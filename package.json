@@ -40,7 +40,6 @@
   },
   "dependencies": {
     "@ethersproject/bignumber": "^5.7.0",
-    "@fuel-ts/transactions": "^0.42.0",
     "@types/request": "^2.48.8",
     "bignumber.js": "^9.1.1",
     "body-parser": "^1.20.1",

@@ -36,26 +36,29 @@ import { nodeUrl, privateKey } from "../src/config";
   const initialPredicateBalance = await predicate.getBalance(token0.assetId);
   console.log("initialPredicateBalance", initialPredicateBalance.toString());
 
-  const tx1 = await wallet
+  const depositTx = await wallet
     .transfer(predicate.address, amount0.toFixed(0), token0.assetId, { gasPrice: 1 })
-    .catch((e) => console.error(`tx1 ${e}`));
-  await tx1?.waitForResult();
+    .catch((e) => console.error(`depositTx ${e}`));
+  await depositTx?.waitForResult();
   //
-  const feetx = await wallet
+  const feeTx = await wallet
     .transfer(predicate.address, 1, TOKENS_BY_SYMBOL.ETH.assetId, { gasPrice: 1 })
-    .catch((e) => console.error(`feetx ${e}`));
-  await feetx?.waitForResult();
+    .catch((e) => console.error(`feeTx ${e}`));
+  await feeTx?.waitForResult();
 
   const predicateBalances = await predicate.getBalances();
   console.log(
     "predicateBalances",
-    predicateBalances.map((v) => v.amount.toString())
+    predicateBalances.map((v) => ({
+      amount: v.amount.toString(),
+      assetId: v.assetId.toString(),
+    }))
   );
   //---------------------
-  const tx2 = await predicate.transfer(wallet.address, amount0.toFixed(0), token0.assetId, {
+  const cancelTx = await wallet.transfer(predicate.address, 0, token0.assetId, {
     gasPrice: 1,
   });
-  await tx2.waitForResult();
+  await cancelTx.waitForResult();
 
   const finalPredicateBalance = await predicate.getBalances();
   console.log(
