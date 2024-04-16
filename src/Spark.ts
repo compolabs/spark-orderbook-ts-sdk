@@ -1,14 +1,21 @@
 import { Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
 
 import BN from "./utils/BN";
+import { NETWORK_ERROR, NetworkError } from "./utils/NetworkError";
 import { DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE } from "./constants";
 import {
   Asset,
-  IOptions,
-  IOptionsSpark,
+  FetchOrdersParams,
+  FetchTradesParams,
+  MarketCreateEvent,
+  Options,
+  OptionsSpark,
   PerpAllTraderPosition,
   PerpMarket,
+  PerpMaxAbsPositionSize,
+  PerpPendingFundingPayment,
   SparkParams,
+  SpotMarketVolume,
   SpotOrder,
   SpotTrades,
 } from "./interface";
@@ -21,7 +28,7 @@ export class Spark {
   private read: ReadActions;
 
   private providerPromise: Promise<Provider>;
-  private options: IOptionsSpark;
+  private options: OptionsSpark;
 
   constructor(params: SparkParams) {
     this.options = {
@@ -186,10 +193,13 @@ export class Spark {
     );
   };
 
-  fetchPerpAllMarkets = async (): Promise<PerpMarket[]> => {
+  fetchPerpAllMarkets = async (
+    assetList: Asset[],
+    quoteAsset: Asset,
+  ): Promise<PerpMarket[]> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchPerpAllMarkets(options);
+    return this.read.fetchPerpAllMarkets(assetList, quoteAsset, options);
   };
 
   fetchPerpFundingRate = async (asset: Asset): Promise<BN> => {
@@ -239,18 +249,18 @@ export class Spark {
     return this.providerPromise;
   };
 
-  private getFetchOptions = async (): Promise<IOptions> => {
+  private getFetchOptions = async (): Promise<Options> => {
     const providerWallet = await this.getProviderWallet();
-    const options: IOptions = { ...this.options, wallet: providerWallet };
+    const options: Options = { ...this.options, wallet: providerWallet };
 
     return options;
   };
 
-  private getApiOptions = (): IOptions => {
+  private getApiOptions = (): Options => {
     if (!this.options.wallet) {
       throw new NetworkError(NETWORK_ERROR.UNKNOWN_WALLET);
     }
 
-    return this.options as IOptions;
+    return this.options as Options;
   };
 }

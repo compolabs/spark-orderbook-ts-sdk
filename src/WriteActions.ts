@@ -12,7 +12,7 @@ import { AssetIdInput, IdentityInput } from "./types/src-20/TokenAbi";
 import { VaultAbi__factory } from "./types/vault";
 import BN from "./utils/BN";
 import { DEFAULT_DECIMALS } from "./constants";
-import { Asset, IOptions } from "./interface";
+import { Asset, Options } from "./interface";
 
 export class WriteActions {
   createSpotOrder = async (
@@ -20,7 +20,7 @@ export class WriteActions {
     quoteToken: Asset,
     size: string,
     price: string,
-    options: IOptions,
+    options: Options,
   ): Promise<string> => {
     const orderbookFactory = OrderbookAbi__factory.connect(
       options.contractAddresses.spotMarket,
@@ -56,7 +56,7 @@ export class WriteActions {
 
   cancelSpotOrder = async (
     orderId: string,
-    options: IOptions,
+    options: Options,
   ): Promise<void> => {
     const orderbookFactory = OrderbookAbi__factory.connect(
       options.contractAddresses.spotMarket,
@@ -72,7 +72,7 @@ export class WriteActions {
   mintToken = async (
     token: Asset,
     amount: string,
-    options: IOptions,
+    options: Options,
   ): Promise<void> => {
     const tokenFactory = options.contractAddresses.tokenFactory;
     const tokenFactoryContract = TokenAbi__factory.connect(
@@ -103,7 +103,7 @@ export class WriteActions {
   depositPerpCollateral = async (
     assetAddress: string,
     amount: string,
-    options: IOptions,
+    options: Options,
   ) => {
     const vaultFactory = VaultAbi__factory.connect(
       options.contractAddresses.vault,
@@ -131,7 +131,7 @@ export class WriteActions {
     gasTokenAddress: string,
     amount: string,
     updateData: string[],
-    options: IOptions,
+    options: Options,
   ) => {
     const vaultFactory = VaultAbi__factory.connect(
       options.contractAddresses.vault,
@@ -188,7 +188,7 @@ export class WriteActions {
     amount: string,
     price: string,
     updateData: string[],
-    options: IOptions,
+    options: Options,
   ): Promise<string> => {
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
       options.contractAddresses.clearingHouse,
@@ -242,7 +242,7 @@ export class WriteActions {
 
   removePerpOrder = async (
     orderId: string,
-    options: IOptions,
+    options: Options,
   ): Promise<void> => {
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
       options.contractAddresses.clearingHouse,
@@ -274,7 +274,7 @@ export class WriteActions {
     orderId: string,
     amount: string,
     updateData: string[],
-    options: IOptions,
+    options: Options,
   ) => {
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
       options.contractAddresses.clearingHouse,

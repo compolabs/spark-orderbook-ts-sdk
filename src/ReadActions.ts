@@ -13,10 +13,17 @@ import { convertI64ToBn } from "./utils/convertI64ToBn";
 import getUnixTime from "./utils/getUnixTime";
 import { IndexerApi } from "./IndexerApi";
 import {
-  IOptions,
+  Asset,
+  FetchOrdersParams,
+  FetchTradesParams,
+  MarketCreateEvent,
+  Options,
   PerpAllTraderPosition,
   PerpMarket,
+  PerpMaxAbsPositionSize,
+  PerpPendingFundingPayment,
   PerpTraderOrder,
+  SpotMarketVolume,
   SpotOrder,
   SpotTrades,
 } from "./interface";
@@ -116,7 +123,7 @@ export class ReadActions {
   fetchPerpCollateralBalance = async (
     accountAddress: string,
     assetAddress: string,
-    options: IOptions,
+    options: Options,
   ): Promise<BN> => {
     const vaultFactory = VaultAbi__factory.connect(
       options.contractAddresses.vault,
@@ -142,7 +149,7 @@ export class ReadActions {
 
   fetchPerpAllTraderPositions = async (
     accountAddress: string,
-    options: IOptions,
+    options: Options,
   ): Promise<PerpAllTraderPosition[]> => {
     const accountBalanceFactory = AccountBalanceAbi__factory.connect(
       options.contractAddresses.accountBalance,
@@ -171,7 +178,7 @@ export class ReadActions {
 
   fetchPerpMarketPrice = async (
     assetAddress: string,
-    options: IOptions,
+    options: Options,
   ): Promise<BN> => {
     const perpMarketFactory = PerpMarketAbi__factory.connect(
       options.contractAddresses.perpMarket,
@@ -193,7 +200,7 @@ export class ReadActions {
 
   fetchPerpFundingRate = async (
     assetAddress: string,
-    options: IOptions,
+    options: Options,
   ): Promise<BN> => {
     const accountBalanceFactory = AccountBalanceAbi__factory.connect(
       options.contractAddresses.accountBalance,
@@ -215,7 +222,7 @@ export class ReadActions {
 
   fetchPerpFreeCollateral = async (
     accountAddress: string,
-    options: IOptions,
+    options: Options,
   ): Promise<BN> => {
     const vaultFactory = VaultAbi__factory.connect(
       options.contractAddresses.vault,
@@ -236,8 +243,9 @@ export class ReadActions {
   };
 
   fetchPerpMarket = async (
-    assetAddress: string,
-    options: IOptions,
+    baseAsset: Asset,
+    quoteAsset: Asset,
+    options: Options,
   ): Promise<PerpMarket> => {
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
       options.contractAddresses.clearingHouse,
@@ -245,7 +253,7 @@ export class ReadActions {
     );
 
     const assetIdInput: AssetIdInput = {
-      value: assetAddress,
+      value: baseAsset.address,
     };
 
     const result = await clearingHouseFactory.functions
@@ -256,15 +264,15 @@ export class ReadActions {
       ? new BN(result.value.paused_index_price.toString())
       : undefined;
     const pausedTimestamp = result.value.paused_timestamp
-      ? result.value.paused_timestamp.toNumber()
+      ? new BN(result.value.paused_timestamp.toString()).toNumber()
       : undefined;
     const closedPrice = result.value.closed_price
       ? new BN(result.value.closed_price.toString())
       : undefined;
 
-    const perpMarket = {
+    const perpMarket: PerpMarket = {
       baseTokenAddress: result.value.asset_id.value,
-      quoteTokenAddress: TOKENS_BY_SYMBOL["USDC"].assetId,
+      quoteTokenAddress: quoteAsset.address,
       imRatio: new BN(result.value.im_ratio.toString()),
       mmRatio: new BN(result.value.mm_ratio.toString()),
       status: result.value.status,
@@ -276,12 +284,16 @@ export class ReadActions {
     return perpMarket;
   };
 
-  fetchPerpAllMarkets = async (options: IOptions): Promise<PerpMarket[]> => {
+  fetchPerpAllMarkets = async (
+    assets: Asset[],
+    quoteAsset: Asset,
+    options: Options,
+  ): Promise<PerpMarket[]> => {
     const markets: PerpMarket[] = [];
 
-    for (const token of TOKENS_LIST) {
+    for (const token of assets) {
       try {
-        const market = await this.fetchPerpMarket(token.assetId, options);
+        const market = await this.fetchPerpMarket(token, quoteAsset, options);
         markets.push(market);
       } catch {
         /* empty */
@@ -294,7 +306,7 @@ export class ReadActions {
   fetchPerpPendingFundingPayment = async (
     accountAddress: string,
     assetAddress: string,
-    options: IOptions,
+    options: Options,
   ): Promise<PerpPendingFundingPayment> => {
     const accountBalanceFactory = AccountBalanceAbi__factory.connect(
       options.contractAddresses.accountBalance,
@@ -321,7 +333,7 @@ export class ReadActions {
 
   fetchPerpIsAllowedCollateral = async (
     assetAddress: string,
-    options: IOptions,
+    options: Options,
   ): Promise<boolean> => {
     const vaultFactory = VaultAbi__factory.connect(
       options.contractAddresses.vault,
@@ -342,7 +354,7 @@ export class ReadActions {
   fetchPerpTraderOrders = async (
     accountAddress: string,
     assetAddress: string,
-    options: IOptions,
+    options: Options,
   ): Promise<PerpTraderOrder[]> => {
     const vaultFactory = PerpMarketAbi__factory.connect(
       options.contractAddresses.perpMarket,
@@ -375,7 +387,7 @@ export class ReadActions {
   fetchPerpMaxAbsPositionSize = async (
     accountAddress: string,
     assetAddress: string,
-    options: IOptions,
+    options: Options,
   ): Promise<PerpMaxAbsPositionSize> => {
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
       options.contractAddresses.clearingHouse,
@@ -402,7 +414,7 @@ export class ReadActions {
 
   fetchPerpMarkPrice = async (
     assetAddress: string,
-    options: IOptions,
+    options: Options,
   ): Promise<BN> => {
     const vaultFactory = PerpMarketAbi__factory.connect(
       options.contractAddresses.perpMarket,

@@ -19,17 +19,17 @@ export interface Asset {
   decimals: number;
 }
 
-interface IBaseOptions {
+interface BaseOptions {
   contractAddresses: Contracts;
   gasPrice: string;
   gasLimit: string;
 }
 
-export interface IOptions extends IBaseOptions {
+export interface Options extends BaseOptions {
   wallet: WalletLocked | WalletUnlocked;
 }
 
-export interface IOptionsSpark extends IBaseOptions {
+export interface OptionsSpark extends BaseOptions {
   wallet?: WalletLocked | WalletUnlocked;
 }
 
@@ -88,3 +88,46 @@ export interface PerpTraderOrder {
   orderPrice: BN;
   trader: string;
 }
+
+export type FetchOrdersParams<T = string> = {
+  baseToken: T;
+  limit: number;
+  trader?: T;
+  type?: "BUY" | "SELL";
+  isActive?: boolean;
+};
+
+export type FetchTradesParams<T = string> = {
+  baseToken: T;
+  limit: number;
+  trader: T;
+};
+
+export type MarketCreateEvent = {
+  id: string;
+  assetId: string;
+  decimal: number;
+};
+
+export type SpotMarketVolume = {
+  low: BN;
+  high: BN;
+  volume: BN;
+};
+
+export type PerpMarketVolume = {
+  predictedFundingRate: BN;
+  averageFunding24h: BN;
+  openInterest: BN;
+  volume24h: BN;
+};
+
+export type PerpMaxAbsPositionSize = {
+  shortSize: BN;
+  longSize: BN;
+};
+
+export type PerpPendingFundingPayment = {
+  fundingPayment: BN;
+  fundingGrowthPayment: BN;
+};
