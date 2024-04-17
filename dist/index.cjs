@@ -1,5 +1,11 @@
-import { Wallet, Provider, Address, hashMessage, arrayify, Interface, Contract, ContractFactory } from 'fuels';
-import BigNumber from 'bignumber.js';
+'use strict';
+
+var fuels = require('fuels');
+var BigNumber = require('bignumber.js');
+
+function _interopDefault (e) { return e && e.__esModule ? e : { default: e }; }
+
+var BigNumber__default = /*#__PURE__*/_interopDefault(BigNumber);
 
 // src/Spark.ts
 
@@ -1327,13 +1333,13 @@ var _storageSlots = [
 ];
 var _AccountBalanceAbi__factory = class _AccountBalanceAbi__factory {
   static createInterface() {
-    return new Interface(_abi);
+    return new fuels.Interface(_abi);
   }
   static connect(id, accountOrProvider) {
-    return new Contract(id, _abi, accountOrProvider);
+    return new fuels.Contract(id, _abi, accountOrProvider);
   }
   static async deployContract(bytecode, wallet, options = {}) {
-    const factory = new ContractFactory(bytecode, _abi, wallet);
+    const factory = new fuels.ContractFactory(bytecode, _abi, wallet);
     const { storageSlots } = _AccountBalanceAbi__factory;
     const contract = await factory.deployContract({
       storageSlots,
@@ -2983,13 +2989,13 @@ var _storageSlots2 = [
 ];
 var _ClearingHouseAbi__factory = class _ClearingHouseAbi__factory {
   static createInterface() {
-    return new Interface(_abi2);
+    return new fuels.Interface(_abi2);
   }
   static connect(id, accountOrProvider) {
-    return new Contract(id, _abi2, accountOrProvider);
+    return new fuels.Contract(id, _abi2, accountOrProvider);
   }
   static async deployContract(bytecode, wallet, options = {}) {
-    const factory = new ContractFactory(bytecode, _abi2, wallet);
+    const factory = new fuels.ContractFactory(bytecode, _abi2, wallet);
     const { storageSlots } = _ClearingHouseAbi__factory;
     const contract = await factory.deployContract({
       storageSlots,
@@ -3994,13 +4000,13 @@ var _storageSlots3 = [
 ];
 var _PerpMarketAbi__factory = class _PerpMarketAbi__factory {
   static createInterface() {
-    return new Interface(_abi3);
+    return new fuels.Interface(_abi3);
   }
   static connect(id, accountOrProvider) {
-    return new Contract(id, _abi3, accountOrProvider);
+    return new fuels.Contract(id, _abi3, accountOrProvider);
   }
   static async deployContract(bytecode, wallet, options = {}) {
-    const factory = new ContractFactory(bytecode, _abi3, wallet);
+    const factory = new fuels.ContractFactory(bytecode, _abi3, wallet);
     const { storageSlots } = _PerpMarketAbi__factory;
     const contract = await factory.deployContract({
       storageSlots,
@@ -4988,13 +4994,13 @@ var _abi4 = {
 var _storageSlots4 = [];
 var _VaultAbi__factory = class _VaultAbi__factory {
   static createInterface() {
-    return new Interface(_abi4);
+    return new fuels.Interface(_abi4);
   }
   static connect(id, accountOrProvider) {
-    return new Contract(id, _abi4, accountOrProvider);
+    return new fuels.Contract(id, _abi4, accountOrProvider);
   }
   static async deployContract(bytecode, wallet, options = {}) {
-    const factory = new ContractFactory(bytecode, _abi4, wallet);
+    const factory = new fuels.ContractFactory(bytecode, _abi4, wallet);
     const { storageSlots } = _VaultAbi__factory;
     const contract = await factory.deployContract({
       storageSlots,
@@ -5006,7 +5012,7 @@ var _VaultAbi__factory = class _VaultAbi__factory {
 _VaultAbi__factory.abi = _abi4;
 _VaultAbi__factory.storageSlots = _storageSlots4;
 var VaultAbi__factory = _VaultAbi__factory;
-BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
+BigNumber__default.default.config({ EXPONENTIAL_AT: [-100, 100] });
 var bigNumberify = (n) => {
   if (n && n.toString) {
     const primitive = n.toString();
@@ -5016,7 +5022,7 @@ var bigNumberify = (n) => {
   }
   return n;
 };
-var _BN = class _BN extends BigNumber {
+var _BN = class _BN extends BigNumber__default.default {
   constructor(n, base) {
     super(bigNumberify(n), base);
     this.dividedBy = this.div;
@@ -5031,7 +5037,7 @@ var _BN = class _BN extends BigNumber {
      * new BN('123.0000').toSignificant(2) === 123
      * new BN('0.001234').toSignificant(2) === 0.0012
      */
-    this.toSignificant = (significantDigits, roundingMode = BigNumber.ROUND_DOWN, format) => {
+    this.toSignificant = (significantDigits, roundingMode = BigNumber__default.default.ROUND_DOWN, format) => {
       return this.gte(1) || significantDigits === 0 ? this.toFormat(significantDigits, roundingMode, format).replace(
         /(\.[0-9]*[1-9])0+$|\.0+$/,
         "$1"
@@ -5089,7 +5095,7 @@ var _BN = class _BN extends BigNumber {
   sqrt() {
     return new _BN(super.sqrt());
   }
-  toDecimalPlaces(decimalPlaces, roundingMode = BigNumber.ROUND_DOWN) {
+  toDecimalPlaces(decimalPlaces, roundingMode = BigNumber__default.default.ROUND_DOWN) {
     return new _BN(super.dp(decimalPlaces, roundingMode));
   }
   toBigFormat(decimalPlaces) {
@@ -5214,7 +5220,7 @@ var ReadActions = class {
       trader,
       isActive
     }) => {
-      const traderAddress = trader ? new Address(trader).toB256() : void 0;
+      const traderAddress = trader ? new fuels.Address(trader).toB256() : void 0;
       const data = await this.indexerApi.getSpotOrders({
         baseToken,
         orderType: type,
@@ -5241,7 +5247,7 @@ var ReadActions = class {
       limit,
       trader
     }) => {
-      const traderAddress = trader ? new Address(trader).toB256() : void 0;
+      const traderAddress = trader ? new fuels.Address(trader).toB256() : void 0;
       const data = await this.indexerApi.getSpotTradeEvents({
         limit,
         trader: traderAddress,
@@ -5269,7 +5275,7 @@ var ReadActions = class {
         options.wallet
       );
       const addressInput = {
-        value: new Address(accountAddress).toB256()
+        value: new fuels.Address(accountAddress).toB256()
       };
       const assetIdInput = {
         value: assetAddress
@@ -5284,7 +5290,7 @@ var ReadActions = class {
         options.wallet
       );
       const addressInput = {
-        value: new Address(accountAddress).toB256()
+        value: new fuels.Address(accountAddress).toB256()
       };
       const result = await accountBalanceFactory.functions.get_all_trader_positions(addressInput).get();
       const positions = result.value.map(([assetAddress, accountBalance]) => ({
@@ -5327,7 +5333,7 @@ var ReadActions = class {
         options.wallet
       );
       const addressInput = {
-        value: new Address(accountAddress).toB256()
+        value: new fuels.Address(accountAddress).toB256()
       };
       const result = await vaultFactory.functions.get_free_collateral(addressInput).get();
       const freeCollateral = new BN_default(result.value.toString());
@@ -5374,7 +5380,7 @@ var ReadActions = class {
         options.wallet
       );
       const addressInput = {
-        value: new Address(accountAddress).toB256()
+        value: new fuels.Address(accountAddress).toB256()
       };
       const assetIdInput = {
         value: assetAddress
@@ -5401,7 +5407,7 @@ var ReadActions = class {
         options.wallet
       );
       const addressInput = {
-        value: new Address(accountAddress).toB256()
+        value: new fuels.Address(accountAddress).toB256()
       };
       const assetIdInput = {
         value: assetAddress
@@ -5422,7 +5428,7 @@ var ReadActions = class {
         options.wallet
       );
       const addressInput = {
-        value: new Address(accountAddress).toB256()
+        value: new fuels.Address(accountAddress).toB256()
       };
       const assetIdInput = {
         value: assetAddress
@@ -6303,13 +6309,13 @@ var _abi5 = {
 var _storageSlots5 = [];
 var _OrderbookAbi__factory = class _OrderbookAbi__factory {
   static createInterface() {
-    return new Interface(_abi5);
+    return new fuels.Interface(_abi5);
   }
   static connect(id, accountOrProvider) {
-    return new Contract(id, _abi5, accountOrProvider);
+    return new fuels.Contract(id, _abi5, accountOrProvider);
   }
   static async deployContract(bytecode, wallet, options = {}) {
-    const factory = new ContractFactory(bytecode, _abi5, wallet);
+    const factory = new fuels.ContractFactory(bytecode, _abi5, wallet);
     const { storageSlots } = _OrderbookAbi__factory;
     const contract = await factory.deployContract({
       storageSlots,
@@ -6861,13 +6867,13 @@ var _storageSlots6 = [
 ];
 var _ProxyAbi__factory = class _ProxyAbi__factory {
   static createInterface() {
-    return new Interface(_abi6);
+    return new fuels.Interface(_abi6);
   }
   static connect(id, accountOrProvider) {
-    return new Contract(id, _abi6, accountOrProvider);
+    return new fuels.Contract(id, _abi6, accountOrProvider);
   }
   static async deployContract(bytecode, wallet, options = {}) {
-    const factory = new ContractFactory(bytecode, _abi6, wallet);
+    const factory = new fuels.ContractFactory(bytecode, _abi6, wallet);
     const { storageSlots } = _ProxyAbi__factory;
     const contract = await factory.deployContract({
       storageSlots,
@@ -9877,13 +9883,13 @@ var _storageSlots7 = [
 ];
 var _PythContractAbi__factory = class _PythContractAbi__factory {
   static createInterface() {
-    return new Interface(_abi7);
+    return new fuels.Interface(_abi7);
   }
   static connect(id, accountOrProvider) {
-    return new Contract(id, _abi7, accountOrProvider);
+    return new fuels.Contract(id, _abi7, accountOrProvider);
   }
   static async deployContract(bytecode, wallet, options = {}) {
-    const factory = new ContractFactory(bytecode, _abi7, wallet);
+    const factory = new fuels.ContractFactory(bytecode, _abi7, wallet);
     const { storageSlots } = _PythContractAbi__factory;
     const contract = await factory.deployContract({
       storageSlots,
@@ -10283,13 +10289,13 @@ var _storageSlots8 = [
 ];
 var _TokenAbi__factory = class _TokenAbi__factory {
   static createInterface() {
-    return new Interface(_abi8);
+    return new fuels.Interface(_abi8);
   }
   static connect(id, accountOrProvider) {
-    return new Contract(id, _abi8, accountOrProvider);
+    return new fuels.Contract(id, _abi8, accountOrProvider);
   }
   static async deployContract(bytecode, wallet, options = {}) {
-    const factory = new ContractFactory(bytecode, _abi8, wallet);
+    const factory = new fuels.ContractFactory(bytecode, _abi8, wallet);
     const { storageSlots } = _TokenAbi__factory;
     const contract = await factory.deployContract({
       storageSlots,
@@ -10340,7 +10346,7 @@ var WriteActions = class {
         options.wallet
       );
       const mintAmount = BN_default.parseUnits(amount, token.decimals);
-      const hash = hashMessage(token.address);
+      const hash = fuels.hashMessage(token.address);
       const identity = {
         Address: {
           value: options.wallet.address.toB256()
@@ -10375,7 +10381,7 @@ var WriteActions = class {
       const assetIdInput = {
         value: baseTokenAddress
       };
-      const parsedUpdateData = updateData.map((v) => Array.from(arrayify(v)));
+      const parsedUpdateData = updateData.map((v) => Array.from(fuels.arrayify(v)));
       const forward = {
         amount: "10",
         assetId: gasTokenAddress
@@ -10418,7 +10424,7 @@ var WriteActions = class {
       const isNegative = amount.includes("-");
       const absSize = amount.replace("-", "");
       const baseSize = { value: absSize, negative: isNegative };
-      const parsedUpdateData = updateData.map((v) => Array.from(arrayify(v)));
+      const parsedUpdateData = updateData.map((v) => Array.from(fuels.arrayify(v)));
       const forward = {
         amount: "10",
         assetId: gasTokenAddress
@@ -10475,7 +10481,7 @@ var WriteActions = class {
       const isNegative = amount.includes("-");
       const absSize = amount.replace("-", "");
       const baseSize = { value: absSize, negative: isNegative };
-      const parsedUpdateData = updateData.map((v) => Array.from(arrayify(v)));
+      const parsedUpdateData = updateData.map((v) => Array.from(fuels.arrayify(v)));
       const forward = {
         amount: "10",
         assetId: gasTokenAddress
@@ -10641,7 +10647,7 @@ var Spark = class {
     };
     this.getProviderWallet = async () => {
       const provider = await this.providerPromise;
-      return Wallet.generate({ provider });
+      return fuels.Wallet.generate({ provider });
     };
     this.getProvider = async () => {
       return this.providerPromise;
@@ -10664,13 +10670,13 @@ var Spark = class {
       gasPrice: params.gasPrice ?? DEFAULT_GAS_PRICE
     };
     this.read = new ReadActions(params.indexerApiUrl);
-    this.providerPromise = Provider.create(params.networkUrl);
+    this.providerPromise = fuels.Provider.create(params.networkUrl);
   }
 };
 
 // src/index.ts
 console.log("1231234");
 
-export { Spark };
+exports.Spark = Spark;
 //# sourceMappingURL=out.js.map
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index.cjs.map

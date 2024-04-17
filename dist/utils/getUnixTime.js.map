@@ -1,1 +1,0 @@
-{"version":3,"file":"getUnixTime.js","sourceRoot":"","sources":["../../src/utils/getUnixTime.ts"],"names":[],"mappings":";;AAAA,SAAwB,WAAW,CAAC,IAAqB;IACvD,MAAM,IAAI,GAAG,IAAI,IAAI,CAAC,IAAI,CAAC,CAAC;IAC5B,OAAO,IAAI,CAAC,KAAK,CAAC,IAAI,CAAC,OAAO,EAAE,GAAG,IAAI,CAAC,CAAC;AAC3C,CAAC;AAHD,8BAGC"}

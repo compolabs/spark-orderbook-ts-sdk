@@ -1,3 +1,3 @@
 import { Spark } from "./Spark";
-
-export default Spark;
+console.log("1231234");
+export { Spark };
