@@ -5542,6 +5542,26 @@ var _abi5 = {
           "name": "BadPrice",
           "type": 0,
           "typeArguments": null
+        },
+        {
+          "name": "BaseSizeIsZero",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
+          "name": "CannotRemoveOrderIndex",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
+          "name": "CannotRemoveOrderByTrader",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
+          "name": "CannotRemoveOrder",
+          "type": 0,
+          "typeArguments": null
         }
       ],
       "typeParameters": null
@@ -5711,29 +5731,20 @@ var _abi5 = {
           "typeArguments": null
         },
         {
-          "name": "trader",
-          "type": 9,
-          "typeArguments": null
-        },
-        {
-          "name": "base_token",
-          "type": 10,
-          "typeArguments": null
-        },
-        {
-          "name": "base_size_change",
-          "type": 11,
-          "typeArguments": null
-        },
-        {
-          "name": "base_price",
-          "type": 20,
-          "typeArguments": null
-        },
-        {
           "name": "timestamp",
           "type": 20,
           "typeArguments": null
+        },
+        {
+          "name": "order",
+          "type": 5,
+          "typeArguments": [
+            {
+              "name": "",
+              "type": 14,
+              "typeArguments": null
+            }
+          ]
         }
       ],
       "typeParameters": null
@@ -6112,7 +6123,7 @@ var _abi5 = {
       "logId": 3,
       "loggedType": {
         "name": "",
-        "type": 15,
+        "type": 4,
         "typeArguments": []
       }
     },
@@ -6136,7 +6147,7 @@ var _abi5 = {
       "logId": 6,
       "loggedType": {
         "name": "",
-        "type": 13,
+        "type": 4,
         "typeArguments": []
       }
     },
@@ -6144,7 +6155,7 @@ var _abi5 = {
       "logId": 7,
       "loggedType": {
         "name": "",
-        "type": 6,
+        "type": 4,
         "typeArguments": []
       }
     },
@@ -6152,7 +6163,7 @@ var _abi5 = {
       "logId": 8,
       "loggedType": {
         "name": "",
-        "type": 4,
+        "type": 15,
         "typeArguments": []
       }
     },
@@ -6176,7 +6187,7 @@ var _abi5 = {
       "logId": 11,
       "loggedType": {
         "name": "",
-        "type": 4,
+        "type": 13,
         "typeArguments": []
       }
     },
@@ -6184,7 +6195,7 @@ var _abi5 = {
       "logId": 12,
       "loggedType": {
         "name": "",
-        "type": 15,
+        "type": 6,
         "typeArguments": []
       }
     },
@@ -6192,7 +6203,7 @@ var _abi5 = {
       "logId": 13,
       "loggedType": {
         "name": "",
-        "type": 15,
+        "type": 4,
         "typeArguments": []
       }
     },
@@ -6200,7 +6211,7 @@ var _abi5 = {
       "logId": 14,
       "loggedType": {
         "name": "",
-        "type": 17,
+        "type": 4,
         "typeArguments": []
       }
     },
@@ -6208,7 +6219,7 @@ var _abi5 = {
       "logId": 15,
       "loggedType": {
         "name": "",
-        "type": 6,
+        "type": 4,
         "typeArguments": []
       }
     },
@@ -6264,6 +6275,190 @@ var _abi5 = {
       "logId": 22,
       "loggedType": {
         "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 23,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 24,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 25,
+      "loggedType": {
+        "name": "",
+        "type": 15,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 26,
+      "loggedType": {
+        "name": "",
+        "type": 15,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 27,
+      "loggedType": {
+        "name": "",
+        "type": 17,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 28,
+      "loggedType": {
+        "name": "",
+        "type": 6,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 29,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 30,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 31,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 32,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 33,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 34,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 35,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 36,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 37,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 38,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 39,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 40,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 41,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 42,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 43,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 44,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 45,
+      "loggedType": {
+        "name": "",
         "type": 15,
         "typeArguments": []
       }
@@ -6278,7 +6473,7 @@ var _abi5 = {
         "type": 10,
         "typeArguments": []
       },
-      "offset": 74404
+      "offset": 102128
     },
     {
       "name": "QUOTE_TOKEN_DECIMALS",
@@ -6287,7 +6482,7 @@ var _abi5 = {
         "type": 19,
         "typeArguments": null
       },
-      "offset": 74340
+      "offset": 102064
     },
     {
       "name": "PRICE_DECIMALS",
@@ -6296,7 +6491,7 @@ var _abi5 = {
         "type": 19,
         "typeArguments": null
       },
-      "offset": 74324
+      "offset": 102048
     }
   ]
 };

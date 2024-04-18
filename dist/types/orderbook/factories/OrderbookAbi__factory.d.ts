@@ -5,16 +5,24 @@ export declare class OrderbookAbi__factory {
         types: ({
             typeId: number;
             type: string;
-            components: {
-                name: string;
-                type: number;
-                typeArguments: null;
-            }[];
+            components: null;
             typeParameters: null;
         } | {
             typeId: number;
             type: string;
-            components: null;
+            components: ({
+                name: string;
+                type: number;
+                typeArguments: null;
+            } | {
+                name: string;
+                type: number;
+                typeArguments: {
+                    name: string;
+                    type: number;
+                    typeArguments: null;
+                }[];
+            })[];
             typeParameters: null;
         } | {
             typeId: number;
