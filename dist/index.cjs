@@ -10675,8 +10675,8 @@ var Spark = class {
 };
 
 // src/index.ts
-console.log("1231234");
+var src_default = Spark;
 
-exports.Spark = Spark;
+module.exports = src_default;
 //# sourceMappingURL=out.js.map
 //# sourceMappingURL=index.cjs.map

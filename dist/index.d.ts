@@ -1,2 +1,2 @@
 import { Spark } from "./Spark";
-export { Spark };
+export default Spark;
