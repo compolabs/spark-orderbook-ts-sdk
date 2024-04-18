@@ -48,32 +48,55 @@ export class WriteActions {
     const tx = await orderbookFactory.functions
       .open_order(assetId, baseSize, price)
       .callParams({ forward })
-      .txParams({ gasPrice: options.gasPrice, gasLimit: options.gasLimit })
-      .call();
+      .txParams({ gasPrice: options.gasPrice });
 
-    return tx.transactionId;
+    const { gasUsed: gasValue } = await tx.getTransactionCost();
+    const res = await tx.txParams({ gasLimit: gasValue }).call();
+    return res.transactionId;
   };
 
   cancelSpotOrder = async (
     orderId: string,
     options: Options,
-  ): Promise<void> => {
+  ): Promise<string> => {
     const orderbookFactory = OrderbookAbi__factory.connect(
       options.contractAddresses.spotMarket,
       options.wallet,
     );
 
-    await orderbookFactory.functions
+    const tx = await orderbookFactory.functions
       .cancel_order(orderId)
-      .txParams({ gasPrice: options.gasPrice, gasLimit: options.gasLimit })
-      .call();
+      .txParams({ gasPrice: options.gasPrice });
+
+    const { gasUsed: gasValue } = await tx.getTransactionCost();
+    const res = await tx.txParams({ gasLimit: gasValue }).call();
+    return res.transactionId;
+  };
+
+  matchSpotOrders = async (
+    sellOrderId: string,
+    buyOrderId: string,
+    options: Options,
+  ): Promise<string> => {
+    const orderbookFactory = OrderbookAbi__factory.connect(
+      options.contractAddresses.spotMarket,
+      options.wallet,
+    );
+
+    const tx = orderbookFactory.functions
+      .match_orders(sellOrderId, buyOrderId)
+      .txParams({ gasPrice: options.gasPrice });
+
+    const { gasUsed: gasValue } = await tx.getTransactionCost();
+    const res = await tx.txParams({ gasLimit: gasValue }).call();
+    return res.transactionId;
   };
 
   mintToken = async (
     token: Asset,
     amount: string,
     options: Options,
-  ): Promise<void> => {
+  ): Promise<string> => {
     const tokenFactory = options.contractAddresses.tokenFactory;
     const tokenFactoryContract = TokenAbi__factory.connect(
       tokenFactory,
@@ -88,23 +111,20 @@ export class WriteActions {
       },
     };
 
-    await tokenFactoryContract.functions
+    const tx = await tokenFactoryContract.functions
       .mint(identity, hash, mintAmount.toString())
-      .txParams({ gasPrice: options.gasPrice, gasLimit: options.gasLimit })
-      .call();
-  };
+      .txParams({ gasPrice: options.gasPrice });
 
-  approve = async (assetAddress: string, amount: string): Promise<void> => {};
-
-  allowance = async (assetAddress: string): Promise<string> => {
-    return "";
+    const { gasUsed: gasValue } = await tx.getTransactionCost();
+    const res = await tx.txParams({ gasLimit: gasValue }).call();
+    return res.transactionId;
   };
 
   depositPerpCollateral = async (
     assetAddress: string,
     amount: string,
     options: Options,
-  ) => {
+  ): Promise<string> => {
     const vaultFactory = VaultAbi__factory.connect(
       options.contractAddresses.vault,
       options.wallet,
@@ -119,11 +139,14 @@ export class WriteActions {
       amount,
     };
 
-    await vaultFactory.functions
+    const tx = await vaultFactory.functions
       .deposit_collateral(assetIdInput)
       .callParams({ forward })
-      .txParams({ gasPrice: options.gasPrice, gasLimit: options.gasLimit })
-      .call();
+      .txParams({ gasPrice: options.gasPrice });
+
+    const { gasUsed: gasValue } = await tx.getTransactionCost();
+    const res = await tx.txParams({ gasLimit: gasValue }).call();
+    return res.transactionId;
   };
 
   withdrawPerpCollateral = async (
@@ -132,7 +155,7 @@ export class WriteActions {
     amount: string,
     updateData: string[],
     options: Options,
-  ) => {
+  ): Promise<string> => {
     const vaultFactory = VaultAbi__factory.connect(
       options.contractAddresses.vault,
       options.wallet,
@@ -149,7 +172,7 @@ export class WriteActions {
       assetId: gasTokenAddress,
     };
 
-    await vaultFactory.functions
+    const tx = await vaultFactory.functions
       .withdraw_collateral(amount, assetIdInput, parsedUpdateData)
       .callParams({ forward })
       .txParams({ gasPrice: 1 })
@@ -178,8 +201,11 @@ export class WriteActions {
           options.contractAddresses.pyth,
           options.wallet,
         ),
-      ])
-      .call();
+      ]);
+
+    const { gasUsed: gasValue } = await tx.getTransactionCost();
+    const res = await tx.txParams({ gasLimit: gasValue }).call();
+    return res.transactionId;
   };
 
   openPerpOrder = async (
@@ -213,7 +239,7 @@ export class WriteActions {
     const tx = await clearingHouseFactory.functions
       .open_order(assetIdInput, baseSize, price, parsedUpdateData)
       .callParams({ forward })
-      .txParams({ gasPrice: options.gasPrice, gasLimit: options.gasLimit })
+      .txParams({ gasPrice: options.gasPrice })
       .addContracts([
         ProxyAbi__factory.connect(
           options.contractAddresses.proxy,
@@ -235,23 +261,25 @@ export class WriteActions {
           options.contractAddresses.pyth,
           options.wallet,
         ),
-      ])
-      .call();
-    return tx.transactionId;
+      ]);
+
+    const { gasUsed: gasValue } = await tx.getTransactionCost();
+    const res = await tx.txParams({ gasLimit: gasValue }).call();
+    return res.transactionId;
   };
 
   removePerpOrder = async (
     orderId: string,
     options: Options,
-  ): Promise<void> => {
+  ): Promise<string> => {
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
       options.contractAddresses.clearingHouse,
       options.wallet,
     );
 
-    await clearingHouseFactory.functions
+    const tx = await clearingHouseFactory.functions
       .remove_order(orderId)
-      .txParams({ gasPrice: options.gasPrice, gasLimit: options.gasLimit })
+      .txParams({ gasPrice: options.gasPrice })
       .addContracts([
         ProxyAbi__factory.connect(
           options.contractAddresses.proxy,
@@ -265,8 +293,11 @@ export class WriteActions {
           options.contractAddresses.clearingHouse,
           options.wallet,
         ),
-      ])
-      .call();
+      ]);
+
+    const { gasUsed: gasValue } = await tx.getTransactionCost();
+    const res = await tx.txParams({ gasLimit: gasValue }).call();
+    return res.transactionId;
   };
 
   fulfillPerpOrder = async (
@@ -275,7 +306,7 @@ export class WriteActions {
     amount: string,
     updateData: string[],
     options: Options,
-  ) => {
+  ): Promise<string> => {
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
       options.contractAddresses.clearingHouse,
       options.wallet,
@@ -292,10 +323,10 @@ export class WriteActions {
       assetId: gasTokenAddress,
     };
 
-    await clearingHouseFactory.functions
+    const tx = await clearingHouseFactory.functions
       .fulfill_order(baseSize, orderId, parsedUpdateData)
       .callParams({ forward })
-      .txParams({ gasPrice: options.gasPrice, gasLimit: options.gasLimit })
+      .txParams({ gasPrice: options.gasPrice })
       .addContracts([
         ProxyAbi__factory.connect(
           options.contractAddresses.proxy,
@@ -321,7 +352,10 @@ export class WriteActions {
           options.contractAddresses.pyth,
           options.wallet,
         ),
-      ])
-      .call();
+      ]);
+
+    const { gasUsed: gasValue } = await tx.getTransactionCost();
+    const res = await tx.txParams({ gasLimit: gasValue }).call();
+    return res.transactionId;
   };
 }

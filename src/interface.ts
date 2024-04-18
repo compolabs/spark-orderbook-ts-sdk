@@ -22,7 +22,6 @@ export interface Asset {
 interface BaseOptions {
   contractAddresses: Contracts;
   gasPrice: string;
-  gasLimit: string;
 }
 
 export interface Options extends BaseOptions {

@@ -120,6 +120,21 @@ export class ReadActions {
     return { volume: BN.ZERO, high: BN.ZERO, low: BN.ZERO };
   };
 
+  fetchSpotOrderById = async (orderId: string): Promise<SpotOrder> => {
+    const order = await this.indexerApi.getSpotOrdersById(orderId);
+
+    const baseSize = new BN(order.base_size);
+    const basePrice = new BN(order.base_price);
+    return {
+      id: order.order_id,
+      baseToken: order.base_token,
+      trader: order.trader,
+      baseSize,
+      orderPrice: basePrice,
+      blockTimestamp: getUnixTime(order.createdAt),
+    };
+  };
+
   fetchPerpCollateralBalance = async (
     accountAddress: string,
     assetAddress: string,

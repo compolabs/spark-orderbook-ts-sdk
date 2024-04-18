@@ -156,6 +156,10 @@ export class Spark {
     return this.read.fetchSpotVolume();
   };
 
+  fetchSpotOrderById = async (orderId: string): Promise<SpotOrder> => {
+    return this.read.fetchSpotOrderById(orderId);
+  };
+
   fetchPerpCollateralBalance = async (
     accountAddress: string,
     asset: Asset,
