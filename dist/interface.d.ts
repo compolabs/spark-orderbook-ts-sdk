@@ -38,8 +38,8 @@ export interface SpotOrder {
     id: string;
     baseToken: string;
     trader: string;
-    baseSize: number;
-    orderPrice: number;
+    baseSize: BN;
+    orderPrice: BN;
     blockTimestamp: number;
 }
 export interface SpotTrades {

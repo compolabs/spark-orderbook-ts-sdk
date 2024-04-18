@@ -5235,8 +5235,8 @@ var ReadActions = class {
           id: order.order_id,
           baseToken: order.base_token,
           trader: order.trader,
-          baseSize: baseSize.toNumber(),
-          orderPrice: basePrice.toNumber(),
+          baseSize,
+          orderPrice: basePrice,
           blockTimestamp: getUnixTime(order.createdAt)
         };
       });
