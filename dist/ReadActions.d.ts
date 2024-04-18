@@ -8,6 +8,7 @@ export declare class ReadActions {
     fetchSpotOrders: ({ baseToken, type, limit, trader, isActive, }: FetchOrdersParams) => Promise<SpotOrder[]>;
     fetchSpotTrades: ({ baseToken, limit, trader, }: FetchTradesParams) => Promise<SpotTrades[]>;
     fetchSpotVolume: () => Promise<SpotMarketVolume>;
+    fetchSpotOrderById: (orderId: string) => Promise<SpotOrder>;
     fetchPerpCollateralBalance: (accountAddress: string, assetAddress: string, options: Options) => Promise<BN>;
     fetchPerpAllTraderPositions: (accountAddress: string, options: Options) => Promise<PerpAllTraderPosition[]>;
     fetchPerpMarketPrice: (assetAddress: string, options: Options) => Promise<BN>;

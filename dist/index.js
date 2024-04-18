@@ -1,7 +1,111 @@
-import { Wallet, Provider, Address, hashMessage, arrayify, Interface, Contract, ContractFactory } from 'fuels';
 import BigNumber from 'bignumber.js';
+import { Wallet, Provider, Address, hashMessage, arrayify, Interface, Contract, ContractFactory } from 'fuels';
 
-// src/Spark.ts
+// src/utils/BN.ts
+BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
+var bigNumberify = (n) => {
+  if (n && n.toString) {
+    const primitive = n.toString();
+    if (typeof primitive !== "object") {
+      return primitive;
+    }
+  }
+  return n;
+};
+var _BN = class _BN extends BigNumber {
+  constructor(n, base) {
+    super(bigNumberify(n), base);
+    this.dividedBy = this.div;
+    this.exponentiatedBy = this.pow;
+    this.modulo = this.mod;
+    this.multipliedBy = this.times;
+    this.squareRoot = this.sqrt;
+    /**
+     * @example
+     * new BN('1234.5678').toSignificant(2) === 1,234.56
+     * new BN('1234.506').toSignificant(2) === 1,234.5
+     * new BN('123.0000').toSignificant(2) === 123
+     * new BN('0.001234').toSignificant(2) === 0.0012
+     */
+    this.toSignificant = (significantDigits, roundingMode = BigNumber.ROUND_DOWN, format) => {
+      return this.gte(1) || significantDigits === 0 ? this.toFormat(significantDigits, roundingMode, format).replace(
+        /(\.[0-9]*[1-9])0+$|\.0+$/,
+        "$1"
+      ) : super.precision(significantDigits, roundingMode).toString();
+    };
+  }
+  static clamp(number, min, max) {
+    return _BN.min(_BN.max(number, min), max);
+  }
+  static max(...n) {
+    return new _BN(super.max(...n.map(bigNumberify)));
+  }
+  static min(...n) {
+    return new _BN(super.min(...n.map(bigNumberify)));
+  }
+  static toBN(p) {
+    return p.then((v) => new _BN(v));
+  }
+  static parseUnits(value, decimals = 8) {
+    return new _BN(10).pow(decimals).times(bigNumberify(value));
+  }
+  static formatUnits(value, decimals = 8) {
+    return new _BN(value).div(new _BN(10).pow(decimals));
+  }
+  static percentOf(value, percent) {
+    return new _BN(new _BN(value).times(percent).div(100).toFixed(0));
+  }
+  static ratioOf(valueA, valueB) {
+    return new _BN(valueA).div(valueB).times(100);
+  }
+  abs() {
+    return new _BN(super.abs());
+  }
+  div(n, base) {
+    return new _BN(super.div(bigNumberify(n), base));
+  }
+  pow(n, m) {
+    return new _BN(super.pow(bigNumberify(n), bigNumberify(m)));
+  }
+  minus(n, base) {
+    return new _BN(super.minus(bigNumberify(n), base));
+  }
+  mod(n, base) {
+    return new _BN(super.mod(bigNumberify(n), base));
+  }
+  times(n, base) {
+    return new _BN(super.times(bigNumberify(n), base));
+  }
+  negated() {
+    return new _BN(super.negated());
+  }
+  plus(n, base) {
+    return new _BN(super.plus(bigNumberify(n), base));
+  }
+  sqrt() {
+    return new _BN(super.sqrt());
+  }
+  toDecimalPlaces(decimalPlaces, roundingMode = BigNumber.ROUND_DOWN) {
+    return new _BN(super.dp(decimalPlaces, roundingMode));
+  }
+  toBigFormat(decimalPlaces) {
+    if (super.toNumber() > 999 && super.toNumber() < 1e6) {
+      return (super.toNumber() / 1e3).toFixed(1) + "K";
+    } else if (super.toNumber() > 1e6) {
+      return (super.toNumber() / 1e6).toFixed(1) + "M";
+    } else if (super.toNumber() < 900) {
+      return super.toFormat(decimalPlaces);
+    }
+    return super.toFormat(decimalPlaces);
+  }
+  clamp(min, max) {
+    return _BN.min(_BN.max(this, min), max);
+  }
+};
+_BN.ZERO = new _BN(0);
+_BN.MaxUint256 = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+var BN = _BN;
+var BN_default = BN;
 
 // src/utils/NetworkError.ts
 var NETWORK_ERROR_MESSAGE = {
@@ -21,7 +125,6 @@ var NetworkError = class _NetworkError extends Error {
 
 // src/constants.ts
 var DEFAULT_DECIMALS = 9;
-var DEFAULT_GAS_LIMIT = "20000000";
 var DEFAULT_GAS_PRICE = "1";
 var _abi = {
   "types": [
@@ -5006,110 +5109,6 @@ var _VaultAbi__factory = class _VaultAbi__factory {
 _VaultAbi__factory.abi = _abi4;
 _VaultAbi__factory.storageSlots = _storageSlots4;
 var VaultAbi__factory = _VaultAbi__factory;
-BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
-var bigNumberify = (n) => {
-  if (n && n.toString) {
-    const primitive = n.toString();
-    if (typeof primitive !== "object") {
-      return primitive;
-    }
-  }
-  return n;
-};
-var _BN = class _BN extends BigNumber {
-  constructor(n, base) {
-    super(bigNumberify(n), base);
-    this.dividedBy = this.div;
-    this.exponentiatedBy = this.pow;
-    this.modulo = this.mod;
-    this.multipliedBy = this.times;
-    this.squareRoot = this.sqrt;
-    /**
-     * @example
-     * new BN('1234.5678').toSignificant(2) === 1,234.56
-     * new BN('1234.506').toSignificant(2) === 1,234.5
-     * new BN('123.0000').toSignificant(2) === 123
-     * new BN('0.001234').toSignificant(2) === 0.0012
-     */
-    this.toSignificant = (significantDigits, roundingMode = BigNumber.ROUND_DOWN, format) => {
-      return this.gte(1) || significantDigits === 0 ? this.toFormat(significantDigits, roundingMode, format).replace(
-        /(\.[0-9]*[1-9])0+$|\.0+$/,
-        "$1"
-      ) : super.precision(significantDigits, roundingMode).toString();
-    };
-  }
-  static clamp(number, min, max) {
-    return _BN.min(_BN.max(number, min), max);
-  }
-  static max(...n) {
-    return new _BN(super.max(...n.map(bigNumberify)));
-  }
-  static min(...n) {
-    return new _BN(super.min(...n.map(bigNumberify)));
-  }
-  static toBN(p) {
-    return p.then((v) => new _BN(v));
-  }
-  static parseUnits(value, decimals = 8) {
-    return new _BN(10).pow(decimals).times(bigNumberify(value));
-  }
-  static formatUnits(value, decimals = 8) {
-    return new _BN(value).div(new _BN(10).pow(decimals));
-  }
-  static percentOf(value, percent) {
-    return new _BN(new _BN(value).times(percent).div(100).toFixed(0));
-  }
-  static ratioOf(valueA, valueB) {
-    return new _BN(valueA).div(valueB).times(100);
-  }
-  abs() {
-    return new _BN(super.abs());
-  }
-  div(n, base) {
-    return new _BN(super.div(bigNumberify(n), base));
-  }
-  pow(n, m) {
-    return new _BN(super.pow(bigNumberify(n), bigNumberify(m)));
-  }
-  minus(n, base) {
-    return new _BN(super.minus(bigNumberify(n), base));
-  }
-  mod(n, base) {
-    return new _BN(super.mod(bigNumberify(n), base));
-  }
-  times(n, base) {
-    return new _BN(super.times(bigNumberify(n), base));
-  }
-  negated() {
-    return new _BN(super.negated());
-  }
-  plus(n, base) {
-    return new _BN(super.plus(bigNumberify(n), base));
-  }
-  sqrt() {
-    return new _BN(super.sqrt());
-  }
-  toDecimalPlaces(decimalPlaces, roundingMode = BigNumber.ROUND_DOWN) {
-    return new _BN(super.dp(decimalPlaces, roundingMode));
-  }
-  toBigFormat(decimalPlaces) {
-    if (super.toNumber() > 999 && super.toNumber() < 1e6) {
-      return (super.toNumber() / 1e3).toFixed(1) + "K";
-    } else if (super.toNumber() > 1e6) {
-      return (super.toNumber() / 1e6).toFixed(1) + "M";
-    } else if (super.toNumber() < 900) {
-      return super.toFormat(decimalPlaces);
-    }
-    return super.toFormat(decimalPlaces);
-  }
-  clamp(min, max) {
-    return _BN.min(_BN.max(this, min), max);
-  }
-};
-_BN.ZERO = new _BN(0);
-_BN.MaxUint256 = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
-var BN = _BN;
-var BN_default = BN;
 
 // src/utils/convertI64ToBn.ts
 var convertI64ToBn = (input) => {
@@ -5262,6 +5261,19 @@ var ReadActions = class {
     this.fetchSpotVolume = async () => {
       console.warn("[fetchVolume] NOT IMPLEMENTED FOR FUEL");
       return { volume: BN_default.ZERO, high: BN_default.ZERO, low: BN_default.ZERO };
+    };
+    this.fetchSpotOrderById = async (orderId) => {
+      const order = await this.indexerApi.getSpotOrdersById(orderId);
+      const baseSize = new BN_default(order.base_size);
+      const basePrice = new BN_default(order.base_price);
+      return {
+        id: order.order_id,
+        baseToken: order.base_token,
+        trader: order.trader,
+        baseSize,
+        orderPrice: basePrice,
+        blockTimestamp: getUnixTime(order.createdAt)
+      };
     };
     this.fetchPerpCollateralBalance = async (accountAddress, assetAddress, options) => {
       const vaultFactory = VaultAbi__factory.connect(
@@ -10518,15 +10530,30 @@ var WriteActions = class {
         amount: isNegative ? absSize : amountToSend.toString(),
         assetId: isNegative ? baseToken.address : quoteToken.address
       };
-      const tx = await orderbookFactory.functions.open_order(assetId, baseSize, price).callParams({ forward }).txParams({ gasPrice: options.gasPrice, gasLimit: options.gasLimit }).call();
-      return tx.transactionId;
+      const tx = await orderbookFactory.functions.open_order(assetId, baseSize, price).callParams({ forward }).txParams({ gasPrice: options.gasPrice });
+      const { gasUsed: gasValue } = await tx.getTransactionCost();
+      const res = await tx.txParams({ gasLimit: gasValue }).call();
+      return res.transactionId;
     };
     this.cancelSpotOrder = async (orderId, options) => {
       const orderbookFactory = OrderbookAbi__factory.connect(
         options.contractAddresses.spotMarket,
         options.wallet
       );
-      await orderbookFactory.functions.cancel_order(orderId).txParams({ gasPrice: options.gasPrice, gasLimit: options.gasLimit }).call();
+      const tx = await orderbookFactory.functions.cancel_order(orderId).txParams({ gasPrice: options.gasPrice });
+      const { gasUsed: gasValue } = await tx.getTransactionCost();
+      const res = await tx.txParams({ gasLimit: gasValue }).call();
+      return res.transactionId;
+    };
+    this.matchSpotOrders = async (sellOrderId, buyOrderId, options) => {
+      const orderbookFactory = OrderbookAbi__factory.connect(
+        options.contractAddresses.spotMarket,
+        options.wallet
+      );
+      const tx = orderbookFactory.functions.match_orders(sellOrderId, buyOrderId).txParams({ gasPrice: options.gasPrice });
+      const { gasUsed: gasValue } = await tx.getTransactionCost();
+      const res = await tx.txParams({ gasLimit: gasValue }).call();
+      return res.transactionId;
     };
     this.mintToken = async (token, amount, options) => {
       const tokenFactory = options.contractAddresses.tokenFactory;
@@ -10541,12 +10568,10 @@ var WriteActions = class {
           value: options.wallet.address.toB256()
         }
       };
-      await tokenFactoryContract.functions.mint(identity, hash, mintAmount.toString()).txParams({ gasPrice: options.gasPrice, gasLimit: options.gasLimit }).call();
-    };
-    this.approve = async (assetAddress, amount) => {
-    };
-    this.allowance = async (assetAddress) => {
-      return "";
+      const tx = await tokenFactoryContract.functions.mint(identity, hash, mintAmount.toString()).txParams({ gasPrice: options.gasPrice });
+      const { gasUsed: gasValue } = await tx.getTransactionCost();
+      const res = await tx.txParams({ gasLimit: gasValue }).call();
+      return res.transactionId;
     };
     this.depositPerpCollateral = async (assetAddress, amount, options) => {
       const vaultFactory = VaultAbi__factory.connect(
@@ -10560,7 +10585,10 @@ var WriteActions = class {
         assetId: assetAddress,
         amount
       };
-      await vaultFactory.functions.deposit_collateral(assetIdInput).callParams({ forward }).txParams({ gasPrice: options.gasPrice, gasLimit: options.gasLimit }).call();
+      const tx = await vaultFactory.functions.deposit_collateral(assetIdInput).callParams({ forward }).txParams({ gasPrice: options.gasPrice });
+      const { gasUsed: gasValue } = await tx.getTransactionCost();
+      const res = await tx.txParams({ gasLimit: gasValue }).call();
+      return res.transactionId;
     };
     this.withdrawPerpCollateral = async (baseTokenAddress, gasTokenAddress, amount, updateData, options) => {
       const vaultFactory = VaultAbi__factory.connect(
@@ -10575,7 +10603,7 @@ var WriteActions = class {
         amount: "10",
         assetId: gasTokenAddress
       };
-      await vaultFactory.functions.withdraw_collateral(amount, assetIdInput, parsedUpdateData).callParams({ forward }).txParams({ gasPrice: 1 }).addContracts([
+      const tx = await vaultFactory.functions.withdraw_collateral(amount, assetIdInput, parsedUpdateData).callParams({ forward }).txParams({ gasPrice: 1 }).addContracts([
         ProxyAbi__factory.connect(
           options.contractAddresses.proxy,
           options.wallet
@@ -10600,7 +10628,10 @@ var WriteActions = class {
           options.contractAddresses.pyth,
           options.wallet
         )
-      ]).call();
+      ]);
+      const { gasUsed: gasValue } = await tx.getTransactionCost();
+      const res = await tx.txParams({ gasLimit: gasValue }).call();
+      return res.transactionId;
     };
     this.openPerpOrder = async (baseTokenAddress, gasTokenAddress, amount, price, updateData, options) => {
       const clearingHouseFactory = ClearingHouseAbi__factory.connect(
@@ -10618,7 +10649,7 @@ var WriteActions = class {
         amount: "10",
         assetId: gasTokenAddress
       };
-      const tx = await clearingHouseFactory.functions.open_order(assetIdInput, baseSize, price, parsedUpdateData).callParams({ forward }).txParams({ gasPrice: options.gasPrice, gasLimit: options.gasLimit }).addContracts([
+      const tx = await clearingHouseFactory.functions.open_order(assetIdInput, baseSize, price, parsedUpdateData).callParams({ forward }).txParams({ gasPrice: options.gasPrice }).addContracts([
         ProxyAbi__factory.connect(
           options.contractAddresses.proxy,
           options.wallet
@@ -10639,15 +10670,17 @@ var WriteActions = class {
           options.contractAddresses.pyth,
           options.wallet
         )
-      ]).call();
-      return tx.transactionId;
+      ]);
+      const { gasUsed: gasValue } = await tx.getTransactionCost();
+      const res = await tx.txParams({ gasLimit: gasValue }).call();
+      return res.transactionId;
     };
     this.removePerpOrder = async (orderId, options) => {
       const clearingHouseFactory = ClearingHouseAbi__factory.connect(
         options.contractAddresses.clearingHouse,
         options.wallet
       );
-      await clearingHouseFactory.functions.remove_order(orderId).txParams({ gasPrice: options.gasPrice, gasLimit: options.gasLimit }).addContracts([
+      const tx = await clearingHouseFactory.functions.remove_order(orderId).txParams({ gasPrice: options.gasPrice }).addContracts([
         ProxyAbi__factory.connect(
           options.contractAddresses.proxy,
           options.wallet
@@ -10660,7 +10693,10 @@ var WriteActions = class {
           options.contractAddresses.clearingHouse,
           options.wallet
         )
-      ]).call();
+      ]);
+      const { gasUsed: gasValue } = await tx.getTransactionCost();
+      const res = await tx.txParams({ gasLimit: gasValue }).call();
+      return res.transactionId;
     };
     this.fulfillPerpOrder = async (gasTokenAddress, orderId, amount, updateData, options) => {
       const clearingHouseFactory = ClearingHouseAbi__factory.connect(
@@ -10675,7 +10711,7 @@ var WriteActions = class {
         amount: "10",
         assetId: gasTokenAddress
       };
-      await clearingHouseFactory.functions.fulfill_order(baseSize, orderId, parsedUpdateData).callParams({ forward }).txParams({ gasPrice: options.gasPrice, gasLimit: options.gasLimit }).addContracts([
+      const tx = await clearingHouseFactory.functions.fulfill_order(baseSize, orderId, parsedUpdateData).callParams({ forward }).txParams({ gasPrice: options.gasPrice }).addContracts([
         ProxyAbi__factory.connect(
           options.contractAddresses.proxy,
           options.wallet
@@ -10700,7 +10736,10 @@ var WriteActions = class {
           options.contractAddresses.pyth,
           options.wallet
         )
-      ]).call();
+      ]);
+      const { gasUsed: gasValue } = await tx.getTransactionCost();
+      const res = await tx.txParams({ gasLimit: gasValue }).call();
+      return res.transactionId;
     };
   }
 };
@@ -10724,20 +10763,27 @@ var Spark = class {
       );
     };
     this.cancelSpotOrder = async (orderId) => {
-      await this.write.cancelSpotOrder(orderId, this.getApiOptions());
+      return this.write.cancelSpotOrder(orderId, this.getApiOptions());
+    };
+    this.matchSpotOrders = async (sellOrderId, buyOrderId) => {
+      return this.write.matchSpotOrders(
+        sellOrderId,
+        buyOrderId,
+        this.getApiOptions()
+      );
     };
     this.mintToken = async (token, amount) => {
-      await this.write.mintToken(token, amount, this.getApiOptions());
+      return this.write.mintToken(token, amount, this.getApiOptions());
     };
     this.depositPerpCollateral = async (asset, amount) => {
-      await this.write.depositPerpCollateral(
+      return this.write.depositPerpCollateral(
         asset.address,
         amount,
         this.getApiOptions()
       );
     };
     this.withdrawPerpCollateral = async (baseToken, gasToken, amount, oracleUpdateData) => {
-      await this.write.withdrawPerpCollateral(
+      return this.write.withdrawPerpCollateral(
         baseToken.address,
         gasToken.address,
         amount,
@@ -10756,7 +10802,7 @@ var Spark = class {
       );
     };
     this.removePerpOrder = async (assetId) => {
-      await this.write.removePerpOrder(assetId, this.getApiOptions());
+      return this.write.removePerpOrder(assetId, this.getApiOptions());
     };
     this.fulfillPerpOrder = async (gasToken, orderId, amount, updateData) => {
       return this.write.fulfillPerpOrder(
@@ -10781,6 +10827,9 @@ var Spark = class {
     };
     this.fetchSpotVolume = async () => {
       return this.read.fetchSpotVolume();
+    };
+    this.fetchSpotOrderById = async (orderId) => {
+      return this.read.fetchSpotOrderById(orderId);
     };
     this.fetchPerpCollateralBalance = async (accountAddress, asset) => {
       const options = await this.getFetchOptions();
@@ -10855,7 +10904,6 @@ var Spark = class {
     this.options = {
       contractAddresses: params.contractAddresses,
       wallet: params.wallet,
-      gasLimit: params.gasLimit ?? DEFAULT_GAS_LIMIT,
       gasPrice: params.gasPrice ?? DEFAULT_GAS_PRICE
     };
     this.read = new ReadActions(params.indexerApiUrl);
@@ -10866,6 +10914,6 @@ var Spark = class {
 // src/index.ts
 var src_default = Spark;
 
-export { src_default as default };
+export { BN_default as BN, src_default as default };
 //# sourceMappingURL=out.js.map
 //# sourceMappingURL=index.js.map
