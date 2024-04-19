@@ -35,6 +35,14 @@ export class ReadActions {
     this.indexerApi = new IndexerApi(url);
   }
 
+  fetchWalletBalance = async (
+    assetId: string,
+    options: Options,
+  ): Promise<string> => {
+    const bn = await options.wallet.getBalance(assetId);
+    return bn.toString();
+  };
+
   fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
     const data = await this.indexerApi.getSpotMarketCreateEvents();
 

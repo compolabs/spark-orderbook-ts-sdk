@@ -254,6 +254,12 @@ export class Spark {
     return this.read.fetchPerpMarkPrice(asset.address, options);
   };
 
+  fetchWalletBalance = async (asset: Asset): Promise<string> => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchWalletBalance(asset.address, options);
+  };
+
   getProviderWallet = async () => {
     const provider = await this.providerPromise;
     return Wallet.generate({ provider });

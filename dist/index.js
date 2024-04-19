@@ -5193,6 +5193,10 @@ var IndexerApi = class extends Fetch {
 // src/ReadActions.ts
 var ReadActions = class {
   constructor(url) {
+    this.fetchWalletBalance = async (assetId, options) => {
+      const bn = await options.wallet.getBalance(assetId);
+      return bn.toString();
+    };
     this.fetchSpotMarkets = async (limit) => {
       const data = await this.indexerApi.getSpotMarketCreateEvents();
       const markets = data.map((market) => ({
@@ -10882,6 +10886,10 @@ var Spark = class {
     this.fetchPerpMarkPrice = async (asset) => {
       const options = await this.getFetchOptions();
       return this.read.fetchPerpMarkPrice(asset.address, options);
+    };
+    this.fetchWalletBalance = async (asset) => {
+      const options = await this.getFetchOptions();
+      return this.read.fetchWalletBalance(asset.address, options);
     };
     this.getProviderWallet = async () => {
       const provider = await this.providerPromise;

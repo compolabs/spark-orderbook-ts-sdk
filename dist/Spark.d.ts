@@ -32,6 +32,7 @@ export declare class Spark {
     fetchPerpMaxAbsPositionSize: (accountAddress: string, asset: Asset) => Promise<PerpMaxAbsPositionSize>;
     fetchPerpPendingFundingPayment: (accountAddress: string, asset: Asset) => Promise<PerpPendingFundingPayment>;
     fetchPerpMarkPrice: (asset: Asset) => Promise<BN>;
+    fetchWalletBalance: (asset: Asset) => Promise<string>;
     getProviderWallet: () => Promise<WalletUnlocked>;
     getProvider: () => Promise<Provider>;
     private getFetchOptions;

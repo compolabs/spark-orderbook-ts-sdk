@@ -3,6 +3,7 @@ import { Asset, FetchOrdersParams, FetchTradesParams, MarketCreateEvent, Options
 export declare class ReadActions {
     private indexerApi;
     constructor(url: string);
+    fetchWalletBalance: (assetId: string, options: Options) => Promise<string>;
     fetchSpotMarkets: (limit: number) => Promise<MarketCreateEvent[]>;
     fetchSpotMarketPrice: (baseToken: string) => Promise<BN>;
     fetchSpotOrders: ({ baseToken, type, limit, trader, isActive, }: FetchOrdersParams) => Promise<SpotOrder[]>;
