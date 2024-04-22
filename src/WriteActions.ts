@@ -104,7 +104,7 @@ export class WriteActions {
     );
 
     const mintAmount = BN.parseUnits(amount, token.decimals);
-    const hash = hashMessage(token.address);
+    const hash = hashMessage(token.symbol);
     const identity: IdentityInput = {
       Address: {
         value: options.wallet.address.toB256(),
