@@ -10896,8 +10896,7 @@ var Spark = class {
       return this.read.fetchPerpMarkPrice(asset.address, options);
     };
     this.fetchWalletBalance = async (asset) => {
-      const options = await this.getFetchOptions();
-      return this.read.fetchWalletBalance(asset.address, options);
+      return this.read.fetchWalletBalance(asset.address, this.getApiOptions());
     };
     this.getProviderWallet = async () => {
       const provider = await this.providerPromise;
