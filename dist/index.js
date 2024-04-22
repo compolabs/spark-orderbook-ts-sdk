@@ -10566,7 +10566,7 @@ var WriteActions = class {
         options.wallet
       );
       const mintAmount = BN_default.parseUnits(amount, token.decimals);
-      const hash = hashMessage(token.address);
+      const hash = hashMessage(token.symbol);
       const identity = {
         Address: {
           value: options.wallet.address.toB256()
