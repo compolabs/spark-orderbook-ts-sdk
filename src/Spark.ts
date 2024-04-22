@@ -255,9 +255,8 @@ export class Spark {
   };
 
   fetchWalletBalance = async (asset: Asset): Promise<string> => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchWalletBalance(asset.address, options);
+    // We use getApiOptions because we need the user's wallet
+    return this.read.fetchWalletBalance(asset.address, this.getApiOptions());
   };
 
   getProviderWallet = async () => {
