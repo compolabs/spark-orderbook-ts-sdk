@@ -139,7 +139,6 @@ export class ReadActions {
       trader: order.trader,
       baseSize,
       orderPrice: basePrice,
-      blockTimestamp: getUnixTime(order.createdAt),
     };
   };
 

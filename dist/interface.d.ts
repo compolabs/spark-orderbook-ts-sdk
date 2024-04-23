@@ -40,7 +40,7 @@ export interface SpotOrder {
     trader: string;
     baseSize: BN;
     orderPrice: BN;
-    blockTimestamp: number;
+    blockTimestamp?: number;
 }
 export interface SpotTrades {
     baseToken: string;

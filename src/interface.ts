@@ -48,7 +48,7 @@ export interface SpotOrder {
   trader: string;
   baseSize: BN;
   orderPrice: BN;
-  blockTimestamp: number;
+  blockTimestamp?: number;//fxime
 }
 
 export interface SpotTrades {

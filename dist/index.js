@@ -6056,8 +6056,7 @@ var ReadActions = class {
         baseToken: order.base_token,
         trader: order.trader,
         baseSize,
-        orderPrice: basePrice,
-        blockTimestamp: getUnixTime(order.createdAt)
+        orderPrice: basePrice
       };
     };
     this.fetchPerpCollateralBalance = async (accountAddress, assetAddress, options) => {
