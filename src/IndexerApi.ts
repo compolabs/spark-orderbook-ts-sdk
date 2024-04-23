@@ -2,13 +2,13 @@ import { Fetch } from "./utils/Fetch";
 
 export class IndexerApi extends Fetch {
   getSpotMarketCreateEvents = async (): Promise<SpotMarketCreateEvent[]> => {
-    return this.get<SpotMarketCreateEvent[]>("/marketCreateEvents");
+    return this.get<SpotMarketCreateEvent[]>("/spot/marketCreateEvents");
   };
 
   getSpotMarketCreateEventsById = async (
     id: string,
   ): Promise<SpotMarketCreateEvent> => {
-    return this.get<SpotMarketCreateEvent>(`/marketCreateEvents/${id}`);
+    return this.get<SpotMarketCreateEvent>(`/spot/marketCreateEvents/${id}`);
   };
 
   getSpotOrders = async (params: SpotOrdersParams): Promise<SpotOrder[]> => {
@@ -22,31 +22,31 @@ export class IndexerApi extends Fetch {
         : undefined,
     };
 
-    return this.get<SpotOrder[]>("/orders", paramsCopy);
+    return this.get<SpotOrder[]>("/spot/orders", paramsCopy);
   };
 
   getSpotOrdersById = async (id: string): Promise<SpotOrder> => {
-    return this.get<SpotOrder>(`/orders/${id}`);
+    return this.get<SpotOrder>(`/spot/orders/${id}`);
   };
 
   getSpotOrderChangeEvents = async (): Promise<SpotOrderChangeEvent[]> => {
-    return this.get<SpotOrderChangeEvent[]>("/orderChangeEvents");
+    return this.get<SpotOrderChangeEvent[]>("/spot/orderChangeEvents");
   };
 
   getSpotOrderChangeEventsById = async (
     id: string,
   ): Promise<SpotOrderChangeEvent> => {
-    return this.get<SpotOrderChangeEvent>(`/ordersChangeEvents/${id}`);
+    return this.get<SpotOrderChangeEvent>(`/spot/ordersChangeEvents/${id}`);
   };
 
   getSpotTradeEvents = async (
     params: SpotTradeEventsParams,
   ): Promise<SpotTradeEvent[]> => {
-    return this.get<SpotTradeEvent[]>("/tradeEvents", params);
+    return this.get<SpotTradeEvent[]>("/spot/tradeEvents", params);
   };
 
   getSpotTradeEventsById = async (id: string): Promise<SpotTradeEvent> => {
-    return this.get<SpotTradeEvent>(`/tradeEvents/${id}`);
+    return this.get<SpotTradeEvent>(`/spot/tradeEvents/${id}`);
   };
 }
 

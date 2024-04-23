@@ -5948,10 +5948,10 @@ var IndexerApi = class extends Fetch {
   constructor() {
     super(...arguments);
     this.getSpotMarketCreateEvents = async () => {
-      return this.get("/marketCreateEvents");
+      return this.get("/spot/marketCreateEvents");
     };
     this.getSpotMarketCreateEventsById = async (id) => {
-      return this.get(`/marketCreateEvents/${id}`);
+      return this.get(`/spot/marketCreateEvents/${id}`);
     };
     this.getSpotOrders = async (params) => {
       const paramsCopy = {
@@ -5959,22 +5959,22 @@ var IndexerApi = class extends Fetch {
         orderType: params.orderType ? params.orderType.toLowerCase() : void 0,
         isOpened: params.isOpened ? String(params.isOpened) : void 0
       };
-      return this.get("/orders", paramsCopy);
+      return this.get("/spot/orders", paramsCopy);
     };
     this.getSpotOrdersById = async (id) => {
-      return this.get(`/orders/${id}`);
+      return this.get(`/spot/orders/${id}`);
     };
     this.getSpotOrderChangeEvents = async () => {
-      return this.get("/orderChangeEvents");
+      return this.get("/spot/orderChangeEvents");
     };
     this.getSpotOrderChangeEventsById = async (id) => {
-      return this.get(`/ordersChangeEvents/${id}`);
+      return this.get(`/spot/ordersChangeEvents/${id}`);
     };
     this.getSpotTradeEvents = async (params) => {
-      return this.get("/tradeEvents", params);
+      return this.get("/spot/tradeEvents", params);
     };
     this.getSpotTradeEventsById = async (id) => {
-      return this.get(`/tradeEvents/${id}`);
+      return this.get(`/spot/tradeEvents/${id}`);
     };
   }
 };
