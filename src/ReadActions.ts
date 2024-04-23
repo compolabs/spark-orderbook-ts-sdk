@@ -410,6 +410,7 @@ export class ReadActions {
   fetchPerpMaxAbsPositionSize = async (
     accountAddress: string,
     assetAddress: string,
+    tradePrice: string,
     options: Options,
   ): Promise<PerpMaxAbsPositionSize> => {
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
@@ -426,7 +427,7 @@ export class ReadActions {
     };
 
     const result = await clearingHouseFactory.functions
-      .get_max_abs_position_size(addressInput, assetIdInput)
+      .get_max_abs_position_size(addressInput, assetIdInput, tradePrice)
       .get();
 
     const shortSize = new BN(result.value[0].toString());

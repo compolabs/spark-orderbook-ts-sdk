@@ -1,4 +1,4 @@
-import type { Provider, Account, AbstractAddress, BytesLike, DeployContractOptions, StorageSlot } from "fuels";
+import type { Provider, Account, AbstractAddress } from "fuels";
 import type { OrderbookAbi, OrderbookAbiInterface } from "../OrderbookAbi";
 export declare class OrderbookAbi__factory {
     static readonly abi: {
@@ -115,8 +115,6 @@ export declare class OrderbookAbi__factory {
             offset: number;
         })[];
     };
-    static readonly storageSlots: StorageSlot[];
     static createInterface(): OrderbookAbiInterface;
     static connect(id: string | AbstractAddress, accountOrProvider: Account | Provider): OrderbookAbi;
-    static deployContract(bytecode: BytesLike, wallet: Account, options?: DeployContractOptions): Promise<OrderbookAbi>;
 }

@@ -5,7 +5,16 @@ export declare class PerpMarketAbi__factory {
         types: ({
             typeId: number;
             type: string;
-            components: {
+            components: null;
+            typeParameters: null;
+        } | {
+            typeId: number;
+            type: string;
+            components: ({
+                name: string;
+                type: number;
+                typeArguments: null;
+            } | {
                 name: string;
                 type: number;
                 typeArguments: {
@@ -13,21 +22,7 @@ export declare class PerpMarketAbi__factory {
                     type: number;
                     typeArguments: null;
                 }[];
-            }[];
-            typeParameters: null;
-        } | {
-            typeId: number;
-            type: string;
-            components: {
-                name: string;
-                type: number;
-                typeArguments: null;
-            }[];
-            typeParameters: null;
-        } | {
-            typeId: number;
-            type: string;
-            components: null;
+            })[];
             typeParameters: null;
         } | {
             typeId: number;

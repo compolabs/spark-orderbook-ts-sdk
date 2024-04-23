@@ -225,12 +225,14 @@ export class Spark {
   fetchPerpMaxAbsPositionSize = async (
     accountAddress: string,
     asset: Asset,
+    tradePrice: string,
   ): Promise<PerpMaxAbsPositionSize> => {
     const options = await this.getFetchOptions();
 
     return this.read.fetchPerpMaxAbsPositionSize(
       accountAddress,
       asset.address,
+      tradePrice,
       options,
     );
   };

@@ -4,8 +4,8 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.77.0
-  Forc version: 0.51.1
+  Fuels version: 0.79.0
+  Forc version: 0.49.3
   Fuel-Core version: 0.22.1
 */
 
@@ -96,6 +96,16 @@ const _abi = {
         },
         {
           "name": "V_NL",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
+          "name": "ZeroPrice",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
+          "name": "ZeroAmount",
           "type": 0,
           "typeArguments": null
         }
@@ -361,13 +371,7 @@ const _abi = {
       ]
     },
     {
-      "inputs": [
-        {
-          "name": "token",
-          "type": 11,
-          "typeArguments": null
-        }
-      ],
+      "inputs": [],
       "name": "deposit_collateral",
       "output": {
         "name": "",
@@ -376,157 +380,14 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "payable",
+          "arguments": []
+        },
+        {
           "name": "storage",
           "arguments": [
             "read",
             "write"
-          ]
-        },
-        {
-          "name": "payable",
-          "arguments": []
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 10,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_account_value_and_total_collateral_value",
-      "output": {
-        "name": "",
-        "type": 1,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 10,
-          "typeArguments": null
-        },
-        {
-          "name": "token",
-          "type": 11,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_collateral_balance",
-      "output": {
-        "name": "",
-        "type": 18,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 10,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_free_collateral",
-      "output": {
-        "name": "",
-        "type": 18,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 10,
-          "typeArguments": null
-        }
-      ],
-      "name": "has_non_settlement_token",
-      "output": {
-        "name": "",
-        "type": 3,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "token",
-          "type": 11,
-          "typeArguments": null
-        }
-      ],
-      "name": "is_allowed_collateral",
-      "output": {
-        "name": "",
-        "type": 3,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 10,
-          "typeArguments": null
-        }
-      ],
-      "name": "is_liquidatable",
-      "output": {
-        "name": "",
-        "type": 3,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
           ]
         }
       ]
@@ -568,15 +429,15 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "payable",
+          "arguments": []
+        },
+        {
           "name": "storage",
           "arguments": [
             "read",
             "write"
           ]
-        },
-        {
-          "name": "payable",
-          "arguments": []
         }
       ]
     },
@@ -664,15 +525,15 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "payable",
+          "arguments": []
+        },
+        {
           "name": "storage",
           "arguments": [
             "read",
             "write"
           ]
-        },
-        {
-          "name": "payable",
-          "arguments": []
         }
       ]
     },
@@ -708,15 +569,209 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "payable",
+          "arguments": []
+        },
+        {
           "name": "storage",
           "arguments": [
             "read",
             "write"
           ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 10,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_account_value_and_total_collateral_value",
+      "output": {
+        "name": "",
+        "type": 1,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 10,
+          "typeArguments": null
         },
         {
-          "name": "payable",
-          "arguments": []
+          "name": "token",
+          "type": 11,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_collateral_balance",
+      "output": {
+        "name": "",
+        "type": 18,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 10,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_free_collateral",
+      "output": {
+        "name": "",
+        "type": 18,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 10,
+          "typeArguments": null
+        },
+        {
+          "name": "token",
+          "type": 11,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_free_collateral_by_token",
+      "output": {
+        "name": "",
+        "type": 18,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 10,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_non_settlement_token_balance",
+      "output": {
+        "name": "",
+        "type": 18,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 10,
+          "typeArguments": null
+        }
+      ],
+      "name": "has_non_settlement_token",
+      "output": {
+        "name": "",
+        "type": 3,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "token",
+          "type": 11,
+          "typeArguments": null
+        }
+      ],
+      "name": "is_allowed_collateral",
+      "output": {
+        "name": "",
+        "type": 3,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 10,
+          "typeArguments": null
+        }
+      ],
+      "name": "is_liquidatable",
+      "output": {
+        "name": "",
+        "type": 3,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
         }
       ]
     }
@@ -918,7 +973,7 @@ const _abi = {
       "logId": 24,
       "loggedType": {
         "name": "",
-        "type": 6,
+        "type": 4,
         "typeArguments": []
       }
     },
@@ -926,7 +981,7 @@ const _abi = {
       "logId": 25,
       "loggedType": {
         "name": "",
-        "type": 5,
+        "type": 4,
         "typeArguments": []
       }
     },
@@ -942,12 +997,52 @@ const _abi = {
       "logId": 27,
       "loggedType": {
         "name": "",
-        "type": 4,
+        "type": 6,
         "typeArguments": []
       }
     },
     {
       "logId": 28,
+      "loggedType": {
+        "name": "",
+        "type": 5,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 29,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 30,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 31,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 32,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 33,
       "loggedType": {
         "name": "",
         "type": 4,
@@ -964,7 +1059,7 @@ const _abi = {
         "type": 10,
         "typeArguments": []
       },
-      "offset": 184044
+      "offset": 208696
     },
     {
       "name": "PROXY_ADDRESS",
@@ -973,7 +1068,7 @@ const _abi = {
         "type": 10,
         "typeArguments": []
       },
-      "offset": 184380
+      "offset": 209032
     },
     {
       "name": "SETTLEMENT_TOKEN",
@@ -982,7 +1077,7 @@ const _abi = {
         "type": 11,
         "typeArguments": []
       },
-      "offset": 184276
+      "offset": 208928
     }
   ]
 };

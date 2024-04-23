@@ -29,7 +29,7 @@ export declare class Spark {
     fetchPerpTraderOrders: (accountAddress: string, asset: Asset) => Promise<import("./interface").PerpTraderOrder[]>;
     fetchPerpAllMarkets: (assetList: Asset[], quoteAsset: Asset) => Promise<PerpMarket[]>;
     fetchPerpFundingRate: (asset: Asset) => Promise<BN>;
-    fetchPerpMaxAbsPositionSize: (accountAddress: string, asset: Asset) => Promise<PerpMaxAbsPositionSize>;
+    fetchPerpMaxAbsPositionSize: (accountAddress: string, asset: Asset, tradePrice: string) => Promise<PerpMaxAbsPositionSize>;
     fetchPerpPendingFundingPayment: (accountAddress: string, asset: Asset) => Promise<PerpPendingFundingPayment>;
     fetchPerpMarkPrice: (asset: Asset) => Promise<BN>;
     fetchWalletBalance: (asset: Asset) => Promise<string>;

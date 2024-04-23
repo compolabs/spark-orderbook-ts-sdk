@@ -4,8 +4,8 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.77.0
-  Forc version: 0.51.1
+  Fuels version: 0.79.0
+  Forc version: 0.49.3
   Fuel-Core version: 0.22.1
 */
 
@@ -205,6 +205,52 @@ const _abi = {
     {
       "inputs": [
         {
+          "name": "distribution_threshold",
+          "type": 15,
+          "typeArguments": null
+        }
+      ],
+      "name": "set_distribution_threshold",
+      "output": {
+        "name": "",
+        "type": 0,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "write"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "surplus_beneficiary",
+          "type": 8,
+          "typeArguments": null
+        }
+      ],
+      "name": "set_surplus_beneficiary",
+      "output": {
+        "name": "",
+        "type": 0,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "write"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
           "name": "price_update_data",
           "type": 14,
           "typeArguments": [
@@ -250,52 +296,6 @@ const _abi = {
         "typeArguments": null
       },
       "attributes": null
-    },
-    {
-      "inputs": [
-        {
-          "name": "distribution_threshold",
-          "type": 15,
-          "typeArguments": null
-        }
-      ],
-      "name": "set_distribution_threshold",
-      "output": {
-        "name": "",
-        "type": 0,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "write"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "surplus_beneficiary",
-          "type": 8,
-          "typeArguments": null
-        }
-      ],
-      "name": "set_surplus_beneficiary",
-      "output": {
-        "name": "",
-        "type": 0,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "write"
-          ]
-        }
-      ]
     }
   ],
   "loggedTypes": [
@@ -303,7 +303,7 @@ const _abi = {
       "logId": 0,
       "loggedType": {
         "name": "",
-        "type": 4,
+        "type": 3,
         "typeArguments": []
       }
     },
@@ -311,24 +311,24 @@ const _abi = {
       "logId": 1,
       "loggedType": {
         "name": "",
-        "type": 7,
-        "typeArguments": null
+        "type": 3,
+        "typeArguments": []
       }
     },
     {
       "logId": 2,
       "loggedType": {
         "name": "",
-        "type": 7,
-        "typeArguments": null
+        "type": 4,
+        "typeArguments": []
       }
     },
     {
       "logId": 3,
       "loggedType": {
         "name": "",
-        "type": 4,
-        "typeArguments": []
+        "type": 7,
+        "typeArguments": null
       }
     },
     {
@@ -343,7 +343,7 @@ const _abi = {
       "logId": 5,
       "loggedType": {
         "name": "",
-        "type": 3,
+        "type": 4,
         "typeArguments": []
       }
     },
@@ -351,8 +351,8 @@ const _abi = {
       "logId": 6,
       "loggedType": {
         "name": "",
-        "type": 3,
-        "typeArguments": []
+        "type": 7,
+        "typeArguments": null
       }
     }
   ],
@@ -365,7 +365,7 @@ const _abi = {
         "type": 1,
         "typeArguments": null
       },
-      "offset": 8932
+      "offset": 8616
     },
     {
       "name": "USDC_ADDRESS",
@@ -374,7 +374,7 @@ const _abi = {
         "type": 9,
         "typeArguments": []
       },
-      "offset": 8796
+      "offset": 8840
     },
     {
       "name": "PROXY_ADDRESS",
@@ -383,7 +383,7 @@ const _abi = {
         "type": 8,
         "typeArguments": []
       },
-      "offset": 8700
+      "offset": 8784
     }
   ]
 };

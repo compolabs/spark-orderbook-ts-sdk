@@ -4,8 +4,8 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.77.0
-  Forc version: 0.51.1
+  Fuels version: 0.79.0
+  Forc version: 0.49.3
   Fuel-Core version: 0.22.1
 */
 
@@ -27,7 +27,7 @@ const _abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "type": 13,
+          "type": 14,
           "typeArguments": null
         },
         {
@@ -44,12 +44,12 @@ const _abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "type": 14,
+          "type": 15,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 17,
+          "type": 19,
           "typeArguments": null
         }
       ],
@@ -61,12 +61,12 @@ const _abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "type": 14,
+          "type": 15,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 14,
+          "type": 15,
           "typeArguments": null
         }
       ],
@@ -78,22 +78,22 @@ const _abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "type": 14,
+          "type": 15,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 14,
+          "type": 15,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 14,
+          "type": 15,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 17,
+          "type": 19,
           "typeArguments": null
         }
       ],
@@ -157,17 +157,17 @@ const _abi = {
       "components": [
         {
           "name": "taker_position_size",
-          "type": 14,
+          "type": 15,
           "typeArguments": null
         },
         {
           "name": "taker_open_notional",
-          "type": 14,
+          "type": 15,
           "typeArguments": null
         },
         {
           "name": "last_tw_premium_growth_global",
-          "type": 14,
+          "type": 15,
           "typeArguments": null
         }
       ],
@@ -175,6 +175,33 @@ const _abi = {
     },
     {
       "typeId": 12,
+      "type": "struct AccountBalanceChangeEvent",
+      "components": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
+          "name": "base_token",
+          "type": 14,
+          "typeArguments": null
+        },
+        {
+          "name": "account_balance",
+          "type": 11,
+          "typeArguments": null
+        },
+        {
+          "name": "timestamp",
+          "type": 19,
+          "typeArguments": null
+        }
+      ],
+      "typeParameters": null
+    },
+    {
+      "typeId": 13,
       "type": "struct Address",
       "components": [
         {
@@ -186,7 +213,7 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 13,
+      "typeId": 14,
       "type": "struct AssetId",
       "components": [
         {
@@ -198,12 +225,12 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 14,
+      "typeId": 15,
       "type": "struct I64",
       "components": [
         {
           "name": "value",
-          "type": 17,
+          "type": 19,
           "typeArguments": null
         },
         {
@@ -215,7 +242,24 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 15,
+      "typeId": 16,
+      "type": "struct OwedRealizedPnlChangeEvent",
+      "components": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
+          "name": "owed_realized_pnl",
+          "type": 15,
+          "typeArguments": null
+        }
+      ],
+      "typeParameters": null
+    },
+    {
+      "typeId": 17,
       "type": "struct RawVec",
       "components": [
         {
@@ -225,7 +269,7 @@ const _abi = {
         },
         {
           "name": "cap",
-          "type": 17,
+          "type": 19,
           "typeArguments": null
         }
       ],
@@ -234,12 +278,12 @@ const _abi = {
       ]
     },
     {
-      "typeId": 16,
+      "typeId": 18,
       "type": "struct Vec",
       "components": [
         {
           "name": "buf",
-          "type": 15,
+          "type": 17,
           "typeArguments": [
             {
               "name": "",
@@ -250,7 +294,7 @@ const _abi = {
         },
         {
           "name": "len",
-          "type": 17,
+          "type": 19,
           "typeArguments": null
         }
       ],
@@ -259,7 +303,7 @@ const _abi = {
       ]
     },
     {
-      "typeId": 17,
+      "typeId": 19,
       "type": "u64",
       "components": null,
       "typeParameters": null
@@ -270,42 +314,42 @@ const _abi = {
       "inputs": [
         {
           "name": "sell_trader",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "buy_trader",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "base_token",
           "type": 13,
           "typeArguments": null
         },
         {
+          "name": "buy_trader",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
+          "name": "base_token",
+          "type": 14,
+          "typeArguments": null
+        },
+        {
           "name": "trade_amount",
-          "type": 17,
+          "type": 19,
           "typeArguments": null
         },
         {
           "name": "trade_value",
-          "type": 17,
+          "type": 19,
           "typeArguments": null
         },
         {
           "name": "seller_fee",
-          "type": 14,
+          "type": 15,
           "typeArguments": null
         },
         {
           "name": "buyer_fee",
-          "type": 14,
+          "type": 15,
           "typeArguments": null
         },
         {
           "name": "matcher",
-          "type": 12,
+          "type": 13,
           "typeArguments": null
         }
       ],
@@ -329,483 +373,12 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "base_token",
           "type": 13,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_account_balance",
-      "output": {
-        "name": "",
-        "type": 11,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_all_pending_funding_payment",
-      "output": {
-        "name": "",
-        "type": 14,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_all_trader_positions",
-      "output": {
-        "name": "",
-        "type": 16,
-        "typeArguments": [
-          {
-            "name": "",
-            "type": 1,
-            "typeArguments": null
-          }
-        ]
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_base_tokens",
-      "output": {
-        "name": "",
-        "type": 16,
-        "typeArguments": [
-          {
-            "name": "",
-            "type": 13,
-            "typeArguments": null
-          }
-        ]
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "token",
-          "type": 13,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_funding",
-      "output": {
-        "name": "",
-        "type": 2,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "market_twap",
-          "type": 17,
-          "typeArguments": null
-        },
-        {
-          "name": "index_twap",
-          "type": 17,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_funding_delta",
-      "output": {
-        "name": "",
-        "type": 14,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "base_token",
-          "type": 13,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_funding_growth_global",
-      "output": {
-        "name": "",
-        "type": 14,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "base_token",
-          "type": 13,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_funding_rate",
-      "output": {
-        "name": "",
-        "type": 14,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "base_token",
-          "type": 13,
-          "typeArguments": null
-        },
-        {
-          "name": "account_value",
-          "type": 14,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_liquidatable_position_size",
-      "output": {
-        "name": "",
-        "type": 14,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_margin_requirement",
-      "output": {
-        "name": "",
-        "type": 17,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "buffer",
-          "type": 17,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_margin_requirement_for_liquidation",
-      "output": {
-        "name": "",
-        "type": 17,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "base_token",
-          "type": 13,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_pending_funding_payment",
-      "output": {
-        "name": "",
-        "type": 3,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_pnl",
-      "output": {
-        "name": "",
-        "type": 3,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_settlement_token_balance_and_unrealized_pnl",
-      "output": {
-        "name": "",
-        "type": 3,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "base_token",
-          "type": 13,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_taker_open_notional",
-      "output": {
-        "name": "",
-        "type": 14,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "base_token",
-          "type": 13,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_taker_position_size",
-      "output": {
-        "name": "",
-        "type": 14,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_total_abs_position_value",
-      "output": {
-        "name": "",
-        "type": 17,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "base_token",
-          "type": 13,
-          "typeArguments": null
-        }
-      ],
-      "name": "get_total_position_value",
-      "output": {
-        "name": "",
-        "type": 14,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "trader",
-          "type": 12,
           "typeArguments": null
         },
         {
           "name": "amount",
-          "type": 14,
+          "type": 15,
           "typeArguments": null
         }
       ],
@@ -829,22 +402,22 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "base_token",
           "type": 13,
           "typeArguments": null
         },
         {
-          "name": "exchanged_position_size",
+          "name": "base_token",
           "type": 14,
           "typeArguments": null
         },
         {
+          "name": "exchanged_position_size",
+          "type": 15,
+          "typeArguments": null
+        },
+        {
           "name": "exchanged_position_notional",
-          "type": 14,
+          "type": 15,
           "typeArguments": null
         }
       ],
@@ -868,12 +441,12 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 12,
+          "type": 13,
           "typeArguments": null
         },
         {
           "name": "base_token",
-          "type": 13,
+          "type": 14,
           "typeArguments": null
         }
       ],
@@ -897,7 +470,7 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 12,
+          "type": 13,
           "typeArguments": null
         }
       ],
@@ -921,7 +494,7 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 12,
+          "type": 13,
           "typeArguments": null
         }
       ],
@@ -945,12 +518,12 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 12,
+          "type": 13,
           "typeArguments": null
         },
         {
           "name": "base_token",
-          "type": 13,
+          "type": 14,
           "typeArguments": null
         }
       ],
@@ -974,14 +547,14 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 12,
+          "type": 13,
           "typeArguments": null
         }
       ],
       "name": "settle_owed_realized_pnl",
       "output": {
         "name": "",
-        "type": 14,
+        "type": 15,
         "typeArguments": null
       },
       "attributes": [
@@ -998,12 +571,12 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 12,
+          "type": 13,
           "typeArguments": null
         },
         {
           "name": "base_token",
-          "type": 13,
+          "type": 14,
           "typeArguments": null
         }
       ],
@@ -1027,7 +600,7 @@ const _abi = {
       "inputs": [
         {
           "name": "insurance_fund_fee_share",
-          "type": 17,
+          "type": 19,
           "typeArguments": null
         }
       ],
@@ -1050,7 +623,7 @@ const _abi = {
       "inputs": [
         {
           "name": "max_funding_rate",
-          "type": 17,
+          "type": 19,
           "typeArguments": null
         }
       ],
@@ -1073,7 +646,7 @@ const _abi = {
       "inputs": [
         {
           "name": "protocol_fee_rate",
-          "type": 17,
+          "type": 19,
           "typeArguments": null
         }
       ],
@@ -1096,17 +669,17 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "base_token",
           "type": 13,
           "typeArguments": null
         },
         {
-          "name": "last_tw_premium_growth_global",
+          "name": "base_token",
           "type": 14,
+          "typeArguments": null
+        },
+        {
+          "name": "last_tw_premium_growth_global",
+          "type": 15,
           "typeArguments": null
         }
       ],
@@ -1125,6 +698,522 @@ const _abi = {
           ]
         }
       ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
+          "name": "base_token",
+          "type": 14,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_account_balance",
+      "output": {
+        "name": "",
+        "type": 11,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_all_pending_funding_payment",
+      "output": {
+        "name": "",
+        "type": 15,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_all_trader_positions",
+      "output": {
+        "name": "",
+        "type": 18,
+        "typeArguments": [
+          {
+            "name": "",
+            "type": 1,
+            "typeArguments": null
+          }
+        ]
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_base_tokens",
+      "output": {
+        "name": "",
+        "type": 18,
+        "typeArguments": [
+          {
+            "name": "",
+            "type": 14,
+            "typeArguments": null
+          }
+        ]
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "token",
+          "type": 14,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_funding",
+      "output": {
+        "name": "",
+        "type": 2,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "market_twap",
+          "type": 19,
+          "typeArguments": null
+        },
+        {
+          "name": "index_twap",
+          "type": 19,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_funding_delta",
+      "output": {
+        "name": "",
+        "type": 15,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "base_token",
+          "type": 14,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_funding_growth_global",
+      "output": {
+        "name": "",
+        "type": 15,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "base_token",
+          "type": 14,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_funding_rate",
+      "output": {
+        "name": "",
+        "type": 15,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
+          "name": "base_token",
+          "type": 14,
+          "typeArguments": null
+        },
+        {
+          "name": "account_value",
+          "type": 15,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_liquidatable_position_size",
+      "output": {
+        "name": "",
+        "type": 15,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_margin_requirement",
+      "output": {
+        "name": "",
+        "type": 19,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
+          "name": "buffer",
+          "type": 19,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_margin_requirement_for_liquidation",
+      "output": {
+        "name": "",
+        "type": 19,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
+          "name": "base_token",
+          "type": 14,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_pending_funding_payment",
+      "output": {
+        "name": "",
+        "type": 3,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_pnl",
+      "output": {
+        "name": "",
+        "type": 3,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [],
+      "name": "get_protocol_fee_rate",
+      "output": {
+        "name": "",
+        "type": 19,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_settlement_token_balance_and_unrealized_pnl",
+      "output": {
+        "name": "",
+        "type": 3,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
+          "name": "settlement_token_collateral",
+          "type": 19,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_settlement_token_balance_and_unrealized_pnl_by_vault",
+      "output": {
+        "name": "",
+        "type": 3,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
+          "name": "base_token",
+          "type": 14,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_taker_open_notional",
+      "output": {
+        "name": "",
+        "type": 15,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
+          "name": "base_token",
+          "type": 14,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_taker_position_size",
+      "output": {
+        "name": "",
+        "type": 15,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_total_abs_position_value",
+      "output": {
+        "name": "",
+        "type": 19,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
+          "name": "base_token",
+          "type": 14,
+          "typeArguments": null
+        }
+      ],
+      "name": "get_total_position_value",
+      "output": {
+        "name": "",
+        "type": 15,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
     }
   ],
   "loggedTypes": [
@@ -1140,7 +1229,7 @@ const _abi = {
       "logId": 1,
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 16,
         "typeArguments": []
       }
     },
@@ -1148,7 +1237,7 @@ const _abi = {
       "logId": 2,
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 12,
         "typeArguments": []
       }
     },
@@ -1156,23 +1245,23 @@ const _abi = {
       "logId": 3,
       "loggedType": {
         "name": "",
-        "type": 10,
-        "typeArguments": null
+        "type": 16,
+        "typeArguments": []
       }
     },
     {
       "logId": 4,
       "loggedType": {
         "name": "",
-        "type": 10,
-        "typeArguments": null
+        "type": 12,
+        "typeArguments": []
       }
     },
     {
       "logId": 5,
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 16,
         "typeArguments": []
       }
     },
@@ -1180,7 +1269,7 @@ const _abi = {
       "logId": 6,
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 16,
         "typeArguments": []
       }
     },
@@ -1188,7 +1277,7 @@ const _abi = {
       "logId": 7,
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 16,
         "typeArguments": []
       }
     },
@@ -1196,7 +1285,7 @@ const _abi = {
       "logId": 8,
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 16,
         "typeArguments": []
       }
     },
@@ -1204,7 +1293,7 @@ const _abi = {
       "logId": 9,
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 12,
         "typeArguments": []
       }
     },
@@ -1212,7 +1301,7 @@ const _abi = {
       "logId": 10,
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 12,
         "typeArguments": []
       }
     },
@@ -1220,7 +1309,7 @@ const _abi = {
       "logId": 11,
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 16,
         "typeArguments": []
       }
     },
@@ -1228,7 +1317,7 @@ const _abi = {
       "logId": 12,
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 12,
         "typeArguments": []
       }
     },
@@ -1236,7 +1325,7 @@ const _abi = {
       "logId": 13,
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 12,
         "typeArguments": []
       }
     },
@@ -1255,6 +1344,214 @@ const _abi = {
         "type": 7,
         "typeArguments": []
       }
+    },
+    {
+      "logId": 16,
+      "loggedType": {
+        "name": "",
+        "type": 7,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 17,
+      "loggedType": {
+        "name": "",
+        "type": 16,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 18,
+      "loggedType": {
+        "name": "",
+        "type": 7,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 19,
+      "loggedType": {
+        "name": "",
+        "type": 16,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 20,
+      "loggedType": {
+        "name": "",
+        "type": 12,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 21,
+      "loggedType": {
+        "name": "",
+        "type": 12,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 22,
+      "loggedType": {
+        "name": "",
+        "type": 7,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 23,
+      "loggedType": {
+        "name": "",
+        "type": 7,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 24,
+      "loggedType": {
+        "name": "",
+        "type": 16,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 25,
+      "loggedType": {
+        "name": "",
+        "type": 12,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 26,
+      "loggedType": {
+        "name": "",
+        "type": 7,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 27,
+      "loggedType": {
+        "name": "",
+        "type": 16,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 28,
+      "loggedType": {
+        "name": "",
+        "type": 16,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 29,
+      "loggedType": {
+        "name": "",
+        "type": 7,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 30,
+      "loggedType": {
+        "name": "",
+        "type": 16,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 31,
+      "loggedType": {
+        "name": "",
+        "type": 12,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 32,
+      "loggedType": {
+        "name": "",
+        "type": 7,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 33,
+      "loggedType": {
+        "name": "",
+        "type": 12,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 34,
+      "loggedType": {
+        "name": "",
+        "type": 16,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 35,
+      "loggedType": {
+        "name": "",
+        "type": 7,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 36,
+      "loggedType": {
+        "name": "",
+        "type": 7,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 37,
+      "loggedType": {
+        "name": "",
+        "type": 7,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 38,
+      "loggedType": {
+        "name": "",
+        "type": 7,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 39,
+      "loggedType": {
+        "name": "",
+        "type": 12,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 40,
+      "loggedType": {
+        "name": "",
+        "type": 10,
+        "typeArguments": null
+      }
+    },
+    {
+      "logId": 41,
+      "loggedType": {
+        "name": "",
+        "type": 10,
+        "typeArguments": null
+      }
     }
   ],
   "messagesTypes": [],
@@ -1263,37 +1560,37 @@ const _abi = {
       "name": "DUST",
       "configurableType": {
         "name": "",
-        "type": 17,
+        "type": 19,
         "typeArguments": null
       },
-      "offset": 241036
+      "offset": 260136
     },
     {
       "name": "PROXY_ADDRESS",
       "configurableType": {
         "name": "",
-        "type": 12,
+        "type": 13,
         "typeArguments": []
       },
-      "offset": 240900
+      "offset": 260000
     },
     {
       "name": "FULLY_CLOSED_RATIO",
       "configurableType": {
         "name": "",
-        "type": 17,
+        "type": 19,
         "typeArguments": null
       },
-      "offset": 241148
+      "offset": 260264
     },
     {
       "name": "SETTLEMENT_TOKEN",
       "configurableType": {
         "name": "",
-        "type": 13,
+        "type": 14,
         "typeArguments": []
       },
-      "offset": 241268
+      "offset": 260352
     }
   ]
 };

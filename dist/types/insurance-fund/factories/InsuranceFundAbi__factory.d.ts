@@ -38,6 +38,22 @@ export declare class InsuranceFundAbi__factory {
             inputs: {
                 name: string;
                 type: number;
+                typeArguments: null;
+            }[];
+            name: string;
+            output: {
+                name: string;
+                type: number;
+                typeArguments: null;
+            };
+            attributes: {
+                name: string;
+                arguments: string[];
+            }[];
+        } | {
+            inputs: {
+                name: string;
+                type: number;
                 typeArguments: {
                     name: string;
                     type: number;
@@ -63,22 +79,6 @@ export declare class InsuranceFundAbi__factory {
                 typeArguments: null;
             };
             attributes: null;
-        } | {
-            inputs: {
-                name: string;
-                type: number;
-                typeArguments: null;
-            }[];
-            name: string;
-            output: {
-                name: string;
-                type: number;
-                typeArguments: null;
-            };
-            attributes: {
-                name: string;
-                arguments: string[];
-            }[];
         })[];
         loggedTypes: ({
             logId: number;

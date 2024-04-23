@@ -4,8 +4,8 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.77.0
-  Forc version: 0.51.1
+  Fuels version: 0.79.0
+  Forc version: 0.49.3
   Fuel-Core version: 0.22.1
 */
 
@@ -25,6 +25,10 @@ import type { Option, Enum, Vec } from "./common";
 
 export enum ErrorInput { PositionSizeIsZero = 'PositionSizeIsZero', MarketNotFound = 'MarketNotFound', MarketNotPaused = 'MarketNotPaused', MarketNotOpened = 'MarketNotOpened', MarketAlreadyExists = 'MarketAlreadyExists', OnlyVaultOrTrader = 'OnlyVaultOrTrader', BaseTokenDoesNotExists = 'BaseTokenDoesNotExists', CannotLiquidateWhenThereIsStillOrder = 'CannotLiquidateWhenThereIsStillOrder', EnoughAccountValue = 'EnoughAccountValue', WrongLiquidationDirection = 'WrongLiquidationDirection', InsufficientInsuranceFundCapacity = 'InsufficientInsuranceFundCapacity', NotEnoughFreeCollateralByImRatio = 'NotEnoughFreeCollateralByImRatio', AccessDenied = 'AccessDenied' };
 export enum ErrorOutput { PositionSizeIsZero = 'PositionSizeIsZero', MarketNotFound = 'MarketNotFound', MarketNotPaused = 'MarketNotPaused', MarketNotOpened = 'MarketNotOpened', MarketAlreadyExists = 'MarketAlreadyExists', OnlyVaultOrTrader = 'OnlyVaultOrTrader', BaseTokenDoesNotExists = 'BaseTokenDoesNotExists', CannotLiquidateWhenThereIsStillOrder = 'CannotLiquidateWhenThereIsStillOrder', EnoughAccountValue = 'EnoughAccountValue', WrongLiquidationDirection = 'WrongLiquidationDirection', InsufficientInsuranceFundCapacity = 'InsufficientInsuranceFundCapacity', NotEnoughFreeCollateralByImRatio = 'NotEnoughFreeCollateralByImRatio', AccessDenied = 'AccessDenied' };
+export type IdentityInput = Enum<{ Address: AddressInput, ContractId: ContractIdInput }>;
+export type IdentityOutput = Enum<{ Address: AddressOutput, ContractId: ContractIdOutput }>;
+export enum MarketEventIdentifierInput { MarketCreateEvent = 'MarketCreateEvent', MarketCloseEvent = 'MarketCloseEvent', MarketPauseEvent = 'MarketPauseEvent', MarketUnpauseEvent = 'MarketUnpauseEvent' };
+export enum MarketEventIdentifierOutput { MarketCreateEvent = 'MarketCreateEvent', MarketCloseEvent = 'MarketCloseEvent', MarketPauseEvent = 'MarketPauseEvent', MarketUnpauseEvent = 'MarketUnpauseEvent' };
 export enum MarketStatusInput { Opened = 'Opened', Paused = 'Paused', Closed = 'Closed' };
 export enum MarketStatusOutput { Opened = 'Opened', Paused = 'Paused', Closed = 'Closed' };
 export enum ReentrancyErrorInput { NonReentrant = 'NonReentrant' };
@@ -34,10 +38,14 @@ export type AddressInput = { value: string };
 export type AddressOutput = AddressInput;
 export type AssetIdInput = { value: string };
 export type AssetIdOutput = AssetIdInput;
+export type ContractIdInput = { value: string };
+export type ContractIdOutput = ContractIdInput;
 export type I64Input = { value: BigNumberish, negative: boolean };
 export type I64Output = { value: BN, negative: boolean };
 export type MarketInput = { asset_id: AssetIdInput, decimal: BigNumberish, price_feed: string, im_ratio: BigNumberish, mm_ratio: BigNumberish, status: MarketStatusInput, paused_index_price: Option<BigNumberish>, paused_timestamp: Option<BigNumberish>, closed_price: Option<BigNumberish> };
 export type MarketOutput = { asset_id: AssetIdOutput, decimal: number, price_feed: string, im_ratio: BN, mm_ratio: BN, status: MarketStatusOutput, paused_index_price: Option<BN>, paused_timestamp: Option<BN>, closed_price: Option<BN> };
+export type MarketEventInput = { market: MarketInput, sender: IdentityInput, timestamp: BigNumberish, identifier: MarketEventIdentifierInput };
+export type MarketEventOutput = { market: MarketOutput, sender: IdentityOutput, timestamp: BN, identifier: MarketEventIdentifierOutput };
 export type RawBytesInput = { ptr: BigNumberish, cap: BigNumberish };
 export type RawBytesOutput = { ptr: BN, cap: BN };
 
@@ -49,10 +57,26 @@ export type ClearingHouseAbiConfigurables = {
 interface ClearingHouseAbiInterface extends Interface {
   functions: {
     add_admin: FunctionFragment;
-    check_market_open: FunctionFragment;
     close_market: FunctionFragment;
     create_market: FunctionFragment;
     fulfill_order: FunctionFragment;
+    liquidate: FunctionFragment;
+    match_orders: FunctionFragment;
+    open_order: FunctionFragment;
+    pause_market: FunctionFragment;
+    remove_admin: FunctionFragment;
+    remove_all_orders: FunctionFragment;
+    remove_order: FunctionFragment;
+    remove_uncollaterized_orders: FunctionFragment;
+    settle_all_funding: FunctionFragment;
+    unpause_market: FunctionFragment;
+    update_insurance_fund_fee_share: FunctionFragment;
+    update_liquidation_penalty_ratio: FunctionFragment;
+    update_matcher_fee_rate: FunctionFragment;
+    update_max_funding_rate: FunctionFragment;
+    update_protocol_fee_rate: FunctionFragment;
+    update_taker_fee_rate: FunctionFragment;
+    check_market_open: FunctionFragment;
     get_account_value: FunctionFragment;
     get_liquidated_position_size_and_notional: FunctionFragment;
     get_margin_requirement_for_liquidation: FunctionFragment;
@@ -62,39 +86,13 @@ interface ClearingHouseAbiInterface extends Interface {
     get_taker_position: FunctionFragment;
     get_taker_position_safe: FunctionFragment;
     is_liquidatable: FunctionFragment;
-    liquidate: FunctionFragment;
-    match_orders: FunctionFragment;
-    open_order: FunctionFragment;
-    pause_market: FunctionFragment;
-    remove_admin: FunctionFragment;
-    remove_all_orders: FunctionFragment;
-    remove_order: FunctionFragment;
-    remove_uncollaterised_orders: FunctionFragment;
     require_enough_free_collateral: FunctionFragment;
-    settle_all_funding: FunctionFragment;
-    unpause_market: FunctionFragment;
-    update_insurance_fund_fee_share: FunctionFragment;
-    update_liquidation_penalty_ratio: FunctionFragment;
-    update_matcher_fee_rate: FunctionFragment;
-    update_max_funding_rate: FunctionFragment;
-    update_protocol_fee_rate: FunctionFragment;
-    update_taker_fee_rate: FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: 'add_admin', values: [AddressInput]): Uint8Array;
-  encodeFunctionData(functionFragment: 'check_market_open', values: [AssetIdInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'close_market', values: [AssetIdInput, BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'create_market', values: [AssetIdInput, BigNumberish, string, BigNumberish, BigNumberish, BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'fulfill_order', values: [I64Input, string, Vec<Bytes>]): Uint8Array;
-  encodeFunctionData(functionFragment: 'get_account_value', values: [AddressInput]): Uint8Array;
-  encodeFunctionData(functionFragment: 'get_liquidated_position_size_and_notional', values: [AddressInput, AssetIdInput, I64Input, I64Input]): Uint8Array;
-  encodeFunctionData(functionFragment: 'get_margin_requirement_for_liquidation', values: [AddressInput]): Uint8Array;
-  encodeFunctionData(functionFragment: 'get_market', values: [AssetIdInput]): Uint8Array;
-  encodeFunctionData(functionFragment: 'get_max_abs_position_size', values: [AddressInput, AssetIdInput]): Uint8Array;
-  encodeFunctionData(functionFragment: 'get_taker_open_notional', values: [AddressInput, AssetIdInput]): Uint8Array;
-  encodeFunctionData(functionFragment: 'get_taker_position', values: [AddressInput, AssetIdInput]): Uint8Array;
-  encodeFunctionData(functionFragment: 'get_taker_position_safe', values: [AddressInput, AssetIdInput]): Uint8Array;
-  encodeFunctionData(functionFragment: 'is_liquidatable', values: [AddressInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'liquidate', values: [AddressInput, AssetIdInput, I64Input, Vec<Bytes>]): Uint8Array;
   encodeFunctionData(functionFragment: 'match_orders', values: [string, string, Vec<Bytes>]): Uint8Array;
   encodeFunctionData(functionFragment: 'open_order', values: [AssetIdInput, I64Input, BigNumberish, Vec<Bytes>]): Uint8Array;
@@ -102,8 +100,7 @@ interface ClearingHouseAbiInterface extends Interface {
   encodeFunctionData(functionFragment: 'remove_admin', values: [AddressInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'remove_all_orders', values: []): Uint8Array;
   encodeFunctionData(functionFragment: 'remove_order', values: [string]): Uint8Array;
-  encodeFunctionData(functionFragment: 'remove_uncollaterised_orders', values: [AddressInput]): Uint8Array;
-  encodeFunctionData(functionFragment: 'require_enough_free_collateral', values: [AddressInput]): Uint8Array;
+  encodeFunctionData(functionFragment: 'remove_uncollaterized_orders', values: [AddressInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'settle_all_funding', values: [AddressInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'unpause_market', values: [AssetIdInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'update_insurance_fund_fee_share', values: [BigNumberish]): Uint8Array;
@@ -112,12 +109,39 @@ interface ClearingHouseAbiInterface extends Interface {
   encodeFunctionData(functionFragment: 'update_max_funding_rate', values: [BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'update_protocol_fee_rate', values: [BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'update_taker_fee_rate', values: [BigNumberish]): Uint8Array;
+  encodeFunctionData(functionFragment: 'check_market_open', values: [AssetIdInput]): Uint8Array;
+  encodeFunctionData(functionFragment: 'get_account_value', values: [AddressInput]): Uint8Array;
+  encodeFunctionData(functionFragment: 'get_liquidated_position_size_and_notional', values: [AddressInput, AssetIdInput, I64Input, I64Input]): Uint8Array;
+  encodeFunctionData(functionFragment: 'get_margin_requirement_for_liquidation', values: [AddressInput]): Uint8Array;
+  encodeFunctionData(functionFragment: 'get_market', values: [AssetIdInput]): Uint8Array;
+  encodeFunctionData(functionFragment: 'get_max_abs_position_size', values: [AddressInput, AssetIdInput, BigNumberish]): Uint8Array;
+  encodeFunctionData(functionFragment: 'get_taker_open_notional', values: [AddressInput, AssetIdInput]): Uint8Array;
+  encodeFunctionData(functionFragment: 'get_taker_position', values: [AddressInput, AssetIdInput]): Uint8Array;
+  encodeFunctionData(functionFragment: 'get_taker_position_safe', values: [AddressInput, AssetIdInput]): Uint8Array;
+  encodeFunctionData(functionFragment: 'is_liquidatable', values: [AddressInput]): Uint8Array;
+  encodeFunctionData(functionFragment: 'require_enough_free_collateral', values: [AddressInput]): Uint8Array;
 
   decodeFunctionData(functionFragment: 'add_admin', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'check_market_open', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'close_market', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'create_market', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'fulfill_order', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'liquidate', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'match_orders', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'open_order', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'pause_market', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'remove_admin', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'remove_all_orders', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'remove_order', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'remove_uncollaterized_orders', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'settle_all_funding', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'unpause_market', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'update_insurance_fund_fee_share', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'update_liquidation_penalty_ratio', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'update_matcher_fee_rate', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'update_max_funding_rate', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'update_protocol_fee_rate', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'update_taker_fee_rate', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'check_market_open', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'get_account_value', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'get_liquidated_position_size_and_notional', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'get_margin_requirement_for_liquidation', data: BytesLike): DecodedValue;
@@ -127,51 +151,24 @@ interface ClearingHouseAbiInterface extends Interface {
   decodeFunctionData(functionFragment: 'get_taker_position', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'get_taker_position_safe', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'is_liquidatable', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'liquidate', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'match_orders', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'open_order', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'pause_market', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'remove_admin', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'remove_all_orders', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'remove_order', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'remove_uncollaterised_orders', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'require_enough_free_collateral', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'settle_all_funding', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'unpause_market', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'update_insurance_fund_fee_share', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'update_liquidation_penalty_ratio', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'update_matcher_fee_rate', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'update_max_funding_rate', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'update_protocol_fee_rate', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'update_taker_fee_rate', data: BytesLike): DecodedValue;
 }
 
 export class ClearingHouseAbi extends Contract {
   interface: ClearingHouseAbiInterface;
   functions: {
-    add_admin: InvokeFunction<[address: AddressInput], void>;
-    check_market_open: InvokeFunction<[base_token: AssetIdInput], void>;
-    close_market: InvokeFunction<[base_token: AssetIdInput, closed_price: BigNumberish], void>;
-    create_market: InvokeFunction<[asset_id: AssetIdInput, decimal: BigNumberish, price_feed: string, im_ratio: BigNumberish, mm_ratio: BigNumberish, initial_price: BigNumberish], void>;
+    add_admin: InvokeFunction<[admin: AddressInput], void>;
+    close_market: InvokeFunction<[base_token: AssetIdInput, close_price: BigNumberish], void>;
+    create_market: InvokeFunction<[base_token: AssetIdInput, decimal: BigNumberish, price_feed: string, im_ratio: BigNumberish, mm_ratio: BigNumberish, initial_price: BigNumberish], void>;
     fulfill_order: InvokeFunction<[base_size: I64Input, order_id: string, price_update_data: Vec<Bytes>], void>;
-    get_account_value: InvokeFunction<[trader: AddressInput], I64Output>;
-    get_liquidated_position_size_and_notional: InvokeFunction<[trader: AddressInput, base_token: AssetIdInput, account_value: I64Input, position_size_to_be_liquidated: I64Input], [I64Output, I64Output]>;
-    get_margin_requirement_for_liquidation: InvokeFunction<[trader: AddressInput], BN>;
-    get_market: InvokeFunction<[base_token: AssetIdInput], MarketOutput>;
-    get_max_abs_position_size: InvokeFunction<[trader: AddressInput, base_asset: AssetIdInput], [BN, BN]>;
-    get_taker_open_notional: InvokeFunction<[trader: AddressInput, base_token: AssetIdInput], I64Output>;
-    get_taker_position: InvokeFunction<[trader: AddressInput, base_token: AssetIdInput], I64Output>;
-    get_taker_position_safe: InvokeFunction<[trader: AddressInput, base_token: AssetIdInput], I64Output>;
-    is_liquidatable: InvokeFunction<[trader: AddressInput], boolean>;
-    liquidate: InvokeFunction<[trader: AddressInput, base_token: AssetIdInput, position_size: I64Input, price_update_data: Vec<Bytes>], void>;
-    match_orders: InvokeFunction<[order_sell_id: string, order_buy_id: string, price_update_data: Vec<Bytes>], void>;
+    liquidate: InvokeFunction<[trader: AddressInput, base_token: AssetIdInput, position_size_to_be_liquidated: I64Input, price_update_data: Vec<Bytes>], void>;
+    match_orders: InvokeFunction<[order1_id: string, order2_id: string, price_update_data: Vec<Bytes>], void>;
     open_order: InvokeFunction<[base_token: AssetIdInput, base_size: I64Input, order_price: BigNumberish, price_update_data: Vec<Bytes>], void>;
     pause_market: InvokeFunction<[base_token: AssetIdInput, update_data: Vec<Bytes>], void>;
-    remove_admin: InvokeFunction<[address: AddressInput], void>;
+    remove_admin: InvokeFunction<[admin: AddressInput], void>;
     remove_all_orders: InvokeFunction<[], void>;
-    remove_order: InvokeFunction<[order_id: string], void>;
-    remove_uncollaterised_orders: InvokeFunction<[trader: AddressInput], void>;
-    require_enough_free_collateral: InvokeFunction<[trader: AddressInput], void>;
+    remove_order: InvokeFunction<[order: string], void>;
+    remove_uncollaterized_orders: InvokeFunction<[trader: AddressInput], void>;
     settle_all_funding: InvokeFunction<[trader: AddressInput], void>;
     unpause_market: InvokeFunction<[base_token: AssetIdInput], void>;
     update_insurance_fund_fee_share: InvokeFunction<[insurance_fund_fee_share: BigNumberish], void>;
@@ -180,5 +177,16 @@ export class ClearingHouseAbi extends Contract {
     update_max_funding_rate: InvokeFunction<[max_funding_rate: BigNumberish], void>;
     update_protocol_fee_rate: InvokeFunction<[protocol_fee_rate: BigNumberish], void>;
     update_taker_fee_rate: InvokeFunction<[fee_rate: BigNumberish], void>;
+    check_market_open: InvokeFunction<[base_token: AssetIdInput], void>;
+    get_account_value: InvokeFunction<[trader: AddressInput], I64Output>;
+    get_liquidated_position_size_and_notional: InvokeFunction<[trader: AddressInput, base_token: AssetIdInput, account_value: I64Input, position_size_to_be_liquidated: I64Input], [I64Output, I64Output]>;
+    get_margin_requirement_for_liquidation: InvokeFunction<[trader: AddressInput], BN>;
+    get_market: InvokeFunction<[base_token: AssetIdInput], MarketOutput>;
+    get_max_abs_position_size: InvokeFunction<[trader: AddressInput, base_asset: AssetIdInput, trade_price: BigNumberish], [BN, BN]>;
+    get_taker_open_notional: InvokeFunction<[trader: AddressInput, base_token: AssetIdInput], I64Output>;
+    get_taker_position: InvokeFunction<[trader: AddressInput, base_token: AssetIdInput], I64Output>;
+    get_taker_position_safe: InvokeFunction<[trader: AddressInput, base_token: AssetIdInput], I64Output>;
+    is_liquidatable: InvokeFunction<[trader: AddressInput], boolean>;
+    require_enough_free_collateral: InvokeFunction<[trader: AddressInput], void>;
   };
 }

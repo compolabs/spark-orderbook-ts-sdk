@@ -20,6 +20,6 @@ export declare class ReadActions {
     fetchPerpPendingFundingPayment: (accountAddress: string, assetAddress: string, options: Options) => Promise<PerpPendingFundingPayment>;
     fetchPerpIsAllowedCollateral: (assetAddress: string, options: Options) => Promise<boolean>;
     fetchPerpTraderOrders: (accountAddress: string, assetAddress: string, options: Options) => Promise<PerpTraderOrder[]>;
-    fetchPerpMaxAbsPositionSize: (accountAddress: string, assetAddress: string, options: Options) => Promise<PerpMaxAbsPositionSize>;
+    fetchPerpMaxAbsPositionSize: (accountAddress: string, assetAddress: string, tradePrice: string, options: Options) => Promise<PerpMaxAbsPositionSize>;
     fetchPerpMarkPrice: (assetAddress: string, options: Options) => Promise<BN>;
 }

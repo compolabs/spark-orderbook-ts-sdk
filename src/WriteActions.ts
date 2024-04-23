@@ -130,17 +130,13 @@ export class WriteActions {
       options.wallet,
     );
 
-    const assetIdInput: AssetIdInput = {
-      value: assetAddress,
-    };
-
     const forward: CoinQuantityLike = {
       assetId: assetAddress,
       amount,
     };
 
     const tx = await vaultFactory.functions
-      .deposit_collateral(assetIdInput)
+      .deposit_collateral()
       .callParams({ forward })
       .txParams({ gasPrice: options.gasPrice });
 
