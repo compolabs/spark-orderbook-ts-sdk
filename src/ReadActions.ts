@@ -25,6 +25,7 @@ import {
   PerpTraderOrder,
   SpotMarketVolume,
   SpotOrder,
+  SpotOrderWithoutTimestamp,
   SpotTrades,
 } from "./interface";
 
@@ -119,7 +120,6 @@ export class ReadActions {
       tradeAmount: new BN(trade.trade_size),
       price: new BN(trade.trade_price),
       timestamp: getUnixTime(trade.createdAt),
-      userAddress: trader,
     }));
   };
 
@@ -128,7 +128,9 @@ export class ReadActions {
     return { volume: BN.ZERO, high: BN.ZERO, low: BN.ZERO };
   };
 
-  fetchSpotOrderById = async (orderId: string): Promise<SpotOrder> => {
+  fetchSpotOrderById = async (
+    orderId: string,
+  ): Promise<SpotOrderWithoutTimestamp> => {
     const order = await this.indexerApi.getSpotOrdersById(orderId);
 
     const baseSize = new BN(order.base_size);

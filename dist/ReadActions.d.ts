@@ -1,5 +1,5 @@
 import BN from "./utils/BN";
-import { Asset, FetchOrdersParams, FetchTradesParams, MarketCreateEvent, Options, PerpAllTraderPosition, PerpMarket, PerpMaxAbsPositionSize, PerpPendingFundingPayment, PerpTraderOrder, SpotMarketVolume, SpotOrder, SpotTrades } from "./interface";
+import { Asset, FetchOrdersParams, FetchTradesParams, MarketCreateEvent, Options, PerpAllTraderPosition, PerpMarket, PerpMaxAbsPositionSize, PerpPendingFundingPayment, PerpTraderOrder, SpotMarketVolume, SpotOrder, SpotOrderWithoutTimestamp, SpotTrades } from "./interface";
 export declare class ReadActions {
     private indexerApi;
     constructor(url: string);
@@ -9,7 +9,7 @@ export declare class ReadActions {
     fetchSpotOrders: ({ baseToken, type, limit, trader, isActive, }: FetchOrdersParams) => Promise<SpotOrder[]>;
     fetchSpotTrades: ({ baseToken, limit, trader, }: FetchTradesParams) => Promise<SpotTrades[]>;
     fetchSpotVolume: () => Promise<SpotMarketVolume>;
-    fetchSpotOrderById: (orderId: string) => Promise<SpotOrder>;
+    fetchSpotOrderById: (orderId: string) => Promise<SpotOrderWithoutTimestamp>;
     fetchPerpCollateralBalance: (accountAddress: string, assetAddress: string, options: Options) => Promise<BN>;
     fetchPerpAllTraderPositions: (accountAddress: string, options: Options) => Promise<PerpAllTraderPosition[]>;
     fetchPerpMarketPrice: (assetAddress: string, options: Options) => Promise<BN>;

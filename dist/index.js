@@ -6078,8 +6078,7 @@ var ReadActions = class {
         seller: trade.seller,
         tradeAmount: new BN_default(trade.trade_size),
         price: new BN_default(trade.trade_price),
-        timestamp: getUnixTime(trade.createdAt),
-        userAddress: trader
+        timestamp: getUnixTime(trade.createdAt)
       }));
     };
     this.fetchSpotVolume = async () => {

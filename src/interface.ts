@@ -48,7 +48,15 @@ export interface SpotOrder {
   trader: string;
   baseSize: BN;
   orderPrice: BN;
-  blockTimestamp?: number;//fxime
+  blockTimestamp: number;
+}
+
+export interface SpotOrderWithoutTimestamp {
+  id: string;
+  baseToken: string;
+  trader: string;
+  baseSize: BN;
+  orderPrice: BN;
 }
 
 export interface SpotTrades {
@@ -60,7 +68,6 @@ export interface SpotTrades {
   tradeAmount: BN;
   price: BN;
   timestamp: number;
-  userAddress: string;
 }
 
 export interface PerpAllTraderPosition {
@@ -100,7 +107,7 @@ export type FetchOrdersParams<T = string> = {
 export type FetchTradesParams<T = string> = {
   baseToken: T;
   limit: number;
-  trader: T;
+  trader?: T;
 };
 
 export type MarketCreateEvent = {

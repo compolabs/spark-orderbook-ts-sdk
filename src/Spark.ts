@@ -17,6 +17,7 @@ import {
   SparkParams,
   SpotMarketVolume,
   SpotOrder,
+  SpotOrderWithoutTimestamp,
   SpotTrades,
 } from "./interface";
 import { ReadActions } from "./ReadActions";
@@ -166,7 +167,9 @@ export class Spark {
     return this.read.fetchSpotVolume();
   };
 
-  fetchSpotOrderById = async (orderId: string): Promise<SpotOrder> => {
+  fetchSpotOrderById = async (
+    orderId: string,
+  ): Promise<SpotOrderWithoutTimestamp> => {
     return this.read.fetchSpotOrderById(orderId);
   };
 

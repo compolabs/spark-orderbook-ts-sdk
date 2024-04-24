@@ -1,6 +1,6 @@
 import { Provider, WalletLocked, WalletUnlocked } from "fuels";
 import BN from "./utils/BN";
-import { Asset, FetchOrdersParams, FetchTradesParams, MarketCreateEvent, PerpAllTraderPosition, PerpMarket, PerpMaxAbsPositionSize, PerpPendingFundingPayment, SparkParams, SpotMarketVolume, SpotOrder, SpotTrades } from "./interface";
+import { Asset, FetchOrdersParams, FetchTradesParams, MarketCreateEvent, PerpAllTraderPosition, PerpMarket, PerpMaxAbsPositionSize, PerpPendingFundingPayment, SparkParams, SpotMarketVolume, SpotOrder, SpotOrderWithoutTimestamp, SpotTrades } from "./interface";
 export declare class Spark {
     private write;
     private read;
@@ -22,7 +22,7 @@ export declare class Spark {
     fetchSpotOrders: (params: FetchOrdersParams) => Promise<SpotOrder[]>;
     fetchSpotTrades: (params: FetchTradesParams) => Promise<SpotTrades[]>;
     fetchSpotVolume: () => Promise<SpotMarketVolume>;
-    fetchSpotOrderById: (orderId: string) => Promise<SpotOrder>;
+    fetchSpotOrderById: (orderId: string) => Promise<SpotOrderWithoutTimestamp>;
     fetchPerpCollateralBalance: (accountAddress: string, asset: Asset) => Promise<BN>;
     fetchPerpAllTraderPositions: (accountAddress: string) => Promise<PerpAllTraderPosition[]>;
     fetchPerpIsAllowedCollateral: (asset: Asset) => Promise<boolean>;
