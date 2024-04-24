@@ -156,6 +156,7 @@ var BETA_NETWORK = {
   name: "Fuel",
   url: "https://beta-5.fuel.network/graphql"
 };
+var BETA_INDEXER_URL = "https://orderbook-indexer.spark-defi.com";
 
 // src/utils/NetworkError.ts
 var NETWORK_ERROR_MESSAGE = {
@@ -11955,6 +11956,7 @@ var Spark = class {
 var src_default = Spark;
 
 exports.BETA_CONTRACT_ADDRESSES = BETA_CONTRACT_ADDRESSES;
+exports.BETA_INDEXER_URL = BETA_INDEXER_URL;
 exports.BETA_NETWORK = BETA_NETWORK;
 exports.BETA_TOKENS = BETA_TOKENS;
 exports.BN = BN_default;

@@ -15,3 +15,4 @@ export declare const BETA_NETWORK: {
     name: string;
     url: string;
 };
+export declare const BETA_INDEXER_URL = "https://orderbook-indexer.spark-defi.com";
