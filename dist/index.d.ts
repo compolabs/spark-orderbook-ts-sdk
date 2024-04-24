@@ -1,5 +1,6 @@
+import { BETA_TOKENS } from "./constants/tokens";
 import BN from "./utils/BN";
-import { EXPLORER_URL, FUEL_BETA_CONTRACT_ADDRESSES, FUEL_BETA_NETWORK } from "./constants";
+import { BETA_CONTRACT_ADDRESSES, BETA_NETWORK, EXPLORER_URL } from "./constants";
 import { Spark } from "./Spark";
 export default Spark;
-export { BN, EXPLORER_URL, FUEL_BETA_CONTRACT_ADDRESSES, FUEL_BETA_NETWORK };
+export { BETA_CONTRACT_ADDRESSES, BETA_NETWORK, BETA_TOKENS, BN, EXPLORER_URL };

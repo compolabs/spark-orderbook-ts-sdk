@@ -1,7 +1,30 @@
 import BigNumber from 'bignumber.js';
 import { Wallet, Provider, Address, hashMessage, arrayify, Interface, Contract, ContractFactory } from 'fuels';
 
-// src/utils/BN.ts
+// src/constants/tokens.ts
+var BETA_TOKENS = [
+  {
+    name: "Ethereum",
+    symbol: "ETH",
+    decimals: 9,
+    assetId: "0x0000000000000000000000000000000000000000000000000000000000000000",
+    priceFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
+  },
+  {
+    name: "Bitcoin",
+    symbol: "BTC",
+    decimals: 8,
+    assetId: "0x593b117a05f5ea64b39ba1f9bc3fb7e7a791c9be130e28376ad552eacdb3b746",
+    priceFeed: "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43"
+  },
+  {
+    name: "USDC",
+    symbol: "USDC",
+    decimals: 6,
+    assetId: "0x0450e4d385cbd2914f74505f18f01587cc4f4ad1fdef4b80cbde2a8155a86d72",
+    priceFeed: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a"
+  }
+];
 BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
 var bigNumberify = (n) => {
   if (n && n.toString) {
@@ -107,10 +130,10 @@ _BN.MaxUint256 = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 var BN = _BN;
 var BN_default = BN;
 
-// src/constants.ts
+// src/constants/index.ts
 var DEFAULT_DECIMALS = 9;
 var DEFAULT_GAS_PRICE = "1";
-var FUEL_BETA_CONTRACT_ADDRESSES = {
+var BETA_CONTRACT_ADDRESSES = {
   spotMarket: "0x7134802bdefd097f1c9d8ad86ef27081ae609b84de0afc87b58bd4e04afc6a23",
   tokenFactory: "0x6bd9643c9279204b474a778dea7f923226060cb94a4c61c5aae015cf96b5aad2",
   vault: "0xe8beef1c4c94e8732b89c5e783c80e9fb7f80fd43ad0c594ba380e4b5556106a",
@@ -121,7 +144,7 @@ var FUEL_BETA_CONTRACT_ADDRESSES = {
   proxy: "0x24c43c6cb3f0898ab46142fefa94a77414d7a6bb2619c41cd8725b161ac50c9d"
 };
 var EXPLORER_URL = "https://app.fuel.network/";
-var FUEL_BETA_NETWORK = {
+var BETA_NETWORK = {
   name: "Fuel",
   url: "https://beta-5.fuel.network/graphql"
 };
@@ -11923,6 +11946,6 @@ var Spark = class {
 // src/index.ts
 var src_default = Spark;
 
-export { BN_default as BN, EXPLORER_URL, FUEL_BETA_CONTRACT_ADDRESSES, FUEL_BETA_NETWORK, src_default as default };
+export { BETA_CONTRACT_ADDRESSES, BETA_NETWORK, BETA_TOKENS, BN_default as BN, EXPLORER_URL, src_default as default };
 //# sourceMappingURL=out.js.map
 //# sourceMappingURL=index.js.map

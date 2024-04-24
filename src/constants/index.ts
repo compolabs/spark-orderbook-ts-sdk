@@ -2,7 +2,7 @@ export const DEFAULT_DECIMALS = 9;
 
 export const DEFAULT_GAS_PRICE = "1";
 
-export const FUEL_BETA_CONTRACT_ADDRESSES = {
+export const BETA_CONTRACT_ADDRESSES = {
   spotMarket:
     "0x7134802bdefd097f1c9d8ad86ef27081ae609b84de0afc87b58bd4e04afc6a23",
   tokenFactory:
@@ -20,7 +20,7 @@ export const FUEL_BETA_CONTRACT_ADDRESSES = {
 
 export const EXPLORER_URL = "https://app.fuel.network/";
 
-export const FUEL_BETA_NETWORK = {
+export const BETA_NETWORK = {
   name: "Fuel",
   url: "https://beta-5.fuel.network/graphql",
 };
