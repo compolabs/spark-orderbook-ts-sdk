@@ -3,7 +3,7 @@ import { defineConfig } from "tsup";
 
 export default defineConfig((options) => ({
   ...baseConfig(options, { withReact: false }),
-  platform: "browser",
+  platform: "neutral",
   entry: ["src/index.ts"],
   external: ["fuels"],
   // minify: "",
