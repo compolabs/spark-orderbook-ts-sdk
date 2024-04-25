@@ -124,8 +124,12 @@ export class ReadActions {
   };
 
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
-    console.warn("[fetchVolume] NOT IMPLEMENTED FOR FUEL");
-    return { volume: BN.ZERO, high: BN.ZERO, low: BN.ZERO };
+    const data = await this.indexerApi.getSpotVolume();
+    return {
+      volume: new BN(data.volume24h),
+      high: new BN(data.high24h),
+      low: new BN(data.low24h),
+    };
   };
 
   fetchSpotOrderById = async (

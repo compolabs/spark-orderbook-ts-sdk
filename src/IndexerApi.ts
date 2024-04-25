@@ -48,6 +48,10 @@ export class IndexerApi extends Fetch {
   getSpotTradeEventsById = async (id: string): Promise<SpotTradeEvent> => {
     return this.get<SpotTradeEvent>(`/spot/tradeEvents/${id}`);
   };
+
+  getSpotVolume = async (): Promise<SpotVolume> => {
+    return this.get<SpotVolume>("/spot/statistics");
+  };
 }
 
 interface SpotMarketCreateEvent {
@@ -110,4 +114,10 @@ type SpotTradeEventsParams = {
   trader?: string;
   baseToken?: string;
   limit?: number;
+};
+
+type SpotVolume = {
+  volume24h: number;
+  high24h: number;
+  low24h: number;
 };
