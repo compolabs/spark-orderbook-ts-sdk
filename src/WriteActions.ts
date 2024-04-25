@@ -1,4 +1,9 @@
-import { arrayify, CoinQuantityLike, hashMessage } from "fuels";
+import {
+  arrayify,
+  CoinQuantityLike,
+  FunctionInvocationScope,
+  hashMessage,
+} from "fuels";
 
 import { AccountBalanceAbi__factory } from "./types/account-balance";
 import { I64Input } from "./types/account-balance/AccountBalanceAbi";
@@ -50,9 +55,7 @@ export class WriteActions {
       .callParams({ forward })
       .txParams({ gasPrice: options.gasPrice });
 
-    const { gasUsed: gasValue } = await tx.getTransactionCost();
-    const res = await tx.txParams({ gasLimit: gasValue }).call();
-    return res.transactionId;
+    return this.sendTransaction(tx, options);
   };
 
   cancelSpotOrder = async (
@@ -68,9 +71,7 @@ export class WriteActions {
       .cancel_order(orderId)
       .txParams({ gasPrice: options.gasPrice });
 
-    const { gasUsed: gasValue } = await tx.getTransactionCost();
-    const res = await tx.txParams({ gasLimit: gasValue }).call();
-    return res.transactionId;
+    return this.sendTransaction(tx, options);
   };
 
   matchSpotOrders = async (
@@ -87,9 +88,7 @@ export class WriteActions {
       .match_orders(sellOrderId, buyOrderId)
       .txParams({ gasPrice: options.gasPrice });
 
-    const { gasUsed: gasValue } = await tx.getTransactionCost();
-    const res = await tx.txParams({ gasLimit: gasValue }).call();
-    return res.transactionId;
+    return this.sendTransaction(tx, options);
   };
 
   mintToken = async (
@@ -115,9 +114,7 @@ export class WriteActions {
       .mint(identity, hash, mintAmount.toString())
       .txParams({ gasPrice: options.gasPrice });
 
-    const { gasUsed: gasValue } = await tx.getTransactionCost();
-    const res = await tx.txParams({ gasLimit: gasValue }).call();
-    return res.transactionId;
+    return this.sendTransaction(tx, options);
   };
 
   depositPerpCollateral = async (
@@ -140,9 +137,7 @@ export class WriteActions {
       .callParams({ forward })
       .txParams({ gasPrice: options.gasPrice });
 
-    const { gasUsed: gasValue } = await tx.getTransactionCost();
-    const res = await tx.txParams({ gasLimit: gasValue }).call();
-    return res.transactionId;
+    return this.sendTransaction(tx, options);
   };
 
   withdrawPerpCollateral = async (
@@ -199,9 +194,7 @@ export class WriteActions {
         ),
       ]);
 
-    const { gasUsed: gasValue } = await tx.getTransactionCost();
-    const res = await tx.txParams({ gasLimit: gasValue }).call();
-    return res.transactionId;
+    return this.sendTransaction(tx, options);
   };
 
   openPerpOrder = async (
@@ -259,9 +252,7 @@ export class WriteActions {
         ),
       ]);
 
-    const { gasUsed: gasValue } = await tx.getTransactionCost();
-    const res = await tx.txParams({ gasLimit: gasValue }).call();
-    return res.transactionId;
+    return this.sendTransaction(tx, options);
   };
 
   removePerpOrder = async (
@@ -291,9 +282,7 @@ export class WriteActions {
         ),
       ]);
 
-    const { gasUsed: gasValue } = await tx.getTransactionCost();
-    const res = await tx.txParams({ gasLimit: gasValue }).call();
-    return res.transactionId;
+    return this.sendTransaction(tx, options);
   };
 
   fulfillPerpOrder = async (
@@ -350,8 +339,16 @@ export class WriteActions {
         ),
       ]);
 
-    const { gasUsed: gasValue } = await tx.getTransactionCost();
-    const res = await tx.txParams({ gasLimit: gasValue }).call();
+    return this.sendTransaction(tx, options);
+  };
+
+  private sendTransaction = async (
+    tx: FunctionInvocationScope,
+    options: Options,
+  ): Promise<string> => {
+    const { gasUsed } = await tx.getTransactionCost();
+    const gasLimit = gasUsed.mul(options.gasLimitMultiplier).toString();
+    const res = await tx.txParams({ gasLimit }).call();
     return res.transactionId;
   };
 }

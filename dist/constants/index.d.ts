@@ -1,5 +1,6 @@
 export declare const DEFAULT_DECIMALS = 9;
 export declare const DEFAULT_GAS_PRICE = "1";
+export declare const DEFAULT_GAS_LIMIT_MULTIPLIER = "2";
 export declare const BETA_CONTRACT_ADDRESSES: {
     spotMarket: string;
     tokenFactory: string;

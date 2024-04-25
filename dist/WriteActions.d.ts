@@ -9,4 +9,5 @@ export declare class WriteActions {
     openPerpOrder: (baseTokenAddress: string, gasTokenAddress: string, amount: string, price: string, updateData: string[], options: Options) => Promise<string>;
     removePerpOrder: (orderId: string, options: Options) => Promise<string>;
     fulfillPerpOrder: (gasTokenAddress: string, orderId: string, amount: string, updateData: string[], options: Options) => Promise<string>;
+    private sendTransaction;
 }

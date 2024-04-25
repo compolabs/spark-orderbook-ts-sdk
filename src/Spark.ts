@@ -2,7 +2,7 @@ import { Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
 
 import BN from "./utils/BN";
 import { NETWORK_ERROR, NetworkError } from "./utils/NetworkError";
-import { DEFAULT_GAS_PRICE } from "./constants";
+import { DEFAULT_GAS_LIMIT_MULTIPLIER, DEFAULT_GAS_PRICE } from "./constants";
 import {
   Asset,
   FetchOrdersParams,
@@ -36,6 +36,8 @@ export class Spark {
       contractAddresses: params.contractAddresses,
       wallet: params.wallet,
       gasPrice: params.gasPrice ?? DEFAULT_GAS_PRICE,
+      gasLimitMultiplier:
+        params.gasLimitMultiplier ?? DEFAULT_GAS_LIMIT_MULTIPLIER,
     };
 
     this.read = new ReadActions(params.indexerApiUrl);

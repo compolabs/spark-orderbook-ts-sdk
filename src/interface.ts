@@ -23,6 +23,7 @@ export interface Asset {
 interface BaseOptions {
   contractAddresses: Contracts;
   gasPrice: string;
+  gasLimitMultiplier: string;
 }
 
 export interface Options extends BaseOptions {
@@ -38,8 +39,8 @@ export interface SparkParams {
   contractAddresses: Contracts;
   indexerApiUrl: string;
   wallet?: WalletLocked | WalletUnlocked;
-  gasLimit?: string;
   gasPrice?: string;
+  gasLimitMultiplier?: string;
 }
 
 export interface SpotOrder {
