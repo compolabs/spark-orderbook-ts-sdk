@@ -6008,6 +6008,9 @@ var IndexerApi = class extends Fetch {
     this.getSpotTradeEventsById = async (id) => {
       return this.get(`/spot/tradeEvents/${id}`);
     };
+    this.getSpotVolume = async () => {
+      return this.get("/spot/statistics");
+    };
   }
 };
 
@@ -6083,8 +6086,12 @@ var ReadActions = class {
       }));
     };
     this.fetchSpotVolume = async () => {
-      console.warn("[fetchVolume] NOT IMPLEMENTED FOR FUEL");
-      return { volume: BN_default.ZERO, high: BN_default.ZERO, low: BN_default.ZERO };
+      const data = await this.indexerApi.getSpotVolume();
+      return {
+        volume: new BN_default(data.volume24h),
+        high: new BN_default(data.high24h),
+        low: new BN_default(data.low24h)
+      };
     };
     this.fetchSpotOrderById = async (orderId) => {
       const order = await this.indexerApi.getSpotOrdersById(orderId);
