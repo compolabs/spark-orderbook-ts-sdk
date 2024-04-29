@@ -6280,7 +6280,7 @@ var ReadActions = class {
       try {
         const result = await clearingHouseFactory.functions.get_max_abs_position_size(addressInput, assetIdInput, tradePrice).get();
         const shortSize = new BN_default(result.value[0].toString());
-        const longSize = new BN_default(result.value[0].toString());
+        const longSize = new BN_default(result.value[1].toString());
         return { shortSize, longSize };
       } catch (error) {
         return { shortSize: BN_default.ZERO, longSize: BN_default.ZERO };
