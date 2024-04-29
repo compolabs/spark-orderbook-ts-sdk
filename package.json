@@ -1,11 +1,25 @@
 {
-  "name": "spark-ts-sdk",
-  "private": true,
-  "version": "0.0.1",
+  "name": "@compolabs/spark-ts-sdk",
+  "version": "0.0.2",
   "type": "module",
   "main": "./dist/index.сjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/compolabs/spark-ts-sdk.git"
+  },
+  "keywords": [
+    "spark",
+    "fuel",
+    "sdk"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/compolabs/spark-ts-sdk/issues"
+  },
+  "homepage": "https://github.com/compolabs/spark-ts-sdk#readme",
   "exports": {
     ".": {
       "require": "./dist/index.cjs",

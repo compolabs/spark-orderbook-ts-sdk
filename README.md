@@ -12,7 +12,7 @@ The spark-ts-sdk is a comprehensive solution for interacting with financial mark
 To install the spark-ts-sdk, follow these steps:
 
 ```bash
-npm i spark-ts-sdk
+npm i @compolabs/spark-ts-sdk
 ```
 
 ## Usage

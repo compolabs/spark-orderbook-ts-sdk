@@ -8,5 +8,5 @@ export default defineConfig((options) => ({
   external: ["fuels"],
   // minify: true,
   splitting: true,
-  metafile: true,
+  metafile: false,
 }));
