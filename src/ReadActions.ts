@@ -431,14 +431,17 @@ export class ReadActions {
       value: assetAddress,
     };
 
-    const result = await clearingHouseFactory.functions
-      .get_max_abs_position_size(addressInput, assetIdInput, tradePrice)
-      .get();
+    try {
+      const result = await clearingHouseFactory.functions
+        .get_max_abs_position_size(addressInput, assetIdInput, tradePrice)
+        .get();
+      const shortSize = new BN(result.value[0].toString());
+      const longSize = new BN(result.value[1].toString());
 
-    const shortSize = new BN(result.value[0].toString());
-    const longSize = new BN(result.value[0].toString());
-
-    return { shortSize, longSize };
+      return { shortSize, longSize };
+    } catch (error) {
+      return { shortSize: BN.ZERO, longSize: BN.ZERO };
+    }
   };
 
   fetchPerpMarkPrice = async (
