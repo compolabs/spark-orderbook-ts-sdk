@@ -6,7 +6,7 @@ export default defineConfig((options) => ({
   platform: "neutral",
   entry: ["src/index.ts"],
   external: ["fuels"],
-  // minify: "",
+  // minify: true,
   splitting: true,
-  metafile: true,
+  metafile: false,
 }));

@@ -6,6 +6,7 @@ import {
   AssetIdInput,
 } from "./types/account-balance/AccountBalanceAbi";
 import { ClearingHouseAbi__factory } from "./types/clearing-house";
+import { OrderbookAbi__factory } from "./types/orderbook";
 import { PerpMarketAbi__factory } from "./types/perp-market";
 import { VaultAbi__factory } from "./types/vault";
 import BN from "./utils/BN";
@@ -134,15 +135,23 @@ export class ReadActions {
 
   fetchSpotOrderById = async (
     orderId: string,
-  ): Promise<SpotOrderWithoutTimestamp> => {
-    const order = await this.indexerApi.getSpotOrdersById(orderId);
+    options: Options,
+  ): Promise<SpotOrderWithoutTimestamp | undefined> => {
+    const orderbookFactory = OrderbookAbi__factory.connect(
+      options.contractAddresses.spotMarket,
+      options.wallet,
+    );
 
-    const baseSize = new BN(order.base_size);
-    const basePrice = new BN(order.base_price);
+    const result = await orderbookFactory.functions.order_by_id(orderId).get();
+
+    if (!result.value) return undefined;
+
+    const baseSize = convertI64ToBn(result.value.base_size);
+    const basePrice = new BN(result.value.base_price.toString());
     return {
-      id: order.order_id,
-      baseToken: order.base_token,
-      trader: order.trader,
+      id: result.value?.id,
+      baseToken: result.value.base_token.value,
+      trader: result.value.trader.value,
       baseSize,
       orderPrice: basePrice,
     };

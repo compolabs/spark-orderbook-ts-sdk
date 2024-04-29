@@ -9,13 +9,11 @@
 The spark-ts-sdk is a comprehensive solution for interacting with financial markets, offering both spot and perpetual trading functionality. It's built on the Fuels platform, utilizing smart contracts for decentralized transaction processing. This library provides easy-to-use methods for creating and managing orders, handling tokens, and retrieving market data.
 
 ## Installation
-To install the spark-ts-sdk, you can use npm to install directly from the GitHub repository. Follow these steps:
+To install the spark-ts-sdk, follow these steps:
 
 ```bash
-npm install git+https://github.com/compolabs/spark-ts-sdk#COMMIT_HASH
+npm i @compolabs/spark-ts-sdk
 ```
-
-Replace **COMMIT_HASH** with the actual commit hash from the main branch that you wish to install. 
 
 ## Usage
 

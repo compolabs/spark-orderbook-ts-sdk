@@ -26,4 +26,4 @@ export const BETA_NETWORK = {
   url: "https://beta-5.fuel.network/graphql",
 };
 
-export const BETA_INDEXER_URL = "https://orderbook-indexer.spark-defi.com";
+export const BETA_INDEXER_URL = "https://indexer.spark-defi.com";

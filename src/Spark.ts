@@ -171,8 +171,10 @@ export class Spark {
 
   fetchSpotOrderById = async (
     orderId: string,
-  ): Promise<SpotOrderWithoutTimestamp> => {
-    return this.read.fetchSpotOrderById(orderId);
+  ): Promise<SpotOrderWithoutTimestamp | undefined> => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchSpotOrderById(orderId, options);
   };
 
   fetchPerpCollateralBalance = async (
