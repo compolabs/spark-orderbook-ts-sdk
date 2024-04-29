@@ -25,10 +25,6 @@ export class IndexerApi extends Fetch {
     return this.get<SpotOrder[]>("/spot/orders", paramsCopy);
   };
 
-  getSpotOrdersById = async (id: string): Promise<SpotOrder> => {
-    return this.get<SpotOrder>(`/spot/orders/${id}`);
-  };
-
   getSpotOrderChangeEvents = async (): Promise<SpotOrderChangeEvent[]> => {
     return this.get<SpotOrderChangeEvent[]>("/spot/orderChangeEvents");
   };

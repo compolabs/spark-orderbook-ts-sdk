@@ -44,6 +44,8 @@ export class Fetch {
     ) as [string, string][];
     const searchParams = new URLSearchParams(validParams);
 
+    console.log(`${endpoint}?${searchParams.toString()}`);
+
     return this.request<T>(`${endpoint}?${searchParams.toString()}`, {
       method: "GET",
     });
