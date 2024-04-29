@@ -5,7 +5,7 @@ export const DEFAULT_GAS_LIMIT_MULTIPLIER = "2";
 
 export const BETA_CONTRACT_ADDRESSES = {
   spotMarket:
-    "0x7134802bdefd097f1c9d8ad86ef27081ae609b84de0afc87b58bd4e04afc6a23",
+    "0x0f0c1065a7b82d026069c5cf070b21ee65713fd1ac92ec1d25eacc3100187f78",
   tokenFactory:
     "0x6bd9643c9279204b474a778dea7f923226060cb94a4c61c5aae015cf96b5aad2",
   vault: "0xe8beef1c4c94e8732b89c5e783c80e9fb7f80fd43ad0c594ba380e4b5556106a",
