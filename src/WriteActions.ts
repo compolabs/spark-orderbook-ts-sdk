@@ -17,7 +17,7 @@ import { AssetIdInput, IdentityInput } from "./types/src-20/TokenAbi";
 import { VaultAbi__factory } from "./types/vault";
 import BN from "./utils/BN";
 import { DEFAULT_DECIMALS } from "./constants";
-import { Asset, Options } from "./interface";
+import { Asset, Options, WriteTransactionResponse } from "./interface";
 
 export class WriteActions {
   createSpotOrder = async (
@@ -26,7 +26,7 @@ export class WriteActions {
     size: string,
     price: string,
     options: Options,
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     const orderbookFactory = OrderbookAbi__factory.connect(
       options.contractAddresses.spotMarket,
       options.wallet,
@@ -61,7 +61,7 @@ export class WriteActions {
   cancelSpotOrder = async (
     orderId: string,
     options: Options,
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     const orderbookFactory = OrderbookAbi__factory.connect(
       options.contractAddresses.spotMarket,
       options.wallet,
@@ -78,7 +78,7 @@ export class WriteActions {
     sellOrderId: string,
     buyOrderId: string,
     options: Options,
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     const orderbookFactory = OrderbookAbi__factory.connect(
       options.contractAddresses.spotMarket,
       options.wallet,
@@ -95,7 +95,7 @@ export class WriteActions {
     token: Asset,
     amount: string,
     options: Options,
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     const tokenFactory = options.contractAddresses.tokenFactory;
     const tokenFactoryContract = TokenAbi__factory.connect(
       tokenFactory,
@@ -121,7 +121,7 @@ export class WriteActions {
     assetAddress: string,
     amount: string,
     options: Options,
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     const vaultFactory = VaultAbi__factory.connect(
       options.contractAddresses.vault,
       options.wallet,
@@ -146,7 +146,7 @@ export class WriteActions {
     amount: string,
     updateData: string[],
     options: Options,
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     const vaultFactory = VaultAbi__factory.connect(
       options.contractAddresses.vault,
       options.wallet,
@@ -204,7 +204,7 @@ export class WriteActions {
     price: string,
     updateData: string[],
     options: Options,
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
       options.contractAddresses.clearingHouse,
       options.wallet,
@@ -258,7 +258,7 @@ export class WriteActions {
   removePerpOrder = async (
     orderId: string,
     options: Options,
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
       options.contractAddresses.clearingHouse,
       options.wallet,
@@ -291,7 +291,7 @@ export class WriteActions {
     amount: string,
     updateData: string[],
     options: Options,
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
       options.contractAddresses.clearingHouse,
       options.wallet,
@@ -345,10 +345,13 @@ export class WriteActions {
   private sendTransaction = async (
     tx: FunctionInvocationScope,
     options: Options,
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     const { gasUsed } = await tx.getTransactionCost();
     const gasLimit = gasUsed.mul(options.gasLimitMultiplier).toString();
     const res = await tx.txParams({ gasLimit }).call();
-    return res.transactionId;
+    return {
+      transactionId: res.transactionId,
+      value: res.value,
+    };
   };
 }
