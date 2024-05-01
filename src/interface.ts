@@ -139,3 +139,8 @@ export type PerpPendingFundingPayment = {
   fundingPayment: BN;
   fundingGrowthPayment: BN;
 };
+
+export type WriteTransactionResponse = {
+  transactionId: string;
+  value: unknown;
+};
