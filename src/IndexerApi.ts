@@ -1,4 +1,5 @@
 import { Fetch } from "./utils/Fetch";
+import { MarketStatusOutput } from "./interface";
 
 export class IndexerApi extends Fetch {
   // SPOT
@@ -131,7 +132,7 @@ type PerpMarketAPI = {
   price_feed: string;
   im_ratio: string;
   mm_ratio: string;
-  status: string;
+  status: MarketStatusOutput;
   paused_index_price: string;
   paused_timestamp: string;
   closed_price: string;

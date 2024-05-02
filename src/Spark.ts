@@ -19,6 +19,7 @@ import {
   SpotOrder,
   SpotOrderWithoutTimestamp,
   SpotTrades,
+  WriteTransactionResponse,
 } from "./interface";
 import { ReadActions } from "./ReadActions";
 import { WriteActions } from "./WriteActions";
@@ -56,7 +57,7 @@ export class Spark {
     quoteToken: Asset,
     size: string,
     price: string,
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     return this.write.createSpotOrder(
       baseToken,
       quoteToken,
@@ -66,14 +67,16 @@ export class Spark {
     );
   };
 
-  cancelSpotOrder = async (orderId: string): Promise<string> => {
+  cancelSpotOrder = async (
+    orderId: string,
+  ): Promise<WriteTransactionResponse> => {
     return this.write.cancelSpotOrder(orderId, this.getApiOptions());
   };
 
   matchSpotOrders = async (
     sellOrderId: string,
     buyOrderId: string,
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     return this.write.matchSpotOrders(
       sellOrderId,
       buyOrderId,
@@ -81,14 +84,17 @@ export class Spark {
     );
   };
 
-  mintToken = async (token: Asset, amount: string): Promise<string> => {
+  mintToken = async (
+    token: Asset,
+    amount: string,
+  ): Promise<WriteTransactionResponse> => {
     return this.write.mintToken(token, amount, this.getApiOptions());
   };
 
   depositPerpCollateral = async (
     asset: Asset,
     amount: string,
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     return this.write.depositPerpCollateral(
       asset.address,
       amount,
@@ -101,7 +107,7 @@ export class Spark {
     gasToken: Asset,
     amount: string,
     oracleUpdateData: string[],
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     return this.write.withdrawPerpCollateral(
       baseToken.address,
       gasToken.address,
@@ -117,7 +123,7 @@ export class Spark {
     amount: string,
     price: string,
     updateData: string[],
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     return this.write.openPerpOrder(
       baseToken.address,
       gasToken.address,
@@ -128,7 +134,9 @@ export class Spark {
     );
   };
 
-  removePerpOrder = async (assetId: string): Promise<string> => {
+  removePerpOrder = async (
+    assetId: string,
+  ): Promise<WriteTransactionResponse> => {
     return this.write.removePerpOrder(assetId, this.getApiOptions());
   };
 
@@ -137,7 +145,7 @@ export class Spark {
     orderId: string,
     amount: string,
     updateData: string[],
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     return this.write.fulfillPerpOrder(
       gasToken.address,
       orderId,

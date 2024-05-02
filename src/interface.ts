@@ -1,7 +1,8 @@
 import { WalletLocked, WalletUnlocked } from "fuels";
 
-import { MarketStatusOutput } from "./types/clearing-house/ClearingHouseAbi";
 import BN from "./utils/BN";
+
+export type MarketStatusOutput = "Opened" | "Paused" | "Closed";
 
 export interface Contracts {
   spotMarket: string;
@@ -83,7 +84,7 @@ export interface PerpMarket {
   quoteTokenAddress: string;
   imRatio: BN;
   mmRatio: BN;
-  status: MarketStatusOutput | string;
+  status: MarketStatusOutput;
   pausedIndexPrice?: BN;
   pausedTimestamp?: number;
   closedPrice?: BN;
@@ -138,4 +139,9 @@ export type PerpMaxAbsPositionSize = {
 export type PerpPendingFundingPayment = {
   fundingPayment: BN;
   fundingGrowthPayment: BN;
+};
+
+export type WriteTransactionResponse = {
+  transactionId: string;
+  value: unknown;
 };
