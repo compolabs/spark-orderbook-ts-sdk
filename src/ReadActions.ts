@@ -24,6 +24,7 @@ import {
   PerpMaxAbsPositionSize,
   PerpPendingFundingPayment,
   PerpTraderOrder,
+  PerpTrades,
   SpotMarketVolume,
   SpotOrder,
   SpotOrderWithoutTimestamp,
@@ -186,28 +187,21 @@ export class ReadActions {
 
   fetchPerpAllTraderPositions = async (
     accountAddress: string,
+    assetAddress: string,
+    limit: number,
     options: Options,
   ): Promise<PerpAllTraderPosition[]> => {
-    const accountBalanceFactory = AccountBalanceAbi__factory.connect(
-      options.contractAddresses.accountBalance,
-      options.wallet,
-    );
+    const data = await this.indexerApi.getPerpPositions({
+      trader: accountAddress,
+      baseToken: assetAddress,
+      limit,
+    });
 
-    const addressInput: AddressInput = {
-      value: new Address(accountAddress as any).toB256(),
-    };
-
-    const result = await accountBalanceFactory.functions
-      .get_all_trader_positions(addressInput)
-      .get();
-
-    const positions = result.value.map(([assetAddress, accountBalance]) => ({
-      baseTokenAddress: assetAddress.value,
-      lastTwPremiumGrowthGlobal: convertI64ToBn(
-        accountBalance.last_tw_premium_growth_global,
-      ),
-      takerOpenNational: convertI64ToBn(accountBalance.taker_open_notional),
-      takerPositionSize: convertI64ToBn(accountBalance.taker_position_size),
+    const positions = data.map((position) => ({
+      baseTokenAddress: position.base_token,
+      lastTwPremiumGrowthGlobal: new BN(position.last_tw_premium_growth_global),
+      takerOpenNational: new BN(position.taker_open_notional),
+      takerPositionSize: new BN(position.taker_position_size),
     }));
 
     return positions;
@@ -406,29 +400,13 @@ export class ReadActions {
       baseToken: assetAddress,
     });
 
-    const vaultFactory = PerpMarketAbi__factory.connect(
-      options.contractAddresses.perpMarket,
-      options.wallet,
-    );
-
-    const addressInput: AddressInput = {
-      value: new Address(accountAddress as any).toB256(),
-    };
-
-    const assetIdInput: AssetIdInput = {
-      value: assetAddress,
-    };
-
-    const result = await vaultFactory.functions
-      .get_trader_orders(addressInput, assetIdInput)
-      .get();
-
-    const orders = result.value.map((order) => ({
-      id: order.id,
-      baseSize: convertI64ToBn(order.base_size),
-      baseTokenAddress: order.base_token.value,
-      orderPrice: new BN(order.order_price.toString()),
-      trader: order.trader.value,
+    const orders = data.map((order) => ({
+      id: order.order_id,
+      trader: order.trader,
+      baseTokenAddress: order.base_token,
+      baseSize: new BN(order.base_size),
+      orderPrice: new BN(order.base_price),
+      timestamp: getUnixTime(order.timestamp),
     }));
 
     return orders;
@@ -486,5 +464,32 @@ export class ReadActions {
     const markPrice = new BN(result.value.toString());
 
     return markPrice;
+  };
+
+  fetchPerpTradeEvents = async ({
+    baseToken,
+    limit,
+    trader,
+  }: FetchTradesParams): Promise<PerpTrades[]> => {
+    const traderAddress = trader
+      ? new Address(trader as any).toB256()
+      : undefined;
+
+    const data = await this.indexerApi.getPerpTradeEvents({
+      limit,
+      trader: traderAddress,
+      baseToken,
+    });
+
+    return data.map((trade) => ({
+      baseToken: trade.base_token,
+      seller: trade.seller,
+      buyer: trade.buyer,
+      tradeSize: trade.trade_size,
+      tradePrice: trade.trade_price,
+      sellOrderId: trade.sell_order_id,
+      buyOrderId: trade.buy_order_id,
+      timestamp: trade.timestamp,
+    }));
   };
 }

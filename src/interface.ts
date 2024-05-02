@@ -72,6 +72,17 @@ export interface SpotTrades {
   timestamp: number;
 }
 
+export interface PerpTrades {
+  baseToken: string;
+  seller: string;
+  buyer: string;
+  tradeSize: string;
+  tradePrice: string;
+  sellOrderId: string;
+  buyOrderId: string;
+  timestamp: string;
+}
+
 export interface PerpAllTraderPosition {
   baseTokenAddress: string;
   lastTwPremiumGrowthGlobal: BN;
@@ -96,6 +107,7 @@ export interface PerpTraderOrder {
   baseTokenAddress: string;
   orderPrice: BN;
   trader: string;
+  timestamp: number;
 }
 
 export type FetchOrdersParams<T = string> = {

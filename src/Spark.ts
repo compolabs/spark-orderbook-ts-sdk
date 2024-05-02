@@ -200,10 +200,17 @@ export class Spark {
 
   fetchPerpAllTraderPositions = async (
     accountAddress: string,
+    assetAddress: string,
+    limit: number,
   ): Promise<PerpAllTraderPosition[]> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchPerpAllTraderPositions(accountAddress, options);
+    return this.read.fetchPerpAllTraderPositions(
+      accountAddress,
+      assetAddress,
+      limit,
+      options,
+    );
   };
 
   fetchPerpIsAllowedCollateral = async (asset: Asset): Promise<boolean> => {
