@@ -204,13 +204,20 @@ export class Spark {
     return this.read.fetchPerpIsAllowedCollateral(asset.address, options);
   };
 
-  fetchPerpTraderOrders = async (accountAddress: string, asset: Asset) => {
+  fetchPerpTraderOrders = async (
+    accountAddress: string,
+    asset: Asset,
+    isOpened?: boolean,
+    orderType?: "buy" | "sell",
+  ) => {
     const options = await this.getFetchOptions();
 
     return this.read.fetchPerpTraderOrders(
       accountAddress,
       asset.address,
       options,
+      isOpened,
+      orderType,
     );
   };
 

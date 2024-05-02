@@ -326,16 +326,22 @@ export class ReadActions {
     quoteAsset: Asset,
     options: Options,
   ): Promise<PerpMarket[]> => {
-    const markets: PerpMarket[] = [];
+    const data = await this.indexerApi.getPerpMarkets();
 
-    for (const token of assets) {
-      try {
-        const market = await this.fetchPerpMarket(token, quoteAsset, options);
-        markets.push(market);
-      } catch {
-        /* empty */
-      }
-    }
+    const markets: PerpMarket[] = data.map((market) => ({
+      baseTokenAddress: market.asset_id,
+      quoteTokenAddress: quoteAsset.address,
+      imRatio: new BN(market.im_ratio),
+      mmRatio: new BN(market.mm_ratio),
+      status: market.status,
+      pausedIndexPrice: market.paused_index_price
+        ? new BN(market.paused_index_price)
+        : undefined,
+      pausedTimestamp: Number(market.paused_timestamp),
+      closedPrice: market.closed_price
+        ? new BN(market.closed_price)
+        : undefined,
+    }));
 
     return markets;
   };
@@ -392,7 +398,14 @@ export class ReadActions {
     accountAddress: string,
     assetAddress: string,
     options: Options,
+    isOpened?: boolean,
+    orderType?: "buy" | "sell",
   ): Promise<PerpTraderOrder[]> => {
+    const data = await this.indexerApi.getPerpOrders({
+      trader: accountAddress,
+      baseToken: assetAddress,
+    });
+
     const vaultFactory = PerpMarketAbi__factory.connect(
       options.contractAddresses.perpMarket,
       options.wallet,

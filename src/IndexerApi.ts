@@ -1,6 +1,8 @@
 import { Fetch } from "./utils/Fetch";
 
 export class IndexerApi extends Fetch {
+  // SPOT
+
   getSpotMarketCreateEvents = async (): Promise<SpotMarketCreateEvent[]> => {
     return this.get<SpotMarketCreateEvent[]>("/spot/marketCreateEvents");
   };
@@ -36,7 +38,7 @@ export class IndexerApi extends Fetch {
   };
 
   getSpotTradeEvents = async (
-    params: SpotTradeEventsParams,
+    params: BaseParams,
   ): Promise<SpotTradeEvent[]> => {
     return this.get<SpotTradeEvent[]>("/spot/tradeEvents", params);
   };
@@ -48,7 +50,33 @@ export class IndexerApi extends Fetch {
   getSpotVolume = async (): Promise<SpotVolume> => {
     return this.get<SpotVolume>("/spot/statistics");
   };
+
+  // PERP
+
+  getPerpMarkets = async (): Promise<PerpMarketAPI[]> => {
+    return this.get<PerpMarketAPI[]>("/perp/markets");
+  };
+
+  getPerpOrders = async (params: PerpOrdersParams): Promise<PerpOrder[]> => {
+    return this.get<PerpOrder[]>("/perp/orders", params);
+  };
+
+  getPerpTradeEvents = async (
+    params: BaseParams,
+  ): Promise<PerpTradeEvent[]> => {
+    return this.get<PerpTradeEvent[]>("/perp/orders", params);
+  };
+
+  getPerpPositions = async (params: BaseParams): Promise<PerpPosition[]> => {
+    return this.get<PerpPosition[]>("/perp/orders", params);
+  };
 }
+
+type BaseParams = {
+  trader?: string;
+  baseToken?: string;
+  limit?: number;
+};
 
 interface SpotMarketCreateEvent {
   id: number;
@@ -59,14 +87,17 @@ interface SpotMarketCreateEvent {
   updatedAt: string;
 }
 
-interface SpotOrder {
-  id: number;
+interface Order {
   order_id: string;
   trader: string;
   base_token: string;
   base_size: string;
   base_price: string;
   timestamp: string;
+}
+
+interface SpotOrder extends Order {
+  id: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -83,10 +114,38 @@ interface SpotOrderChangeEvent {
   updatedAt: string;
 }
 
-interface SpotTradeEvent {
-  id: number;
+type SpotOrdersParams = BaseParams & {
+  orderType?: "BUY" | "SELL";
+  isOpened?: boolean;
+};
+
+type SpotVolume = {
+  volume24h: number;
+  high24h: number;
+  low24h: number;
+};
+
+type PerpMarketAPI = {
+  asset_id: string;
+  decimal: string;
+  price_feed: string;
+  im_ratio: string;
+  mm_ratio: string;
+  status: string;
+  paused_index_price: string;
+  paused_timestamp: string;
+  closed_price: string;
+};
+
+type PerpOrdersParams = BaseParams & {
+  isOpened?: string;
+  orderType?: "buy" | "sell";
+};
+
+type PerpOrder = Order;
+
+interface TradeEvent {
   base_token: string;
-  order_matcher: string;
   seller: string;
   buyer: string;
   trade_size: string;
@@ -94,26 +153,21 @@ interface SpotTradeEvent {
   sell_order_id: string;
   buy_order_id: string;
   timestamp: string;
+}
+
+interface SpotTradeEvent extends TradeEvent {
+  id: number;
+  order_matcher: string;
   createdAt: string;
   updatedAt: string;
 }
 
-type SpotOrdersParams = {
-  trader?: string;
-  baseToken?: string;
-  orderType?: "BUY" | "SELL";
-  isOpened?: boolean;
-  limit?: number;
-};
+type PerpTradeEvent = TradeEvent;
 
-type SpotTradeEventsParams = {
-  trader?: string;
-  baseToken?: string;
-  limit?: number;
-};
-
-type SpotVolume = {
-  volume24h: number;
-  high24h: number;
-  low24h: number;
+type PerpPosition = {
+  trader: string;
+  base_token: string;
+  taker_position_size: string;
+  taker_open_notional: string;
+  last_tw_premium_growth_global: string;
 };

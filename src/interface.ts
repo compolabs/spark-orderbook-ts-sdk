@@ -83,7 +83,7 @@ export interface PerpMarket {
   quoteTokenAddress: string;
   imRatio: BN;
   mmRatio: BN;
-  status: MarketStatusOutput;
+  status: MarketStatusOutput | string;
   pausedIndexPrice?: BN;
   pausedTimestamp?: number;
   closedPrice?: BN;
