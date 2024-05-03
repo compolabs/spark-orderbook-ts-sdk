@@ -14,6 +14,7 @@ import {
   PerpMarket,
   PerpMaxAbsPositionSize,
   PerpPendingFundingPayment,
+  PerpTrades,
   SparkParams,
   SpotMarketVolume,
   SpotOrder,
@@ -183,6 +184,12 @@ export class Spark {
     const options = await this.getFetchOptions();
 
     return this.read.fetchSpotOrderById(orderId, options);
+  };
+
+  fetchPerpTrades = async (
+    params: FetchTradesParams,
+  ): Promise<PerpTrades[]> => {
+    return this.read.fetchPerpTradeEvents(params);
   };
 
   fetchPerpCollateralBalance = async (
