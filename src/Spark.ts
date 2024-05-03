@@ -14,6 +14,7 @@ import {
   PerpMarket,
   PerpMaxAbsPositionSize,
   PerpPendingFundingPayment,
+  PerpTrades,
   SparkParams,
   SpotMarketVolume,
   SpotOrder,
@@ -185,6 +186,12 @@ export class Spark {
     return this.read.fetchSpotOrderById(orderId, options);
   };
 
+  fetchPerpTrades = async (
+    params: FetchTradesParams,
+  ): Promise<PerpTrades[]> => {
+    return this.read.fetchPerpTradeEvents(params);
+  };
+
   fetchPerpCollateralBalance = async (
     accountAddress: string,
     asset: Asset,
@@ -200,10 +207,17 @@ export class Spark {
 
   fetchPerpAllTraderPositions = async (
     accountAddress: string,
+    assetAddress: string,
+    limit: number,
   ): Promise<PerpAllTraderPosition[]> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchPerpAllTraderPositions(accountAddress, options);
+    return this.read.fetchPerpAllTraderPositions(
+      accountAddress,
+      assetAddress,
+      limit,
+      options,
+    );
   };
 
   fetchPerpIsAllowedCollateral = async (asset: Asset): Promise<boolean> => {
@@ -212,13 +226,20 @@ export class Spark {
     return this.read.fetchPerpIsAllowedCollateral(asset.address, options);
   };
 
-  fetchPerpTraderOrders = async (accountAddress: string, asset: Asset) => {
+  fetchPerpTraderOrders = async (
+    accountAddress: string,
+    asset: Asset,
+    isOpened?: boolean,
+    orderType?: "buy" | "sell",
+  ) => {
     const options = await this.getFetchOptions();
 
     return this.read.fetchPerpTraderOrders(
       accountAddress,
       asset.address,
       options,
+      isOpened,
+      orderType,
     );
   };
 
