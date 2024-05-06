@@ -418,6 +418,11 @@ export class ReadActions {
     tradePrice: string,
     options: Options,
   ): Promise<PerpMaxAbsPositionSize> => {
+    const vaultFactory = VaultAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
       options.contractAddresses.clearingHouse,
       options.wallet,
@@ -432,7 +437,7 @@ export class ReadActions {
     };
 
     try {
-      const result = await clearingHouseFactory.functions
+      const result = await vaultFactory.functions
         .get_max_abs_position_size(addressInput, assetIdInput, tradePrice)
         .get();
       const shortSize = new BN(result.value[0].toString());
@@ -448,7 +453,7 @@ export class ReadActions {
     assetAddress: string,
     options: Options,
   ): Promise<BN> => {
-    const vaultFactory = PerpMarketAbi__factory.connect(
+    const perpMarketFactory = PerpMarketAbi__factory.connect(
       options.contractAddresses.perpMarket,
       options.wallet,
     );
@@ -457,7 +462,7 @@ export class ReadActions {
       value: assetAddress,
     };
 
-    const result = await vaultFactory.functions
+    const result = await perpMarketFactory.functions
       .get_mark_price(assetIdInput)
       .get();
 

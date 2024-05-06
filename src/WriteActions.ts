@@ -164,7 +164,7 @@ export class WriteActions {
     };
 
     const tx = await vaultFactory.functions
-      .withdraw_collateral(amount, assetIdInput, parsedUpdateData)
+      .withdraw_collateral(amount, assetIdInput)
       .callParams({ forward })
       .txParams({ gasPrice: 1 })
       .addContracts([
@@ -226,7 +226,7 @@ export class WriteActions {
     };
 
     const tx = await clearingHouseFactory.functions
-      .open_order(assetIdInput, baseSize, price, parsedUpdateData)
+      .open_order(assetIdInput, baseSize, price)
       .callParams({ forward })
       .txParams({ gasPrice: options.gasPrice })
       .addContracts([
@@ -309,7 +309,57 @@ export class WriteActions {
     };
 
     const tx = await clearingHouseFactory.functions
-      .fulfill_order(baseSize, orderId, parsedUpdateData)
+      .fulfill_order(baseSize, orderId)
+      .callParams({ forward })
+      .txParams({ gasPrice: options.gasPrice })
+      .addContracts([
+        ProxyAbi__factory.connect(
+          options.contractAddresses.proxy,
+          options.wallet,
+        ),
+        PerpMarketAbi__factory.connect(
+          options.contractAddresses.perpMarket,
+          options.wallet,
+        ),
+        AccountBalanceAbi__factory.connect(
+          options.contractAddresses.accountBalance,
+          options.wallet,
+        ),
+        ClearingHouseAbi__factory.connect(
+          options.contractAddresses.clearingHouse,
+          options.wallet,
+        ),
+        VaultAbi__factory.connect(
+          options.contractAddresses.vault,
+          options.wallet,
+        ),
+        PythContractAbi__factory.connect(
+          options.contractAddresses.pyth,
+          options.wallet,
+        ),
+      ]);
+
+    return this.sendTransaction(tx, options);
+  };
+
+  matchPerpOrders = async (
+    order1Id: string,
+    order2Id: string,
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const clearingHouseFactory = ClearingHouseAbi__factory.connect(
+      options.contractAddresses.clearingHouse,
+      options.wallet,
+    );
+
+    const forward: CoinQuantityLike = {
+      amount: "10",
+      assetId:
+        "0x0000000000000000000000000000000000000000000000000000000000000000", // for the test
+    };
+
+    const tx = await clearingHouseFactory.functions
+      .match_orders(order1Id, order2Id)
       .callParams({ forward })
       .txParams({ gasPrice: options.gasPrice })
       .addContracts([

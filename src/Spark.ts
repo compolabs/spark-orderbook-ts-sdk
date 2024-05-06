@@ -273,6 +273,14 @@ export class Spark {
     );
   };
 
+  matchPerpOrders = async (
+    order1Id: string,
+    order2Id: string,
+  ): Promise<WriteTransactionResponse> => {
+    const options = await this.getFetchOptions();
+    return this.write.matchPerpOrders(order1Id, order2Id, options);
+  };
+
   fetchPerpPendingFundingPayment = async (
     accountAddress: string,
     asset: Asset,

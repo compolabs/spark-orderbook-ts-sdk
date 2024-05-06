@@ -4,15 +4,14 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.79.0
-  Forc version: 0.49.3
-  Fuel-Core version: 0.22.1
+  Fuels version: 0.84.0
+  Forc version: 0.56.0
+  Fuel-Core version: 0.26.0
 */
 
 import type {
   BigNumberish,
   BN,
-  Bytes,
   BytesLike,
   Contract,
   DecodedValue,
@@ -21,7 +20,7 @@ import type {
   InvokeFunction,
 } from 'fuels';
 
-import type { Enum, Vec } from "./common";
+import type { Enum } from "./common";
 
 export enum ErrorInput { TradingIsPaused = 'TradingIsPaused', InvalidAsset = 'InvalidAsset', AccessDenied = 'AccessDenied', NotEnoughFreeCollateral = 'NotEnoughFreeCollateral', OnlyClearingHouse = 'OnlyClearingHouse', AmountExceedsTheBalance = 'AmountExceedsTheBalance', V_GTDC = 'V_GTDC', V_MSAE = 'V_MSAE', V_NL = 'V_NL', ZeroPrice = 'ZeroPrice', ZeroAmount = 'ZeroAmount' };
 export enum ErrorOutput { TradingIsPaused = 'TradingIsPaused', InvalidAsset = 'InvalidAsset', AccessDenied = 'AccessDenied', NotEnoughFreeCollateral = 'NotEnoughFreeCollateral', OnlyClearingHouse = 'OnlyClearingHouse', AmountExceedsTheBalance = 'AmountExceedsTheBalance', V_GTDC = 'V_GTDC', V_MSAE = 'V_MSAE', V_NL = 'V_NL', ZeroPrice = 'ZeroPrice', ZeroAmount = 'ZeroAmount' };
@@ -38,8 +37,6 @@ export type CollateralConfigurationInput = { deposit_cap: BigNumberish, collater
 export type CollateralConfigurationOutput = { deposit_cap: BN, collateral_ratio: BN, collateral_scale: BN, discount_ratio: BN, price_feed: string };
 export type I64Input = { value: BigNumberish, negative: boolean };
 export type I64Output = { value: BN, negative: boolean };
-export type RawBytesInput = { ptr: BigNumberish, cap: BigNumberish };
-export type RawBytesOutput = { ptr: BN, cap: BN };
 
 export type VaultAbiConfigurables = {
   OWNER: AddressInput;
@@ -62,6 +59,7 @@ interface VaultAbiInterface extends Interface {
     get_collateral_balance: FunctionFragment;
     get_free_collateral: FunctionFragment;
     get_free_collateral_by_token: FunctionFragment;
+    get_max_abs_position_size: FunctionFragment;
     get_non_settlement_token_balance: FunctionFragment;
     has_non_settlement_token: FunctionFragment;
     is_allowed_collateral: FunctionFragment;
@@ -71,16 +69,17 @@ interface VaultAbiInterface extends Interface {
   encodeFunctionData(functionFragment: 'add_admin', values: [AddressInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'add_collateral_configuration', values: [AssetIdInput, CollateralConfigurationInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'deposit_collateral', values: []): Uint8Array;
-  encodeFunctionData(functionFragment: 'liquidate_collateral', values: [AddressInput, AssetIdInput, BigNumberish, Vec<Bytes>]): Uint8Array;
+  encodeFunctionData(functionFragment: 'liquidate_collateral', values: [AddressInput, AssetIdInput, BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'pause_trading', values: []): Uint8Array;
   encodeFunctionData(functionFragment: 'remove_admin', values: [AddressInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'resume_trading', values: []): Uint8Array;
-  encodeFunctionData(functionFragment: 'withdraw_all', values: [AssetIdInput, Vec<Bytes>]): Uint8Array;
-  encodeFunctionData(functionFragment: 'withdraw_collateral', values: [BigNumberish, AssetIdInput, Vec<Bytes>]): Uint8Array;
+  encodeFunctionData(functionFragment: 'withdraw_all', values: [AssetIdInput]): Uint8Array;
+  encodeFunctionData(functionFragment: 'withdraw_collateral', values: [BigNumberish, AssetIdInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'get_account_value_and_total_collateral_value', values: [AddressInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'get_collateral_balance', values: [AddressInput, AssetIdInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'get_free_collateral', values: [AddressInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'get_free_collateral_by_token', values: [AddressInput, AssetIdInput]): Uint8Array;
+  encodeFunctionData(functionFragment: 'get_max_abs_position_size', values: [AddressInput, AssetIdInput, BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'get_non_settlement_token_balance', values: [AddressInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'has_non_settlement_token', values: [AddressInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'is_allowed_collateral', values: [AssetIdInput]): Uint8Array;
@@ -99,6 +98,7 @@ interface VaultAbiInterface extends Interface {
   decodeFunctionData(functionFragment: 'get_collateral_balance', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'get_free_collateral', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'get_free_collateral_by_token', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'get_max_abs_position_size', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'get_non_settlement_token_balance', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'has_non_settlement_token', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'is_allowed_collateral', data: BytesLike): DecodedValue;
@@ -111,16 +111,17 @@ export class VaultAbi extends Contract {
     add_admin: InvokeFunction<[address: AddressInput], void>;
     add_collateral_configuration: InvokeFunction<[asset_id: AssetIdInput, configuration: CollateralConfigurationInput], void>;
     deposit_collateral: InvokeFunction<[], void>;
-    liquidate_collateral: InvokeFunction<[trader: AddressInput, token: AssetIdInput, settlement_amount: BigNumberish, price_update_data: Vec<Bytes>], BN>;
+    liquidate_collateral: InvokeFunction<[trader: AddressInput, token: AssetIdInput, settlement_amount: BigNumberish], BN>;
     pause_trading: InvokeFunction<[], void>;
     remove_admin: InvokeFunction<[address: AddressInput], void>;
     resume_trading: InvokeFunction<[], void>;
-    withdraw_all: InvokeFunction<[token: AssetIdInput, price_update_data: Vec<Bytes>], BN>;
-    withdraw_collateral: InvokeFunction<[amount: BigNumberish, token: AssetIdInput, price_update_data: Vec<Bytes>], void>;
+    withdraw_all: InvokeFunction<[token: AssetIdInput], BN>;
+    withdraw_collateral: InvokeFunction<[amount: BigNumberish, token: AssetIdInput], void>;
     get_account_value_and_total_collateral_value: InvokeFunction<[trader: AddressInput], [I64Output, I64Output]>;
     get_collateral_balance: InvokeFunction<[trader: AddressInput, token: AssetIdInput], BN>;
     get_free_collateral: InvokeFunction<[trader: AddressInput], BN>;
     get_free_collateral_by_token: InvokeFunction<[trader: AddressInput, token: AssetIdInput], BN>;
+    get_max_abs_position_size: InvokeFunction<[trader: AddressInput, base_asset: AssetIdInput, trade_price: BigNumberish], [BN, BN]>;
     get_non_settlement_token_balance: InvokeFunction<[trader: AddressInput], BN>;
     has_non_settlement_token: InvokeFunction<[trader: AddressInput], boolean>;
     is_allowed_collateral: InvokeFunction<[token: AssetIdInput], boolean>;

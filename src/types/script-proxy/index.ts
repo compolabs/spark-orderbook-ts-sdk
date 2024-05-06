@@ -9,6 +9,6 @@
   Fuel-Core version: 0.26.0
 */
 
-export type { ClearingHouseAbi } from './ClearingHouseAbi';
+export type { ScriptProxyAbi } from './ScriptProxyAbi';
 
-export { ClearingHouseAbi__factory } from './factories/ClearingHouseAbi__factory';
+export { ScriptProxyAbi__factory } from './factories/ScriptProxyAbi__factory';
