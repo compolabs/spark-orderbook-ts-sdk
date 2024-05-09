@@ -1563,7 +1563,7 @@ const _abi = {
         "type": 19,
         "typeArguments": null
       },
-      "offset": 260136
+      "offset": 260248
     },
     {
       "name": "PROXY_ADDRESS",
@@ -1572,7 +1572,7 @@ const _abi = {
         "type": 13,
         "typeArguments": []
       },
-      "offset": 260000
+      "offset": 260112
     },
     {
       "name": "FULLY_CLOSED_RATIO",
@@ -1581,7 +1581,7 @@ const _abi = {
         "type": 19,
         "typeArguments": null
       },
-      "offset": 260264
+      "offset": 260376
     },
     {
       "name": "SETTLEMENT_TOKEN",
@@ -1590,7 +1590,7 @@ const _abi = {
         "type": 14,
         "typeArguments": []
       },
-      "offset": 260352
+      "offset": 260464
     }
   ]
 };

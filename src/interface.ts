@@ -42,6 +42,7 @@ export interface SparkParams {
   wallet?: WalletLocked | WalletUnlocked;
   gasPrice?: string;
   gasLimitMultiplier?: string;
+  pythUrl?: string;
 }
 
 export interface SpotOrder {

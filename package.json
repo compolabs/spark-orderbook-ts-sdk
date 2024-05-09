@@ -41,6 +41,7 @@
     "fuels": ">=0.82.0"
   },
   "dependencies": {
+    "@pythnetwork/pyth-evm-js": "^1.46.0",
     "bignumber.js": "^9.1.2",
     "tsdef": "^0.0.14"
   },

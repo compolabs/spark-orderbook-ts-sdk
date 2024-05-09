@@ -15,7 +15,7 @@ export const BETA_TOKENS = [
     assetId:
       "0x593b117a05f5ea64b39ba1f9bc3fb7e7a791c9be130e28376ad552eacdb3b746",
     priceFeed:
-      "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43",
+      "0xc5e0e0c92116c0c070a242b254270441a6201af680a33e0381561c59db3266c9",
   },
   {
     name: "USDC",

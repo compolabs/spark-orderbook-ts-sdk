@@ -423,11 +423,6 @@ export class ReadActions {
       options.wallet,
     );
 
-    const clearingHouseFactory = ClearingHouseAbi__factory.connect(
-      options.contractAddresses.clearingHouse,
-      options.wallet,
-    );
-
     const addressInput: AddressInput = {
       value: new Address(accountAddress as any).toB256(),
     };
@@ -445,6 +440,7 @@ export class ReadActions {
 
       return { shortSize, longSize };
     } catch (error) {
+      console.log(error);
       return { shortSize: BN.ZERO, longSize: BN.ZERO };
     }
   };
