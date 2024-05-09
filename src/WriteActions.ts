@@ -37,7 +37,7 @@ export class WriteActions {
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const orderbookFactory = OrderbookAbi__factory.connect(
-      options.contractAddresses.spotMarket,
+      options.contractAddresses.spotMarket.base,
       options.wallet,
     );
 
@@ -72,7 +72,7 @@ export class WriteActions {
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const orderbookFactory = OrderbookAbi__factory.connect(
-      options.contractAddresses.spotMarket,
+      options.contractAddresses.spotMarket.base,
       options.wallet,
     );
 
@@ -89,7 +89,7 @@ export class WriteActions {
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const orderbookFactory = OrderbookAbi__factory.connect(
-      options.contractAddresses.spotMarket,
+      options.contractAddresses.spotMarket.base,
       options.wallet,
     );
 
@@ -105,7 +105,7 @@ export class WriteActions {
     amount: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const tokenFactory = options.contractAddresses.tokenFactory;
+    const tokenFactory = options.contractAddresses.tokenFactory.base;
     const tokenFactoryContract = TokenAbi__factory.connect(
       tokenFactory,
       options.wallet,
@@ -132,7 +132,7 @@ export class WriteActions {
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const vaultFactory = VaultAbi__factory.connect(
-      options.contractAddresses.vault,
+      options.contractAddresses.vault.base,
       options.wallet,
     );
 
@@ -196,27 +196,27 @@ export class WriteActions {
       .txParams({ gasPrice: 1 })
       .addContracts([
         ProxyAbi__factory.connect(
-          options.contractAddresses.proxy,
+          options.contractAddresses.proxy.base,
           options.wallet,
         ),
         PerpMarketAbi__factory.connect(
-          options.contractAddresses.perpMarket,
+          options.contractAddresses.perpMarket.base,
           options.wallet,
         ),
         AccountBalanceAbi__factory.connect(
-          options.contractAddresses.accountBalance,
+          options.contractAddresses.accountBalance.base,
           options.wallet,
         ),
         ClearingHouseAbi__factory.connect(
-          options.contractAddresses.clearingHouse,
+          options.contractAddresses.clearingHouse.base,
           options.wallet,
         ),
         VaultAbi__factory.connect(
-          options.contractAddresses.vault,
+          options.contractAddresses.vault.base,
           options.wallet,
         ),
         PythContractAbi__factory.connect(
-          options.contractAddresses.pyth,
+          options.contractAddresses.pyth.base,
           options.wallet,
         ),
       ]);
@@ -240,7 +240,7 @@ export class WriteActions {
     );
 
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
-      options.contractAddresses.clearingHouse,
+      options.contractAddresses.clearingHouse.base,
       options.wallet,
     );
 
@@ -284,23 +284,23 @@ export class WriteActions {
       .txParams({ gasPrice: options.gasPrice })
       .addContracts([
         ProxyAbi__factory.connect(
-          options.contractAddresses.proxy,
+          options.contractAddresses.proxy.base,
           options.wallet,
         ),
         PerpMarketAbi__factory.connect(
-          options.contractAddresses.perpMarket,
+          options.contractAddresses.perpMarket.base,
           options.wallet,
         ),
         AccountBalanceAbi__factory.connect(
-          options.contractAddresses.accountBalance,
+          options.contractAddresses.accountBalance.base,
           options.wallet,
         ),
         VaultAbi__factory.connect(
-          options.contractAddresses.vault,
+          options.contractAddresses.vault.base,
           options.wallet,
         ),
         PythContractAbi__factory.connect(
-          options.contractAddresses.pyth,
+          options.contractAddresses.pyth.base,
           options.wallet,
         ),
       ]);
@@ -313,7 +313,7 @@ export class WriteActions {
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
-      options.contractAddresses.clearingHouse,
+      options.contractAddresses.clearingHouse.base,
       options.wallet,
     );
 
@@ -322,15 +322,15 @@ export class WriteActions {
       .txParams({ gasPrice: options.gasPrice })
       .addContracts([
         ProxyAbi__factory.connect(
-          options.contractAddresses.proxy,
+          options.contractAddresses.proxy.base,
           options.wallet,
         ),
         PerpMarketAbi__factory.connect(
-          options.contractAddresses.perpMarket,
+          options.contractAddresses.perpMarket.base,
           options.wallet,
         ),
         ClearingHouseAbi__factory.connect(
-          options.contractAddresses.clearingHouse,
+          options.contractAddresses.clearingHouse.base,
           options.wallet,
         ),
       ]);
@@ -387,27 +387,27 @@ export class WriteActions {
       .txParams({ gasPrice: options.gasPrice })
       .addContracts([
         ProxyAbi__factory.connect(
-          options.contractAddresses.proxy,
+          options.contractAddresses.proxy.base,
           options.wallet,
         ),
         PerpMarketAbi__factory.connect(
-          options.contractAddresses.perpMarket,
+          options.contractAddresses.perpMarket.base,
           options.wallet,
         ),
         AccountBalanceAbi__factory.connect(
-          options.contractAddresses.accountBalance,
+          options.contractAddresses.accountBalance.base,
           options.wallet,
         ),
         ClearingHouseAbi__factory.connect(
-          options.contractAddresses.clearingHouse,
+          options.contractAddresses.clearingHouse.base,
           options.wallet,
         ),
         VaultAbi__factory.connect(
-          options.contractAddresses.vault,
+          options.contractAddresses.vault.base,
           options.wallet,
         ),
         PythContractAbi__factory.connect(
-          options.contractAddresses.pyth,
+          options.contractAddresses.pyth.base,
           options.wallet,
         ),
       ]);
@@ -421,7 +421,7 @@ export class WriteActions {
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
-      options.contractAddresses.clearingHouse,
+      options.contractAddresses.clearingHouse.base,
       options.wallet,
     );
 
@@ -437,27 +437,27 @@ export class WriteActions {
       .txParams({ gasPrice: options.gasPrice })
       .addContracts([
         ProxyAbi__factory.connect(
-          options.contractAddresses.proxy,
+          options.contractAddresses.proxy.base,
           options.wallet,
         ),
         PerpMarketAbi__factory.connect(
-          options.contractAddresses.perpMarket,
+          options.contractAddresses.perpMarket.base,
           options.wallet,
         ),
         AccountBalanceAbi__factory.connect(
-          options.contractAddresses.accountBalance,
+          options.contractAddresses.accountBalance.base,
           options.wallet,
         ),
         ClearingHouseAbi__factory.connect(
-          options.contractAddresses.clearingHouse,
+          options.contractAddresses.clearingHouse.base,
           options.wallet,
         ),
         VaultAbi__factory.connect(
-          options.contractAddresses.vault,
+          options.contractAddresses.vault.base,
           options.wallet,
         ),
         PythContractAbi__factory.connect(
-          options.contractAddresses.pyth,
+          options.contractAddresses.pyth.base,
           options.wallet,
         ),
       ]);

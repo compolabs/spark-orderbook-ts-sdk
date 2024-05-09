@@ -11,7 +11,7 @@ type ContractAddress = {
   fuel: FuelAddress;
 };
 
-interface BetaContractAddresses {
+export interface BetaContractAddresses {
   [key: string]: ContractAddress;
 }
 

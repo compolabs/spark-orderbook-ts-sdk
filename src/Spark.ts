@@ -10,7 +10,11 @@ import {
 import { PythContractAbi__factory } from "./types/pyth";
 import BN from "./utils/BN";
 import { NETWORK_ERROR, NetworkError } from "./utils/NetworkError";
-import { DEFAULT_GAS_LIMIT_MULTIPLIER, DEFAULT_GAS_PRICE } from "./constants";
+import {
+  BETA_CONTRACT_ADDRESSES,
+  DEFAULT_GAS_LIMIT_MULTIPLIER,
+  DEFAULT_GAS_PRICE,
+} from "./constants";
 import {
   Asset,
   FetchOrdersParams,
@@ -46,7 +50,7 @@ export class Spark {
 
   constructor(params: SparkParams) {
     this.options = {
-      contractAddresses: params.contractAddresses,
+      contractAddresses: params.contractAddresses ?? BETA_CONTRACT_ADDRESSES,
       wallet: params.wallet,
       gasPrice: params.gasPrice ?? DEFAULT_GAS_PRICE,
       gasLimitMultiplier:
@@ -373,7 +377,7 @@ export class Spark {
     const options = await this.getFetchOptions();
 
     const pythContract = PythContractAbi__factory.connect(
-      options.contractAddresses.pyth,
+      options.contractAddresses.pyth.base,
       options.wallet,
     );
 

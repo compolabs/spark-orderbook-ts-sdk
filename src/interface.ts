@@ -1,6 +1,7 @@
 import { WalletLocked, WalletUnlocked } from "fuels";
 
 import BN from "./utils/BN";
+import { BetaContractAddresses } from "./constants";
 
 export type MarketStatusOutput = "Opened" | "Paused" | "Closed";
 
@@ -22,7 +23,7 @@ export interface Asset {
 }
 
 interface BaseOptions {
-  contractAddresses: Contracts;
+  contractAddresses: BetaContractAddresses;
   gasPrice: string;
   gasLimitMultiplier: string;
 }
@@ -37,8 +38,8 @@ export interface OptionsSpark extends BaseOptions {
 
 export interface SparkParams {
   networkUrl: string;
-  contractAddresses: Contracts;
   indexerApiUrl: string;
+  contractAddresses?: BetaContractAddresses;
   wallet?: WalletLocked | WalletUnlocked;
   gasPrice?: string;
   gasLimitMultiplier?: string;
