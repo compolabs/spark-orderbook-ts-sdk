@@ -128,6 +128,8 @@ describe("Read Tests", () => {
     async () => {
       const positions = await spark.fetchPerpAllTraderPositions(
         wallet.address.toAddress(),
+        BETA_TOKENS[1].assetId,
+        100,
       );
 
       expect(positions).toBeDefined();

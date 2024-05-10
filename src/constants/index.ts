@@ -29,28 +29,28 @@ export const BETA_CONTRACT_ADDRESSES: BetaContractAddresses = {
     fuel: "fuel",
   },
   vault: {
-    base: "0xb3183fce01719581d51b2e2728d48c41487587de467658c0b2b771da12f453da",
-    fuel: "fuel1kvvrlnspwx2cr4gm9cnj34yvg9y8tp77gem93s9jkaca5yh520dqn04uzy",
+    base: "0x04bfef4abff72e0b8b8b96f3a89beacfa4e280a0944f74adaba34f74b9af0bd3",
+    fuel: "fuel1qjl77j4l7uhqhzutjme63xl2e7jw9q9qj38hftdt5d8hfwd0p0fs75tsh3",
   },
   accountBalance: {
-    base: "0xbc2e353b4abce76a21f517142e50d9f1eb3d0d0685e1288574110141853d483d",
-    fuel: "fuel1hshr2w62hnnk5g04zu2zu5xe784n6rgxshsj3pt5zyq5rpfafq7sxh02eh",
+    base: "0x798dce97aaa21bde82cf55459d14c828238394c80ae4ea444d20667baba83dd7",
+    fuel: "fuel10xxua9a25gdaaqk024ze69xg9q3c89xgptjw53zdypn8h2ag8htsruu77f",
   },
   clearingHouse: {
-    base: "0x3ae5b110c319fdbf9e8fe59f7fd60e84b2b01725b1f63270927c4aa8f279a7ce",
-    fuel: "fuel18tjmzyxrr87ml850uk0hl4swsjetq9e9k8mryuyj03923une5l8q0dm42s",
+    base: "0xfe244b38e8783290538dd2f9de7461013a0436c69a6d193f8d2fba270e9e1655",
+    fuel: "fuel1lcjykw8g0qefq5ud6tuauarpqyaqgdkxnfk3j0ud97azwr57ze2svmqlac",
   },
   perpMarket: {
-    base: "0x8f49a91675443bb1a90e91d5c04c07d3e7fe38afaf9167e2cee616ef0b566096",
-    fuel: "fuel13ay6j9n4gsamr2gwj82uqnq860nluw9047gk0ckwuctw7z6kvztq9yehr3",
+    base: "0xfb8dc15d38f47c62f7b15724e3e22645435d6314cc51a5c0fc49896da3f0a397",
+    fuel: "fuel1lwxuzhfc737x9aa32ujw8c3xg4p46cc5e3g6ts8ufxykmgls5wtst3953x",
   },
   proxy: {
-    base: "0xb8f0f15983383f478600cd17bfacb4ab246f04e071151f29a31a594841d04d56",
-    fuel: "fuel1hrc0zkvr8ql50psqe5tmlt954vjx7p8qwy2372drrfv5sswsf4tqc6frwe",
+    base: "0x5db3efcefe7c0f22566a78088fe29d6d6de73b667da0abe9e3b6e7a7d6bd458d",
+    fuel: "fuel1tke7lnh70s8jy4n20qyglc5ad4k7wwmx0ks2h60rkmn6044agkxssvcgm8",
   },
   insuranceFund: {
-    base: "0x07e9b371baeb21697ba2f8aa5032466f2b76341b60a10c0bbacb8a1bda2f5af5",
-    fuel: "fuel1ql5mxud6avskj7azlz49qvjxdu4hvdqmvzsscza6ew9phk30tt6s2mvec2",
+    base: "0x9cb2e31a5e1ed73da81e2523d4935104c971b0a920a75d2ae6b7f2cc5ffbfb43",
+    fuel: "fuel1njewxxj7rmtnm2q7y53afy63qnyhrv9fyzn462hxklevchlmldpssy5wlz",
   },
 };
 

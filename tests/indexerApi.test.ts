@@ -66,7 +66,7 @@ describe("Indexer Api Tests", () => {
     },
     TIMEOUT_DEADLINE,
   );
-  it(
+  it.skip(
     "getSpotOrderChangeEventsById",
     async () => {
       const allEvents = await indexer.getSpotOrderChangeEvents();

@@ -34,6 +34,7 @@
     "build": "tsup && npm run copy-dts",
     "lint": "eslint --ext .tsx,.ts . --fix",
     "test": "jest",
+    "test-watch": "jest --watch",
     "prepare": "husky",
     "copy-dts": "copyfiles -u 1 \"src/**/*.d.ts\" dist"
   },
