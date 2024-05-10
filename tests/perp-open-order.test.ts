@@ -15,8 +15,7 @@ import {
   TEST_TIMEOUT,
   TOKENS_BY_SYMBOL,
 } from "./constants";
-
-const PRIVATE_KEY_ALICE = Wallet.generate().privateKey;
+import { PRIVATE_KEY_ALICE } from "./constants";
 
 describe("Perp Open Order Tests", () => {
   let wallet: WalletUnlocked;

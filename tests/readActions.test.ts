@@ -8,7 +8,8 @@ import Spark, {
   BETA_TOKENS,
 } from "../src";
 
-const PRIVATE_KEY_ALICE = Wallet.generate().privateKey;
+import { PRIVATE_KEY_ALICE } from "./constants";
+
 const TIMEOUT_DEADLINE = 60_000; // 1min
 
 const TOKENS_LIST = Object.values(BETA_TOKENS).map(

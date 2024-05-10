@@ -389,7 +389,7 @@ export class Spark {
     const parsedUpdateData = priceUpdateData.map((v) =>
       Array.from(arrayify(v)),
     );
-    console.log(parsedUpdateData, "priceUpdateData");
+
     const updateFee = await pythContract.functions
       .update_fee(parsedUpdateData)
       .get();

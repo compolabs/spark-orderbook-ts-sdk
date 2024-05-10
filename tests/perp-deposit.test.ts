@@ -15,9 +15,7 @@ import {
   TEST_TIMEOUT,
   TOKENS_BY_SYMBOL,
 } from "./constants";
-
-const PRIVATE_KEY_ALICE =
-  "0xc47772fe3a12ed3ce28adf9c4e615d32c06f4085d1ffc3524e533ec5c0b67372";
+import { PRIVATE_KEY_ALICE } from "./constants";
 
 describe("Perp Deposit \\ Withdraw Tests", () => {
   let wallet: WalletUnlocked;
