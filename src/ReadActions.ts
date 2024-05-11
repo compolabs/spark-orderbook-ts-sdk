@@ -139,7 +139,7 @@ export class ReadActions {
     options: Options,
   ): Promise<SpotOrderWithoutTimestamp | undefined> => {
     const orderbookFactory = OrderbookAbi__factory.connect(
-      options.contractAddresses.spotMarket.base,
+      options.contractAddresses.spotMarket,
       options.wallet,
     );
 
@@ -164,7 +164,7 @@ export class ReadActions {
     options: Options,
   ): Promise<BN> => {
     const vaultFactory = VaultAbi__factory.connect(
-      options.contractAddresses.vault.base,
+      options.contractAddresses.vault,
       options.wallet,
     );
 
@@ -212,7 +212,7 @@ export class ReadActions {
     options: Options,
   ): Promise<BN> => {
     const perpMarketFactory = PerpMarketAbi__factory.connect(
-      options.contractAddresses.perpMarket.base,
+      options.contractAddresses.perpMarket,
       options.wallet,
     );
 
@@ -234,7 +234,7 @@ export class ReadActions {
     options: Options,
   ): Promise<BN> => {
     const accountBalanceFactory = AccountBalanceAbi__factory.connect(
-      options.contractAddresses.accountBalance.base,
+      options.contractAddresses.accountBalance,
       options.wallet,
     );
 
@@ -256,7 +256,7 @@ export class ReadActions {
     options: Options,
   ): Promise<BN> => {
     const vaultFactory = VaultAbi__factory.connect(
-      options.contractAddresses.vault.base,
+      options.contractAddresses.vault,
       options.wallet,
     );
 
@@ -279,7 +279,7 @@ export class ReadActions {
     options: Options,
   ): Promise<PerpMarket> => {
     const clearingHouseFactory = ClearingHouseAbi__factory.connect(
-      options.contractAddresses.clearingHouse.base,
+      options.contractAddresses.clearingHouse,
       options.wallet,
     );
 
@@ -346,7 +346,7 @@ export class ReadActions {
     options: Options,
   ): Promise<PerpPendingFundingPayment> => {
     const accountBalanceFactory = AccountBalanceAbi__factory.connect(
-      options.contractAddresses.accountBalance.base,
+      options.contractAddresses.accountBalance,
       options.wallet,
     );
 
@@ -373,7 +373,7 @@ export class ReadActions {
     options: Options,
   ): Promise<boolean> => {
     const vaultFactory = VaultAbi__factory.connect(
-      options.contractAddresses.vault.base,
+      options.contractAddresses.vault,
       options.wallet,
     );
 
@@ -419,7 +419,7 @@ export class ReadActions {
     options: Options,
   ): Promise<PerpMaxAbsPositionSize> => {
     const vaultFactory = VaultAbi__factory.connect(
-      options.contractAddresses.vault.base,
+      options.contractAddresses.vault,
       options.wallet,
     );
 
@@ -450,7 +450,7 @@ export class ReadActions {
     options: Options,
   ): Promise<BN> => {
     const perpMarketFactory = PerpMarketAbi__factory.connect(
-      options.contractAddresses.perpMarket.base,
+      options.contractAddresses.perpMarket,
       options.wallet,
     );
 

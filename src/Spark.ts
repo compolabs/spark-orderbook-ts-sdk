@@ -377,7 +377,7 @@ export class Spark {
     const options = await this.getFetchOptions();
 
     const pythContract = PythContractAbi__factory.connect(
-      options.contractAddresses.pyth.base,
+      options.contractAddresses.pyth,
       options.wallet,
     );
 
