@@ -1,10 +1,12 @@
 import {
-  arrayify,
+  Address,
   CoinQuantityLike,
   FunctionInvocationScope,
   hashMessage,
+  Script,
 } from "fuels";
 
+import { BETA_TOKENS } from "./constants/tokens";
 import { AccountBalanceAbi__factory } from "./types/account-balance";
 import { I64Input } from "./types/account-balance/AccountBalanceAbi";
 import { ClearingHouseAbi__factory } from "./types/clearing-house";
@@ -12,11 +14,18 @@ import { OrderbookAbi__factory } from "./types/orderbook";
 import { PerpMarketAbi__factory } from "./types/perp-market";
 import { ProxyAbi__factory } from "./types/proxy";
 import { PythContractAbi__factory } from "./types/pyth";
+import { ScriptProxyAbi__factory } from "./types/script-proxy";
+import {
+  FulfillOrderInput,
+  OpenOrderInput,
+  WithdrawCollateralInput,
+} from "./types/script-proxy/ScriptProxyAbi";
+import ScriptProxyAbiBytes from "./types/script-proxy/ScriptProxyAbi.hex";
 import { TokenAbi__factory } from "./types/src-20";
 import { AssetIdInput, IdentityInput } from "./types/src-20/TokenAbi";
 import { VaultAbi__factory } from "./types/vault";
 import BN from "./utils/BN";
-import { DEFAULT_DECIMALS } from "./constants";
+import { BETA_CONTRACT_ADDRESSES, DEFAULT_DECIMALS } from "./constants";
 import { Asset, Options, WriteTransactionResponse } from "./interface";
 
 export class WriteActions {
@@ -144,11 +153,13 @@ export class WriteActions {
     baseTokenAddress: string,
     gasTokenAddress: string,
     amount: string,
-    updateData: string[],
+    updateData: number[][],
+    updateFee: BN,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const vaultFactory = VaultAbi__factory.connect(
-      options.contractAddresses.vault,
+    const scriptProxy = new Script(
+      ScriptProxyAbiBytes,
+      ScriptProxyAbi__factory.abi,
       options.wallet,
     );
 
@@ -156,15 +167,31 @@ export class WriteActions {
       value: baseTokenAddress,
     };
 
-    const parsedUpdateData = updateData.map((v) => Array.from(arrayify(v)));
-
     const forward: CoinQuantityLike = {
       amount: "10",
       assetId: gasTokenAddress,
     };
 
-    const tx = await vaultFactory.functions
-      .withdraw_collateral(amount, assetIdInput, parsedUpdateData)
+    const priceFeedIds: unknown = BETA_TOKENS.map((v) => v.priceFeed);
+
+    const withdrawCollateralInput: WithdrawCollateralInput = {
+      vault: {
+        value: Address.fromString(BETA_CONTRACT_ADDRESSES.vault).toB256(),
+      },
+      amount: amount.toString(),
+      collateral: assetIdInput,
+    };
+
+    const tx = await scriptProxy.functions
+      .main(
+        { WithdrawCollateral: withdrawCollateralInput },
+        {
+          value: Address.fromString(BETA_CONTRACT_ADDRESSES.proxy).toB256(),
+        },
+        updateFee,
+        priceFeedIds,
+        updateData,
+      )
       .callParams({ forward })
       .txParams({ gasPrice: 1 })
       .addContracts([
@@ -202,11 +229,13 @@ export class WriteActions {
     gasTokenAddress: string,
     amount: string,
     price: string,
-    updateData: string[],
+    updateData: number[][],
+    updateFee: BN,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const clearingHouseFactory = ClearingHouseAbi__factory.connect(
-      options.contractAddresses.clearingHouse,
+    const scriptProxy = new Script(
+      ScriptProxyAbiBytes,
+      ScriptProxyAbi__factory.abi,
       options.wallet,
     );
 
@@ -218,15 +247,34 @@ export class WriteActions {
     const absSize = amount.replace("-", "");
     const baseSize: I64Input = { value: absSize, negative: isNegative };
 
-    const parsedUpdateData = updateData.map((v) => Array.from(arrayify(v)));
+    const priceFeedIds: unknown = BETA_TOKENS.map((v) => v.priceFeed);
 
     const forward: CoinQuantityLike = {
       amount: "10",
       assetId: gasTokenAddress,
     };
 
-    const tx = await clearingHouseFactory.functions
-      .open_order(assetIdInput, baseSize, price, parsedUpdateData)
+    const openPerpOrderInput: OpenOrderInput = {
+      clearing_house: {
+        value: Address.fromString(
+          BETA_CONTRACT_ADDRESSES.clearingHouse,
+        ).toB256(),
+      },
+      base_size: baseSize,
+      base_token: assetIdInput,
+      order_price: price,
+    };
+
+    const tx = await scriptProxy.functions
+      .main(
+        { OpenOrder: openPerpOrderInput },
+        {
+          value: Address.fromString(BETA_CONTRACT_ADDRESSES.proxy).toB256(),
+        },
+        updateFee,
+        priceFeedIds,
+        updateData,
+      )
       .callParams({ forward })
       .txParams({ gasPrice: options.gasPrice })
       .addContracts([
@@ -289,11 +337,13 @@ export class WriteActions {
     gasTokenAddress: string,
     orderId: string,
     amount: string,
-    updateData: string[],
+    updateData: number[][],
+    updateFee: BN,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const clearingHouseFactory = ClearingHouseAbi__factory.connect(
-      options.contractAddresses.clearingHouse,
+    const scriptProxy = new Script(
+      ScriptProxyAbiBytes,
+      ScriptProxyAbi__factory.abi,
       options.wallet,
     );
 
@@ -301,15 +351,83 @@ export class WriteActions {
     const absSize = amount.replace("-", "");
     const baseSize: I64Input = { value: absSize, negative: isNegative };
 
-    const parsedUpdateData = updateData.map((v) => Array.from(arrayify(v)));
+    const priceFeedIds: unknown = BETA_TOKENS.map((v) => v.priceFeed);
 
     const forward: CoinQuantityLike = {
       amount: "10",
       assetId: gasTokenAddress,
     };
 
+    const fullfillPerpOrderInput: FulfillOrderInput = {
+      clearing_house: {
+        value: Address.fromString(
+          BETA_CONTRACT_ADDRESSES.clearingHouse,
+        ).toB256(),
+      },
+      base_size: baseSize,
+      order_id: orderId,
+    };
+
+    const tx = await scriptProxy.functions
+      .main(
+        { FulfillOrder: fullfillPerpOrderInput },
+        {
+          value: Address.fromString(BETA_CONTRACT_ADDRESSES.proxy).toB256(),
+        },
+        updateFee,
+        priceFeedIds,
+        updateData,
+      )
+      .callParams({ forward })
+      .txParams({ gasPrice: options.gasPrice })
+      .addContracts([
+        ProxyAbi__factory.connect(
+          options.contractAddresses.proxy,
+          options.wallet,
+        ),
+        PerpMarketAbi__factory.connect(
+          options.contractAddresses.perpMarket,
+          options.wallet,
+        ),
+        AccountBalanceAbi__factory.connect(
+          options.contractAddresses.accountBalance,
+          options.wallet,
+        ),
+        ClearingHouseAbi__factory.connect(
+          options.contractAddresses.clearingHouse,
+          options.wallet,
+        ),
+        VaultAbi__factory.connect(
+          options.contractAddresses.vault,
+          options.wallet,
+        ),
+        PythContractAbi__factory.connect(
+          options.contractAddresses.pyth,
+          options.wallet,
+        ),
+      ]);
+
+    return this.sendTransaction(tx, options);
+  };
+
+  matchPerpOrders = async (
+    order1Id: string,
+    order2Id: string,
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const clearingHouseFactory = ClearingHouseAbi__factory.connect(
+      options.contractAddresses.clearingHouse,
+      options.wallet,
+    );
+
+    const forward: CoinQuantityLike = {
+      amount: "10",
+      assetId:
+        "0x0000000000000000000000000000000000000000000000000000000000000000", // for the test
+    };
+
     const tx = await clearingHouseFactory.functions
-      .fulfill_order(baseSize, orderId, parsedUpdateData)
+      .match_orders(order1Id, order2Id)
       .callParams({ forward })
       .txParams({ gasPrice: options.gasPrice })
       .addContracts([

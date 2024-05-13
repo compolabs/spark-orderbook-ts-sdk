@@ -1,8 +1,20 @@
-import { Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
+import { EvmPriceServiceConnection } from "@pythnetwork/pyth-evm-js";
+import {
+  arrayify,
+  Provider,
+  Wallet,
+  WalletLocked,
+  WalletUnlocked,
+} from "fuels";
 
+import { PythContractAbi__factory } from "./types/pyth";
 import BN from "./utils/BN";
 import { NETWORK_ERROR, NetworkError } from "./utils/NetworkError";
-import { DEFAULT_GAS_LIMIT_MULTIPLIER, DEFAULT_GAS_PRICE } from "./constants";
+import {
+  BETA_CONTRACT_ADDRESSES,
+  DEFAULT_GAS_LIMIT_MULTIPLIER,
+  DEFAULT_GAS_PRICE,
+} from "./constants";
 import {
   Asset,
   FetchOrdersParams,
@@ -25,6 +37,8 @@ import {
 import { ReadActions } from "./ReadActions";
 import { WriteActions } from "./WriteActions";
 
+const PYTH_URL = "https://hermes.pyth.network";
+
 export class Spark {
   private write = new WriteActions();
 
@@ -32,10 +46,11 @@ export class Spark {
 
   private providerPromise: Promise<Provider>;
   private options: OptionsSpark;
+  private pythServiceConnection: EvmPriceServiceConnection;
 
   constructor(params: SparkParams) {
     this.options = {
-      contractAddresses: params.contractAddresses,
+      contractAddresses: params.contractAddresses ?? BETA_CONTRACT_ADDRESSES,
       wallet: params.wallet,
       gasPrice: params.gasPrice ?? DEFAULT_GAS_PRICE,
       gasLimitMultiplier:
@@ -45,6 +60,19 @@ export class Spark {
     this.read = new ReadActions(params.indexerApiUrl);
 
     this.providerPromise = Provider.create(params.networkUrl);
+
+    this.pythServiceConnection = new EvmPriceServiceConnection(
+      params.pythUrl ?? PYTH_URL,
+      {
+        logger: {
+          error: console.error,
+          warn: console.warn,
+          info: () => undefined,
+          debug: () => undefined,
+          trace: () => undefined,
+        },
+      },
+    );
   }
 
   setActiveWallet = (wallet?: WalletLocked | WalletUnlocked) => {
@@ -107,13 +135,17 @@ export class Spark {
     baseToken: Asset,
     gasToken: Asset,
     amount: string,
-    oracleUpdateData: string[],
+    tokenPriceFeed: string,
   ): Promise<WriteTransactionResponse> => {
+    const { priceUpdateData, updateFee } =
+      await this.getPriceFeedUpdateData(tokenPriceFeed);
+
     return this.write.withdrawPerpCollateral(
       baseToken.address,
       gasToken.address,
       amount,
-      oracleUpdateData,
+      priceUpdateData,
+      updateFee as BN,
       this.getApiOptions(),
     );
   };
@@ -123,14 +155,17 @@ export class Spark {
     gasToken: Asset,
     amount: string,
     price: string,
-    updateData: string[],
+    tokenPriceFeed: string,
   ): Promise<WriteTransactionResponse> => {
+    const { priceUpdateData, updateFee } =
+      await this.getPriceFeedUpdateData(tokenPriceFeed);
     return this.write.openPerpOrder(
       baseToken.address,
       gasToken.address,
       amount,
       price,
-      updateData,
+      priceUpdateData,
+      updateFee as BN,
       this.getApiOptions(),
     );
   };
@@ -145,13 +180,17 @@ export class Spark {
     gasToken: Asset,
     orderId: string,
     amount: string,
-    updateData: string[],
+    tokenPriceFeed: string,
   ): Promise<WriteTransactionResponse> => {
+    const { priceUpdateData, updateFee } =
+      await this.getPriceFeedUpdateData(tokenPriceFeed);
+
     return this.write.fulfillPerpOrder(
       gasToken.address,
       orderId,
       amount,
-      updateData,
+      priceUpdateData,
+      updateFee as BN,
       this.getApiOptions(),
     );
   };
@@ -273,6 +312,14 @@ export class Spark {
     );
   };
 
+  matchPerpOrders = async (
+    order1Id: string,
+    order2Id: string,
+  ): Promise<WriteTransactionResponse> => {
+    const options = await this.getFetchOptions();
+    return this.write.matchPerpOrders(order1Id, order2Id, options);
+  };
+
   fetchPerpPendingFundingPayment = async (
     accountAddress: string,
     asset: Asset,
@@ -319,5 +366,37 @@ export class Spark {
     }
 
     return this.options as Options;
+  };
+
+  private getPriceFeedUpdateData = async (
+    feedIds: string | string[],
+  ): Promise<{
+    priceUpdateData: number[][];
+    updateFee: unknown;
+  }> => {
+    const options = await this.getFetchOptions();
+
+    const pythContract = PythContractAbi__factory.connect(
+      options.contractAddresses.pyth,
+      options.wallet,
+    );
+
+    const priceUpdateData =
+      await this.pythServiceConnection.getPriceFeedsUpdateData(
+        [feedIds].flat(),
+      );
+
+    const parsedUpdateData = priceUpdateData.map((v) =>
+      Array.from(arrayify(v)),
+    );
+
+    const updateFee = await pythContract.functions
+      .update_fee(parsedUpdateData)
+      .get();
+
+    return {
+      priceUpdateData: parsedUpdateData,
+      updateFee: updateFee.value,
+    };
   };
 }

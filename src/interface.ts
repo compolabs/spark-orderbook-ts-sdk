@@ -13,6 +13,7 @@ export interface Contracts {
   perpMarket: string;
   pyth: string;
   proxy: string;
+  insuranceFund?: string;
 }
 
 export interface Asset {
@@ -37,11 +38,12 @@ export interface OptionsSpark extends BaseOptions {
 
 export interface SparkParams {
   networkUrl: string;
-  contractAddresses: Contracts;
   indexerApiUrl: string;
+  contractAddresses?: Contracts;
   wallet?: WalletLocked | WalletUnlocked;
   gasPrice?: string;
   gasLimitMultiplier?: string;
+  pythUrl?: string;
 }
 
 export interface SpotOrder {

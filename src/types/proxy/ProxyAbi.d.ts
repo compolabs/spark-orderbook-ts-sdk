@@ -4,9 +4,9 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.79.0
-  Forc version: 0.49.3
-  Fuel-Core version: 0.22.1
+  Fuels version: 0.84.0
+  Forc version: 0.56.0
+  Fuel-Core version: 0.26.0
 */
 
 import type {
@@ -40,6 +40,7 @@ export type SparkContractsOutput = { version: BN, account_balance_address: Addre
 export type ProxyAbiConfigurables = {
   OWNER: AddressInput;
   DEBUG_STEP: Option;
+  SETTLEMENT_TOKEN_PRICE_FEED: string;
 };
 
 interface ProxyAbiInterface extends Interface {
@@ -49,12 +50,12 @@ interface ProxyAbiInterface extends Interface {
     debug_set_price: FunctionFragment;
     debug_setup_twap: FunctionFragment;
     publish_new_version: FunctionFragment;
+    update_price: FunctionFragment;
     get_all_spark_contracts_versions: FunctionFragment;
     get_price: FunctionFragment;
     get_spark_contracts: FunctionFragment;
     get_spark_contracts_by_version: FunctionFragment;
     timestamp: FunctionFragment;
-    update_price: FunctionFragment;
     version: FunctionFragment;
   };
 
@@ -63,12 +64,12 @@ interface ProxyAbiInterface extends Interface {
   encodeFunctionData(functionFragment: 'debug_set_price', values: [string, BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'debug_setup_twap', values: [AssetIdInput, BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'publish_new_version', values: [AddressInput, AddressInput, AddressInput, AddressInput, AddressInput, AddressInput, AddressInput]): Uint8Array;
+  encodeFunctionData(functionFragment: 'update_price', values: [Vec<string>, Vec<Bytes>]): Uint8Array;
   encodeFunctionData(functionFragment: 'get_all_spark_contracts_versions', values: []): Uint8Array;
   encodeFunctionData(functionFragment: 'get_price', values: [string]): Uint8Array;
   encodeFunctionData(functionFragment: 'get_spark_contracts', values: []): Uint8Array;
   encodeFunctionData(functionFragment: 'get_spark_contracts_by_version', values: [BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'timestamp', values: []): Uint8Array;
-  encodeFunctionData(functionFragment: 'update_price', values: [Vec<Bytes>]): Uint8Array;
   encodeFunctionData(functionFragment: 'version', values: []): Uint8Array;
 
   decodeFunctionData(functionFragment: 'debug_increment_timestamp', data: BytesLike): DecodedValue;
@@ -76,12 +77,12 @@ interface ProxyAbiInterface extends Interface {
   decodeFunctionData(functionFragment: 'debug_set_price', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'debug_setup_twap', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'publish_new_version', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'update_price', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'get_all_spark_contracts_versions', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'get_price', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'get_spark_contracts', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'get_spark_contracts_by_version', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'timestamp', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'update_price', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'version', data: BytesLike): DecodedValue;
 }
 
@@ -93,12 +94,12 @@ export class ProxyAbi extends Contract {
     debug_set_price: InvokeFunction<[price_feed: string, price: BigNumberish], void>;
     debug_setup_twap: InvokeFunction<[base_token: AssetIdInput, current_twap: BigNumberish], void>;
     publish_new_version: InvokeFunction<[account_balance_address: AddressInput, clearing_house_address: AddressInput, insurance_fund_address: AddressInput, treasury_address: AddressInput, perp_market_address: AddressInput, vault_address: AddressInput, pyth_address: AddressInput], void>;
+    update_price: InvokeFunction<[price_feed_ids: Vec<string>, price_update_data: Vec<Bytes>], void>;
     get_all_spark_contracts_versions: InvokeFunction<[], Vec<SparkContractsOutput>>;
     get_price: InvokeFunction<[price_feed: string], BN>;
     get_spark_contracts: InvokeFunction<[], SparkContractsOutput>;
     get_spark_contracts_by_version: InvokeFunction<[version: BigNumberish], SparkContractsOutput>;
     timestamp: InvokeFunction<[], BN>;
-    update_price: InvokeFunction<[price_update_data: Vec<Bytes>], void>;
     version: InvokeFunction<[], BN>;
   };
 }
