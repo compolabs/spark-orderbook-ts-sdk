@@ -181,7 +181,7 @@ describe("Read Tests", () => {
     },
     TIMEOUT_DEADLINE,
   );
-  it(
+  it.only(
     "fetchPerpMaxAbsPositionSize",
     async () => {
       const size = await spark.fetchPerpMaxAbsPositionSize(
@@ -215,6 +215,19 @@ describe("Read Tests", () => {
     },
     TIMEOUT_DEADLINE,
   );
+  it.skip(
+    "fetchPerpTradeEvents",
+    async () => {
+      const allPerpTrades = await spark.fetchPerpTrades({
+        baseToken: TOKENS_BY_SYMBOL["BTC"].address,
+        limit: 10,
+      });
+      // skip because there is no enough data to test
+      expect(allPerpTrades).toHaveLength(10);
+    },
+    TIMEOUT_DEADLINE,
+  );
+
   it(
     "fetchWalletBalance",
     async () => {
