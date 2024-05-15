@@ -181,7 +181,7 @@ describe("Read Tests", () => {
     },
     TIMEOUT_DEADLINE,
   );
-  it.only(
+  it(
     "fetchPerpMaxAbsPositionSize",
     async () => {
       const size = await spark.fetchPerpMaxAbsPositionSize(
