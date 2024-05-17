@@ -19,6 +19,8 @@ export const BETA_CONTRACT_ADDRESSES: Contracts = {
   tokenFactory:
     "0x6bd9643c9279204b474a778dea7f923226060cb94a4c61c5aae015cf96b5aad2",
   pyth: "0x3cd5005f23321c8ae0ccfa98fb07d9a5ff325c483f21d2d9540d6897007600c9",
+
+  // repo spark-perps
   vault: "0x04bfef4abff72e0b8b8b96f3a89beacfa4e280a0944f74adaba34f74b9af0bd3",
   accountBalance:
     "0x798dce97aaa21bde82cf55459d14c828238394c80ae4ea444d20667baba83dd7",
@@ -29,6 +31,10 @@ export const BETA_CONTRACT_ADDRESSES: Contracts = {
   proxy: "0x5db3efcefe7c0f22566a78088fe29d6d6de73b667da0abe9e3b6e7a7d6bd458d",
   insuranceFund:
     "0x9cb2e31a5e1ed73da81e2523d4935104c971b0a920a75d2ae6b7f2cc5ffbfb43",
+
+  // repo swaylend-contracts
+  lendMarket:
+    "0xeb48c137fe72183cd571092aaec78798ee6158f580139a0ff1208b82f78d8987",
 };
 
 export const EXPLORER_URL = "https://app.fuel.network/";

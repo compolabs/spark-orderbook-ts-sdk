@@ -14,6 +14,7 @@ export interface Contracts {
   pyth: string;
   proxy: string;
   insuranceFund?: string;
+  lendMarket?: string;
 }
 
 export interface Asset {
@@ -158,4 +159,9 @@ export type PerpPendingFundingPayment = {
 export type WriteTransactionResponse = {
   transactionId: string;
   value: unknown;
+};
+
+export type UserSupplyBorrow = {
+  supply: BN;
+  borrow: BN;
 };

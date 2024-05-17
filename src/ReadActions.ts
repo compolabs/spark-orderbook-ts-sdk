@@ -6,6 +6,7 @@ import {
   AssetIdInput,
 } from "./types/account-balance/AccountBalanceAbi";
 import { ClearingHouseAbi__factory } from "./types/clearing-house";
+import { MarketAbi__factory } from "./types/lend-market";
 import { OrderbookAbi__factory } from "./types/orderbook";
 import { PerpMarketAbi__factory } from "./types/perp-market";
 import { VaultAbi__factory } from "./types/vault";
@@ -29,6 +30,7 @@ import {
   SpotOrder,
   SpotOrderWithoutTimestamp,
   SpotTrades,
+  UserSupplyBorrow,
 } from "./interface";
 
 export class ReadActions {
@@ -492,5 +494,40 @@ export class ReadActions {
       buyOrderId: trade.buy_order_id,
       timestamp: trade.timestamp,
     }));
+  };
+
+  // Lend Market actions
+
+  fetchUserSupplyBorrow = async (
+    accountAddress: string,
+    options: Options,
+  ): Promise<UserSupplyBorrow> => {
+    const lendMarketFactory = MarketAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+
+    const addressInput: AddressInput = {
+      value: new Address(accountAddress as any).toB256(),
+    };
+
+    try {
+      const result = await lendMarketFactory.functions
+        .get_user_supply_borrow(addressInput)
+        .get();
+      const supply = new BN(result.value[0].toString());
+      const borrow = new BN(result.value[1].toString());
+
+      console.log("supply", supply.toString());
+      console.log("borrow", borrow.toString());
+
+      return {
+        supply: new BN(0),
+        borrow: new BN(0),
+      };
+    } catch (err) {
+      console.log(err, "rerererererre");
+      return { supply: BN.ZERO, borrow: BN.ZERO };
+    }
   };
 }

@@ -353,6 +353,12 @@ export class Spark {
     return this.providerPromise;
   };
 
+  fetchUserSupplyBorrow = async (accountAddress: string) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchUserSupplyBorrow(accountAddress, options);
+  };
+
   private getFetchOptions = async (): Promise<Options> => {
     const providerWallet = await this.getProviderWallet();
     const options: Options = { ...this.options, wallet: providerWallet };
