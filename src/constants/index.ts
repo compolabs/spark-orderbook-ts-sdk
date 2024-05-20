@@ -34,7 +34,7 @@ export const BETA_CONTRACT_ADDRESSES: Contracts = {
 
   // repo swaylend-contracts
   lendMarket:
-    "0xeb48c137fe72183cd571092aaec78798ee6158f580139a0ff1208b82f78d8987",
+    "0xd08f0f69ff3aaffcf43e63b04f669ccafc366aeca79e25976cea0e05ef3680a3",
 };
 
 export const EXPLORER_URL = "https://app.fuel.network/";

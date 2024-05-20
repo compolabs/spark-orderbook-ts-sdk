@@ -10,6 +10,7 @@ import { BETA_TOKENS } from "./constants/tokens";
 import { AccountBalanceAbi__factory } from "./types/account-balance";
 import { I64Input } from "./types/account-balance/AccountBalanceAbi";
 import { ClearingHouseAbi__factory } from "./types/clearing-house";
+import { MarketAbi__factory } from "./types/lend-market";
 import { OrderbookAbi__factory } from "./types/orderbook";
 import { PerpMarketAbi__factory } from "./types/perp-market";
 import { ProxyAbi__factory } from "./types/proxy";
@@ -460,6 +461,104 @@ export class WriteActions {
     return this.sendTransaction(tx, options);
   };
 
+  // Lend market functions
+
+  supplyBase = async (
+    gasTokenAddress: string,
+    amount: string,
+    assetId: string,
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const lendMarketFactory = MarketAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+
+    const forward: CoinQuantityLike = {
+      amount: amount,
+      assetId: assetId,
+    };
+
+    const tx = await lendMarketFactory.functions
+      .supply_base()
+      .callParams({ forward })
+      .txParams({ gasPrice: options.gasPrice });
+
+    return this.sendTransaction(tx, options);
+  };
+
+  withdrawBase = async (
+    gasTokenAddress: string,
+    tokenAmount: string,
+    options: Options,
+  ) => {
+    const lendMarketFactory = MarketAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+
+    const forward: CoinQuantityLike = {
+      amount: "10",
+      assetId: gasTokenAddress,
+    };
+
+    const tx = await lendMarketFactory.functions
+      .withdraw_base(tokenAmount)
+      .callParams({ forward })
+      .txParams({ gasPrice: options.gasPrice });
+
+    return this.sendTransaction(tx, options);
+  };
+
+  supplyCollateral = async (gasTokenAddress: string, options: Options) => {
+    const lendMarketFactory = MarketAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+
+    const forward: CoinQuantityLike = {
+      amount: "10",
+      assetId: gasTokenAddress,
+    };
+
+    const tx = await lendMarketFactory.functions
+      .supply_collateral()
+      .callParams({ forward })
+      .txParams({ gasPrice: options.gasPrice });
+
+    return this.sendTransaction(tx, options);
+  };
+
+  withdrawCollateral = async (
+    gasTokenAddress: string,
+    amount: string,
+    assetId: string,
+    options: Options,
+  ) => {
+    const lendMarketFactory = MarketAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+
+    const forward: CoinQuantityLike = {
+      amount: "10",
+      assetId: gasTokenAddress,
+    };
+
+    const tx = await lendMarketFactory.functions
+      .withdraw_collateral(assetId, amount)
+      .callParams({ forward })
+      .txParams({ gasPrice: options.gasPrice })
+      .addContracts([
+        PythContractAbi__factory.connect(
+          options.contractAddresses.pyth,
+          options.wallet,
+        ),
+      ]);
+
+    return this.sendTransaction(tx, options);
+  };
+
   private sendTransaction = async (
     tx: FunctionInvocationScope,
     options: Options,
@@ -467,6 +566,8 @@ export class WriteActions {
     const { gasUsed } = await tx.getTransactionCost();
     const gasLimit = gasUsed.mul(options.gasLimitMultiplier).toString();
     const res = await tx.txParams({ gasLimit }).call();
+
+    console.log(res);
     return {
       transactionId: res.transactionId,
       value: res.value,

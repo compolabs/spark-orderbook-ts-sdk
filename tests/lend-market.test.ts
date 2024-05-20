@@ -42,6 +42,15 @@ describe("Read Tests", () => {
     });
   });
 
+  it("Supply 2000", async () => {
+    const btc = TOKENS_BY_SYMBOL["BTC"];
+    const eth = TOKENS_BY_SYMBOL["ETH"];
+
+    const result = await spark.supplyBase(eth, "2000", btc);
+
+    expect(result).toBeDefined();
+  });
+
   it(
     "fetchUserSupplyBorrow",
     async () => {
@@ -49,7 +58,7 @@ describe("Read Tests", () => {
         wallet.address.toAddress(),
       );
 
-      expect(result).toBeDefined();
+      expect(result).not.toBeNull();
     },
     TIMEOUT_DEADLINE,
   );

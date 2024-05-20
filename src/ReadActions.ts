@@ -9,6 +9,7 @@ import { ClearingHouseAbi__factory } from "./types/clearing-house";
 import { MarketAbi__factory } from "./types/lend-market";
 import { OrderbookAbi__factory } from "./types/orderbook";
 import { PerpMarketAbi__factory } from "./types/perp-market";
+import { PythContractAbi__factory } from "./types/pyth";
 import { VaultAbi__factory } from "./types/vault";
 import BN from "./utils/BN";
 import { convertI64ToBn } from "./utils/convertI64ToBn";
@@ -501,7 +502,7 @@ export class ReadActions {
   fetchUserSupplyBorrow = async (
     accountAddress: string,
     options: Options,
-  ): Promise<UserSupplyBorrow> => {
+  ): Promise<UserSupplyBorrow | null> => {
     const lendMarketFactory = MarketAbi__factory.connect(
       options.contractAddresses.vault,
       options.wallet,
@@ -526,8 +527,141 @@ export class ReadActions {
         borrow: new BN(0),
       };
     } catch (err) {
-      console.log(err, "rerererererre");
-      return { supply: BN.ZERO, borrow: BN.ZERO };
+      console.log(err);
+
+      return null;
+      // return { supply: BN.ZERO, borrow: BN.ZERO };
     }
+  };
+
+  fetchCollateralConfigurations = async (options: Options) => {
+    const lendMarketFactory = MarketAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+
+    const result = await lendMarketFactory.functions
+      .get_collateral_configurations()
+      .get();
+
+    return result;
+  };
+
+  fetchTotalsCollateral = async (assetId: string, options: Options) => {
+    const lendMarketFactory = MarketAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+
+    const result = await lendMarketFactory.functions
+      .totals_collateral(assetId)
+      .get();
+
+    console.log("result", result.value.toString());
+  };
+
+  fetchBalanceOfAsset = async (
+    assetId: string,
+    options: Options,
+  ): Promise<string> => {
+    const lendMarketFactory = MarketAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+
+    const result = await lendMarketFactory.functions.balance_of(assetId).get();
+
+    return result.value.toString();
+  };
+
+  fetchReserves = async (options: Options) => {
+    const lendMarketFactory = MarketAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+
+    const result = await lendMarketFactory.functions.get_reserves().get();
+
+    return result.value;
+  };
+
+  fetchUserCollateral = async (
+    accountAddress: string,
+    assetId: string,
+    options: Options,
+  ) => {
+    const lendMarketFactory = MarketAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+    const addressInput: AddressInput = {
+      value: new Address(accountAddress as any).toB256(),
+    };
+
+    const result = await lendMarketFactory.functions
+      .get_user_collateral(addressInput, assetId)
+      .get();
+
+    return result.value.toString();
+  };
+
+  fetchUtilization = async (options: Options) => {
+    const lendMarketFactory = MarketAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+
+    const result = await lendMarketFactory.functions.get_utilization().get();
+
+    return result.value;
+  };
+
+  fetchAvailableToBorrow = async (accountAddress: string, options: Options) => {
+    const lendMarketFactory = MarketAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+
+    const addressInput: AddressInput = {
+      value: new Address(accountAddress as any).toB256(),
+    };
+
+    const result = await lendMarketFactory.functions
+      .available_to_borrow(addressInput)
+      .addContracts([
+        PythContractAbi__factory.connect(
+          options.contractAddresses.pyth,
+          options.wallet,
+        ),
+      ])
+      .get();
+
+    return result.value.toString();
+  };
+
+  fetchBorrowRate = async (value: string, options: Options) => {
+    const lendMarketFactory = MarketAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+
+    const result = await lendMarketFactory.functions
+      .get_borrow_rate(value)
+      .get();
+
+    return result.value.toString();
+  };
+
+  fetchSupplyRate = async (value: string, options: Options) => {
+    const lendMarketFactory = MarketAbi__factory.connect(
+      options.contractAddresses.vault,
+      options.wallet,
+    );
+
+    const result = await lendMarketFactory.functions
+      .get_supply_rate(value)
+      .get();
+
+    return result.value.toString();
   };
 }

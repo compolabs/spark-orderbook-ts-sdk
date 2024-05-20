@@ -353,10 +353,104 @@ export class Spark {
     return this.providerPromise;
   };
 
+  // Lend market functions
+
   fetchUserSupplyBorrow = async (accountAddress: string) => {
     const options = await this.getFetchOptions();
 
     return this.read.fetchUserSupplyBorrow(accountAddress, options);
+  };
+
+  fetchCollateralConfigurations = async () => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchCollateralConfigurations(options);
+  };
+
+  fetchTotalsCollateral = async (asset: Asset) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchTotalsCollateral(asset.address, options);
+  };
+
+  fetchBalanceOfAsset = async (asset: Asset) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchBalanceOfAsset(asset.address, options);
+  };
+
+  fetchReserves = async (asset: Asset) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchReserves(options);
+  };
+
+  fetchUserCollateral = async (accountAddress: string, asset: Asset) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchUserCollateral(
+      accountAddress,
+      asset.address,
+      options,
+    );
+  };
+
+  fetchUtilization = async () => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchUtilization(options);
+  };
+
+  fetchAvailableToBorrow = async (accountAddress: string) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchAvailableToBorrow(accountAddress, options);
+  };
+
+  fetchBorrowRate = async (value: string) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchBorrowRate(value, options);
+  };
+
+  fetchSupplyRate = async (value: string) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchSupplyRate(value, options);
+  };
+
+  supplyBase = async (gasToken: Asset, amount: string, asset: Asset) => {
+    return this.write.supplyBase(
+      gasToken.address,
+      amount,
+      asset.address,
+      this.getApiOptions(),
+    );
+  };
+
+  withdrawBase = async (gasToken: Asset, amount: string) => {
+    return this.write.withdrawBase(
+      gasToken.address,
+      amount,
+      this.getApiOptions(),
+    );
+  };
+
+  supplyCollateral = async (gasToken: Asset) => {
+    return this.write.supplyCollateral(gasToken.address, this.getApiOptions());
+  };
+
+  withdrawCollateral = async (
+    gasToken: Asset,
+    amount: string,
+    asset: Asset,
+  ) => {
+    return this.write.withdrawCollateral(
+      gasToken.address,
+      amount,
+      asset.address,
+      this.getApiOptions(),
+    );
   };
 
   private getFetchOptions = async (): Promise<Options> => {
