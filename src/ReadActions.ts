@@ -434,18 +434,13 @@ export class ReadActions {
       value: assetAddress,
     };
 
-    try {
-      const result = await vaultFactory.functions
-        .get_max_abs_position_size(addressInput, assetIdInput, tradePrice)
-        .get();
-      const shortSize = new BN(result.value[0].toString());
-      const longSize = new BN(result.value[1].toString());
+    const result = await vaultFactory.functions
+      .get_max_abs_position_size(addressInput, assetIdInput, tradePrice)
+      .get();
+    const shortSize = new BN(result.value[0].toString());
+    const longSize = new BN(result.value[1].toString());
 
-      return { shortSize, longSize };
-    } catch (error) {
-      console.log(error);
-      return { shortSize: BN.ZERO, longSize: BN.ZERO };
-    }
+    return { shortSize, longSize };
   };
 
   fetchPerpMarkPrice = async (

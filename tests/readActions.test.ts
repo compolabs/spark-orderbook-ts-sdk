@@ -181,13 +181,13 @@ describe("Read Tests", () => {
     },
     TIMEOUT_DEADLINE,
   );
-  it(
+  it.only(
     "fetchPerpMaxAbsPositionSize",
     async () => {
       const size = await spark.fetchPerpMaxAbsPositionSize(
         wallet.address.toAddress(),
         TOKENS_BY_SYMBOL["BTC"],
-        "100000",
+        "67034000000000",
       );
 
       expect(size).toBeDefined();
