@@ -547,7 +547,6 @@ export class WriteActions {
 
     const tx = await lendMarketFactory.functions
       .withdraw_collateral(assetId, amount)
-      .callParams({ forward })
       .txParams({ gasPrice: options.gasPrice })
       .addContracts([
         PythContractAbi__factory.connect(
