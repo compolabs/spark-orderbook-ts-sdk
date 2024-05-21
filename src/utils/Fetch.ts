@@ -1,4 +1,7 @@
+import { GraphQLResponse } from "src/interface";
 import { Nilable } from "tsdef";
+
+import { ENVIO_INDEXER_URL } from "../constants";
 
 export class Fetch {
   private url: string;
@@ -20,12 +23,26 @@ export class Fetch {
     return response.json();
   };
 
-  protected post = <T>(
+  private requestQL = async <T>(
     endpoint: string,
+    data: RequestInit,
+  ): Promise<T> => {
+    return fetch(endpoint, data)
+      .then((response) => response.json())
+      .then((data: GraphQLResponse<T>) => {
+        if (data.errors) {
+          throw new Error(data.errors[0].message);
+        } else {
+          return data.data;
+        }
+      });
+  };
+
+  protected post = <T>(
     body: Record<string, any>,
     credentials: RequestCredentials = "same-origin",
   ) => {
-    return this.request<T>(endpoint, {
+    return this.requestQL<T>(ENVIO_INDEXER_URL, {
       method: "POST",
       body: JSON.stringify(body),
       credentials,

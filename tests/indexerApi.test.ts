@@ -58,30 +58,6 @@ describe("Indexer Api Tests", () => {
     TIMEOUT_DEADLINE,
   );
   it(
-    "getSpotOrderChangeEvents",
-    async () => {
-      const response = await indexer.getSpotOrderChangeEvents();
-
-      expect(response).toBeDefined();
-    },
-    TIMEOUT_DEADLINE,
-  );
-  it.skip(
-    "getSpotOrderChangeEventsById",
-    async () => {
-      const allEvents = await indexer.getSpotOrderChangeEvents();
-
-      const [event] = allEvents;
-
-      const response = await indexer.getSpotOrderChangeEventsById(
-        event.id.toString(),
-      );
-
-      expect(response).toBeDefined();
-    },
-    TIMEOUT_DEADLINE,
-  );
-  it(
     "getSpotTradeEvents",
     async () => {
       const response = await indexer.getSpotTradeEvents({
@@ -94,24 +70,7 @@ describe("Indexer Api Tests", () => {
     },
     TIMEOUT_DEADLINE,
   );
-  it(
-    "getSpotTradeEventsById",
-    async () => {
-      const allTradeEvents = await indexer.getSpotTradeEvents({
-        baseToken: TOKENS_BY_SYMBOL["BTC"].address,
-        limit: 1,
-      });
 
-      const [event] = allTradeEvents;
-
-      const response = await indexer.getSpotTradeEventsById(
-        event.id.toString(),
-      );
-
-      expect(response).toBeDefined();
-    },
-    TIMEOUT_DEADLINE,
-  );
   it(
     "getSpotVolume",
     async () => {

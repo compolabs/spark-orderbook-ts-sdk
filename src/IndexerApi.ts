@@ -5,47 +5,110 @@ export class IndexerApi extends Fetch {
   // SPOT
 
   getSpotMarketCreateEvents = async (): Promise<SpotMarketCreateEvent[]> => {
-    return this.get<SpotMarketCreateEvent[]>("/spot/marketCreateEvents");
+    const query = `
+      query SpotMarketCreateEventQuery {
+        SpotMarketCreateEvent {
+          id,
+          asset_id,
+          asset_decimals,
+          timestamp,
+        }
+      }
+    `;
+    const response = await this.post<IndexerResponse<SpotMarketCreateEvent[]>>({
+      query,
+    });
+
+    return response.SpotMarketCreateEvent;
   };
 
   getSpotMarketCreateEventsById = async (
     id: string,
   ): Promise<SpotMarketCreateEvent> => {
-    return this.get<SpotMarketCreateEvent>(`/spot/marketCreateEvents/${id}`);
+    const query = `query SpotMarketCreateEventQuery {
+      SpotMarketCreateEvent(where: {id: {_eq: ${id}}})
+      }
+    `;
+
+    const response = await this.post<IndexerResponse<SpotMarketCreateEvent>>({
+      query,
+    });
+
+    return response.SpotMarketCreateEvent;
   };
 
   getSpotOrders = async (params: SpotOrdersParams): Promise<SpotOrder[]> => {
-    const paramsCopy = {
-      ...params,
-      orderType: params.orderType
-        ? (params.orderType.toLowerCase() as string)
-        : undefined,
-      isOpened: params.isOpened
-        ? (String(params.isOpened) as string)
-        : undefined,
-    };
+    let whereFilter = "";
 
-    return this.get<SpotOrder[]>("/spot/orders", paramsCopy);
-  };
+    if (params.orderType) {
+      whereFilter = `order_type: {_eq: "${params.orderType}"}, ` + whereFilter;
+    }
+    if (params.isOpened) {
+      whereFilter = `base_price: {_neq: "0"},` + whereFilter;
+    }
+    if (params.trader) {
+      whereFilter = `trader: {_eq: "${params.trader}"},` + whereFilter;
+    }
+    if (params.baseToken) {
+      whereFilter = `base_token: {_eq: "${params.baseToken}"},` + whereFilter;
+    }
 
-  getSpotOrderChangeEvents = async (): Promise<SpotOrderChangeEvent[]> => {
-    return this.get<SpotOrderChangeEvent[]>("/spot/orderChangeEvents");
-  };
+    const query = `query SpotOrderQuery {
+      SpotOrder(limit: ${params.limit}, where: {${whereFilter}}) {
+        id,
+        trader, 
+        order_type,
+        base_token,
+        base_size,
+        base_price,
+        timestamp,
+      }
+    }
+    `;
 
-  getSpotOrderChangeEventsById = async (
-    id: string,
-  ): Promise<SpotOrderChangeEvent> => {
-    return this.get<SpotOrderChangeEvent>(`/spot/ordersChangeEvents/${id}`);
+    const response = await this.post<IndexerResponse<SpotOrder[]>>({
+      query,
+    });
+
+    return response.SpotOrder;
   };
 
   getSpotTradeEvents = async (
     params: BaseParams,
   ): Promise<SpotTradeEvent[]> => {
-    return this.get<SpotTradeEvent[]>("/spot/tradeEvents", params);
-  };
+    let whereFilter = "";
 
-  getSpotTradeEventsById = async (id: string): Promise<SpotTradeEvent> => {
-    return this.get<SpotTradeEvent>(`/spot/tradeEvents/${id}`);
+    if (params.trader) {
+      whereFilter = `trader: {_eq: "${params.trader}"},` + whereFilter;
+    }
+    if (params.baseToken) {
+      whereFilter = `base_token: {_eq: "${params.baseToken}"},` + whereFilter;
+    }
+
+    const query = `query SpotTradeEventQuery {
+      SpotTradeEvent(limit: ${params.limit}, where: {${whereFilter}}) {
+        base_token
+        buy_order {
+          base_price
+          base_size
+          base_token
+          id
+          order_type
+          timestamp
+          trader
+        }
+        order_matcher
+        id
+        buyer
+        buy_order_id
+      }
+    }`;
+
+    const response = await this.post<IndexerResponse<SpotTradeEvent[]>>({
+      query,
+    });
+
+    return response.SpotTradeEvent;
   };
 
   getSpotVolume = async (): Promise<SpotVolume> => {
@@ -172,3 +235,7 @@ type PerpPosition = {
   taker_open_notional: string;
   last_tw_premium_growth_global: string;
 };
+
+interface IndexerResponse<T> {
+  [key: string]: T;
+}
