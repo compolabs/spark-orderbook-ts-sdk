@@ -19,16 +19,16 @@ export const BETA_CONTRACT_ADDRESSES: Contracts = {
   tokenFactory:
     "0x6bd9643c9279204b474a778dea7f923226060cb94a4c61c5aae015cf96b5aad2",
   pyth: "0x3cd5005f23321c8ae0ccfa98fb07d9a5ff325c483f21d2d9540d6897007600c9",
-  vault: "0x04bfef4abff72e0b8b8b96f3a89beacfa4e280a0944f74adaba34f74b9af0bd3",
+  vault: "0x60e8310cd9b0cb1455e6574ebb692c4bd7e37c4692234fd9b159cf6a636adfe3",
   accountBalance:
-    "0x798dce97aaa21bde82cf55459d14c828238394c80ae4ea444d20667baba83dd7",
+    "0x227d7dd191158406e1954310e7f6ea2a128ca8ca3134cbcd87054baf686aadee",
   clearingHouse:
-    "0xfe244b38e8783290538dd2f9de7461013a0436c69a6d193f8d2fba270e9e1655",
+    "0x631c7c0bbf3c2e75214f8cf8db8459f95062d04cde982a6e66a561efa4ca564f",
   perpMarket:
-    "0xfb8dc15d38f47c62f7b15724e3e22645435d6314cc51a5c0fc49896da3f0a397",
-  proxy: "0x5db3efcefe7c0f22566a78088fe29d6d6de73b667da0abe9e3b6e7a7d6bd458d",
+    "0x311a7e90fe75f32aa7d220d23d327b4b56673370f32570eb26d2e84d1da037e3",
+  proxy: "0xf17742faea8c198414b2d365c7d9bde03a2da3ba0f4f8d471d8017d35f093fc5",
   insuranceFund:
-    "0x9cb2e31a5e1ed73da81e2523d4935104c971b0a920a75d2ae6b7f2cc5ffbfb43",
+    "0xa65f3a5eb4d44ae9125a5d7edb06733ba062bfc9b190844c02ed67ffb1cc2bbc",
 };
 
 export const EXPLORER_URL = "https://app.fuel.network/";
