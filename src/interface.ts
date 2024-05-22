@@ -160,11 +160,6 @@ export type WriteTransactionResponse = {
   value: unknown;
 };
 
-export type UserSupplyBorrow = {
-  supply: BN;
-  borrow: BN;
-};
-
 export interface GraphQLResponse<T> {
   data: T;
   errors?: { message: string }[];

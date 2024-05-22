@@ -41,7 +41,9 @@ export class IndexerApi extends Fetch {
     let whereFilter = "";
 
     if (params.orderType) {
-      whereFilter = `order_type: {_eq: "${params.orderType}"}, ` + whereFilter;
+      whereFilter =
+        `order_type: {_eq: "${params.orderType.toLowerCase()}"}, ` +
+        whereFilter;
     }
     if (params.isOpened) {
       whereFilter = `base_price: {_neq: "0"},` + whereFilter;
@@ -88,19 +90,15 @@ export class IndexerApi extends Fetch {
     const query = `query SpotTradeEventQuery {
       SpotTradeEvent(limit: ${params.limit}, where: {${whereFilter}}) {
         base_token
-        buy_order {
-          base_price
-          base_size
-          base_token
-          id
-          order_type
-          timestamp
-          trader
-        }
-        order_matcher
-        id
         buyer
+        seller
+        id
+        order_matcher
+        timestamp
+        sell_order_id
         buy_order_id
+        trade_price
+        trade_size
       }
     }`;
 
@@ -152,30 +150,12 @@ interface SpotMarketCreateEvent {
 }
 
 interface Order {
-  order_id: string;
+  id: string;
   trader: string;
   base_token: string;
   base_size: string;
   base_price: string;
   timestamp: string;
-}
-
-interface SpotOrder extends Order {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface SpotOrderChangeEvent {
-  id: number;
-  order_id: string;
-  trader: string;
-  base_token: string;
-  base_size_change: string;
-  base_price: string;
-  timestamp: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 type SpotOrdersParams = BaseParams & {
@@ -207,6 +187,7 @@ type PerpOrdersParams = BaseParams & {
 };
 
 type PerpOrder = Order;
+type SpotOrder = Order;
 
 interface TradeEvent {
   base_token: string;
@@ -220,10 +201,8 @@ interface TradeEvent {
 }
 
 interface SpotTradeEvent extends TradeEvent {
-  id: number;
+  id: string;
   order_matcher: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 type PerpTradeEvent = TradeEvent;
