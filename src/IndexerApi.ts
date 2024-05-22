@@ -22,21 +22,6 @@ export class IndexerApi extends Fetch {
     return response.SpotMarketCreateEvent;
   };
 
-  getSpotMarketCreateEventsById = async (
-    id: string,
-  ): Promise<SpotMarketCreateEvent> => {
-    const query = `query SpotMarketCreateEventQuery {
-      SpotMarketCreateEvent(where: {id: {_eq: ${id}}})
-      }
-    `;
-
-    const response = await this.post<IndexerResponse<SpotMarketCreateEvent>>({
-      query,
-    });
-
-    return response.SpotMarketCreateEvent;
-  };
-
   getSpotOrders = async (params: SpotOrdersParams): Promise<SpotOrder[]> => {
     let whereFilter = "";
 

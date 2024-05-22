@@ -36,15 +36,6 @@ describe("Indexer Api Tests", () => {
     TIMEOUT_DEADLINE,
   );
   it(
-    "getSpotMarketCreateEventsById",
-    async () => {
-      const response = await indexer.getSpotMarketCreateEvents();
-
-      expect(response).toBeDefined();
-    },
-    TIMEOUT_DEADLINE,
-  );
-  it(
     "getSpotOrders",
     async () => {
       const response = await indexer.getSpotOrders({
