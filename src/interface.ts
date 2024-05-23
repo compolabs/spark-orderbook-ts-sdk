@@ -159,3 +159,8 @@ export type WriteTransactionResponse = {
   transactionId: string;
   value: unknown;
 };
+
+export interface GraphQLResponse<T> {
+  data: T;
+  errors?: { message: string }[];
+}
