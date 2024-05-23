@@ -19,20 +19,22 @@ export const BETA_CONTRACT_ADDRESSES: Contracts = {
   tokenFactory:
     "0x6bd9643c9279204b474a778dea7f923226060cb94a4c61c5aae015cf96b5aad2",
   pyth: "0x3cd5005f23321c8ae0ccfa98fb07d9a5ff325c483f21d2d9540d6897007600c9",
-  vault: "0x60e8310cd9b0cb1455e6574ebb692c4bd7e37c4692234fd9b159cf6a636adfe3",
+
+  // repo spark-perps
+  vault: "0x005919151692f5103ee6dc8dd7140d51e646f8c6c967e2b246b6c7e77f976627",
   accountBalance:
-    "0x227d7dd191158406e1954310e7f6ea2a128ca8ca3134cbcd87054baf686aadee",
+    "0xb74ac6bde6ec7cfe5872e664f8348322545d49428f49fc2bd6f7a55658561cb3",
   clearingHouse:
-    "0x631c7c0bbf3c2e75214f8cf8db8459f95062d04cde982a6e66a561efa4ca564f",
+    "0xb74ac6bde6ec7cfe5872e664f8348322545d49428f49fc2bd6f7a55658561cb3",
   perpMarket:
-    "0x311a7e90fe75f32aa7d220d23d327b4b56673370f32570eb26d2e84d1da037e3",
-  proxy: "0xf17742faea8c198414b2d365c7d9bde03a2da3ba0f4f8d471d8017d35f093fc5",
+    "0xbfbad1c9a8495398e072dd4449c5767b675b5fda1a4889a14d056a83a3c512ae",
+  proxy: "0x9e8f0ee642047db461d135291ee01370d83d25adfdc5f94fddc432b2295cde2f",
   insuranceFund:
-    "0x9cb2e31a5e1ed73da81e2523d4935104c971b0a920a75d2ae6b7f2cc5ffbfb43",
+    "0x3ce17a2cf2422f3af6db91c321ddd7cfd96079746b53d391dc1ba21f92b161d0",
 
   // repo swaylend-contracts
   lendMarket:
-    "0x7cd523d6c6776213f386f8893b75a04da57cfad50a24517c4f7038d8adff4933",
+    "0x974cb7510dd28335dccdff984660d0da9efd0fbb3988c113189c1fe9158d40c0",
 };
 
 export const EXPLORER_URL = "https://app.fuel.network/";

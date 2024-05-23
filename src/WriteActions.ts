@@ -566,7 +566,6 @@ export class WriteActions {
     const gasLimit = gasUsed.mul(options.gasLimitMultiplier).toString();
     const res = await tx.txParams({ gasLimit }).call();
 
-    console.log(res);
     return {
       transactionId: res.transactionId,
       value: res.value,

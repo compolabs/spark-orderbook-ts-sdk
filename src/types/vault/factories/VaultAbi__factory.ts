@@ -72,11 +72,6 @@ const _abi = {
       "type": "enum Error",
       "components": [
         {
-          "name": "TradingIsPaused",
-          "type": 0,
-          "typeArguments": null
-        },
-        {
           "name": "InvalidAsset",
           "type": 0,
           "typeArguments": null
@@ -88,11 +83,6 @@ const _abi = {
         },
         {
           "name": "NotEnoughFreeCollateral",
-          "type": 0,
-          "typeArguments": null
-        },
-        {
-          "name": "OnlyClearingHouse",
           "type": 0,
           "typeArguments": null
         },
@@ -1055,7 +1045,7 @@ const _abi = {
         "type": 10,
         "typeArguments": []
       },
-      "offset": 227196
+      "offset": 227172
     },
     {
       "name": "PROXY_ADDRESS",
@@ -1064,7 +1054,7 @@ const _abi = {
         "type": 10,
         "typeArguments": []
       },
-      "offset": 227524
+      "offset": 227500
     },
     {
       "name": "SETTLEMENT_TOKEN",
@@ -1073,7 +1063,7 @@ const _abi = {
         "type": 11,
         "typeArguments": []
       },
-      "offset": 227420
+      "offset": 227396
     }
   ]
 };

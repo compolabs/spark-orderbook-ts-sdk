@@ -22,8 +22,8 @@ import type {
 
 import type { Enum, Vec } from "./common";
 
-export enum ErrorInput { AccessDenied = 'AccessDenied', NotEnoughFreeCollateralByImRatio = 'NotEnoughFreeCollateralByImRatio', NoMarketFound = 'NoMarketFound' };
-export enum ErrorOutput { AccessDenied = 'AccessDenied', NotEnoughFreeCollateralByImRatio = 'NotEnoughFreeCollateralByImRatio', NoMarketFound = 'NoMarketFound' };
+export enum ErrorInput { AccessDenied = 'AccessDenied', NotEnoughFreeCollateralByImRatio = 'NotEnoughFreeCollateralByImRatio' };
+export enum ErrorOutput { AccessDenied = 'AccessDenied', NotEnoughFreeCollateralByImRatio = 'NotEnoughFreeCollateralByImRatio' };
 
 export type AccountBalanceInput = { taker_position_size: I64Input, taker_open_notional: I64Input, last_tw_premium_growth_global: I64Input };
 export type AccountBalanceOutput = { taker_position_size: I64Output, taker_open_notional: I64Output, last_tw_premium_growth_global: I64Output };

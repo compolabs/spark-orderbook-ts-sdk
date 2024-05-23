@@ -124,11 +124,6 @@ const _abi = {
           "name": "NotEnoughFreeCollateralByImRatio",
           "type": 0,
           "typeArguments": null
-        },
-        {
-          "name": "NoMarketFound",
-          "type": 0,
-          "typeArguments": null
         }
       ],
       "typeParameters": null
@@ -1563,7 +1558,7 @@ const _abi = {
         "type": 19,
         "typeArguments": null
       },
-      "offset": 260248
+      "offset": 260136
     },
     {
       "name": "PROXY_ADDRESS",
@@ -1572,7 +1567,7 @@ const _abi = {
         "type": 13,
         "typeArguments": []
       },
-      "offset": 260112
+      "offset": 260000
     },
     {
       "name": "FULLY_CLOSED_RATIO",
@@ -1581,7 +1576,7 @@ const _abi = {
         "type": 19,
         "typeArguments": null
       },
-      "offset": 260376
+      "offset": 260264
     },
     {
       "name": "SETTLEMENT_TOKEN",
@@ -1590,7 +1585,7 @@ const _abi = {
         "type": 14,
         "typeArguments": []
       },
-      "offset": 260464
+      "offset": 260352
     }
   ]
 };

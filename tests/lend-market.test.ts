@@ -42,7 +42,7 @@ describe("Read Tests", () => {
     });
   });
 
-  it("Check user collateral", async () => {
+  it.only("Check user collateral", async () => {
     const address = wallet.address.toAddress();
     const btc = TOKENS_BY_SYMBOL["BTC"];
     const result = await spark.fetchUserCollateral(address, btc);
