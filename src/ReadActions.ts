@@ -89,12 +89,12 @@ export class ReadActions {
       const baseSize = new BN(order.base_size);
       const basePrice = new BN(order.base_price);
       return {
-        id: order.order_id,
+        id: order.id,
         baseToken: order.base_token,
         trader: order.trader,
         baseSize,
         orderPrice: basePrice,
-        blockTimestamp: getUnixTime(order.createdAt),
+        blockTimestamp: getUnixTime(order.timestamp),
       };
     });
 
@@ -124,7 +124,7 @@ export class ReadActions {
       seller: trade.seller,
       tradeAmount: new BN(trade.trade_size),
       price: new BN(trade.trade_price),
-      timestamp: getUnixTime(trade.createdAt),
+      timestamp: getUnixTime(trade.timestamp),
     }));
   };
 
@@ -404,7 +404,7 @@ export class ReadActions {
     });
 
     const orders = data.map((order) => ({
-      id: order.order_id,
+      id: order.id,
       trader: order.trader,
       baseTokenAddress: order.base_token,
       baseSize: new BN(order.base_size),

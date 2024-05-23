@@ -43,3 +43,5 @@ export const BETA_NETWORK = {
 };
 
 export const BETA_INDEXER_URL = "https://indexer.spark-defi.com";
+
+export const ENVIO_INDEXER_URL = "http://13.49.144.58:8080/v1/graphql";
