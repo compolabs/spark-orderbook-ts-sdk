@@ -27,12 +27,12 @@ const _abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "type": 12,
+          "type": 13,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 12,
+          "type": 13,
           "typeArguments": null
         }
       ],
@@ -44,12 +44,12 @@ const _abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "type": 13,
+          "type": 14,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 13,
+          "type": 14,
           "typeArguments": null
         }
       ],
@@ -131,6 +131,23 @@ const _abi = {
     },
     {
       "typeId": 6,
+      "type": "enum MathError",
+      "components": [
+        {
+          "name": "ZeroDiv",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
+          "name": "NegToPosConv",
+          "type": 0,
+          "typeArguments": null
+        }
+      ],
+      "typeParameters": null
+    },
+    {
+      "typeId": 7,
       "type": "enum PauseError",
       "components": [
         {
@@ -147,7 +164,7 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 7,
+      "typeId": 8,
       "type": "enum ReentrancyError",
       "components": [
         {
@@ -159,13 +176,13 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 8,
+      "typeId": 9,
       "type": "str",
       "components": null,
       "typeParameters": null
     },
     {
-      "typeId": 9,
+      "typeId": 10,
       "type": "struct Address",
       "components": [
         {
@@ -177,7 +194,7 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 10,
+      "typeId": 11,
       "type": "struct AssetId",
       "components": [
         {
@@ -189,27 +206,27 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 11,
+      "typeId": 12,
       "type": "struct CollateralConfiguration",
       "components": [
         {
           "name": "deposit_cap",
-          "type": 13,
+          "type": 14,
           "typeArguments": null
         },
         {
           "name": "collateral_ratio",
-          "type": 13,
+          "type": 14,
           "typeArguments": null
         },
         {
           "name": "collateral_scale",
-          "type": 13,
+          "type": 14,
           "typeArguments": null
         },
         {
           "name": "discount_ratio",
-          "type": 13,
+          "type": 14,
           "typeArguments": null
         },
         {
@@ -221,12 +238,12 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 12,
+      "typeId": 13,
       "type": "struct I64",
       "components": [
         {
           "name": "value",
-          "type": 13,
+          "type": 14,
           "typeArguments": null
         },
         {
@@ -238,7 +255,7 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 13,
+      "typeId": 14,
       "type": "u64",
       "components": null,
       "typeParameters": null
@@ -249,7 +266,7 @@ const _abi = {
       "inputs": [
         {
           "name": "address",
-          "type": 9,
+          "type": 10,
           "typeArguments": null
         }
       ],
@@ -272,12 +289,12 @@ const _abi = {
       "inputs": [
         {
           "name": "asset_id",
-          "type": 10,
+          "type": 11,
           "typeArguments": null
         },
         {
           "name": "configuration",
-          "type": 11,
+          "type": 12,
           "typeArguments": null
         }
       ],
@@ -307,15 +324,15 @@ const _abi = {
       },
       "attributes": [
         {
-          "name": "payable",
-          "arguments": []
-        },
-        {
           "name": "storage",
           "arguments": [
             "read",
             "write"
           ]
+        },
+        {
+          "name": "payable",
+          "arguments": []
         }
       ]
     },
@@ -323,24 +340,24 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 9,
-          "typeArguments": null
-        },
-        {
-          "name": "token",
           "type": 10,
           "typeArguments": null
         },
         {
+          "name": "token",
+          "type": 11,
+          "typeArguments": null
+        },
+        {
           "name": "settlement_amount",
-          "type": 13,
+          "type": 14,
           "typeArguments": null
         }
       ],
       "name": "liquidate_collateral",
       "output": {
         "name": "",
-        "type": 13,
+        "type": 14,
         "typeArguments": null
       },
       "attributes": [
@@ -374,7 +391,7 @@ const _abi = {
       "inputs": [
         {
           "name": "address",
-          "type": 9,
+          "type": 10,
           "typeArguments": null
         }
       ],
@@ -414,14 +431,14 @@ const _abi = {
       "inputs": [
         {
           "name": "token",
-          "type": 10,
+          "type": 11,
           "typeArguments": null
         }
       ],
       "name": "withdraw_all",
       "output": {
         "name": "",
-        "type": 13,
+        "type": 14,
         "typeArguments": null
       },
       "attributes": [
@@ -438,12 +455,12 @@ const _abi = {
       "inputs": [
         {
           "name": "amount",
-          "type": 13,
+          "type": 14,
           "typeArguments": null
         },
         {
           "name": "token",
-          "type": 10,
+          "type": 11,
           "typeArguments": null
         }
       ],
@@ -467,7 +484,7 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 9,
+          "type": 10,
           "typeArguments": null
         }
       ],
@@ -490,19 +507,19 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 9,
+          "type": 10,
           "typeArguments": null
         },
         {
           "name": "token",
-          "type": 10,
+          "type": 11,
           "typeArguments": null
         }
       ],
       "name": "get_collateral_balance",
       "output": {
         "name": "",
-        "type": 13,
+        "type": 14,
         "typeArguments": null
       },
       "attributes": [
@@ -518,14 +535,14 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 9,
+          "type": 10,
           "typeArguments": null
         }
       ],
       "name": "get_free_collateral",
       "output": {
         "name": "",
-        "type": 13,
+        "type": 14,
         "typeArguments": null
       },
       "attributes": [
@@ -541,19 +558,19 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 9,
+          "type": 10,
           "typeArguments": null
         },
         {
           "name": "token",
-          "type": 10,
+          "type": 11,
           "typeArguments": null
         }
       ],
       "name": "get_free_collateral_by_token",
       "output": {
         "name": "",
-        "type": 13,
+        "type": 14,
         "typeArguments": null
       },
       "attributes": [
@@ -569,17 +586,17 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 9,
-          "typeArguments": null
-        },
-        {
-          "name": "base_asset",
           "type": 10,
           "typeArguments": null
         },
         {
+          "name": "base_asset",
+          "type": 11,
+          "typeArguments": null
+        },
+        {
           "name": "trade_price",
-          "type": 13,
+          "type": 14,
           "typeArguments": null
         }
       ],
@@ -602,14 +619,14 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 9,
+          "type": 10,
           "typeArguments": null
         }
       ],
       "name": "get_non_settlement_token_balance",
       "output": {
         "name": "",
-        "type": 13,
+        "type": 14,
         "typeArguments": null
       },
       "attributes": [
@@ -625,7 +642,7 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 9,
+          "type": 10,
           "typeArguments": null
         }
       ],
@@ -648,7 +665,7 @@ const _abi = {
       "inputs": [
         {
           "name": "token",
-          "type": 10,
+          "type": 11,
           "typeArguments": null
         }
       ],
@@ -671,7 +688,7 @@ const _abi = {
       "inputs": [
         {
           "name": "trader",
-          "type": 9,
+          "type": 10,
           "typeArguments": null
         }
       ],
@@ -712,7 +729,7 @@ const _abi = {
       "logId": 2,
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 8,
         "typeArguments": []
       }
     },
@@ -720,7 +737,7 @@ const _abi = {
       "logId": 3,
       "loggedType": {
         "name": "",
-        "type": 6,
+        "type": 7,
         "typeArguments": []
       }
     },
@@ -768,7 +785,7 @@ const _abi = {
       "logId": 9,
       "loggedType": {
         "name": "",
-        "type": 8,
+        "type": 9,
         "typeArguments": null
       }
     },
@@ -816,7 +833,7 @@ const _abi = {
       "logId": 15,
       "loggedType": {
         "name": "",
-        "type": 6,
+        "type": 7,
         "typeArguments": []
       }
     },
@@ -840,7 +857,7 @@ const _abi = {
       "logId": 18,
       "loggedType": {
         "name": "",
-        "type": 6,
+        "type": 7,
         "typeArguments": []
       }
     },
@@ -848,7 +865,7 @@ const _abi = {
       "logId": 19,
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 8,
         "typeArguments": []
       }
     },
@@ -856,7 +873,7 @@ const _abi = {
       "logId": 20,
       "loggedType": {
         "name": "",
-        "type": 6,
+        "type": 7,
         "typeArguments": []
       }
     },
@@ -912,7 +929,7 @@ const _abi = {
       "logId": 27,
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 8,
         "typeArguments": []
       }
     },
@@ -920,7 +937,7 @@ const _abi = {
       "logId": 28,
       "loggedType": {
         "name": "",
-        "type": 6,
+        "type": 7,
         "typeArguments": []
       }
     },
@@ -963,6 +980,70 @@ const _abi = {
         "type": 5,
         "typeArguments": []
       }
+    },
+    {
+      "logId": 34,
+      "loggedType": {
+        "name": "",
+        "type": 6,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 35,
+      "loggedType": {
+        "name": "",
+        "type": 6,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 36,
+      "loggedType": {
+        "name": "",
+        "type": 6,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 37,
+      "loggedType": {
+        "name": "",
+        "type": 6,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 38,
+      "loggedType": {
+        "name": "",
+        "type": 6,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 39,
+      "loggedType": {
+        "name": "",
+        "type": 6,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 40,
+      "loggedType": {
+        "name": "",
+        "type": 6,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 41,
+      "loggedType": {
+        "name": "",
+        "type": 6,
+        "typeArguments": []
+      }
     }
   ],
   "messagesTypes": [],
@@ -971,28 +1052,28 @@ const _abi = {
       "name": "OWNER",
       "configurableType": {
         "name": "",
-        "type": 9,
+        "type": 10,
         "typeArguments": []
       },
-      "offset": 228940
+      "offset": 227196
     },
     {
       "name": "PROXY_ADDRESS",
       "configurableType": {
         "name": "",
-        "type": 9,
+        "type": 10,
         "typeArguments": []
       },
-      "offset": 229268
+      "offset": 227524
     },
     {
       "name": "SETTLEMENT_TOKEN",
       "configurableType": {
         "name": "",
-        "type": 10,
+        "type": 11,
         "typeArguments": []
       },
-      "offset": 229164
+      "offset": 227420
     }
   ]
 };
