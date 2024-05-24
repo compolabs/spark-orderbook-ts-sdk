@@ -9,14 +9,14 @@ export const PRIVATE_KEY_ALICE = process.env.ALICE ?? "";
 
 export const pythURL = "https://hermes.pyth.network";
 
-interface Asset {
+export interface TokenAsset {
   address: string;
   symbol: string;
   decimals: number;
   priceFeed: string;
 }
 
-export const TOKENS_LIST: Asset[] = Object.values(BETA_TOKENS).map(
+export const TOKENS_LIST: TokenAsset[] = Object.values(BETA_TOKENS).map(
   ({ decimals, assetId, symbol, priceFeed }) => ({
     address: assetId,
     symbol,
@@ -25,15 +25,16 @@ export const TOKENS_LIST: Asset[] = Object.values(BETA_TOKENS).map(
   }),
 );
 
-export const TOKENS_BY_SYMBOL: Record<string, Asset> = TOKENS_LIST.reduce(
+export const TOKENS_BY_SYMBOL: Record<string, TokenAsset> = TOKENS_LIST.reduce(
   (acc, t) => ({ ...acc, [t.symbol]: t }),
   {},
 );
 
-export const TOKENS_BY_ASSET_ID: Record<string, Asset> = TOKENS_LIST.reduce(
-  (acc, t) => ({ ...acc, [t.address.toLowerCase()]: t }),
-  {},
-);
+export const TOKENS_BY_ASSET_ID: Record<string, TokenAsset> =
+  TOKENS_LIST.reduce(
+    (acc, t) => ({ ...acc, [t.address.toLowerCase()]: t }),
+    {},
+  );
 
 export const FAUCET_AMOUNTS = {
   ETH: "0.001",

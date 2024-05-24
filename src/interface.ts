@@ -14,7 +14,7 @@ export interface Contracts {
   pyth: string;
   proxy: string;
   insuranceFund?: string;
-  lendMarket?: string;
+  lendMarket: string;
 }
 
 export interface Asset {

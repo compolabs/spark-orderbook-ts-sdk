@@ -8,7 +8,7 @@ import Spark, {
   BETA_TOKENS,
 } from "../src";
 
-import { PRIVATE_KEY_ALICE } from "./constants";
+import { PRIVATE_KEY_ALICE, TokenAsset } from "./constants";
 
 const TIMEOUT_DEADLINE = 60_000; // 1min
 
@@ -42,21 +42,20 @@ describe("Read Tests", () => {
     });
   });
 
-  it.only("Check user collateral", async () => {
-    const address = wallet.address.toAddress();
-    const btc = TOKENS_BY_SYMBOL["BTC"];
-    const result = await spark.fetchUserCollateral(address, btc);
-
-    expect(result).not.toBeNull();
-  });
-
-  it("Supply 2000", async () => {
-    const btc = TOKENS_BY_SYMBOL["BTC"];
-    const eth = TOKENS_BY_SYMBOL["ETH"];
+  it("Supply 20", async () => {
+    const btc: TokenAsset = TOKENS_BY_SYMBOL["USDC"];
+    const eth: TokenAsset = TOKENS_BY_SYMBOL["ETH"];
 
     const result = await spark.supplyBase(eth, "2000", btc);
 
     expect(result).toBeDefined();
+  });
+
+  it("Check user collateral", async () => {
+    const address = wallet.address.toAddress();
+    const btc: TokenAsset = TOKENS_BY_SYMBOL["BTC"];
+    const result = await spark.fetchUserCollateral(address, btc);
+    expect(result).not.toBeNull();
   });
 
   it(
@@ -83,7 +82,7 @@ describe("Read Tests", () => {
   it(
     "fetchTotalsCollateral",
     async () => {
-      const btc = TOKENS_BY_SYMBOL["BTC"];
+      const btc: TokenAsset = TOKENS_BY_SYMBOL["BTC"];
       const result = await spark.fetchTotalsCollateral(btc);
       expect(result).toBeDefined();
     },
@@ -93,7 +92,7 @@ describe("Read Tests", () => {
   it(
     "fetchBalanceOfAsset",
     async () => {
-      const btc = TOKENS_BY_SYMBOL["BTC"];
+      const btc: TokenAsset = TOKENS_BY_SYMBOL["BTC"];
       const result = await spark.fetchBalanceOfAsset(btc);
       expect(result).toBeDefined();
     },
@@ -113,7 +112,7 @@ describe("Read Tests", () => {
   it(
     "fetchUserCollateral",
     async () => {
-      const btc = TOKENS_BY_SYMBOL["BTC"];
+      const btc: TokenAsset = TOKENS_BY_SYMBOL["BTC"];
       const address = wallet.address.toAddress();
       const result = await spark.fetchUserCollateral(address, btc);
       expect(result).toBeDefined();
@@ -130,6 +129,7 @@ describe("Read Tests", () => {
     TIMEOUT_DEADLINE,
   );
 
+  // FuelError: The transaction reverted because a "require" statement has thrown "OutdatedPrice".
   it(
     "fetchAvailableToBorrow",
     async () => {
@@ -158,32 +158,36 @@ describe("Read Tests", () => {
     TIMEOUT_DEADLINE,
   );
 
+  // FuelError: The target function withdraw_base cannot accept forwarded funds as it's not marked as 'payable'
   it(
     "withdrawBase",
     async () => {
       const address = wallet.address.toAddress();
-      const btc = TOKENS_BY_SYMBOL["BTC"];
+      const btc: TokenAsset = TOKENS_BY_SYMBOL["BTC"];
       const result = await spark.withdrawBase(btc, "1000");
       expect(result).toBeDefined();
     },
     TIMEOUT_DEADLINE,
   );
 
+  // FuelError: The transaction reverted with an unknown reason: 0
+
   it(
     "supplyCollateral",
     async () => {
-      const btc = TOKENS_BY_SYMBOL["BTC"];
+      const btc: TokenAsset = TOKENS_BY_SYMBOL["BTC"];
       const result = await spark.supplyCollateral(btc);
       expect(result).toBeDefined();
     },
     TIMEOUT_DEADLINE,
   );
 
+  // FuelError: The transaction reverted with reason: "ArithmeticOverflow".
   it(
     "withdrawCollateral",
     async () => {
-      const btc = TOKENS_BY_SYMBOL["BTC"];
-      const eth = TOKENS_BY_SYMBOL["ETH"];
+      const btc: TokenAsset = TOKENS_BY_SYMBOL["BTC"];
+      const eth: TokenAsset = TOKENS_BY_SYMBOL["ETH"];
       const result = await spark.withdrawCollateral(eth, "1000", btc);
       expect(result).toBeDefined();
     },

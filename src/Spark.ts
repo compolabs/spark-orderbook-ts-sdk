@@ -87,7 +87,7 @@ export class Spark {
     size: string,
     price: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.createSpotOrder(
+    return this.write.spot.createSpotOrder(
       baseToken,
       quoteToken,
       size,
@@ -99,14 +99,14 @@ export class Spark {
   cancelSpotOrder = async (
     orderId: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.cancelSpotOrder(orderId, this.getApiOptions());
+    return this.write.spot.cancelSpotOrder(orderId, this.getApiOptions());
   };
 
   matchSpotOrders = async (
     sellOrderId: string,
     buyOrderId: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.matchSpotOrders(
+    return this.write.spot.matchSpotOrders(
       sellOrderId,
       buyOrderId,
       this.getApiOptions(),
@@ -124,7 +124,7 @@ export class Spark {
     asset: Asset,
     amount: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.depositPerpCollateral(
+    return this.write.perp.depositPerpCollateral(
       asset.address,
       amount,
       this.getApiOptions(),
@@ -140,7 +140,7 @@ export class Spark {
     const { priceUpdateData, updateFee } =
       await this.getPriceFeedUpdateData(tokenPriceFeed);
 
-    return this.write.withdrawPerpCollateral(
+    return this.write.perp.withdrawPerpCollateral(
       baseToken.address,
       gasToken.address,
       amount,
@@ -159,7 +159,7 @@ export class Spark {
   ): Promise<WriteTransactionResponse> => {
     const { priceUpdateData, updateFee } =
       await this.getPriceFeedUpdateData(tokenPriceFeed);
-    return this.write.openPerpOrder(
+    return this.write.perp.openPerpOrder(
       baseToken.address,
       gasToken.address,
       amount,
@@ -173,7 +173,7 @@ export class Spark {
   removePerpOrder = async (
     assetId: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.removePerpOrder(assetId, this.getApiOptions());
+    return this.write.perp.removePerpOrder(assetId, this.getApiOptions());
   };
 
   fulfillPerpOrder = async (
@@ -185,7 +185,7 @@ export class Spark {
     const { priceUpdateData, updateFee } =
       await this.getPriceFeedUpdateData(tokenPriceFeed);
 
-    return this.write.fulfillPerpOrder(
+    return this.write.perp.fulfillPerpOrder(
       gasToken.address,
       orderId,
       amount,
@@ -317,7 +317,7 @@ export class Spark {
     order2Id: string,
   ): Promise<WriteTransactionResponse> => {
     const options = await this.getFetchOptions();
-    return this.write.matchPerpOrders(order1Id, order2Id, options);
+    return this.write.perp.matchPerpOrders(order1Id, order2Id, options);
   };
 
   fetchPerpPendingFundingPayment = async (
@@ -420,7 +420,7 @@ export class Spark {
   };
 
   supplyBase = async (gasToken: Asset, amount: string, asset: Asset) => {
-    return this.write.supplyBase(
+    return this.write.lend.supplyBase(
       gasToken.address,
       amount,
       asset.address,
@@ -429,7 +429,7 @@ export class Spark {
   };
 
   withdrawBase = async (gasToken: Asset, amount: string) => {
-    return this.write.withdrawBase(
+    return this.write.lend.withdrawBase(
       gasToken.address,
       amount,
       this.getApiOptions(),
@@ -437,7 +437,10 @@ export class Spark {
   };
 
   supplyCollateral = async (gasToken: Asset) => {
-    return this.write.supplyCollateral(gasToken.address, this.getApiOptions());
+    return this.write.lend.supplyCollateral(
+      gasToken.address,
+      this.getApiOptions(),
+    );
   };
 
   withdrawCollateral = async (
@@ -445,7 +448,7 @@ export class Spark {
     amount: string,
     asset: Asset,
   ) => {
-    return this.write.withdrawCollateral(
+    return this.write.lend.withdrawCollateral(
       gasToken.address,
       amount,
       asset.address,

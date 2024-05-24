@@ -1,12 +1,11 @@
 import { Address } from "fuels";
 import { Options, UserSupplyBorrow } from "src/interface";
-import { ReadActions } from "src/ReadActions";
 import { AddressInput } from "src/types/account-balance/AccountBalanceAbi";
 import { MarketAbi__factory } from "src/types/lend-market";
 import { PythContractAbi__factory } from "src/types/pyth";
 import BN from "src/utils/BN";
 
-export class LendReadActions extends ReadActions {
+export class LendReadActions {
   fetchUserSupplyBorrow = async (
     accountAddress: string,
     options: Options,
@@ -66,6 +65,7 @@ export class LendReadActions extends ReadActions {
       .get();
 
     console.log("result", result.value.toString());
+    return result.value.toString();
   };
 
   fetchBalanceOfAsset = async (

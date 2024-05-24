@@ -1,20 +1,22 @@
-import { LendReadActions } from "./read-actions/LendReadActions";
-import { PerpReadActions } from "./read-actions/PerpReadActions";
-import { SpotReadActions } from "./read-actions/SpotReadActions";
 import { IndexerApi } from "./IndexerApi";
 import { Options } from "./interface";
+import {
+  LendReadActions,
+  PerpReadActions,
+  SpotReadActions,
+} from "./read-actions";
 
 export class ReadActions {
   protected indexerApi: IndexerApi;
-  perp: PerpReadActions;
-  spot: SpotReadActions;
-  lend: LendReadActions;
+  public spot: SpotReadActions;
+  public lend: LendReadActions;
+  public perp: PerpReadActions;
 
   constructor(url: string) {
     this.indexerApi = new IndexerApi(url);
     this.perp = new PerpReadActions(url);
     this.spot = new SpotReadActions(url);
-    this.lend = new LendReadActions(url);
+    this.lend = new LendReadActions();
   }
 
   fetchWalletBalance = async (

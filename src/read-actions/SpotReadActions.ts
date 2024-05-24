@@ -1,4 +1,5 @@
 import { Address } from "fuels";
+import { IndexerApi } from "src/IndexerApi";
 import {
   FetchOrdersParams,
   FetchTradesParams,
@@ -9,13 +10,18 @@ import {
   SpotOrderWithoutTimestamp,
   SpotTrades,
 } from "src/interface";
-import { ReadActions } from "src/ReadActions";
 import { OrderbookAbi__factory } from "src/types/orderbook";
 import BN from "src/utils/BN";
 import { convertI64ToBn } from "src/utils/convertI64ToBn";
 import getUnixTime from "src/utils/getUnixTime";
 
-export class SpotReadActions extends ReadActions {
+export class SpotReadActions {
+  private indexerApi: IndexerApi;
+
+  constructor(indexerApiUrl: string) {
+    this.indexerApi = new IndexerApi(indexerApiUrl);
+  }
+
   fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
     const data = await this.indexerApi.getSpotMarketCreateEvents();
 

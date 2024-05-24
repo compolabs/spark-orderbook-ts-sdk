@@ -1,4 +1,5 @@
 import { Address } from "fuels";
+import { IndexerApi } from "src/IndexerApi";
 import {
   Asset,
   FetchTradesParams,
@@ -10,7 +11,6 @@ import {
   PerpTraderOrder,
   PerpTrades,
 } from "src/interface";
-import { ReadActions } from "src/ReadActions";
 import { AccountBalanceAbi__factory } from "src/types/account-balance";
 import {
   AddressInput,
@@ -23,7 +23,13 @@ import BN from "src/utils/BN";
 import { convertI64ToBn } from "src/utils/convertI64ToBn";
 import getUnixTime from "src/utils/getUnixTime";
 
-export class PerpReadActions extends ReadActions {
+export class PerpReadActions {
+  private indexerApi: IndexerApi;
+
+  constructor(indexerApiUrl: string) {
+    this.indexerApi = new IndexerApi(indexerApiUrl);
+  }
+
   fetchPerpCollateralBalance = async (
     accountAddress: string,
     assetAddress: string,
