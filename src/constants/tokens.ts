@@ -26,4 +26,12 @@ export const BETA_TOKENS = [
     priceFeed:
       "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
   },
+  {
+    name: "UNI",
+    symbol: "UNI",
+    decimals: 6,
+    assetId:
+      "0xae37bc0feb66e60a89e301d450bb4640aa9bd7cedd856e253e23989eae536e92",
+    priceFeed: "",
+  },
 ];

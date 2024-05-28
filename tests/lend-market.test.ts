@@ -6,9 +6,10 @@ import Spark, {
   BETA_INDEXER_URL,
   BETA_NETWORK,
   BETA_TOKENS,
+  BN,
 } from "../src";
 
-import { PRIVATE_KEY_ALICE, TokenAsset } from "./constants";
+import { FAUCET_AMOUNTS, PRIVATE_KEY_ALICE, TokenAsset } from "./constants";
 
 const TIMEOUT_DEADLINE = 60_000; // 1min
 
@@ -43,18 +44,17 @@ describe("Read Tests", () => {
   });
 
   it("Supply 20", async () => {
-    const btc: TokenAsset = TOKENS_BY_SYMBOL["USDC"];
-    const eth: TokenAsset = TOKENS_BY_SYMBOL["ETH"];
+    const usdc: TokenAsset = TOKENS_BY_SYMBOL["USDC"];
 
-    const result = await spark.supplyBase(eth, "2000", btc);
+    const result = await spark.supplyBase(usdc, "2000");
 
     expect(result).toBeDefined();
   });
 
   it("Check user collateral", async () => {
     const address = wallet.address.toAddress();
-    const btc: TokenAsset = TOKENS_BY_SYMBOL["BTC"];
-    const result = await spark.fetchUserCollateral(address, btc);
+    const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
+    const result = await spark.fetchUserCollateral(address, uni);
     expect(result).not.toBeNull();
   });
 
@@ -82,8 +82,8 @@ describe("Read Tests", () => {
   it(
     "fetchTotalsCollateral",
     async () => {
-      const btc: TokenAsset = TOKENS_BY_SYMBOL["BTC"];
-      const result = await spark.fetchTotalsCollateral(btc);
+      const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
+      const result = await spark.fetchTotalsCollateral(uni);
       expect(result).toBeDefined();
     },
     TIMEOUT_DEADLINE,
@@ -92,8 +92,8 @@ describe("Read Tests", () => {
   it(
     "fetchBalanceOfAsset",
     async () => {
-      const btc: TokenAsset = TOKENS_BY_SYMBOL["BTC"];
-      const result = await spark.fetchBalanceOfAsset(btc);
+      const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
+      const result = await spark.fetchBalanceOfAsset(uni);
       expect(result).toBeDefined();
     },
     TIMEOUT_DEADLINE,
@@ -102,8 +102,8 @@ describe("Read Tests", () => {
   it(
     "fetchReserves",
     async () => {
-      const btc = TOKENS_BY_SYMBOL["BTC"];
-      const result = await spark.fetchReserves(btc);
+      const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
+      const result = await spark.fetchReserves(uni);
       expect(result).toBeDefined();
     },
     TIMEOUT_DEADLINE,
@@ -112,9 +112,9 @@ describe("Read Tests", () => {
   it(
     "fetchUserCollateral",
     async () => {
-      const btc: TokenAsset = TOKENS_BY_SYMBOL["BTC"];
+      const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
       const address = wallet.address.toAddress();
-      const result = await spark.fetchUserCollateral(address, btc);
+      const result = await spark.fetchUserCollateral(address, uni);
       expect(result).toBeDefined();
     },
     TIMEOUT_DEADLINE,
@@ -157,40 +157,116 @@ describe("Read Tests", () => {
     },
     TIMEOUT_DEADLINE,
   );
+});
 
-  // FuelError: The target function withdraw_base cannot accept forwarded funds as it's not marked as 'payable'
+describe("Write tests", () => {
+  let wallet: WalletUnlocked;
+  let spark: Spark;
+
+  beforeEach(async () => {
+    const provider = await Provider.create(BETA_NETWORK.url);
+    wallet = Wallet.fromPrivateKey(PRIVATE_KEY_ALICE, provider);
+
+    spark = new Spark({
+      networkUrl: BETA_NETWORK.url,
+      contractAddresses: BETA_CONTRACT_ADDRESSES,
+      indexerApiUrl: BETA_INDEXER_URL,
+      wallet,
+    });
+  });
+
+  it(
+    "supplyBase",
+    async () => {
+      const usdc: TokenAsset = TOKENS_BY_SYMBOL["USDC"];
+
+      const amountToSend = BN.parseUnits(FAUCET_AMOUNTS.USDC, usdc.decimals);
+
+      const result = await spark.supplyBase(usdc, amountToSend.toString());
+      expect(result).toBeDefined();
+    },
+    TIMEOUT_DEADLINE,
+  );
+
+  it(
+    "supplyCollateral",
+    async () => {
+      const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
+
+      const amountToSend = BN.parseUnits(FAUCET_AMOUNTS.UNI, uni.decimals);
+
+      const result = await spark.supplyCollateral(uni, amountToSend.toString());
+      expect(result).toBeDefined();
+    },
+    TIMEOUT_DEADLINE,
+  );
+
   it(
     "withdrawBase",
     async () => {
-      const address = wallet.address.toAddress();
-      const btc: TokenAsset = TOKENS_BY_SYMBOL["BTC"];
-      const result = await spark.withdrawBase(btc, "1000");
+      const usdc: TokenAsset = TOKENS_BY_SYMBOL["USDC"];
+
+      const amountToSend = BN.parseUnits(
+        FAUCET_AMOUNTS.USDC,
+        usdc.decimals,
+      ).dividedBy(2);
+
+      const result = await spark.withdrawBase(amountToSend.toString()); // Always USDC
+      expect(result).toBeDefined();
+    },
+    TIMEOUT_DEADLINE,
+  );
+
+  it(
+    "withdrawCollateral",
+    async () => {
+      const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
+
+      const amountToSend = BN.parseUnits(
+        FAUCET_AMOUNTS.USDC,
+        uni.decimals,
+      ).dividedBy(2);
+
+      const result = await spark.withdrawCollateral(
+        uni,
+        amountToSend.toString(),
+      );
       expect(result).toBeDefined();
     },
     TIMEOUT_DEADLINE,
   );
 
   // FuelError: The transaction reverted with an unknown reason: 0
+  // it(
+  //   "supplyCollateral",
+  //   async () => {
+  //     const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
+  //     const result = await spark.supplyCollateral(UNI, "0.001");
+  //     expect(result).toBeDefined();
+  //   },
+  //   TIMEOUT_DEADLINE,
+  // );
 
-  it(
-    "supplyCollateral",
-    async () => {
-      const btc: TokenAsset = TOKENS_BY_SYMBOL["BTC"];
-      const result = await spark.supplyCollateral(btc);
-      expect(result).toBeDefined();
-    },
-    TIMEOUT_DEADLINE,
-  );
+  // // FuelError: The target function withdraw_base cannot accept forwarded funds as it's not marked as 'payable'
+  // it(
+  //   "withdrawBase",
+  //   async () => {
+  //     // const address = wallet.address.toAddress();
+  //     // const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
+  //     const result = await spark.withdrawBase("1000");
+  //     expect(result).toBeDefined();
+  //   },
+  //   TIMEOUT_DEADLINE,
+  // );
 
-  // FuelError: The transaction reverted with reason: "ArithmeticOverflow".
-  it(
-    "withdrawCollateral",
-    async () => {
-      const btc: TokenAsset = TOKENS_BY_SYMBOL["BTC"];
-      const eth: TokenAsset = TOKENS_BY_SYMBOL["ETH"];
-      const result = await spark.withdrawCollateral(eth, "1000", btc);
-      expect(result).toBeDefined();
-    },
-    TIMEOUT_DEADLINE,
-  );
+  // // FuelError: The transaction reverted with reason: "ArithmeticOverflow".
+  // it(
+  //   "withdrawCollateral",
+  //   async () => {
+  //     const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
+  //     const result = await spark.withdrawCollateral(UNI, "1000");
+  //     expect(result).toBeDefined();
+  //   },
+  //   TIMEOUT_DEADLINE,
+  // );
 });

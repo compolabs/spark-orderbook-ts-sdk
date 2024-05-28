@@ -419,39 +419,30 @@ export class Spark {
     return this.read.lend.fetchSupplyRate(value, options);
   };
 
-  supplyBase = async (gasToken: Asset, amount: string, asset: Asset) => {
+  supplyBase = async (asset: Asset, amount: string) => {
     return this.write.lend.supplyBase(
-      gasToken.address,
-      amount,
       asset.address,
-      this.getApiOptions(),
-    );
-  };
-
-  withdrawBase = async (gasToken: Asset, amount: string) => {
-    return this.write.lend.withdrawBase(
-      gasToken.address,
       amount,
       this.getApiOptions(),
     );
   };
 
-  supplyCollateral = async (gasToken: Asset) => {
+  withdrawBase = async (amount: string) => {
+    return this.write.lend.withdrawBase(amount, this.getApiOptions());
+  };
+
+  supplyCollateral = async (asset: Asset, amount: string) => {
     return this.write.lend.supplyCollateral(
-      gasToken.address,
+      asset.address,
+      amount,
       this.getApiOptions(),
     );
   };
 
-  withdrawCollateral = async (
-    gasToken: Asset,
-    amount: string,
-    asset: Asset,
-  ) => {
+  withdrawCollateral = async (asset: Asset, amount: string) => {
     return this.write.lend.withdrawCollateral(
-      gasToken.address,
-      amount,
       asset.address,
+      amount,
       this.getApiOptions(),
     );
   };
