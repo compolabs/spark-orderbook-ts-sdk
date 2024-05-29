@@ -171,7 +171,6 @@ describe("Write tests", () => {
       const usdc: TokenAsset = TOKENS_BY_SYMBOL["USDC"];
 
       const amountToSend = BN.parseUnits(FAUCET_AMOUNTS.USDC, usdc.decimals);
-
       const result = await spark.supplyBase(usdc, amountToSend.toString());
       expect(result).toBeDefined();
     },
@@ -218,7 +217,7 @@ describe("Write tests", () => {
       const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
 
       const amountToSend = BN.parseUnits(
-        FAUCET_AMOUNTS.USDC,
+        FAUCET_AMOUNTS.UNI,
         uni.decimals,
       ).dividedBy(2);
 
@@ -230,38 +229,4 @@ describe("Write tests", () => {
     },
     TIMEOUT_DEADLINE,
   );
-
-  // FuelError: The transaction reverted with an unknown reason: 0
-  // it(
-  //   "supplyCollateral",
-  //   async () => {
-  //     const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
-  //     const result = await spark.supplyCollateral(UNI, "0.001");
-  //     expect(result).toBeDefined();
-  //   },
-  //   TIMEOUT_DEADLINE,
-  // );
-
-  // // FuelError: The target function withdraw_base cannot accept forwarded funds as it's not marked as 'payable'
-  // it(
-  //   "withdrawBase",
-  //   async () => {
-  //     // const address = wallet.address.toAddress();
-  //     // const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
-  //     const result = await spark.withdrawBase("1000");
-  //     expect(result).toBeDefined();
-  //   },
-  //   TIMEOUT_DEADLINE,
-  // );
-
-  // // FuelError: The transaction reverted with reason: "ArithmeticOverflow".
-  // it(
-  //   "withdrawCollateral",
-  //   async () => {
-  //     const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
-  //     const result = await spark.withdrawCollateral(UNI, "1000");
-  //     expect(result).toBeDefined();
-  //   },
-  //   TIMEOUT_DEADLINE,
-  // );
 });
