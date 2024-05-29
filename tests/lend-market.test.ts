@@ -5,27 +5,17 @@ import Spark, {
   BETA_CONTRACT_ADDRESSES,
   BETA_INDEXER_URL,
   BETA_NETWORK,
-  BETA_TOKENS,
   BN,
 } from "../src";
 
-import { FAUCET_AMOUNTS, PRIVATE_KEY_ALICE, TokenAsset } from "./constants";
+import {
+  FAUCET_AMOUNTS,
+  PRIVATE_KEY_ALICE,
+  TokenAsset,
+  TOKENS_BY_SYMBOL,
+} from "./constants";
 
 const TIMEOUT_DEADLINE = 60_000; // 1min
-
-const TOKENS_LIST = Object.values(BETA_TOKENS).map(
-  ({ decimals, assetId, symbol, priceFeed }) => ({
-    address: assetId,
-    symbol,
-    decimals,
-    priceFeed,
-  }),
-);
-
-const TOKENS_BY_SYMBOL = TOKENS_LIST.reduce(
-  (acc, t) => ({ ...acc, [t.symbol]: t }),
-  {},
-);
 
 describe("Read Tests", () => {
   let wallet: WalletUnlocked;
@@ -193,7 +183,12 @@ describe("Write tests", () => {
     async () => {
       const uni: TokenAsset = TOKENS_BY_SYMBOL["UNI"];
 
+      await spark.mintToken(uni, FAUCET_AMOUNTS.UNI);
+
+      const uniBalance = await spark.fetchWalletBalance(uni);
       const amountToSend = BN.parseUnits(FAUCET_AMOUNTS.UNI, uni.decimals);
+
+      expect(new BN(uniBalance).gte(amountToSend)).toBe(true);
 
       const result = await spark.supplyCollateral(uni, amountToSend.toString());
       expect(result).toBeDefined();

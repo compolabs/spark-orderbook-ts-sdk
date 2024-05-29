@@ -23,7 +23,7 @@ export class ReadActions {
     assetId: string,
     options: Options,
   ): Promise<string> => {
-    const bn = await options.wallet.getBalance(assetId);
-    return bn.toString();
+    const balance = await options.wallet.getBalance(assetId);
+    return balance.toString();
   };
 }
