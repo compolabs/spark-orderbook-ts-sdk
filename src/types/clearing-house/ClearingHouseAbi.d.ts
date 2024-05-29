@@ -20,10 +20,10 @@ import type {
   InvokeFunction,
 } from 'fuels';
 
-import type { Option, Enum } from "./common";
+import type { Option, Enum, Vec } from "./common";
 
-export enum ErrorInput { PositionSizeIsZero = 'PositionSizeIsZero', MarketNotFound = 'MarketNotFound', MarketNotPaused = 'MarketNotPaused', MarketNotOpened = 'MarketNotOpened', MarketAlreadyExists = 'MarketAlreadyExists', OnlyVaultOrTrader = 'OnlyVaultOrTrader', BaseTokenDoesNotExists = 'BaseTokenDoesNotExists', CannotLiquidateWhenThereIsStillOrder = 'CannotLiquidateWhenThereIsStillOrder', EnoughAccountValue = 'EnoughAccountValue', WrongLiquidationDirection = 'WrongLiquidationDirection', InsufficientInsuranceFundCapacity = 'InsufficientInsuranceFundCapacity', NotEnoughFreeCollateralByImRatio = 'NotEnoughFreeCollateralByImRatio', AccessDenied = 'AccessDenied' };
-export enum ErrorOutput { PositionSizeIsZero = 'PositionSizeIsZero', MarketNotFound = 'MarketNotFound', MarketNotPaused = 'MarketNotPaused', MarketNotOpened = 'MarketNotOpened', MarketAlreadyExists = 'MarketAlreadyExists', OnlyVaultOrTrader = 'OnlyVaultOrTrader', BaseTokenDoesNotExists = 'BaseTokenDoesNotExists', CannotLiquidateWhenThereIsStillOrder = 'CannotLiquidateWhenThereIsStillOrder', EnoughAccountValue = 'EnoughAccountValue', WrongLiquidationDirection = 'WrongLiquidationDirection', InsufficientInsuranceFundCapacity = 'InsufficientInsuranceFundCapacity', NotEnoughFreeCollateralByImRatio = 'NotEnoughFreeCollateralByImRatio', AccessDenied = 'AccessDenied' };
+export enum ErrorInput { PositionSizeIsZero = 'PositionSizeIsZero', MarketNotFound = 'MarketNotFound', MarketNotPaused = 'MarketNotPaused', MarketNotOpened = 'MarketNotOpened', MarketAlreadyExists = 'MarketAlreadyExists', CannotLiquidateWhenThereIsStillOrder = 'CannotLiquidateWhenThereIsStillOrder', EnoughAccountValue = 'EnoughAccountValue', WrongLiquidationDirection = 'WrongLiquidationDirection', InsufficientInsuranceFundCapacity = 'InsufficientInsuranceFundCapacity', NotEnoughFreeCollateralByImRatio = 'NotEnoughFreeCollateralByImRatio', AccessDenied = 'AccessDenied' };
+export enum ErrorOutput { PositionSizeIsZero = 'PositionSizeIsZero', MarketNotFound = 'MarketNotFound', MarketNotPaused = 'MarketNotPaused', MarketNotOpened = 'MarketNotOpened', MarketAlreadyExists = 'MarketAlreadyExists', CannotLiquidateWhenThereIsStillOrder = 'CannotLiquidateWhenThereIsStillOrder', EnoughAccountValue = 'EnoughAccountValue', WrongLiquidationDirection = 'WrongLiquidationDirection', InsufficientInsuranceFundCapacity = 'InsufficientInsuranceFundCapacity', NotEnoughFreeCollateralByImRatio = 'NotEnoughFreeCollateralByImRatio', AccessDenied = 'AccessDenied' };
 export type IdentityInput = Enum<{ Address: AddressInput, ContractId: ContractIdInput }>;
 export type IdentityOutput = Enum<{ Address: AddressOutput, ContractId: ContractIdOutput }>;
 export enum MarketEventIdentifierInput { MarketCreateEvent = 'MarketCreateEvent', MarketCloseEvent = 'MarketCloseEvent', MarketPauseEvent = 'MarketPauseEvent', MarketUnpauseEvent = 'MarketUnpauseEvent' };
@@ -160,12 +160,12 @@ export class ClearingHouseAbi extends Contract {
     fulfill_order: InvokeFunction<[base_size: I64Input, order_id: string], void>;
     liquidate: InvokeFunction<[trader: AddressInput, base_token: AssetIdInput, position_size_to_be_liquidated: I64Input], void>;
     match_orders: InvokeFunction<[order1_id: string, order2_id: string], void>;
-    open_order: InvokeFunction<[base_token: AssetIdInput, base_size: I64Input, order_price: BigNumberish], void>;
+    open_order: InvokeFunction<[base_token: AssetIdInput, base_size: I64Input, order_price: BigNumberish], string>;
     pause_market: InvokeFunction<[base_token: AssetIdInput], void>;
     remove_admin: InvokeFunction<[admin: AddressInput], void>;
-    remove_all_orders: InvokeFunction<[], void>;
+    remove_all_orders: InvokeFunction<[], Vec<string>>;
     remove_order: InvokeFunction<[order: string], void>;
-    remove_uncollaterized_orders: InvokeFunction<[trader: AddressInput], void>;
+    remove_uncollaterized_orders: InvokeFunction<[trader: AddressInput], Vec<string>>;
     settle_all_funding: InvokeFunction<[trader: AddressInput], void>;
     unpause_market: InvokeFunction<[base_token: AssetIdInput], void>;
     update_insurance_fund_fee_share: InvokeFunction<[insurance_fund_fee_share: BigNumberish], void>;

@@ -22,8 +22,8 @@ import type {
 
 import type { Enum } from "./common";
 
-export enum ErrorInput { TradingIsPaused = 'TradingIsPaused', InvalidAsset = 'InvalidAsset', AccessDenied = 'AccessDenied', NotEnoughFreeCollateral = 'NotEnoughFreeCollateral', OnlyClearingHouse = 'OnlyClearingHouse', AmountExceedsTheBalance = 'AmountExceedsTheBalance', V_GTDC = 'V_GTDC', V_MSAE = 'V_MSAE', V_NL = 'V_NL', ZeroPrice = 'ZeroPrice', ZeroAmount = 'ZeroAmount' };
-export enum ErrorOutput { TradingIsPaused = 'TradingIsPaused', InvalidAsset = 'InvalidAsset', AccessDenied = 'AccessDenied', NotEnoughFreeCollateral = 'NotEnoughFreeCollateral', OnlyClearingHouse = 'OnlyClearingHouse', AmountExceedsTheBalance = 'AmountExceedsTheBalance', V_GTDC = 'V_GTDC', V_MSAE = 'V_MSAE', V_NL = 'V_NL', ZeroPrice = 'ZeroPrice', ZeroAmount = 'ZeroAmount' };
+export enum ErrorInput { InvalidAsset = 'InvalidAsset', AccessDenied = 'AccessDenied', NotEnoughFreeCollateral = 'NotEnoughFreeCollateral', AmountExceedsTheBalance = 'AmountExceedsTheBalance', V_GTDC = 'V_GTDC', V_MSAE = 'V_MSAE', V_NL = 'V_NL', ZeroPrice = 'ZeroPrice', ZeroAmount = 'ZeroAmount' };
+export enum ErrorOutput { InvalidAsset = 'InvalidAsset', AccessDenied = 'AccessDenied', NotEnoughFreeCollateral = 'NotEnoughFreeCollateral', AmountExceedsTheBalance = 'AmountExceedsTheBalance', V_GTDC = 'V_GTDC', V_MSAE = 'V_MSAE', V_NL = 'V_NL', ZeroPrice = 'ZeroPrice', ZeroAmount = 'ZeroAmount' };
 export enum MathErrorInput { ZeroDiv = 'ZeroDiv', NegToPosConv = 'NegToPosConv' };
 export enum MathErrorOutput { ZeroDiv = 'ZeroDiv', NegToPosConv = 'NegToPosConv' };
 export enum PauseErrorInput { Paused = 'Paused', NotPaused = 'NotPaused' };

@@ -168,22 +168,12 @@ const _abi = {
           "typeArguments": null
         },
         {
-          "name": "NoMarketFound",
-          "type": 0,
-          "typeArguments": null
-        },
-        {
           "name": "OrdersCantBeMatched",
           "type": 0,
           "typeArguments": null
         },
         {
           "name": "NoMarketPriceForMarket",
-          "type": 0,
-          "typeArguments": null
-        },
-        {
-          "name": "FirstArgumentShouldBeOrderSellSecondOrderBuy",
           "type": 0,
           "typeArguments": null
         }

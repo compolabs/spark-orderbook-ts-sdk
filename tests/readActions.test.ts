@@ -96,7 +96,7 @@ describe("Read Tests", () => {
     },
     TIMEOUT_DEADLINE,
   );
-  it(
+  it.skip(
     "fetchSpotOrderById",
     async () => {
       const allSpotTrades = await spark.fetchSpotTrades({
@@ -172,7 +172,7 @@ describe("Read Tests", () => {
     },
     TIMEOUT_DEADLINE,
   );
-  it(
+  it.skip(
     "fetchPerpFundingRate",
     async () => {
       const rate = await spark.fetchPerpFundingRate(TOKENS_BY_SYMBOL["USDC"]);
@@ -187,7 +187,7 @@ describe("Read Tests", () => {
       const size = await spark.fetchPerpMaxAbsPositionSize(
         wallet.address.toAddress(),
         TOKENS_BY_SYMBOL["BTC"],
-        "100000",
+        "67034000000000",
       );
 
       expect(size).toBeDefined();

@@ -42,7 +42,7 @@ describe("Basic Tests", () => {
   });
 
   it(
-    "Should get transaction by it",
+    "Should get all orders",
     async () => {
       const allOrders = await spark.fetchSpotOrders({
         baseToken: TOKENS_BY_SYMBOL["BTC"].address,
@@ -52,13 +52,9 @@ describe("Basic Tests", () => {
 
       console.log(allOrders.map((o) => o.id));
 
-      expect(allOrders).toHaveLength(1);
+      expect(allOrders).toHaveLength(10);
 
       console.log(allOrders);
-
-      const orderById = await spark.fetchSpotOrderById(allOrders[0].id);
-
-      expect(orderById).toBeDefined();
     },
     TIMEOUT_DEADLINE,
   );

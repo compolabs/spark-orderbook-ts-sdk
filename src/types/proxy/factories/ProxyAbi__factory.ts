@@ -281,34 +281,6 @@ const _abi = {
     {
       "inputs": [
         {
-          "name": "trader",
-          "type": 7,
-          "typeArguments": null
-        },
-        {
-          "name": "amount",
-          "type": 10,
-          "typeArguments": null
-        }
-      ],
-      "name": "debug_modify_owed_realized_pnl",
-      "output": {
-        "name": "",
-        "type": 0,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "write"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
           "name": "price_feed",
           "type": 1,
           "typeArguments": null
@@ -329,35 +301,6 @@ const _abi = {
         {
           "name": "storage",
           "arguments": [
-            "write"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "base_token",
-          "type": 8,
-          "typeArguments": null
-        },
-        {
-          "name": "current_twap",
-          "type": 15,
-          "typeArguments": null
-        }
-      ],
-      "name": "debug_setup_twap",
-      "output": {
-        "name": "",
-        "type": 0,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read",
             "write"
           ]
         }
@@ -450,14 +393,70 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "payable",
+          "arguments": []
+        },
+        {
           "name": "storage",
           "arguments": [
             "read"
           ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "trader",
+          "type": 7,
+          "typeArguments": null
         },
         {
-          "name": "payable",
-          "arguments": []
+          "name": "amount",
+          "type": 10,
+          "typeArguments": null
+        }
+      ],
+      "name": "debug_modify_owed_realized_pnl",
+      "output": {
+        "name": "",
+        "type": 0,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "base_token",
+          "type": 8,
+          "typeArguments": null
+        },
+        {
+          "name": "current_twap",
+          "type": 15,
+          "typeArguments": null
+        }
+      ],
+      "name": "debug_setup_twap",
+      "output": {
+        "name": "",
+        "type": 0,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
         }
       ]
     },
@@ -641,7 +640,7 @@ const _abi = {
         "type": 7,
         "typeArguments": []
       },
-      "offset": 23928
+      "offset": 23872
     },
     {
       "name": "DEBUG_STEP",

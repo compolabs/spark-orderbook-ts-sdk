@@ -22,8 +22,8 @@ import type {
 
 import type { Option, Enum, Vec } from "./common";
 
-export enum ErrorInput { AccessDenied = 'AccessDenied', FreeCollateralMoreThanZero = 'FreeCollateralMoreThanZero', NoOrdersFound = 'NoOrdersFound', NoMarketFound = 'NoMarketFound', OrdersCantBeMatched = 'OrdersCantBeMatched', NoMarketPriceForMarket = 'NoMarketPriceForMarket', FirstArgumentShouldBeOrderSellSecondOrderBuy = 'FirstArgumentShouldBeOrderSellSecondOrderBuy' };
-export enum ErrorOutput { AccessDenied = 'AccessDenied', FreeCollateralMoreThanZero = 'FreeCollateralMoreThanZero', NoOrdersFound = 'NoOrdersFound', NoMarketFound = 'NoMarketFound', OrdersCantBeMatched = 'OrdersCantBeMatched', NoMarketPriceForMarket = 'NoMarketPriceForMarket', FirstArgumentShouldBeOrderSellSecondOrderBuy = 'FirstArgumentShouldBeOrderSellSecondOrderBuy' };
+export enum ErrorInput { AccessDenied = 'AccessDenied', FreeCollateralMoreThanZero = 'FreeCollateralMoreThanZero', NoOrdersFound = 'NoOrdersFound', OrdersCantBeMatched = 'OrdersCantBeMatched', NoMarketPriceForMarket = 'NoMarketPriceForMarket' };
+export enum ErrorOutput { AccessDenied = 'AccessDenied', FreeCollateralMoreThanZero = 'FreeCollateralMoreThanZero', NoOrdersFound = 'NoOrdersFound', OrdersCantBeMatched = 'OrdersCantBeMatched', NoMarketPriceForMarket = 'NoMarketPriceForMarket' };
 export type IdentityInput = Enum<{ Address: AddressInput, ContractId: ContractIdInput }>;
 export type IdentityOutput = Enum<{ Address: AddressOutput, ContractId: ContractIdOutput }>;
 export enum OrderEventIdentifierInput { OrderOpenEvent = 'OrderOpenEvent', OrderRemoveUncollaterizedEvent = 'OrderRemoveUncollaterizedEvent', OrderRemoveEvent = 'OrderRemoveEvent', OrderRemoveAllEvent = 'OrderRemoveAllEvent', OrderMatchEvent = 'OrderMatchEvent', OrderFulfillEvent = 'OrderFulfillEvent' };

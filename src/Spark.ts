@@ -87,7 +87,7 @@ export class Spark {
     size: string,
     price: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.createSpotOrder(
+    return this.write.spot.createSpotOrder(
       baseToken,
       quoteToken,
       size,
@@ -99,14 +99,14 @@ export class Spark {
   cancelSpotOrder = async (
     orderId: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.cancelSpotOrder(orderId, this.getApiOptions());
+    return this.write.spot.cancelSpotOrder(orderId, this.getApiOptions());
   };
 
   matchSpotOrders = async (
     sellOrderId: string,
     buyOrderId: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.matchSpotOrders(
+    return this.write.spot.matchSpotOrders(
       sellOrderId,
       buyOrderId,
       this.getApiOptions(),
@@ -124,7 +124,7 @@ export class Spark {
     asset: Asset,
     amount: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.depositPerpCollateral(
+    return this.write.perp.depositPerpCollateral(
       asset.address,
       amount,
       this.getApiOptions(),
@@ -140,7 +140,7 @@ export class Spark {
     const { priceUpdateData, updateFee } =
       await this.getPriceFeedUpdateData(tokenPriceFeed);
 
-    return this.write.withdrawPerpCollateral(
+    return this.write.perp.withdrawPerpCollateral(
       baseToken.address,
       gasToken.address,
       amount,
@@ -159,7 +159,7 @@ export class Spark {
   ): Promise<WriteTransactionResponse> => {
     const { priceUpdateData, updateFee } =
       await this.getPriceFeedUpdateData(tokenPriceFeed);
-    return this.write.openPerpOrder(
+    return this.write.perp.openPerpOrder(
       baseToken.address,
       gasToken.address,
       amount,
@@ -173,7 +173,7 @@ export class Spark {
   removePerpOrder = async (
     assetId: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.removePerpOrder(assetId, this.getApiOptions());
+    return this.write.perp.removePerpOrder(assetId, this.getApiOptions());
   };
 
   fulfillPerpOrder = async (
@@ -185,7 +185,7 @@ export class Spark {
     const { priceUpdateData, updateFee } =
       await this.getPriceFeedUpdateData(tokenPriceFeed);
 
-    return this.write.fulfillPerpOrder(
+    return this.write.perp.fulfillPerpOrder(
       gasToken.address,
       orderId,
       amount,
@@ -196,25 +196,25 @@ export class Spark {
   };
 
   fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
-    return this.read.fetchSpotMarkets(limit);
+    return this.read.spot.fetchSpotMarkets(limit);
   };
 
   fetchSpotMarketPrice = async (baseToken: Asset): Promise<BN> => {
-    return this.read.fetchSpotMarketPrice(baseToken.address);
+    return this.read.spot.fetchSpotMarketPrice(baseToken.address);
   };
 
   fetchSpotOrders = async (params: FetchOrdersParams): Promise<SpotOrder[]> => {
-    return this.read.fetchSpotOrders(params);
+    return this.read.spot.fetchSpotOrders(params);
   };
 
   fetchSpotTrades = async (
     params: FetchTradesParams,
   ): Promise<SpotTrades[]> => {
-    return this.read.fetchSpotTrades(params);
+    return this.read.spot.fetchSpotTrades(params);
   };
 
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
-    return this.read.fetchSpotVolume();
+    return this.read.spot.fetchSpotVolume();
   };
 
   fetchSpotOrderById = async (
@@ -222,13 +222,13 @@ export class Spark {
   ): Promise<SpotOrderWithoutTimestamp | undefined> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchSpotOrderById(orderId, options);
+    return this.read.spot.fetchSpotOrderById(orderId, options);
   };
 
   fetchPerpTrades = async (
     params: FetchTradesParams,
   ): Promise<PerpTrades[]> => {
-    return this.read.fetchPerpTradeEvents(params);
+    return this.read.perp.fetchPerpTradeEvents(params);
   };
 
   fetchPerpCollateralBalance = async (
@@ -237,7 +237,7 @@ export class Spark {
   ): Promise<BN> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchPerpCollateralBalance(
+    return this.read.perp.fetchPerpCollateralBalance(
       accountAddress,
       asset.address,
       options,
@@ -251,7 +251,7 @@ export class Spark {
   ): Promise<PerpAllTraderPosition[]> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchPerpAllTraderPositions(
+    return this.read.perp.fetchPerpAllTraderPositions(
       accountAddress,
       assetAddress,
       limit,
@@ -262,7 +262,7 @@ export class Spark {
   fetchPerpIsAllowedCollateral = async (asset: Asset): Promise<boolean> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchPerpIsAllowedCollateral(asset.address, options);
+    return this.read.perp.fetchPerpIsAllowedCollateral(asset.address, options);
   };
 
   fetchPerpTraderOrders = async (
@@ -273,7 +273,7 @@ export class Spark {
   ) => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchPerpTraderOrders(
+    return this.read.perp.fetchPerpTraderOrders(
       accountAddress,
       asset.address,
       options,
@@ -288,13 +288,13 @@ export class Spark {
   ): Promise<PerpMarket[]> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchPerpAllMarkets(assetList, quoteAsset, options);
+    return this.read.perp.fetchPerpAllMarkets(assetList, quoteAsset, options);
   };
 
   fetchPerpFundingRate = async (asset: Asset): Promise<BN> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchPerpFundingRate(asset.address, options);
+    return this.read.perp.fetchPerpFundingRate(asset.address, options);
   };
 
   fetchPerpMaxAbsPositionSize = async (
@@ -304,7 +304,7 @@ export class Spark {
   ): Promise<PerpMaxAbsPositionSize> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchPerpMaxAbsPositionSize(
+    return this.read.perp.fetchPerpMaxAbsPositionSize(
       accountAddress,
       asset.address,
       tradePrice,
@@ -317,7 +317,7 @@ export class Spark {
     order2Id: string,
   ): Promise<WriteTransactionResponse> => {
     const options = await this.getFetchOptions();
-    return this.write.matchPerpOrders(order1Id, order2Id, options);
+    return this.write.perp.matchPerpOrders(order1Id, order2Id, options);
   };
 
   fetchPerpPendingFundingPayment = async (
@@ -326,7 +326,7 @@ export class Spark {
   ): Promise<PerpPendingFundingPayment> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchPerpPendingFundingPayment(
+    return this.read.perp.fetchPerpPendingFundingPayment(
       accountAddress,
       asset.address,
       options,
@@ -336,7 +336,7 @@ export class Spark {
   fetchPerpMarkPrice = async (asset: Asset): Promise<BN> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchPerpMarkPrice(asset.address, options);
+    return this.read.perp.fetchPerpMarkPrice(asset.address, options);
   };
 
   fetchWalletBalance = async (asset: Asset): Promise<string> => {
@@ -351,6 +351,100 @@ export class Spark {
 
   getProvider = async () => {
     return this.providerPromise;
+  };
+
+  // Lend market functions
+
+  fetchUserSupplyBorrow = async (accountAddress: string) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.lend.fetchUserSupplyBorrow(accountAddress, options);
+  };
+
+  fetchCollateralConfigurations = async () => {
+    const options = await this.getFetchOptions();
+
+    return this.read.lend.fetchCollateralConfigurations(options);
+  };
+
+  fetchTotalsCollateral = async (asset: Asset) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.lend.fetchTotalsCollateral(asset.address, options);
+  };
+
+  fetchBalanceOfAsset = async (asset: Asset) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.lend.fetchBalanceOfAsset(asset.address, options);
+  };
+
+  fetchReserves = async (asset: Asset) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.lend.fetchReserves(options);
+  };
+
+  fetchUserCollateral = async (accountAddress: string, asset: Asset) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.lend.fetchUserCollateral(
+      accountAddress,
+      asset.address,
+      options,
+    );
+  };
+
+  fetchUtilization = async () => {
+    const options = await this.getFetchOptions();
+
+    return this.read.lend.fetchUtilization(options);
+  };
+
+  fetchAvailableToBorrow = async (accountAddress: string) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.lend.fetchAvailableToBorrow(accountAddress, options);
+  };
+
+  fetchBorrowRate = async (value: string) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.lend.fetchBorrowRate(value, options);
+  };
+
+  fetchSupplyRate = async (value: string) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.lend.fetchSupplyRate(value, options);
+  };
+
+  supplyBase = async (asset: Asset, amount: string) => {
+    return this.write.lend.supplyBase(
+      asset.address,
+      amount,
+      this.getApiOptions(),
+    );
+  };
+
+  withdrawBase = async (amount: string) => {
+    return this.write.lend.withdrawBase(amount, this.getApiOptions());
+  };
+
+  supplyCollateral = async (asset: Asset, amount: string) => {
+    return this.write.lend.supplyCollateral(
+      asset.address,
+      amount,
+      this.getApiOptions(),
+    );
+  };
+
+  withdrawCollateral = async (asset: Asset, amount: string) => {
+    return this.write.lend.withdrawCollateral(
+      asset.address,
+      amount,
+      this.getApiOptions(),
+    );
   };
 
   private getFetchOptions = async (): Promise<Options> => {
