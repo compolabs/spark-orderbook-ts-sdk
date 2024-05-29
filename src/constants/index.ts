@@ -21,16 +21,16 @@ export const BETA_CONTRACT_ADDRESSES: Contracts = {
   pyth: "0x3cd5005f23321c8ae0ccfa98fb07d9a5ff325c483f21d2d9540d6897007600c9",
 
   // repo spark-perps
-  vault: "0x3629d6eb42b80d27d434253c9bb710d62417d686826627c4a981e81676608ef5",
+  vault: "0x9a8a7f725cb91f9a8150c176211a328ff4686084deb74f898f63abe172d6f4f9",
   accountBalance:
-    "0x4bdb37b10982b5cf77845bf44095b8036cf9252386dd2e0037bcdbb1a8499b51",
+    "0x0d80c8554940954cc2a18589e2b4cc907f0cd59ad17a4cd0bfb9a7ebcc16f087",
   clearingHouse:
-    "0xfc748b3c1e9ee8adbedecef7b9aac906b7659bafc0fd198629010197f169e3d2",
+    "0x0cb56bf48312492663216e847e39bae2e1f7f2f778c5730c9a57f101c020f7d7",
   perpMarket:
-    "0x9d3ac2d8201ec152d4b6953dbf3036464a8aa2ba70be021cf6f905d2358ecc65",
-  proxy: "0x51d66411f4a1b38fe67f53993e82ed6448d6097a755506c94fe21711c68dc94a",
+    "0x2a4e482664b9c63483d2899601d8a4500e44e401e38a4545b1a932de5c85832f",
+  proxy: "0x14aa6060dfff1cf3977a57b414e1dd6b413181b33c4cbd888f5eadf1d0481a9e",
   insuranceFund:
-    "0x2a6c2283b226405fcb80133bdea7a5b43532409e4f8550c51e22fc327a402939",
+    "0xa067eef9358eb402b05a744b9cbec475b5eb3596b3c87daa1647294423bdd0fb",
 
   // repo swaylend-contracts
   lendMarket:
@@ -46,4 +46,5 @@ export const BETA_NETWORK = {
 
 export const BETA_INDEXER_URL = "https://indexer.spark-defi.com";
 
-export const ENVIO_INDEXER_URL = "http://13.49.144.58:8080/v1/graphql";
+export const ENVIO_INDEXER_URL =
+  "https://indexer.bigdevenergy.link/8dcea06/v1/graphql";
