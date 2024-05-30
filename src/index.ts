@@ -6,9 +6,9 @@ import {
   BETA_NETWORK,
   EXPLORER_URL,
 } from "./constants";
-import { Spark } from "./Spark";
+import { SparkOrderbook } from "./SparkOrderbook";
 
-export default Spark;
+export default SparkOrderbook;
 
 export {
   BETA_CONTRACT_ADDRESSES,
@@ -19,12 +19,6 @@ export {
   EXPLORER_URL,
 };
 
-export * from "./types/account-balance";
-export * from "./types/clearing-house";
-export * from "./types/insurance-fund";
 export * from "./types/orderbook";
-export * from "./types/perp-market";
-export * from "./types/proxy";
 export * from "./types/pyth";
 export * from "./types/src-20";
-export * from "./types/vault";

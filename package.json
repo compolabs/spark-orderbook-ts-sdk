@@ -1,5 +1,5 @@
 {
-  "name": "@compolabs/spark-ts-sdk",
+  "name": "@compolabs/spark-orderbook-ts-sdk",
   "version": "0.5.0",
   "type": "module",
   "main": "./dist/index.сjs",
@@ -7,7 +7,7 @@
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/compolabs/spark-ts-sdk.git"
+    "url": "git+https://github.com/compolabs/spark-orderbook-ts-sdk.git"
   },
   "keywords": [
     "spark",
@@ -17,9 +17,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/compolabs/spark-ts-sdk/issues"
+    "url": "https://github.com/compolabs/spark-orderbook-ts-sdk/issues"
   },
-  "homepage": "https://github.com/compolabs/spark-ts-sdk#readme",
+  "homepage": "https://github.com/compolabs/spark-orderbook-ts-sdk#readme",
   "exports": {
     ".": {
       "require": "./dist/index.cjs",
