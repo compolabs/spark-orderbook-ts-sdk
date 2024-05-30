@@ -1,25 +1,85 @@
-import { FunctionInvocationScope, hashMessage } from "fuels";
+import { CoinQuantityLike, FunctionInvocationScope, hashMessage } from "fuels";
+import { DEFAULT_DECIMALS } from "src/constants";
 
+import { OrderbookAbi__factory } from "./types/orderbook";
+import { I64Input } from "./types/orderbook/OrderbookAbi";
 import { TokenAbi__factory } from "./types/src-20";
 import { IdentityInput } from "./types/src-20/TokenAbi";
+import { AssetIdInput } from "./types/src-20/TokenAbi";
 import BN from "./utils/BN";
 import { Asset, Options, WriteTransactionResponse } from "./interface";
-import {
-  LendWriteActions,
-  PerpWriteActions,
-  SpotWriteActions,
-} from "./write-actions";
 
 export class WriteActions {
-  public perp: PerpWriteActions;
-  public spot: SpotWriteActions;
-  public lend: LendWriteActions;
+  createSpotOrder = async (
+    baseToken: Asset,
+    quoteToken: Asset,
+    size: string,
+    price: string,
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const orderbookFactory = OrderbookAbi__factory.connect(
+      options.contractAddresses.spotMarket,
+      options.wallet,
+    );
 
-  constructor() {
-    this.perp = new PerpWriteActions(this.sendTransaction.bind(this));
-    this.spot = new SpotWriteActions(this.sendTransaction.bind(this));
-    this.lend = new LendWriteActions(this.sendTransaction.bind(this));
-  }
+    const assetId: AssetIdInput = { value: baseToken.address };
+    const isNegative = size.includes("-");
+    const absSize = size.replace("-", "");
+    const baseSize: I64Input = { value: absSize, negative: isNegative };
+
+    const amountToSend = new BN(absSize)
+      .times(price)
+      .dividedToIntegerBy(
+        new BN(10).pow(
+          DEFAULT_DECIMALS + baseToken.decimals - quoteToken.decimals,
+        ),
+      );
+
+    const forward: CoinQuantityLike = {
+      amount: isNegative ? absSize : amountToSend.toString(),
+      assetId: isNegative ? baseToken.address : quoteToken.address,
+    };
+
+    const tx = await orderbookFactory.functions
+      .open_order(assetId, baseSize, price)
+      .callParams({ forward })
+      .txParams({ gasPrice: options.gasPrice });
+
+    return this.sendTransaction(tx, options);
+  };
+
+  cancelSpotOrder = async (
+    orderId: string,
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const orderbookFactory = OrderbookAbi__factory.connect(
+      options.contractAddresses.spotMarket,
+      options.wallet,
+    );
+
+    const tx = await orderbookFactory.functions
+      .cancel_order(orderId)
+      .txParams({ gasPrice: options.gasPrice });
+
+    return this.sendTransaction(tx, options);
+  };
+
+  matchSpotOrders = async (
+    sellOrderId: string,
+    buyOrderId: string,
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const orderbookFactory = OrderbookAbi__factory.connect(
+      options.contractAddresses.spotMarket,
+      options.wallet,
+    );
+
+    const tx = orderbookFactory.functions
+      .match_orders(sellOrderId, buyOrderId)
+      .txParams({ gasPrice: options.gasPrice });
+
+    return this.sendTransaction(tx, options);
+  };
 
   mintToken = async (
     token: Asset,
