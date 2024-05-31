@@ -20,5 +20,4 @@ export {
 };
 
 export * from "./types/orderbook";
-export * from "./types/pyth";
 export * from "./types/src-20";

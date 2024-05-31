@@ -4,9 +4,9 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.42.0
-  Forc version: 0.35.5
-  Fuel-Core version: 0.17.3
+  Fuels version: 0.84.0
+  Forc version: 0.56.0
+  Fuel-Core version: 0.26.0
 */
 
 import type {
@@ -31,11 +31,11 @@ export enum OrderChangeEventIdentifierOutput { OrderOpenEvent = 'OrderOpenEvent'
 export enum ReentrancyErrorInput { NonReentrant = 'NonReentrant' };
 export enum ReentrancyErrorOutput { NonReentrant = 'NonReentrant' };
 
-export type AddressInput = { value: string };
+export type AddressInput = { bits: string };
 export type AddressOutput = AddressInput;
-export type AssetIdInput = { value: string };
+export type AssetIdInput = { bits: string };
 export type AssetIdOutput = AssetIdInput;
-export type ContractIdInput = { value: string };
+export type ContractIdInput = { bits: string };
 export type ContractIdOutput = ContractIdInput;
 export type I64Input = { value: BigNumberish, negative: boolean };
 export type I64Output = { value: BN, negative: boolean };
@@ -49,6 +49,12 @@ export type OrderChangeEventInput = { order_id: string, sender: IdentityInput, t
 export type OrderChangeEventOutput = { order_id: string, sender: IdentityOutput, timestamp: BN, identifier: OrderChangeEventIdentifierOutput, tx_id: string, order: Option<OrderOutput> };
 export type TradeEventInput = { base_token: AssetIdInput, order_matcher: AddressInput, seller: AddressInput, buyer: AddressInput, trade_size: BigNumberish, trade_price: BigNumberish, sell_order_id: string, buy_order_id: string, timestamp: BigNumberish, tx_id: string };
 export type TradeEventOutput = { base_token: AssetIdOutput, order_matcher: AddressOutput, seller: AddressOutput, buyer: AddressOutput, trade_size: BN, trade_price: BN, sell_order_id: string, buy_order_id: string, timestamp: BN, tx_id: string };
+
+export type OrderbookAbiConfigurables = {
+  QUOTE_TOKEN: AssetIdInput;
+  QUOTE_TOKEN_DECIMALS: BigNumberish;
+  PRICE_DECIMALS: BigNumberish;
+};
 
 interface OrderbookAbiInterface extends Interface {
   functions: {

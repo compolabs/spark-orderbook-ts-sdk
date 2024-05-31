@@ -2,10 +2,9 @@ import { CoinQuantityLike, FunctionInvocationScope, hashMessage } from "fuels";
 import { DEFAULT_DECIMALS } from "src/constants";
 
 import { OrderbookAbi__factory } from "./types/orderbook";
-import { I64Input } from "./types/orderbook/OrderbookAbi";
+import { AssetIdInput, I64Input } from "./types/orderbook/OrderbookAbi";
 import { TokenAbi__factory } from "./types/src-20";
 import { IdentityInput } from "./types/src-20/TokenAbi";
-import { AssetIdInput } from "./types/src-20/TokenAbi";
 import BN from "./utils/BN";
 import { Asset, Options, WriteTransactionResponse } from "./interface";
 
@@ -22,7 +21,7 @@ export class WriteActions {
       options.wallet,
     );
 
-    const assetId: AssetIdInput = { value: baseToken.address };
+    const assetId: AssetIdInput = { bits: baseToken.address };
     const isNegative = size.includes("-");
     const absSize = size.replace("-", "");
     const baseSize: I64Input = { value: absSize, negative: isNegative };
@@ -43,7 +42,7 @@ export class WriteActions {
     const tx = await orderbookFactory.functions
       .open_order(assetId, baseSize, price)
       .callParams({ forward })
-      .txParams({ gasPrice: options.gasPrice });
+      .txParams({ gasLimit: options.gasPrice });
 
     return this.sendTransaction(tx, options);
   };
@@ -59,7 +58,7 @@ export class WriteActions {
 
     const tx = await orderbookFactory.functions
       .cancel_order(orderId)
-      .txParams({ gasPrice: options.gasPrice });
+      .txParams({ gasLimit: options.gasPrice });
 
     return this.sendTransaction(tx, options);
   };
@@ -76,7 +75,7 @@ export class WriteActions {
 
     const tx = orderbookFactory.functions
       .match_orders(sellOrderId, buyOrderId)
-      .txParams({ gasPrice: options.gasPrice });
+      .txParams({ gasLimit: options.gasPrice });
 
     return this.sendTransaction(tx, options);
   };
@@ -96,13 +95,13 @@ export class WriteActions {
     const hash = hashMessage(token.symbol);
     const identity: IdentityInput = {
       Address: {
-        value: options.wallet.address.toB256(),
+        bits: options.wallet.address.toB256(),
       },
     };
 
     const tx = await tokenFactoryContract.functions
       .mint(identity, hash, mintAmount.toString())
-      .txParams({ gasPrice: options.gasPrice });
+      .txParams({ gasLimit: options.gasPrice });
 
     return this.sendTransaction(tx, options);
   };

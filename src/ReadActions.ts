@@ -128,8 +128,8 @@ export class ReadActions {
     const basePrice = new BN(result.value.base_price.toString());
     return {
       id: result.value?.id,
-      baseToken: result.value.base_token.value,
-      trader: result.value.trader.value,
+      baseToken: result.value.base_token.bits,
+      trader: result.value.trader.bits,
       baseSize,
       orderPrice: basePrice,
     };
