@@ -1,4 +1,3 @@
-import { EvmPriceServiceConnection } from "@pythnetwork/pyth-evm-js";
 import { Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
 
 import BN from "./utils/BN";
@@ -25,8 +24,6 @@ import {
 import { ReadActions } from "./ReadActions";
 import { WriteActions } from "./WriteActions";
 
-const PYTH_URL = "https://hermes.pyth.network";
-
 export class SparkOrderbook {
   private write = new WriteActions();
 
@@ -34,7 +31,6 @@ export class SparkOrderbook {
 
   private providerPromise: Promise<Provider>;
   private options: OptionsSpark;
-  private pythServiceConnection: EvmPriceServiceConnection;
 
   constructor(params: SparkParams) {
     this.options = {
@@ -48,19 +44,6 @@ export class SparkOrderbook {
     this.read = new ReadActions(params.indexerApiUrl);
 
     this.providerPromise = Provider.create(params.networkUrl);
-
-    this.pythServiceConnection = new EvmPriceServiceConnection(
-      params.pythUrl ?? PYTH_URL,
-      {
-        logger: {
-          error: console.error,
-          warn: console.warn,
-          info: () => undefined,
-          debug: () => undefined,
-          trace: () => undefined,
-        },
-      },
-    );
   }
 
   setActiveWallet = (wallet?: WalletLocked | WalletUnlocked) => {

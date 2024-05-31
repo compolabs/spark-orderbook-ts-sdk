@@ -4,9 +4,9 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.77.0
-  Forc version: 0.51.1
-  Fuel-Core version: 0.22.1
+  Fuels version: 0.84.0
+  Forc version: 0.56.0
+  Fuel-Core version: 0.26.0
 */
 
 import type {
@@ -29,11 +29,11 @@ export enum BurnErrorOutput { NotEnoughCoins = 'NotEnoughCoins' };
 export type IdentityInput = Enum<{ Address: AddressInput, ContractId: ContractIdInput }>;
 export type IdentityOutput = Enum<{ Address: AddressOutput, ContractId: ContractIdOutput }>;
 
-export type AddressInput = { value: string };
+export type AddressInput = { bits: string };
 export type AddressOutput = AddressInput;
-export type AssetIdInput = { value: string };
+export type AssetIdInput = { bits: string };
 export type AssetIdOutput = AssetIdInput;
-export type ContractIdInput = { value: string };
+export type ContractIdInput = { bits: string };
 export type ContractIdOutput = ContractIdInput;
 export type RawBytesInput = { ptr: BigNumberish, cap: BigNumberish };
 export type RawBytesOutput = { ptr: BN, cap: BN };

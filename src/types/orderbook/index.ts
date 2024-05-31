@@ -4,9 +4,9 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.42.0
-  Forc version: 0.35.5
-  Fuel-Core version: 0.17.3
+  Fuels version: 0.84.0
+  Forc version: 0.56.0
+  Fuel-Core version: 0.26.0
 */
 
 export type { OrderbookAbi } from './OrderbookAbi';

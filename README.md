@@ -20,14 +20,14 @@ npm i @compolabs/spark-orderbook-ts-sdk
 To use the spark-orderbook-ts-sdk, you'll need to set up a `Spark` instance with the appropriate configuration:
 
 ```typescript
-import Spark, { BETA_NETWORK, BETA_CONTRACT_ADDRESSES, BETA_INDEXER_URL } from "spark-orderbook-ts-sdk";
+import Spark, { TESTNET_NETWORK, BETA_CONTRACT_ADDRESSES, BETA_INDEXER_URL } from "spark-orderbook-ts-sdk";
 
 // Create a wallet instance
-const provider = await Provider.create(BETA_NETWORK.url);
+const provider = await Provider.create(TESTNET_NETWORK.url);
 const wallet = Wallet.fromPrivateKey(/* PRIVATE KEY */, provider);
 
 const spark = new Spark({
-  networkUrl: BETA_NETWORK.url,
+  networkUrl: TESTNET_NETWORK.url,
   contractAddresses: BETA_CONTRACT_ADDRESSES,
   indexerApiUrl: BETA_INDEXER_URL,
   wallet,

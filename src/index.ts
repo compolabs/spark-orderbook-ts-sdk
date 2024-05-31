@@ -3,8 +3,8 @@ import BN from "./utils/BN";
 import {
   BETA_CONTRACT_ADDRESSES,
   BETA_INDEXER_URL,
-  BETA_NETWORK,
   EXPLORER_URL,
+  TESTNET_NETWORK,
 } from "./constants";
 import { SparkOrderbook } from "./SparkOrderbook";
 
@@ -13,12 +13,11 @@ export default SparkOrderbook;
 export {
   BETA_CONTRACT_ADDRESSES,
   BETA_INDEXER_URL,
-  BETA_NETWORK,
   BETA_TOKENS,
   BN,
   EXPLORER_URL,
+  TESTNET_NETWORK,
 };
 
 export * from "./types/orderbook";
-export * from "./types/pyth";
 export * from "./types/src-20";

@@ -40,7 +40,7 @@ export class IndexerApi extends Fetch {
     }
 
     const query = `query SpotOrderQuery {
-      SpotOrder(limit: ${params.limit}, where: {${whereFilter}}) {
+      SpotOrder(limit: ${params.limit}, where: {${whereFilter}}, order_by: {base_price: asc}) {
         id,
         trader, 
         order_type,
