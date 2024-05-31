@@ -13,7 +13,7 @@ export const BETA_TOKENS = [
     symbol: "BTC",
     decimals: 8,
     assetId:
-      "0x593b117a05f5ea64b39ba1f9bc3fb7e7a791c9be130e28376ad552eacdb3b746",
+      "0xccceae45a7c23dcd4024f4083e959a0686a191694e76fa4fb76c449361ca01f7",
     priceFeed:
       "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43",
   },
@@ -22,7 +22,7 @@ export const BETA_TOKENS = [
     symbol: "USDC",
     decimals: 6,
     assetId:
-      "0x0450e4d385cbd2914f74505f18f01587cc4f4ad1fdef4b80cbde2a8155a86d72",
+      "0xfed3ee85624c79cb18a3a848092239f2e764ed6b0aa156ad10a18bfdbe74269f",
     priceFeed:
       "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
   },
@@ -31,7 +31,7 @@ export const BETA_TOKENS = [
     symbol: "UNI",
     decimals: 9,
     assetId:
-      "0xeb13723dc4e1e325fde9daf552fd829422007332713fd416f9c98a2d775125c7",
+      "0x6bb660d910df84bdd1cb329b4c8aad4f1994bad999a49c969af9a37f0920b9d8",
     priceFeed: "",
   },
 ];

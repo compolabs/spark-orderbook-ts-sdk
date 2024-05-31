@@ -17,7 +17,7 @@ export const EXPLORER_URL = "https://app.fuel.network/";
 
 export const BETA_NETWORK = {
   name: "Fuel",
-  url: "https://beta-5.fuel.network/graphql",
+  url: "https://testnet.fuel.network/v1/graphql",
 };
 
 export const BETA_INDEXER_URL = "https://indexer.spark-defi.com";
