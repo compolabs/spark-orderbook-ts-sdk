@@ -4,8 +4,8 @@ import { Provider, Wallet, WalletUnlocked } from "fuels";
 import Spark, {
   BETA_CONTRACT_ADDRESSES,
   BETA_INDEXER_URL,
-  BETA_NETWORK,
   BETA_TOKENS,
+  TESTNET_NETWORK,
 } from "../src";
 
 import { PRIVATE_KEY_ALICE } from "./constants";
@@ -31,11 +31,11 @@ describe("Read Tests", () => {
   let spark: Spark;
 
   beforeEach(async () => {
-    const provider = await Provider.create(BETA_NETWORK.url);
+    const provider = await Provider.create(TESTNET_NETWORK.url);
     wallet = Wallet.fromPrivateKey(PRIVATE_KEY_ALICE, provider);
 
     spark = new Spark({
-      networkUrl: BETA_NETWORK.url,
+      networkUrl: TESTNET_NETWORK.url,
       contractAddresses: BETA_CONTRACT_ADDRESSES,
       indexerApiUrl: BETA_INDEXER_URL,
       wallet,

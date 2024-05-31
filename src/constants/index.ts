@@ -15,7 +15,7 @@ export const BETA_CONTRACT_ADDRESSES: OrderbookContracts = {
 
 export const EXPLORER_URL = "https://app.fuel.network/";
 
-export const BETA_NETWORK = {
+export const TESTNET_NETWORK = {
   name: "Fuel",
   url: "https://testnet.fuel.network/v1/graphql",
 };
