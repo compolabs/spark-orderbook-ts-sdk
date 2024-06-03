@@ -3,8 +3,8 @@ import { Provider, Wallet, WalletUnlocked } from "fuels";
 
 import Spark, {
   BETA_CONTRACT_ADDRESSES,
-  BETA_INDEXER_URL,
   BN,
+  TESTNET_INDEXER_URL,
   TESTNET_NETWORK,
 } from "../src";
 
@@ -23,7 +23,7 @@ describe("Faucet Tests", () => {
     spark = new Spark({
       networkUrl: TESTNET_NETWORK.url,
       contractAddresses: BETA_CONTRACT_ADDRESSES,
-      indexerApiUrl: BETA_INDEXER_URL,
+      indexerApiUrl: TESTNET_INDEXER_URL,
       wallet,
     });
   });

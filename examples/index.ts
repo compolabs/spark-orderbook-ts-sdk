@@ -2,7 +2,7 @@ import { Provider, Wallet } from "fuels";
 
 import SparkOrderbook, {
   BETA_CONTRACT_ADDRESSES,
-  BETA_INDEXER_URL,
+  TESTNET_INDEXER_URL,
   TESTNET_NETWORK,
 } from "../src";
 
@@ -15,7 +15,7 @@ const wallet = Wallet.fromPrivateKey(TEST_PRIVATE_KEY, provider);
 const spark = new SparkOrderbook({
   networkUrl: TESTNET_NETWORK.url,
   contractAddresses: BETA_CONTRACT_ADDRESSES,
-  indexerApiUrl: BETA_INDEXER_URL,
+  indexerApiUrl: TESTNET_INDEXER_URL,
   wallet,
 });
 

@@ -1,8 +1,6 @@
 import { GraphQLResponse } from "src/interface";
 import { Nilable } from "tsdef";
 
-import { ENVIO_INDEXER_URL } from "../constants";
-
 export class Fetch {
   private url: string;
 
@@ -11,19 +9,6 @@ export class Fetch {
   }
 
   private request = async <T>(
-    endpoint: string,
-    data: RequestInit,
-  ): Promise<T> => {
-    const response = await fetch(`${this.url}${endpoint}`, data);
-
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-
-    return response.json();
-  };
-
-  private requestQL = async <T>(
     endpoint: string,
     data: RequestInit,
   ): Promise<T> => {
@@ -42,7 +27,7 @@ export class Fetch {
     body: Record<string, any>,
     credentials: RequestCredentials = "same-origin",
   ) => {
-    return this.requestQL<T>(ENVIO_INDEXER_URL, {
+    return this.request<T>(this.url, {
       method: "POST",
       body: JSON.stringify(body),
       credentials,

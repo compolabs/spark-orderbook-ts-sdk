@@ -94,7 +94,12 @@ export class IndexerApi extends Fetch {
   };
 
   getSpotVolume = async (): Promise<SpotVolume> => {
-    return this.get<SpotVolume>("/spot/statistics");
+    return {
+      volume24h: 0,
+      high24h: 0,
+      low24h: 0,
+    };
+    // return this.get<SpotVolume>("/spot/statistics");
   };
 }
 
