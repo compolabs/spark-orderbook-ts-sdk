@@ -22,7 +22,7 @@ export class IndexerApi extends Fetch {
   };
 
   getSpotOrders = async (params: SpotOrdersParams): Promise<SpotOrder[]> => {
-    let whereFilter = "";
+    let whereFilter = `base_size: {_neq: "0"}`;
 
     if (params.orderType) {
       whereFilter =
