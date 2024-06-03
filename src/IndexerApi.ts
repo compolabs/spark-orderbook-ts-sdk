@@ -65,7 +65,11 @@ export class IndexerApi extends Fetch {
     let whereFilter = "";
 
     if (params.trader) {
-      whereFilter = `trader: {_eq: "${params.trader}"},` + whereFilter;
+      whereFilter =
+        `_or: [
+        {seller: {_eq: "${params.trader}"}},
+        {buyer: {_eq: "${params.trader}"}}
+      ]` + whereFilter;
     }
     if (params.baseToken) {
       whereFilter = `base_token: {_eq: "${params.baseToken}"},` + whereFilter;

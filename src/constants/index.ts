@@ -21,4 +21,3 @@ export const TESTNET_NETWORK = {
 };
 
 export const TESTNET_INDEXER_URL = "http://13.49.144.58:8080/v1/graphql";
-
