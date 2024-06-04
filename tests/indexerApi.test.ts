@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from "@jest/globals";
 
-import { BETA_INDEXER_URL, BETA_TOKENS } from "../src";
+import { BETA_TOKENS, TESTNET_INDEXER_URL } from "../src";
 import { IndexerApi } from "../src/IndexerApi";
 
 const TIMEOUT_DEADLINE = 60_000; // 1min
@@ -23,7 +23,7 @@ describe("Indexer Api Tests", () => {
   let indexer: IndexerApi;
 
   beforeAll(async () => {
-    indexer = new IndexerApi(BETA_INDEXER_URL);
+    indexer = new IndexerApi(TESTNET_INDEXER_URL);
   });
 
   it(

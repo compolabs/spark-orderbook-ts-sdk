@@ -22,7 +22,7 @@ export class IndexerApi extends Fetch {
   };
 
   getSpotOrders = async (params: SpotOrdersParams): Promise<SpotOrder[]> => {
-    let whereFilter = "";
+    let whereFilter = `base_size: {_neq: "0"}`;
 
     if (params.orderType) {
       whereFilter =
@@ -65,7 +65,11 @@ export class IndexerApi extends Fetch {
     let whereFilter = "";
 
     if (params.trader) {
-      whereFilter = `trader: {_eq: "${params.trader}"},` + whereFilter;
+      whereFilter =
+        `_or: [
+        {seller: {_eq: "${params.trader}"}},
+        {buyer: {_eq: "${params.trader}"}}
+      ]` + whereFilter;
     }
     if (params.baseToken) {
       whereFilter = `base_token: {_eq: "${params.baseToken}"},` + whereFilter;
@@ -94,7 +98,12 @@ export class IndexerApi extends Fetch {
   };
 
   getSpotVolume = async (): Promise<SpotVolume> => {
-    return this.get<SpotVolume>("/spot/statistics");
+    return {
+      volume24h: 0,
+      high24h: 0,
+      low24h: 0,
+    };
+    // return this.get<SpotVolume>("/spot/statistics");
   };
 }
 
