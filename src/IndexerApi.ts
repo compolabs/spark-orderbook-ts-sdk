@@ -39,8 +39,11 @@ export class IndexerApi extends Fetch {
       whereFilter = `base_token: {_eq: "${params.baseToken}"},` + whereFilter;
     }
 
+    const orderType =
+      params.orderType?.toLowerCase() === "buy" ? "desc" : "asc";
+
     const query = `query SpotOrderQuery {
-      SpotOrder(limit: ${params.limit}, where: {${whereFilter}}, order_by: {base_price: asc}) {
+      SpotOrder(limit: ${params.limit}, where: {${whereFilter}}, order_by: {base_price: ${orderType}}) {
         id,
         trader, 
         order_type,
