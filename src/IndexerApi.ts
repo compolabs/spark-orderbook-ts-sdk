@@ -79,7 +79,7 @@ export class IndexerApi extends Fetch {
     }
 
     const query = `query SpotTradeEventQuery {
-      SpotTradeEvent(limit: ${params.limit}, where: {${whereFilter}}) {
+      SpotTradeEvent(limit: ${params.limit}, where: {${whereFilter}}, order_by: { timestamp: desc }) {
         base_token
         buyer
         seller
