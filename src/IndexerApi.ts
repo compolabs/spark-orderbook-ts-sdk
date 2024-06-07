@@ -101,12 +101,51 @@ export class IndexerApi extends Fetch {
   };
 
   getSpotVolume = async (): Promise<SpotVolume> => {
+    const now = new Date();
+    const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+    const yesterdayISO = yesterday.toISOString();
+
+    const query = `query SpotTradeEventQuery {
+      SpotTradeEvent(where: {timestamp: {_gte: "${yesterdayISO}"}}) {
+        trade_size
+        trade_price
+        timestamp
+      }
+    }`;
+
+    const response = await this.post<IndexerResponse<SpotTradeEvent[]>>({
+      query,
+    });
+
+    const data = response.SpotTradeEvent.reduce(
+      (prev, currentData) => {
+        const price = BigInt(currentData.trade_price);
+        const size = BigInt(currentData.trade_size);
+        prev.volume24h += size;
+
+        if (prev.high24h < price) {
+          prev.high24h = price;
+        }
+
+        if (prev.low24h > price) {
+          prev.low24h = price;
+        }
+
+        return prev;
+      },
+      {
+        volume24h: 0n,
+        high24h: 0n,
+        low24h: BigInt(Number.MAX_SAFE_INTEGER),
+      },
+    );
+
     return {
-      volume24h: 0,
-      high24h: 0,
-      low24h: 0,
+      volume24h: data.volume24h.toString(),
+      high24h: data.high24h.toString(),
+      low24h: data.low24h.toString(),
     };
-    // return this.get<SpotVolume>("/spot/statistics");
   };
 }
 
@@ -140,9 +179,9 @@ type SpotOrdersParams = BaseParams & {
 };
 
 type SpotVolume = {
-  volume24h: number;
-  high24h: number;
-  low24h: number;
+  volume24h: string;
+  high24h: string;
+  low24h: string;
 };
 
 type SpotOrder = Order;
