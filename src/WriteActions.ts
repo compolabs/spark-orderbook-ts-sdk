@@ -1,58 +1,53 @@
 import { CoinQuantityLike, FunctionInvocationScope, hashMessage } from "fuels";
-import { DEFAULT_DECIMALS } from "src/constants";
 
-import { OrderbookAbi__factory } from "./types/orderbook";
-import { AssetIdInput, I64Input } from "./types/orderbook/OrderbookAbi";
+import { MarketContractAbi__factory } from "./types/market";
+import { AssetIdInput, OrderTypeInput } from "./types/market/MarketContractAbi";
 import { TokenAbi__factory } from "./types/src-20";
 import { IdentityInput } from "./types/src-20/TokenAbi";
 import BN from "./utils/BN";
-import { Asset, Options, WriteTransactionResponse } from "./interface";
+import {
+  Asset,
+  Options,
+  OrderType,
+  WriteTransactionResponse,
+} from "./interface";
 
 export class WriteActions {
-  createSpotOrder = async (
-    baseToken: Asset,
-    quoteToken: Asset,
-    size: string,
+  createOrder = async (
+    amount: string,
+    token: Asset,
     price: string,
+    type: OrderType,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const orderbookFactory = OrderbookAbi__factory.connect(
-      options.contractAddresses.spotMarket,
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
       options.wallet,
     );
 
-    const assetId: AssetIdInput = { bits: baseToken.address };
-    const isNegative = size.includes("-");
-    const absSize = size.replace("-", "");
-    const baseSize: I64Input = { value: absSize, negative: isNegative };
+    const assetId: AssetIdInput = { bits: token.address };
 
-    const amountToSend = new BN(absSize)
-      .times(price)
-      .dividedToIntegerBy(
-        new BN(10).pow(
-          DEFAULT_DECIMALS + baseToken.decimals - quoteToken.decimals,
-        ),
-      );
+    const amountToSend = new BN(amount).times(price);
 
     const forward: CoinQuantityLike = {
-      amount: isNegative ? absSize : amountToSend.toString(),
-      assetId: isNegative ? baseToken.address : quoteToken.address,
+      amount: amountToSend.toString(),
+      assetId: token.address,
     };
 
     const tx = await orderbookFactory.functions
-      .open_order(assetId, baseSize, price)
+      .open_order(amount, assetId, type as unknown as OrderTypeInput, price)
       .callParams({ forward })
       .txParams({ gasLimit: options.gasPrice });
 
     return this.sendTransaction(tx, options);
   };
 
-  cancelSpotOrder = async (
+  cancelOrder = async (
     orderId: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const orderbookFactory = OrderbookAbi__factory.connect(
-      options.contractAddresses.spotMarket,
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
       options.wallet,
     );
 
@@ -63,18 +58,18 @@ export class WriteActions {
     return this.sendTransaction(tx, options);
   };
 
-  matchSpotOrders = async (
+  matchOrders = async (
     sellOrderId: string,
     buyOrderId: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const orderbookFactory = OrderbookAbi__factory.connect(
-      options.contractAddresses.spotMarket,
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
       options.wallet,
     );
 
     const tx = orderbookFactory.functions
-      .match_orders(sellOrderId, buyOrderId)
+      .match_orders([sellOrderId, buyOrderId])
       .txParams({ gasLimit: options.gasPrice });
 
     return this.sendTransaction(tx, options);

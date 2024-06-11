@@ -1,9 +1,7 @@
 import { Fetch } from "./utils/Fetch";
 
 export class IndexerApi extends Fetch {
-  // SPOT
-
-  getSpotMarketCreateEvents = async (): Promise<SpotMarketCreateEvent[]> => {
+  getMarketCreateEvents = async (): Promise<SpotMarketCreateEvent[]> => {
     const query = `
       query SpotMarketCreateEventQuery {
         SpotMarketCreateEvent {
@@ -21,7 +19,7 @@ export class IndexerApi extends Fetch {
     return response.SpotMarketCreateEvent;
   };
 
-  getSpotOrders = async (params: SpotOrdersParams): Promise<SpotOrder[]> => {
+  getOrders = async (params: SpotOrdersParams): Promise<SpotOrder[]> => {
     let whereFilter = `base_size: {_neq: "0"}`;
 
     if (params.orderType) {
@@ -62,9 +60,7 @@ export class IndexerApi extends Fetch {
     return response.SpotOrder;
   };
 
-  getSpotTradeEvents = async (
-    params: BaseParams,
-  ): Promise<SpotTradeEvent[]> => {
+  getTradeEvents = async (params: BaseParams): Promise<SpotTradeEvent[]> => {
     let whereFilter = "";
 
     if (params.trader) {
@@ -100,7 +96,7 @@ export class IndexerApi extends Fetch {
     return response.SpotTradeEvent;
   };
 
-  getSpotVolume = async (): Promise<SpotVolume> => {
+  getVolume = async (): Promise<SpotVolume> => {
     const now = new Date();
     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 

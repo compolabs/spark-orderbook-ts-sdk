@@ -27,18 +27,18 @@ describe("Indexer Api Tests", () => {
   });
 
   it(
-    "getSpotMarketCreateEvents",
+    "getMarketCreateEvents",
     async () => {
-      const response = await indexer.getSpotMarketCreateEvents();
+      const response = await indexer.getMarketCreateEvents();
 
       expect(response).toBeDefined();
     },
     TIMEOUT_DEADLINE,
   );
   it(
-    "getSpotOrders",
+    "getOrders",
     async () => {
-      const response = await indexer.getSpotOrders({
+      const response = await indexer.getOrders({
         baseToken: TOKENS_BY_SYMBOL["BTC"].address,
         limit: 1,
       });
@@ -49,9 +49,9 @@ describe("Indexer Api Tests", () => {
     TIMEOUT_DEADLINE,
   );
   it(
-    "getSpotTradeEvents",
+    "getTradeEvents",
     async () => {
-      const response = await indexer.getSpotTradeEvents({
+      const response = await indexer.getTradeEvents({
         baseToken: TOKENS_BY_SYMBOL["BTC"].address,
         limit: 1,
       });
@@ -63,9 +63,9 @@ describe("Indexer Api Tests", () => {
   );
 
   it(
-    "getSpotVolume",
+    "getVolume",
     async () => {
-      const response = await indexer.getSpotVolume();
+      const response = await indexer.getVolume();
 
       expect(response).toBeDefined();
     },

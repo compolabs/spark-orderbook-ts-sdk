@@ -43,70 +43,68 @@ describe("Read Tests", () => {
   });
 
   it(
-    "fetchSpotMarkets",
+    "fetchMarkets",
     async () => {
-      const allMarkets = await spark.fetchSpotMarkets(1);
+      const allMarkets = await spark.fetchMarkets(1);
 
       expect(allMarkets).toHaveLength(1);
     },
     TIMEOUT_DEADLINE,
   );
   it(
-    "fetchSpotMarketPrice",
+    "fetchMarketPrice",
     async () => {
-      const marketPrice = await spark.fetchSpotMarketPrice(
-        TOKENS_BY_SYMBOL["BTC"],
-      );
+      const marketPrice = await spark.fetchMarketPrice(TOKENS_BY_SYMBOL["BTC"]);
 
       expect(marketPrice.toString()).toBeDefined();
     },
     TIMEOUT_DEADLINE,
   );
   it(
-    "fetchSpotOrders",
+    "fetchOrders",
     async () => {
-      const allSpotOrders = await spark.fetchSpotOrders({
+      const allOrders = await spark.fetchOrders({
         baseToken: TOKENS_BY_SYMBOL["BTC"].address,
         limit: 1,
         isActive: true,
       });
 
-      expect(allSpotOrders).toHaveLength(1);
+      expect(allOrders).toHaveLength(1);
     },
     TIMEOUT_DEADLINE,
   );
   it(
-    "fetchSpotTrades",
+    "fetchTrades",
     async () => {
-      const allSpotTrades = await spark.fetchSpotTrades({
+      const allTrades = await spark.fetchTrades({
         baseToken: TOKENS_BY_SYMBOL["BTC"].address,
         limit: 10,
       });
 
-      expect(allSpotTrades).toHaveLength(10);
+      expect(allTrades).toHaveLength(10);
     },
     TIMEOUT_DEADLINE,
   );
   it(
-    "fetchSpotVolume",
+    "fetchVolume",
     async () => {
-      const volume = await spark.fetchSpotVolume();
+      const volume = await spark.fetchVolume();
 
       expect(volume).toBeDefined();
     },
     TIMEOUT_DEADLINE,
   );
   it.skip(
-    "fetchSpotOrderById",
+    "fetchOrderById",
     async () => {
-      const allSpotTrades = await spark.fetchSpotTrades({
+      const allTrades = await spark.fetchTrades({
         baseToken: TOKENS_BY_SYMBOL["BTC"].address,
         limit: 1,
       });
 
-      expect(allSpotTrades).toHaveLength(1);
+      expect(allTrades).toHaveLength(1);
 
-      const order = await spark.fetchSpotOrderById(allSpotTrades[0].id);
+      const order = await spark.fetchOrderById(allTrades[0].id);
 
       expect(order).toBeDefined;
     },

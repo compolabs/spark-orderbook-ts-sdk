@@ -44,7 +44,7 @@ describe("Basic Tests", () => {
   it(
     "Should get all orders",
     async () => {
-      const allOrders = await spark.fetchSpotOrders({
+      const allOrders = await spark.fetchOrders({
         baseToken: TOKENS_BY_SYMBOL["BTC"].address,
         limit: 10,
         isActive: true,

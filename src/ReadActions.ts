@@ -1,8 +1,7 @@
 import { Address } from "fuels";
 
-import { OrderbookAbi__factory } from "./types/orderbook";
+import { MarketContractAbi__factory } from "./types/market";
 import BN from "./utils/BN";
-import { convertI64ToBn } from "./utils/convertI64ToBn";
 import getUnixTime from "./utils/getUnixTime";
 import { IndexerApi } from "./IndexerApi";
 import {
@@ -23,8 +22,8 @@ export class ReadActions {
     this.indexerApi = new IndexerApi(url);
   }
 
-  fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
-    const data = await this.indexerApi.getSpotMarketCreateEvents();
+  fetchMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
+    const data = await this.indexerApi.getMarketCreateEvents();
 
     const markets = data.map((market) => ({
       id: market.asset_id,
@@ -35,12 +34,12 @@ export class ReadActions {
     return markets;
   };
 
-  fetchSpotMarketPrice = async (baseToken: string): Promise<BN> => {
+  fetchMarketPrice = async (baseToken: string): Promise<BN> => {
     console.warn("[fetchMarketPrice] NOT IMPLEMENTED FOR FUEL");
     return BN.ZERO;
   };
 
-  fetchSpotOrders = async ({
+  fetchOrders = async ({
     baseToken,
     type,
     limit,
@@ -51,7 +50,7 @@ export class ReadActions {
       ? new Address(trader as any).toB256()
       : undefined;
 
-    const data = await this.indexerApi.getSpotOrders({
+    const data = await this.indexerApi.getOrders({
       baseToken,
       orderType: type,
       limit,
@@ -75,7 +74,7 @@ export class ReadActions {
     return orders;
   };
 
-  fetchSpotTrades = async ({
+  fetchTrades = async ({
     baseToken,
     limit,
     trader,
@@ -84,7 +83,7 @@ export class ReadActions {
       ? new Address(trader as any).toB256()
       : undefined;
 
-    const data = await this.indexerApi.getSpotTradeEvents({
+    const data = await this.indexerApi.getTradeEvents({
       limit,
       trader: traderAddress,
       baseToken,
@@ -102,8 +101,8 @@ export class ReadActions {
     }));
   };
 
-  fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
-    const data = await this.indexerApi.getSpotVolume();
+  fetchVolume = async (): Promise<SpotMarketVolume> => {
+    const data = await this.indexerApi.getVolume();
     return {
       volume: new BN(data.volume24h),
       high: new BN(data.high24h),
@@ -111,25 +110,27 @@ export class ReadActions {
     };
   };
 
-  fetchSpotOrderById = async (
+  fetchOrderById = async (
     orderId: string,
     options: Options,
   ): Promise<SpotOrderWithoutTimestamp | undefined> => {
-    const orderbookFactory = OrderbookAbi__factory.connect(
-      options.contractAddresses.spotMarket,
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
       options.wallet,
     );
 
-    const result = await orderbookFactory.functions.order_by_id(orderId).get();
+    const result = await orderbookFactory.functions.order(orderId).get();
 
     if (!result.value) return undefined;
 
-    const baseSize = convertI64ToBn(result.value.base_size);
-    const basePrice = new BN(result.value.base_price.toString());
+    const baseSize = new BN(result.value.amount.toString());
+    const basePrice = new BN(result.value.price.toString());
     return {
-      id: result.value?.id,
-      baseToken: result.value.base_token.bits,
-      trader: result.value.trader.bits,
+      // TODO: Check what is ID for order
+      // id: result.value?.id,
+      id: "",
+      baseToken: result.value.asset.bits,
+      trader: result.value.owner.Address?.bits ?? "", // TODO: Check owner Address or ContractId
       baseSize,
       orderPrice: basePrice,
     };

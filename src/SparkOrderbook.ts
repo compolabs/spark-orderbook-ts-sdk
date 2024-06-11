@@ -14,6 +14,7 @@ import {
   MarketCreateEvent,
   Options,
   OptionsSpark,
+  OrderType,
   SparkParams,
   SpotMarketVolume,
   SpotOrder,
@@ -52,32 +53,30 @@ export class SparkOrderbook {
     this.options = newOptions;
   };
 
-  createSpotOrder = async (
-    baseToken: Asset,
-    quoteToken: Asset,
-    size: string,
+  createOrder = async (
+    amount: string,
+    token: Asset,
     price: string,
+    type: OrderType,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.createSpotOrder(
-      baseToken,
-      quoteToken,
-      size,
+    return this.write.createOrder(
+      amount,
+      token,
       price,
+      type,
       this.getApiOptions(),
     );
   };
 
-  cancelSpotOrder = async (
-    orderId: string,
-  ): Promise<WriteTransactionResponse> => {
-    return this.write.cancelSpotOrder(orderId, this.getApiOptions());
+  cancelOrder = async (orderId: string): Promise<WriteTransactionResponse> => {
+    return this.write.cancelOrder(orderId, this.getApiOptions());
   };
 
-  matchSpotOrders = async (
+  matchOrders = async (
     sellOrderId: string,
     buyOrderId: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.matchSpotOrders(
+    return this.write.matchOrders(
       sellOrderId,
       buyOrderId,
       this.getApiOptions(),
@@ -91,34 +90,32 @@ export class SparkOrderbook {
     return this.write.mintToken(token, amount, this.getApiOptions());
   };
 
-  fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
-    return this.read.fetchSpotMarkets(limit);
+  fetchMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
+    return this.read.fetchMarkets(limit);
   };
 
-  fetchSpotMarketPrice = async (baseToken: Asset): Promise<BN> => {
-    return this.read.fetchSpotMarketPrice(baseToken.address);
+  fetchMarketPrice = async (baseToken: Asset): Promise<BN> => {
+    return this.read.fetchMarketPrice(baseToken.address);
   };
 
-  fetchSpotOrders = async (params: FetchOrdersParams): Promise<SpotOrder[]> => {
-    return this.read.fetchSpotOrders(params);
+  fetchOrders = async (params: FetchOrdersParams): Promise<SpotOrder[]> => {
+    return this.read.fetchOrders(params);
   };
 
-  fetchSpotTrades = async (
-    params: FetchTradesParams,
-  ): Promise<SpotTrades[]> => {
-    return this.read.fetchSpotTrades(params);
+  fetchTrades = async (params: FetchTradesParams): Promise<SpotTrades[]> => {
+    return this.read.fetchTrades(params);
   };
 
-  fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
-    return this.read.fetchSpotVolume();
+  fetchVolume = async (): Promise<SpotMarketVolume> => {
+    return this.read.fetchVolume();
   };
 
-  fetchSpotOrderById = async (
+  fetchOrderById = async (
     orderId: string,
   ): Promise<SpotOrderWithoutTimestamp | undefined> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchSpotOrderById(orderId, options);
+    return this.read.fetchOrderById(orderId, options);
   };
 
   fetchWalletBalance = async (asset: Asset): Promise<string> => {

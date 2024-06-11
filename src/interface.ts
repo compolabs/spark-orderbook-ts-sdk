@@ -5,7 +5,7 @@ import BN from "./utils/BN";
 export type MarketStatusOutput = "Opened" | "Paused" | "Closed";
 
 export interface OrderbookContracts {
-  spotMarket: string;
+  market: string;
   tokenFactory: string;
   pyth: string;
 }
@@ -106,4 +106,9 @@ export type UserSupplyBorrow = {
 export interface GraphQLResponse<T> {
   data: T;
   errors?: { message: string }[];
+}
+
+export enum OrderType {
+  Buy = "Buy",
+  Sell = "Sell",
 }

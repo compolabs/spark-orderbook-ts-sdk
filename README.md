@@ -40,16 +40,16 @@ const spark = new Spark({
 Below is a list of all the available methods in the spark-orderbook-ts-sdk. These methods enable interaction with spot market:
 
 1. **setActiveWallet(wallet?: WalletLocked | WalletUnlocked)** - Updates the active wallet used in the library.
-2. **createSpotOrder(baseToken: Asset, quoteToken: Asset, size: string, price: string)** - Creates a spot order with the specified parameters.
-3. **cancelSpotOrder(orderId: string)** - Cancels a specified spot order.
-4. **matchSpotOrders(sellOrderId: string, buyOrderId: string)** - Matches a sell order with a buy order.
+2. **creatOrder(baseToken: Asset, quoteToken: Asset, size: string, price: string)** - Creates an order with the specified parameters.
+3. **canceOrder(orderId: string)** - Cancels a specified order.
+4. **matcOrders(sellOrderId: string, buyOrderId: string)** - Matches a sell order with a buy order.
 5. **mintToken(token: Asset, amount: string)** - Mints the specified amount of a token.
-6. **fetchSpotMarkets(limit: number)** - Retrieves a list of spot markets up to the specified limit.
-7. **fetchSpotMarketPrice(baseToken: Asset)** - Fetches the current market price for a given spot market token.
-8. **fetchSpotOrders(params: FetchOrdersParams)** - Fetches spot orders based on the specified parameters.
-9. **fetchSpotTrades(params: FetchTradesParams)** - Retrieves trades for spot markets based on provided parameters.
-10. **fetchSpotVolume()** - Retrieves the trading volume for spot markets.
-11. **fetchSpotOrderById(orderId: string)** - Retrieves details of a specific spot order by its ID.
+6. **fetcMarkets(limit: number)** - Retrieves a list of markets up to the specified limit.
+7. **fetcMarketPrice(baseToken: Asset)** - Fetches the current market price for a given market token.
+8. **fetcOrders(params: FetchOrdersParams)** - Fetches orders based on the specified parameters.
+9. **fetcTrades(params: FetchTradesParams)** - Retrieves trades for markets based on provided parameters.
+10. **fetcVolume()** - Retrieves the trading volume for markets.
+11. **fetcOrderById(orderId: string)** - Retrieves details of a specific order by its ID.
 12. **fetchWalletBalance(asset: Asset)** - Fetches the balance of a specified asset in the wallet.
 13. **getProviderWallet()** - Retrieves the wallet associated with the provider.
 14. **getProvider()** - Retrieves the provider used by the library.
