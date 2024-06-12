@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from "@jest/globals";
 import { BETA_TOKENS, TESTNET_INDEXER_URL } from "../src";
 import { IndexerApi } from "../src/IndexerApi";
 
-const TIMEOUT_DEADLINE = 60_000; // 1min
+import { TEST_TIMEOUT } from "./constants";
 
 const TOKENS_LIST = Object.values(BETA_TOKENS).map(
   ({ decimals, assetId, symbol, priceFeed }) => ({
@@ -33,7 +33,7 @@ describe("Indexer Api Tests", () => {
 
       expect(response).toBeDefined();
     },
-    TIMEOUT_DEADLINE,
+    TEST_TIMEOUT,
   );
   it(
     "getOrders",
@@ -46,7 +46,7 @@ describe("Indexer Api Tests", () => {
       expect(response).toBeDefined();
       expect(response).toHaveLength(1);
     },
-    TIMEOUT_DEADLINE,
+    TEST_TIMEOUT,
   );
   it(
     "getTradeEvents",
@@ -59,7 +59,7 @@ describe("Indexer Api Tests", () => {
       expect(response).toBeDefined();
       expect(response).toHaveLength(1);
     },
-    TIMEOUT_DEADLINE,
+    TEST_TIMEOUT,
   );
 
   it(
@@ -69,6 +69,6 @@ describe("Indexer Api Tests", () => {
 
       expect(response).toBeDefined();
     },
-    TIMEOUT_DEADLINE,
+    TEST_TIMEOUT,
   );
 });

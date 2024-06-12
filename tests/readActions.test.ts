@@ -8,9 +8,7 @@ import Spark, {
   TESTNET_NETWORK,
 } from "../src";
 
-import { PRIVATE_KEY_ALICE } from "./constants";
-
-const TIMEOUT_DEADLINE = 60_000; // 1min
+import { PRIVATE_KEY_ALICE, TEST_TIMEOUT } from "./constants";
 
 const TOKENS_LIST = Object.values(BETA_TOKENS).map(
   ({ decimals, assetId, symbol, priceFeed }) => ({
@@ -49,7 +47,7 @@ describe("Read Tests", () => {
 
       expect(allMarkets).toHaveLength(1);
     },
-    TIMEOUT_DEADLINE,
+    TEST_TIMEOUT,
   );
   it(
     "fetchMarketPrice",
@@ -58,7 +56,7 @@ describe("Read Tests", () => {
 
       expect(marketPrice.toString()).toBeDefined();
     },
-    TIMEOUT_DEADLINE,
+    TEST_TIMEOUT,
   );
   it(
     "fetchOrders",
@@ -71,7 +69,7 @@ describe("Read Tests", () => {
 
       expect(allOrders).toHaveLength(1);
     },
-    TIMEOUT_DEADLINE,
+    TEST_TIMEOUT,
   );
   it(
     "fetchTrades",
@@ -83,7 +81,7 @@ describe("Read Tests", () => {
 
       expect(allTrades).toHaveLength(10);
     },
-    TIMEOUT_DEADLINE,
+    TEST_TIMEOUT,
   );
   it(
     "fetchVolume",
@@ -92,7 +90,7 @@ describe("Read Tests", () => {
 
       expect(volume).toBeDefined();
     },
-    TIMEOUT_DEADLINE,
+    TEST_TIMEOUT,
   );
   it.skip(
     "fetchOrderById",
@@ -108,7 +106,7 @@ describe("Read Tests", () => {
 
       expect(order).toBeDefined;
     },
-    TIMEOUT_DEADLINE,
+    TEST_TIMEOUT,
   );
 
   it(
@@ -118,6 +116,6 @@ describe("Read Tests", () => {
 
       expect(allOrders).toBeDefined();
     },
-    TIMEOUT_DEADLINE,
+    TEST_TIMEOUT,
   );
 });

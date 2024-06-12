@@ -8,9 +8,12 @@ import Spark, {
   TESTNET_NETWORK,
 } from "../src";
 
-import { FAUCET_AMOUNTS, TEST_TIMEOUT, TOKENS_BY_SYMBOL } from "./constants";
-
-const PRIVATE_KEY_ALICE = Wallet.generate().privateKey;
+import {
+  FAUCET_AMOUNTS,
+  PRIVATE_KEY_ALICE,
+  TEST_TIMEOUT,
+  TOKENS_BY_SYMBOL,
+} from "./constants";
 
 describe("Faucet Tests", () => {
   let wallet: WalletUnlocked;

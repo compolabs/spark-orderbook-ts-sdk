@@ -4,6 +4,8 @@ import { Provider, Wallet, WalletUnlocked } from "fuels";
 import Spark, {
   BETA_CONTRACT_ADDRESSES,
   BETA_TOKENS,
+  BN,
+  OrderType,
   TESTNET_INDEXER_URL,
   TESTNET_NETWORK,
 } from "../src";
@@ -24,7 +26,7 @@ const TOKENS_BY_SYMBOL = TOKENS_LIST.reduce(
   {},
 );
 
-describe("Basic Tests", () => {
+describe("Open Order Test", () => {
   let wallet: WalletUnlocked;
   let spark: Spark;
 
@@ -41,19 +43,47 @@ describe("Basic Tests", () => {
   });
 
   it(
-    "Should get all orders",
+    "Open buy order",
     async () => {
-      const allOrders = await spark.fetchOrders({
-        baseToken: TOKENS_BY_SYMBOL["BTC"].address,
-        limit: 10,
-        isActive: true,
-      });
+      const usdc = TOKENS_BY_SYMBOL["USDC"];
+      const amount = "100"; // USDC
+      const amountToSend = BN.parseUnits(amount, usdc.decimals);
 
-      console.log(allOrders.map((o) => o.id));
+      const price = "1";
 
-      expect(allOrders).toHaveLength(10);
+      const data = await spark.createOrder(
+        amountToSend.toString(),
+        usdc,
+        price,
+        OrderType.Buy,
+      );
 
-      console.log(allOrders);
+      console.log("CREATE ORDER DATA", data);
+
+      expect(data.transactionId).toBeDefined();
+    },
+    TEST_TIMEOUT,
+  );
+
+  it(
+    "Open sell order",
+    async () => {
+      const usdc = TOKENS_BY_SYMBOL["USDC"];
+      const amount = "100"; // USDC
+      const amountToSend = BN.parseUnits(amount, usdc.decimals);
+
+      const price = "1";
+
+      const data = await spark.createOrder(
+        amountToSend.toString(),
+        usdc,
+        price,
+        OrderType.Sell,
+      );
+
+      console.log("CREATE ORDER DATA", data);
+
+      expect(data.transactionId).toBeDefined();
     },
     TEST_TIMEOUT,
   );
