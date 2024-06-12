@@ -67,6 +67,9 @@
     "tsup": "^8.0.2",
     "typescript": "^5.4.5"
   },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.18.0"
+  },
   "engines": {
     "node": ">=18"
   }
