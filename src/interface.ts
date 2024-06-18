@@ -51,7 +51,8 @@ export interface SpotOrder {
 
 export interface SpotOrderWithoutTimestamp {
   id: string;
-  baseToken: string;
+  assetType: AssetType;
+  orderType: OrderType;
   trader: string;
   baseSize: BN;
   orderPrice: BN;
@@ -111,4 +112,9 @@ export interface GraphQLResponse<T> {
 export enum OrderType {
   Buy = "Buy",
   Sell = "Sell",
+}
+
+export enum AssetType {
+  Base = 'Base',
+  Quote = 'Quote'
 }

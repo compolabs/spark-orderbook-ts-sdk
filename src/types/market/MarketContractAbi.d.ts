@@ -32,12 +32,16 @@ export enum AuthErrorInput { Unauthorized = 'Unauthorized' };
 export enum AuthErrorOutput { Unauthorized = 'Unauthorized' };
 export type IdentityInput = Enum<{ Address: AddressInput, ContractId: ContractIdInput }>;
 export type IdentityOutput = Enum<{ Address: AddressOutput, ContractId: ContractIdOutput }>;
-export enum OrderErrorInput { NoOrdersFound = 'NoOrdersFound', DuplicateOrder = 'DuplicateOrder', PriceCannotBeZero = 'PriceCannotBeZero', AmountCannotBeZero = 'AmountCannotBeZero', FailedToRemove = 'FailedToRemove' };
-export enum OrderErrorOutput { NoOrdersFound = 'NoOrdersFound', DuplicateOrder = 'DuplicateOrder', PriceCannotBeZero = 'PriceCannotBeZero', AmountCannotBeZero = 'AmountCannotBeZero', FailedToRemove = 'FailedToRemove' };
+export type MatchErrorInput = Enum<{ CantMatch: [string, string], CantBatchMatch: [] }>;
+export type MatchErrorOutput = MatchErrorInput;
+export enum OrderChangeTypeInput { OrderOpened = 'OrderOpened', OrderCancelled = 'OrderCancelled', OrderMatched = 'OrderMatched' };
+export enum OrderChangeTypeOutput { OrderOpened = 'OrderOpened', OrderCancelled = 'OrderCancelled', OrderMatched = 'OrderMatched' };
+export type OrderErrorInput = Enum<{ OrderNotFound: string, PriceCannotBeZero: [], AmountCannotBeZero: [], FailedToRemove: string }>;
+export type OrderErrorOutput = OrderErrorInput;
 export enum OrderTypeInput { Buy = 'Buy', Sell = 'Sell' };
 export enum OrderTypeOutput { Buy = 'Buy', Sell = 'Sell' };
-export enum ValueErrorInput { InvalidAmount = 'InvalidAmount' };
-export enum ValueErrorOutput { InvalidAmount = 'InvalidAmount' };
+export enum ValueErrorInput { InvalidAmount = 'InvalidAmount', InvalidLength = 'InvalidLength' };
+export enum ValueErrorOutput { InvalidAmount = 'InvalidAmount', InvalidLength = 'InvalidLength' };
 
 export type AccountInput = { liquid: BalanceInput, locked: BalanceInput };
 export type AccountOutput = { liquid: BalanceOutput, locked: BalanceOutput };
@@ -53,10 +57,14 @@ export type ContractIdInput = { bits: string };
 export type ContractIdOutput = ContractIdInput;
 export type DepositEventInput = { amount: BigNumberish, asset: AssetIdInput, user: IdentityInput };
 export type DepositEventOutput = { amount: BN, asset: AssetIdOutput, user: IdentityOutput };
+export type MatchOrderEventInput = { order_id: string, asset: AssetIdInput, order_matcher: IdentityInput, owner: IdentityInput, counterparty: IdentityInput, match_size: BigNumberish, match_price: BigNumberish };
+export type MatchOrderEventOutput = { order_id: string, asset: AssetIdOutput, order_matcher: IdentityOutput, owner: IdentityOutput, counterparty: IdentityOutput, match_size: BN, match_price: BN };
 export type OpenOrderEventInput = { amount: BigNumberish, asset: AssetIdInput, asset_type: AssetTypeInput, order_type: OrderTypeInput, order_id: string, price: BigNumberish, user: IdentityInput };
 export type OpenOrderEventOutput = { amount: BN, asset: AssetIdOutput, asset_type: AssetTypeOutput, order_type: OrderTypeOutput, order_id: string, price: BN, user: IdentityOutput };
-export type OrderInput = { amount: BigNumberish, asset: AssetIdInput, asset_type: AssetTypeInput, order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish };
-export type OrderOutput = { amount: BN, asset: AssetIdOutput, asset_type: AssetTypeOutput, order_type: OrderTypeOutput, owner: IdentityOutput, price: BN };
+export type OrderInput = { amount: BigNumberish, asset_type: AssetTypeInput, order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish };
+export type OrderOutput = { amount: BN, asset_type: AssetTypeOutput, order_type: OrderTypeOutput, owner: IdentityOutput, price: BN, block_height: number };
+export type OrderChangeInfoInput = { change_type: OrderChangeTypeInput, block_height: BigNumberish, sender: IdentityInput, tx_id: string, amount_before: BigNumberish, amount_after: BigNumberish };
+export type OrderChangeInfoOutput = { change_type: OrderChangeTypeOutput, block_height: number, sender: IdentityOutput, tx_id: string, amount_before: BN, amount_after: BN };
 export type SetFeeEventInput = { amount: BigNumberish, user: Option<IdentityInput> };
 export type SetFeeEventOutput = { amount: BN, user: Option<IdentityOutput> };
 export type WithdrawEventInput = { amount: BigNumberish, asset: AssetIdInput, user: IdentityInput };
@@ -75,6 +83,7 @@ interface MarketContractAbiInterface extends Interface {
   functions: {
     cancel_order: FunctionFragment;
     deposit: FunctionFragment;
+    match_order_pair: FunctionFragment;
     match_orders: FunctionFragment;
     open_order: FunctionFragment;
     set_fee: FunctionFragment;
@@ -83,25 +92,29 @@ interface MarketContractAbiInterface extends Interface {
     config: FunctionFragment;
     fee: FunctionFragment;
     order: FunctionFragment;
+    order_change_info: FunctionFragment;
     order_id: FunctionFragment;
     user_orders: FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: 'cancel_order', values: [string]): Uint8Array;
   encodeFunctionData(functionFragment: 'deposit', values: []): Uint8Array;
+  encodeFunctionData(functionFragment: 'match_order_pair', values: [string, string]): Uint8Array;
   encodeFunctionData(functionFragment: 'match_orders', values: [Vec<string>]): Uint8Array;
-  encodeFunctionData(functionFragment: 'open_order', values: [BigNumberish, AssetIdInput, OrderTypeInput, BigNumberish]): Uint8Array;
+  encodeFunctionData(functionFragment: 'open_order', values: [BigNumberish, AssetTypeInput, OrderTypeInput, BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'set_fee', values: [BigNumberish, Option<IdentityInput>]): Uint8Array;
-  encodeFunctionData(functionFragment: 'withdraw', values: [BigNumberish, AssetIdInput]): Uint8Array;
+  encodeFunctionData(functionFragment: 'withdraw', values: [BigNumberish, AssetTypeInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'account', values: [IdentityInput]): Uint8Array;
   encodeFunctionData(functionFragment: 'config', values: []): Uint8Array;
   encodeFunctionData(functionFragment: 'fee', values: [Option<IdentityInput>]): Uint8Array;
   encodeFunctionData(functionFragment: 'order', values: [string]): Uint8Array;
-  encodeFunctionData(functionFragment: 'order_id', values: [BigNumberish, AssetIdInput, OrderTypeInput, IdentityInput, BigNumberish]): Uint8Array;
+  encodeFunctionData(functionFragment: 'order_change_info', values: [string]): Uint8Array;
+  encodeFunctionData(functionFragment: 'order_id', values: [AssetTypeInput, OrderTypeInput, IdentityInput, BigNumberish, BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'user_orders', values: [IdentityInput]): Uint8Array;
 
   decodeFunctionData(functionFragment: 'cancel_order', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'deposit', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'match_order_pair', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'match_orders', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'open_order', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'set_fee', data: BytesLike): DecodedValue;
@@ -110,6 +123,7 @@ interface MarketContractAbiInterface extends Interface {
   decodeFunctionData(functionFragment: 'config', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'fee', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'order', data: BytesLike): DecodedValue;
+  decodeFunctionData(functionFragment: 'order_change_info', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'order_id', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'user_orders', data: BytesLike): DecodedValue;
 }
@@ -119,15 +133,17 @@ export class MarketContractAbi extends Contract {
   functions: {
     cancel_order: InvokeFunction<[order_id: string], void>;
     deposit: InvokeFunction<[], void>;
+    match_order_pair: InvokeFunction<[order0_id: string, order1_id: string], void>;
     match_orders: InvokeFunction<[orders: Vec<string>], void>;
-    open_order: InvokeFunction<[amount: BigNumberish, asset: AssetIdInput, order_type: OrderTypeInput, price: BigNumberish], string>;
+    open_order: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput, order_type: OrderTypeInput, price: BigNumberish], string>;
     set_fee: InvokeFunction<[amount: BigNumberish, user: Option<IdentityInput>], void>;
-    withdraw: InvokeFunction<[amount: BigNumberish, asset: AssetIdInput], void>;
+    withdraw: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput], void>;
     account: InvokeFunction<[user: IdentityInput], Option<AccountOutput>>;
     config: InvokeFunction<[], [AddressOutput, AssetIdOutput, number, AssetIdOutput, number, number]>;
     fee: InvokeFunction<[user: Option<IdentityInput>], BN>;
     order: InvokeFunction<[order: string], Option<OrderOutput>>;
-    order_id: InvokeFunction<[amount: BigNumberish, asset: AssetIdInput, order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish], string>;
+    order_change_info: InvokeFunction<[order_id: string], Vec<OrderChangeInfoOutput>>;
+    order_id: InvokeFunction<[asset_type: AssetTypeInput, order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish], string>;
     user_orders: InvokeFunction<[user: IdentityInput], Vec<string>>;
   };
 }

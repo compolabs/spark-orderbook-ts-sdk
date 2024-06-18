@@ -4,7 +4,6 @@ import { Provider, Wallet, WalletUnlocked } from "fuels";
 import Spark, {
   BETA_CONTRACT_ADDRESSES,
   BETA_TOKENS,
-  BN,
   OrderType,
   TESTNET_INDEXER_URL,
   TESTNET_NETWORK,
@@ -47,16 +46,13 @@ describe("Open Order Test", () => {
     async () => {
       const usdc = TOKENS_BY_SYMBOL["USDC"];
       const amount = "100"; // USDC
-      const amountToSend = BN.parseUnits(amount, usdc.decimals);
+      // const amountToSend = BN.parseUnits(amount, usdc.decimals);
 
-      const price = "1";
+      // console.log("send amount", amountToSend.toString());
 
-      const data = await spark.createOrder(
-        amountToSend.toString(),
-        usdc,
-        price,
-        OrderType.Buy,
-      );
+      const price = "70000";
+
+      const data = await spark.createOrder(amount, usdc, price, OrderType.Buy);
 
       console.log("CREATE ORDER DATA", data);
 
@@ -70,12 +66,14 @@ describe("Open Order Test", () => {
     async () => {
       const usdc = TOKENS_BY_SYMBOL["USDC"];
       const amount = "100"; // USDC
-      const amountToSend = BN.parseUnits(amount, usdc.decimals);
+      // const amountToSend = BN.parseUnits(amount, usdc.decimals);
+
+      console.log("send amount", amount.toString());
 
       const price = "1";
 
       const data = await spark.createOrder(
-        amountToSend.toString(),
+        amount.toString(),
         usdc,
         price,
         OrderType.Sell,

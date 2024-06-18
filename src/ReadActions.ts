@@ -5,10 +5,12 @@ import BN from "./utils/BN";
 import getUnixTime from "./utils/getUnixTime";
 import { IndexerApi } from "./IndexerApi";
 import {
+  AssetType,
   FetchOrdersParams,
   FetchTradesParams,
   MarketCreateEvent,
   Options,
+  OrderType,
   SpotMarketVolume,
   SpotOrder,
   SpotOrderWithoutTimestamp,
@@ -125,12 +127,12 @@ export class ReadActions {
 
     const baseSize = new BN(result.value.amount.toString());
     const basePrice = new BN(result.value.price.toString());
+
     return {
-      // TODO: Check what is ID for order
-      // id: result.value?.id,
-      id: "",
-      baseToken: result.value.asset.bits,
-      trader: result.value.owner.Address?.bits ?? "", // TODO: Check owner Address or ContractId
+      id: orderId,
+      assetType: result.value.asset_type as unknown as AssetType,
+      orderType: result.value.order_type as unknown as OrderType,
+      trader: result.value.owner.Address?.bits ?? "",
       baseSize,
       orderPrice: basePrice,
     };

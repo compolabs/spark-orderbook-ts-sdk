@@ -9,6 +9,7 @@ import {
 } from "./constants";
 import {
   Asset,
+  AssetType,
   FetchOrdersParams,
   FetchTradesParams,
   MarketCreateEvent,
@@ -56,12 +57,14 @@ export class SparkOrderbook {
   createOrder = async (
     amount: string,
     token: Asset,
+    tokenType: AssetType,
     price: string,
     type: OrderType,
   ): Promise<WriteTransactionResponse> => {
     return this.write.createOrder(
       amount,
       token,
+      tokenType,
       price,
       type,
       this.getApiOptions(),

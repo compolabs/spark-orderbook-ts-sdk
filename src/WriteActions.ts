@@ -1,12 +1,18 @@
-import { CoinQuantityLike, FunctionInvocationScope, hashMessage } from "fuels";
+import {
+  CoinQuantityLike,
+  FunctionInvocationScope,
+  hashMessage,
+  MultiCallInvocationScope,
+} from "fuels";
 
 import { MarketContractAbi__factory } from "./types/market";
-import { AssetIdInput, OrderTypeInput } from "./types/market/MarketContractAbi";
+import { AssetIdInput, AssetTypeInput, OrderTypeInput } from "./types/market/MarketContractAbi";
 import { TokenAbi__factory } from "./types/src-20";
 import { IdentityInput } from "./types/src-20/TokenAbi";
 import BN from "./utils/BN";
 import {
   Asset,
+  AssetType,
   Options,
   OrderType,
   WriteTransactionResponse,
@@ -16,6 +22,7 @@ export class WriteActions {
   createOrder = async (
     amount: string,
     token: Asset,
+    tokenType: AssetType,
     price: string,
     type: OrderType,
     options: Options,
@@ -25,8 +32,6 @@ export class WriteActions {
       options.wallet,
     );
 
-    const assetId: AssetIdInput = { bits: token.address };
-
     const amountToSend = new BN(amount).times(price);
 
     const forward: CoinQuantityLike = {
@@ -34,12 +39,19 @@ export class WriteActions {
       assetId: token.address,
     };
 
-    const tx = await orderbookFactory.functions
-      .open_order(amount, assetId, type as unknown as OrderTypeInput, price)
-      .callParams({ forward })
+    const tx = orderbookFactory
+      .multiCall([
+        orderbookFactory.functions.deposit().callParams({ forward }),
+        orderbookFactory.functions.open_order(
+          amount,
+          tokenType as unknown as AssetTypeInput,
+          type as unknown as OrderTypeInput,
+          price,
+        ),
+      ])
       .txParams({ gasLimit: options.gasPrice });
 
-    return this.sendTransaction(tx, options);
+    return this.sendMultiTransaction(tx, options);
   };
 
   cancelOrder = async (
@@ -108,6 +120,20 @@ export class WriteActions {
     const { gasUsed } = await tx.getTransactionCost();
     const gasLimit = gasUsed.mul(options.gasLimitMultiplier).toString();
     const res = await tx.txParams({ gasLimit }).call();
+
+    return {
+      transactionId: res.transactionId,
+      value: res.value,
+    };
+  };
+
+  private sendMultiTransaction = async (
+    txs: MultiCallInvocationScope,
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const { gasUsed } = await txs.getTransactionCost();
+    const gasLimit = gasUsed.mul(options.gasLimitMultiplier).toString();
+    const res = await txs.txParams({ gasLimit }).call();
 
     return {
       transactionId: res.transactionId,
