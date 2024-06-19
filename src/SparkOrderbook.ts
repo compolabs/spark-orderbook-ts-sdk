@@ -93,6 +93,13 @@ export class SparkOrderbook {
     return this.write.mintToken(token, amount, this.getApiOptions());
   };
 
+  deposit = async (
+    token: Asset,
+    amount: string,
+  ): Promise<WriteTransactionResponse> => {
+    return this.write.deposit(token, amount, this.getApiOptions());
+  };
+
   fetchMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
     return this.read.fetchMarkets(limit);
   };

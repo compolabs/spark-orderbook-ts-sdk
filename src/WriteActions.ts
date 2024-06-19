@@ -22,6 +22,26 @@ import {
 } from "./interface";
 
 export class WriteActions {
+  deposit = async (
+    token: Asset,
+    amount: string,
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const forward: CoinQuantityLike = {
+      amount,
+      assetId: token.address,
+    };
+
+    const tx = orderbookFactory.functions.deposit().callParams({ forward })
+
+    return this.sendTransaction(tx, options);
+  }
+
   createOrder = async (
     amount: string,
     token: Asset,
@@ -35,12 +55,27 @@ export class WriteActions {
       options.wallet,
     );
 
-    const amountToSend = new BN(amount).times(price);
+    // const amountToSend = new BN(amount).times(price);
+    const amountF = BN.parseUnits(amount, token.decimals);
 
     const forward: CoinQuantityLike = {
-      amount: amountToSend.toString(),
+      amount: amountF.toString(),
       assetId: token.address,
     };
+
+    console.log(
+      'deposit',
+      amountF.toString(),
+      token.address,
+    )
+
+    console.log(
+      'open_order',
+      amount.toString(),
+      tokenType as unknown as AssetTypeInput,
+      type as unknown as OrderTypeInput,
+      price.toString(),
+    )
 
     const tx = orderbookFactory
       .multiCall([

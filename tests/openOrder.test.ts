@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "@jest/globals";
 import { Provider, Wallet, WalletUnlocked } from "fuels";
 
 import Spark, {
+  AssetType,
   BETA_CONTRACT_ADDRESSES,
   BETA_TOKENS,
   OrderType,
@@ -42,17 +43,29 @@ describe("Open Order Test", () => {
   });
 
   it(
+    "Trying to deposit",
+    async () => {
+      const usdc = TOKENS_BY_SYMBOL["USDC"];
+      const amount = "200000000"; // USDC
+
+      const data = await spark.deposit(usdc, amount);
+
+      console.log("DEPOSIT DATA", data);
+
+      expect(data.transactionId).toBeDefined();
+    },
+    TEST_TIMEOUT,
+  );
+
+  it.only(
     "Open buy order",
     async () => {
       const usdc = TOKENS_BY_SYMBOL["USDC"];
-      const amount = "100"; // USDC
-      // const amountToSend = BN.parseUnits(amount, usdc.decimals);
+      const amount = "200"; // USDC
 
-      // console.log("send amount", amountToSend.toString());
+      const price = "1";
 
-      const price = "70000";
-
-      const data = await spark.createOrder(amount, usdc, price, OrderType.Buy);
+      const data = await spark.createOrder(amount, usdc, AssetType.Quote, price, OrderType.Sell);
 
       console.log("CREATE ORDER DATA", data);
 
@@ -75,6 +88,7 @@ describe("Open Order Test", () => {
       const data = await spark.createOrder(
         amount.toString(),
         usdc,
+        AssetType.Quote,
         price,
         OrderType.Sell,
       );
