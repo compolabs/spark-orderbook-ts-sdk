@@ -1,4 +1,10 @@
-import { Address, Bech32Address, Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
+import {
+  Bech32Address,
+  Provider,
+  Wallet,
+  WalletLocked,
+  WalletUnlocked,
+} from "fuels";
 
 import BN from "./utils/BN";
 import { NETWORK_ERROR, NetworkError } from "./utils/NetworkError";

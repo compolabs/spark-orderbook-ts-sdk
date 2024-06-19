@@ -1,6 +1,7 @@
 import { Address, Bech32Address } from "fuels";
 
 import { MarketContractAbi__factory } from "./types/market";
+import { AddressInput, IdentityInput } from "./types/market/MarketContractAbi";
 import BN from "./utils/BN";
 import getUnixTime from "./utils/getUnixTime";
 import { IndexerApi } from "./IndexerApi";
@@ -16,7 +17,6 @@ import {
   SpotOrderWithoutTimestamp,
   SpotTrades,
 } from "./interface";
-import { AddressInput, IdentityInput } from "./types/market/MarketContractAbi";
 
 export class ReadActions {
   protected indexerApi: IndexerApi;
@@ -148,17 +148,17 @@ export class ReadActions {
       options.wallet,
     );
 
-    const traderAddress = new Address(trader).toB256()
+    const traderAddress = new Address(trader).toB256();
 
     const address: AddressInput = {
       bits: traderAddress,
-    }
+    };
 
     const user: IdentityInput = {
       Address: address,
-    }
+    };
 
-    const result = await orderbookFactory.functions.user_orders(user).get()
+    const result = await orderbookFactory.functions.user_orders(user).get();
 
     return result.value;
   };

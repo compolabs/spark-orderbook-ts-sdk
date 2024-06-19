@@ -60,7 +60,9 @@ describe("Open Order Test", () => {
   it(
     "Fetch user orders",
     async () => {
-      const data = await spark.fetchOrderIdsByAddress(wallet.address.toAddress());
+      const data = await spark.fetchOrderIdsByAddress(
+        wallet.address.toAddress(),
+      );
 
       console.log("ORDERS DATA", data);
 
@@ -72,12 +74,14 @@ describe("Open Order Test", () => {
   it.only(
     "Fetch order",
     async () => {
-      const data = await spark.fetchOrderById('0xf93343da722c95c59bc77cb085f411cf83f0912f4c60571b1fa429a3ab8f88a4');
+      const data = await spark.fetchOrderById(
+        "0xf93343da722c95c59bc77cb085f411cf83f0912f4c60571b1fa429a3ab8f88a4",
+      );
 
       console.log("ORDER DATA", {
         ...data,
         baseSize: data?.baseSize.toString(),
-        orderPrice: data?.orderPrice.toString()
+        orderPrice: data?.orderPrice.toString(),
       });
 
       expect(data).toBeDefined();
