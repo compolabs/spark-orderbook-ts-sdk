@@ -115,6 +115,6 @@ export enum OrderType {
 }
 
 export enum AssetType {
-  Base = 'Base',
-  Quote = 'Quote'
+  Base = "Base",
+  Quote = "Quote",
 }

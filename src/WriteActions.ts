@@ -6,7 +6,10 @@ import {
 } from "fuels";
 
 import { MarketContractAbi__factory } from "./types/market";
-import { AssetIdInput, AssetTypeInput, OrderTypeInput } from "./types/market/MarketContractAbi";
+import {
+  AssetTypeInput,
+  OrderTypeInput,
+} from "./types/market/MarketContractAbi";
 import { TokenAbi__factory } from "./types/src-20";
 import { IdentityInput } from "./types/src-20/TokenAbi";
 import BN from "./utils/BN";
