@@ -1,4 +1,4 @@
-import { Address } from "fuels";
+import { Address, Bech32Address } from "fuels";
 
 import { MarketContractAbi__factory } from "./types/market";
 import BN from "./utils/BN";
@@ -16,6 +16,7 @@ import {
   SpotOrderWithoutTimestamp,
   SpotTrades,
 } from "./interface";
+import { AddressInput, IdentityInput } from "./types/market/MarketContractAbi";
 
 export class ReadActions {
   protected indexerApi: IndexerApi;
@@ -136,6 +137,30 @@ export class ReadActions {
       baseSize,
       orderPrice: basePrice,
     };
+  };
+
+  fetchOrderIdsByAddress = async (
+    trader: Bech32Address,
+    options: Options,
+  ): Promise<string[]> => {
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const traderAddress = new Address(trader).toB256()
+
+    const address: AddressInput = {
+      bits: traderAddress,
+    }
+
+    const user: IdentityInput = {
+      Address: address,
+    }
+
+    const result = await orderbookFactory.functions.user_orders(user).get()
+
+    return result.value;
   };
 
   fetchWalletBalance = async (

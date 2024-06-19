@@ -37,10 +37,10 @@ export class WriteActions {
       assetId: token.address,
     };
 
-    const tx = orderbookFactory.functions.deposit().callParams({ forward })
+    const tx = orderbookFactory.functions.deposit().callParams({ forward });
 
     return this.sendTransaction(tx, options);
-  }
+  };
 
   createOrder = async (
     amount: string,
@@ -63,19 +63,15 @@ export class WriteActions {
       assetId: token.address,
     };
 
-    console.log(
-      'deposit',
-      amountF.toString(),
-      token.address,
-    )
+    console.log("deposit", amountF.toString(), token.address);
 
     console.log(
-      'open_order',
+      "open_order",
       amount.toString(),
       tokenType as unknown as AssetTypeInput,
       type as unknown as OrderTypeInput,
       price.toString(),
-    )
+    );
 
     const tx = orderbookFactory
       .multiCall([

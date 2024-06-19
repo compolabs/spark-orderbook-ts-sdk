@@ -57,15 +57,49 @@ describe("Open Order Test", () => {
     TEST_TIMEOUT,
   );
 
+  it(
+    "Fetch user orders",
+    async () => {
+      const data = await spark.fetchOrderIdsByAddress(wallet.address.toAddress());
+
+      console.log("ORDERS DATA", data);
+
+      expect(data).toBeDefined();
+    },
+    TEST_TIMEOUT,
+  );
+
   it.only(
+    "Fetch order",
+    async () => {
+      const data = await spark.fetchOrderById('0xf93343da722c95c59bc77cb085f411cf83f0912f4c60571b1fa429a3ab8f88a4');
+
+      console.log("ORDER DATA", {
+        ...data,
+        baseSize: data?.baseSize.toString(),
+        orderPrice: data?.orderPrice.toString()
+      });
+
+      expect(data).toBeDefined();
+    },
+    TEST_TIMEOUT,
+  );
+
+  it(
     "Open buy order",
     async () => {
       const usdc = TOKENS_BY_SYMBOL["USDC"];
       const amount = "200"; // USDC
 
-      const price = "1";
+      const price = "";
 
-      const data = await spark.createOrder(amount, usdc, AssetType.Quote, price, OrderType.Sell);
+      const data = await spark.createOrder(
+        amount,
+        usdc,
+        AssetType.Base,
+        price,
+        OrderType.Buy,
+      );
 
       console.log("CREATE ORDER DATA", data);
 

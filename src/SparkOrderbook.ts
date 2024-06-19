@@ -1,4 +1,4 @@
-import { Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
+import { Address, Bech32Address, Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
 
 import BN from "./utils/BN";
 import { NETWORK_ERROR, NetworkError } from "./utils/NetworkError";
@@ -131,6 +131,12 @@ export class SparkOrderbook {
   fetchWalletBalance = async (asset: Asset): Promise<string> => {
     // We use getApiOptions because we need the user's wallet
     return this.read.fetchWalletBalance(asset.address, this.getApiOptions());
+  };
+
+  fetchOrderIdsByAddress = async (trader: Bech32Address): Promise<string[]> => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchOrderIdsByAddress(trader, options);
   };
 
   getProviderWallet = async () => {
