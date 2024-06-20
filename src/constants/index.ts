@@ -20,4 +20,4 @@ export const TESTNET_NETWORK = {
 };
 
 export const TESTNET_INDEXER_URL =
-  "https://indexer.bigdevenergy.link/2afab9c/v1/graphql";
+  "https://indexer.bigdevenergy.link/8e070c7/v1/graphql";

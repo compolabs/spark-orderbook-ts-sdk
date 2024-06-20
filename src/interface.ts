@@ -105,22 +105,20 @@ export interface Order {
   timestamp: string;
 }
 
-export interface GetMatchOrderEventsParams {
+export interface GetTradeOrderEventsParams {
   limit: number;
   user?: string;
   asset?: string;
 }
 
-export interface MatchOrderEvent {
-  id: string;
-  match_price: string;
-  match_size: string;
-  order_id: string;
-  order_matcher: string;
-  owner: string;
-  counterparty: string;
-  asset: string;
-  db_write_timestamp: string;
+export interface TradeOrderEvent {
+  base_buy_order_id: string
+  base_sell_order_id: string
+  id: string
+  order_matcher: string
+  trade_price: string
+  trade_size: string
+  tx_id: string
 }
 
 export type Volume = {

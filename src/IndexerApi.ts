@@ -1,10 +1,10 @@
 import { Fetch } from "./utils/Fetch";
 import {
-  GetMatchOrderEventsParams,
   GetOrdersParams,
-  MatchOrderEvent,
+  GetTradeOrderEventsParams,
   Order,
   SpotMarketCreateEvent,
+  TradeOrderEvent,
   Volume,
 } from "./interface";
 
@@ -77,9 +77,9 @@ export class IndexerApi extends Fetch {
     return response.Order;
   };
 
-  getMatchOrderEvents = async (
-    params: GetMatchOrderEventsParams,
-  ): Promise<MatchOrderEvent[]> => {
+  getTradeOrderEvents = async (
+    params: GetTradeOrderEventsParams,
+  ): Promise<TradeOrderEvent[]> => {
     const whereFilterParts: string[] = [];
 
     if (params.user) {
@@ -97,27 +97,25 @@ export class IndexerApi extends Fetch {
 
     const whereFilter = whereFilterParts.join(", ");
 
-    const query = `query MatchOrderEventQuery {
-      MatchOrderEvent(limit: ${params.limit}, where: {${whereFilter}}, order_by: { timestamp: desc }) {
+    const query = `query TradeOrderEventQuery {
+      TradeOrderEvent(limit: ${params.limit}, where: {${whereFilter}}, order_by: { timestamp: desc }) {
+        base_buy_order_id
+        base_sell_order_id
         id
-        match_price
-        match_size
-        order_id
         order_matcher
-        owner
-        counterparty
-        asset
-        db_write_timestamp
+        trade_price
+        trade_size
+        tx_id
       }
     }`;
 
     const response = await this.post<
-      IndexerResponse<MatchOrderEvent[], "MatchOrderEvent">
+      IndexerResponse<TradeOrderEvent[], "TradeOrderEvent">
     >({
       query,
     });
 
-    return response.MatchOrderEvent;
+    return response.TradeOrderEvent;
   };
 
   getVolume = async (): Promise<Volume> => {
@@ -127,30 +125,30 @@ export class IndexerApi extends Fetch {
 
     const yesterdayISO = yesterday.toISOString();
 
-    const query = `query MatchOrderEventQuery {
-      MatchOrderEvent(where: {db_write_timestamp: {_gte: "${yesterdayISO}"}}) {
+    const query = `query TradeOrderEventQuery {
+      TradeOrderEvent(where: {db_write_timestamp: {_gte: "${yesterdayISO}"}}) {
         id
-        match_price
-        match_size
+        trade_price
+        trade_size
         db_write_timestamp
       }
     }`;
 
-    type MatchOrderEventPartial = Pick<
-      MatchOrderEvent,
-      "id" | "match_price" | "match_size" | "db_write_timestamp"
+    type TradeOrderEventPartial = Pick<
+      TradeOrderEvent,
+      "id" | "trade_price" | "trade_size"
     >;
 
     const response = await this.post<
-      IndexerResponse<MatchOrderEventPartial[], "MatchOrderEvent">
+      IndexerResponse<TradeOrderEventPartial[], "TradeOrderEvent">
     >({
       query,
     });
 
-    const data = response.MatchOrderEvent.reduce(
+    const data = response.TradeOrderEvent.reduce(
       (prev, currentData) => {
-        const price = BigInt(currentData.match_price);
-        const size = BigInt(currentData.match_size);
+        const price = BigInt(currentData.trade_price);
+        const size = BigInt(currentData.trade_size);
         prev.volume24h += size;
 
         if (prev.high24h < price) {
