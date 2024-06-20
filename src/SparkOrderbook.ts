@@ -13,32 +13,34 @@ import {
   DEFAULT_GAS_LIMIT_MULTIPLIER,
   DEFAULT_GAS_PRICE,
 } from "./constants";
+import { IndexerApi } from "./IndexerApi";
 import {
   Asset,
   AssetType,
-  FetchOrdersParams,
-  FetchTradesParams,
+  GetMatchOrderEventsParams,
+  GetOrdersParams,
   MarketCreateEvent,
+  MatchOrderEvent,
   Options,
   OptionsSpark,
+  Order,
   OrderType,
   SparkParams,
-  SpotMarketVolume,
-  SpotOrder,
   SpotOrderWithoutTimestamp,
-  SpotTrades,
+  Volume,
   WriteTransactionResponse,
 } from "./interface";
 import { ReadActions } from "./ReadActions";
 import { WriteActions } from "./WriteActions";
 
 export class SparkOrderbook {
+  private read = new ReadActions();
   private write = new WriteActions();
-
-  private read: ReadActions;
 
   private providerPromise: Promise<Provider>;
   private options: OptionsSpark;
+
+  private indexerApi: IndexerApi;
 
   constructor(params: SparkParams) {
     this.options = {
@@ -49,7 +51,7 @@ export class SparkOrderbook {
         params.gasLimitMultiplier ?? DEFAULT_GAS_LIMIT_MULTIPLIER,
     };
 
-    this.read = new ReadActions(params.indexerApiUrl);
+    this.indexerApi = new IndexerApi(params.indexerApiUrl);
 
     this.providerPromise = Provider.create(params.networkUrl);
   }
@@ -107,23 +109,25 @@ export class SparkOrderbook {
   };
 
   fetchMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
-    return this.read.fetchMarkets(limit);
+    return this.indexerApi.getMarketCreateEvents() as any; // TODO: Fix type
   };
 
   fetchMarketPrice = async (baseToken: Asset): Promise<BN> => {
     return this.read.fetchMarketPrice(baseToken.address);
   };
 
-  fetchOrders = async (params: FetchOrdersParams): Promise<SpotOrder[]> => {
-    return this.read.fetchOrders(params);
+  fetchOrders = async (params: GetOrdersParams): Promise<Order[]> => {
+    return this.indexerApi.getOrders(params);
   };
 
-  fetchTrades = async (params: FetchTradesParams): Promise<SpotTrades[]> => {
-    return this.read.fetchTrades(params);
+  fetchMatchOrderEvents = async (
+    params: GetMatchOrderEventsParams,
+  ): Promise<MatchOrderEvent[]> => {
+    return this.indexerApi.getMatchOrderEvents(params);
   };
 
-  fetchVolume = async (): Promise<SpotMarketVolume> => {
-    return this.read.fetchVolume();
+  fetchVolume = async (): Promise<Volume> => {
+    return this.indexerApi.getVolume();
   };
 
   fetchOrderById = async (

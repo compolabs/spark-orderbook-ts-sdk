@@ -40,15 +40,6 @@ export interface SparkParams {
   pythUrl?: string;
 }
 
-export interface SpotOrder {
-  id: string;
-  baseToken: string;
-  trader: string;
-  baseSize: BN;
-  orderPrice: BN;
-  blockTimestamp: number;
-}
-
 export interface SpotOrderWithoutTimestamp {
   id: string;
   assetType: AssetType;
@@ -58,41 +49,10 @@ export interface SpotOrderWithoutTimestamp {
   orderPrice: BN;
 }
 
-export interface SpotTrades {
-  baseToken: string;
-  buyer: string;
-  id: string;
-  matcher: string;
-  seller: string;
-  tradeAmount: BN;
-  price: BN;
-  timestamp: number;
-}
-
-export type FetchOrdersParams<T = string> = {
-  baseToken: T;
-  limit: number;
-  trader?: T;
-  type?: "BUY" | "SELL";
-  isActive?: boolean;
-};
-
-export type FetchTradesParams<T = string> = {
-  baseToken: T;
-  limit: number;
-  trader?: T;
-};
-
 export type MarketCreateEvent = {
   id: string;
   assetId: string;
   decimal: number;
-};
-
-export type SpotMarketVolume = {
-  low: BN;
-  high: BN;
-  volume: BN;
 };
 
 export type WriteTransactionResponse = {
@@ -100,10 +60,6 @@ export type WriteTransactionResponse = {
   value: unknown;
 };
 
-export type UserSupplyBorrow = {
-  supply: BN;
-  borrow: BN;
-};
 export interface GraphQLResponse<T> {
   data: T;
   errors?: { message: string }[];
@@ -118,3 +74,57 @@ export enum AssetType {
   Base = "Base",
   Quote = "Quote",
 }
+
+export interface SpotMarketCreateEvent {
+  id: number;
+  asset_id: string;
+  asset_decimals: string;
+  timestamp: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GetOrdersParams {
+  limit: number;
+  orderType?: "Buy" | "Sell";
+  status?: string;
+  user?: string;
+  asset?: string;
+}
+
+export interface Order {
+  id: string;
+  asset: string;
+  asset_type: "Base" | "Quote";
+  amount: string;
+  initail_amount: string;
+  order_type: "Buy" | "Sell";
+  price: string;
+  status: string;
+  user: string;
+  timestamp: string;
+}
+
+export interface GetMatchOrderEventsParams {
+  limit: number;
+  user?: string;
+  asset?: string;
+}
+
+export interface MatchOrderEvent {
+  id: string;
+  match_price: string;
+  match_size: string;
+  order_id: string;
+  order_matcher: string;
+  owner: string;
+  counterparty: string;
+  asset: string;
+  db_write_timestamp: string;
+}
+
+export type Volume = {
+  volume24h: string;
+  high24h: string;
+  low24h: string;
+};

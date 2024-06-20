@@ -19,4 +19,5 @@ export const TESTNET_NETWORK = {
   url: "https://testnet.fuel.network/v1/graphql",
 };
 
-export const TESTNET_INDEXER_URL = "http://13.49.144.58:8080/v1/graphql";
+export const TESTNET_INDEXER_URL =
+  "https://indexer.bigdevenergy.link/2afab9c/v1/graphql";
