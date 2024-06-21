@@ -1,46 +1,59 @@
 import { Fetch } from "./utils/Fetch";
 import {
   GetOrdersParams,
-  GetTradeOrderEventsParams,
+  GetMatchOrderEventsParams,
   Order,
-  SpotMarketCreateEvent,
-  TradeOrderEvent,
+  MatchOrderEvent,
   Volume,
 } from "./interface";
 
 export class IndexerApi extends Fetch {
   // TODO: NOT IMPLEMENTED FOR NEW VERSION
-  getMarketCreateEvents = async (): Promise<SpotMarketCreateEvent[]> => {
-    const query = `
-      query SpotMarketCreateEventQuery {
-        SpotMarketCreateEvent {
-          id,
-          asset_id,
-          asset_decimals,
-          timestamp,
-        }
-      }
-    `;
-    const response = await this.post<
-      IndexerResponse<SpotMarketCreateEvent[], "SpotMarketCreateEvent">
-    >({
-      query,
-    });
+  // getMarketCreateEvents = async (): Promise<SpotMarketCreateEvent[]> => {
+  //   const query = `
+  //     query SpotMarketCreateEventQuery {
+  //       SpotMarketCreateEvent {
+  //         id,
+  //         asset_id,
+  //         asset_decimals,
+  //         timestamp,
+  //       }
+  //     }
+  //   `;
+  //   const response = await this.post<
+  //     IndexerResponse<SpotMarketCreateEvent[], "SpotMarketCreateEvent">
+  //   >({
+  //     query,
+  //   });
 
-    return response.SpotMarketCreateEvent;
-  };
+  //   // return response.SpotMarketCreateEvent;
+
+  //   return [{
+  //     id: 1,
+  //     asset_id: '',
+  //     asset_decimals: '',
+  //     timestamp: '',
+  //     createdAt: '',
+  //     updatedAt: '',
+  //   }]
+  // };
 
   getOrders = async (params: GetOrdersParams): Promise<Order[]> => {
-    const whereFilterParts: string[] = ['base_size: { _neq: "0" }'];
+    const whereFilterParts: string[] = [];
 
     if (params.orderType) {
       whereFilterParts.push(
-        `order_type: { _eq: "${params.orderType.toLowerCase()}" }`,
+        `order_type: { _eq: "${params.orderType}" }`,
       );
     }
 
-    if (params.status) {
-      whereFilterParts.push(`status: { _eq: "${params.status}" }`);
+    if (params.status?.length) {
+      if (params.status.length > 1) {
+        const statusConditions = params.status.map(status => `{ status: { _eq: "${status}" } }`).join(', ');
+        whereFilterParts.push(`_or: [${statusConditions}]`);
+      } else {
+        whereFilterParts.push(`status: { _eq: "${params.status[0]}" }`);
+      }
     }
 
     if (params.user) {
@@ -61,11 +74,12 @@ export class IndexerApi extends Fetch {
         asset
         asset_type
         amount
-        initail_amount
+        initial_amount
         order_type
         price
         status
         user
+        timestamp
       }
     }
     `;
@@ -77,19 +91,19 @@ export class IndexerApi extends Fetch {
     return response.Order;
   };
 
-  getTradeOrderEvents = async (
-    params: GetTradeOrderEventsParams,
-  ): Promise<TradeOrderEvent[]> => {
+  getMatchOrderEvents = async (
+    params: GetMatchOrderEventsParams,
+  ): Promise<MatchOrderEvent[]> => {
     const whereFilterParts: string[] = [];
 
-    if (params.user) {
-      whereFilterParts.push(`
-        _or: [
-          { owner: { _eq: "${params.user}" } },
-          { counterparty: { _eq: "${params.user}" } }
-        ]
-      `);
-    }
+    // if (params.user) {
+    //   whereFilterParts.push(`
+    //     _or: [
+    //       { owner: { _eq: "${params.user}" } },
+    //       { counterparty: { _eq: "${params.user}" } }
+    //     ]
+    //   `);
+    // }
 
     if (params.asset) {
       whereFilterParts.push(`asset: { _eq: "${params.asset}" }`);
@@ -97,25 +111,25 @@ export class IndexerApi extends Fetch {
 
     const whereFilter = whereFilterParts.join(", ");
 
-    const query = `query TradeOrderEventQuery {
-      TradeOrderEvent(limit: ${params.limit}, where: {${whereFilter}}, order_by: { timestamp: desc }) {
-        base_buy_order_id
-        base_sell_order_id
+    const query = `query MatchOrderEventQuery {
+      MatchOrderEvent(limit: ${params.limit}, where: {${whereFilter}}, order_by: { timestamp: desc }) {
         id
-        order_matcher
-        trade_price
-        trade_size
-        tx_id
+        owner
+        counterparty
+        asset
+        match_size
+        match_price
+        timestamp
       }
     }`;
 
     const response = await this.post<
-      IndexerResponse<TradeOrderEvent[], "TradeOrderEvent">
+      IndexerResponse<MatchOrderEvent[], "MatchOrderEvent">
     >({
       query,
     });
 
-    return response.TradeOrderEvent;
+    return response.MatchOrderEvent;
   };
 
   getVolume = async (): Promise<Volume> => {
@@ -125,30 +139,30 @@ export class IndexerApi extends Fetch {
 
     const yesterdayISO = yesterday.toISOString();
 
-    const query = `query TradeOrderEventQuery {
-      TradeOrderEvent(where: {db_write_timestamp: {_gte: "${yesterdayISO}"}}) {
+    const query = `query MatchOrderEventQuery {
+      MatchOrderEvent(where: {timestamp: {_gte: "${yesterdayISO}"}}) {
         id
-        trade_price
-        trade_size
-        db_write_timestamp
+        match_size
+        match_price
+        timestamp
       }
     }`;
 
-    type TradeOrderEventPartial = Pick<
-      TradeOrderEvent,
-      "id" | "trade_price" | "trade_size"
+    type MatchOrderEventPartial = Pick<
+      MatchOrderEvent,
+      "id" | "match_size" | "match_price"
     >;
 
     const response = await this.post<
-      IndexerResponse<TradeOrderEventPartial[], "TradeOrderEvent">
+      IndexerResponse<MatchOrderEventPartial[], "MatchOrderEvent">
     >({
       query,
     });
 
-    const data = response.TradeOrderEvent.reduce(
+    const data = response.MatchOrderEvent.reduce(
       (prev, currentData) => {
-        const price = BigInt(currentData.trade_price);
-        const size = BigInt(currentData.trade_size);
+        const price = BigInt(currentData.match_price);
+        const size = BigInt(currentData.match_size);
         prev.volume24h += size;
 
         if (prev.high24h < price) {

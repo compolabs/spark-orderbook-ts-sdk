@@ -87,7 +87,7 @@ export interface SpotMarketCreateEvent {
 export interface GetOrdersParams {
   limit: number;
   orderType?: "Buy" | "Sell";
-  status?: string;
+  status?: ('Active' | 'Canceled' | 'Closed')[];
   user?: string;
   asset?: string;
 }
@@ -97,28 +97,27 @@ export interface Order {
   asset: string;
   asset_type: "Base" | "Quote";
   amount: string;
-  initail_amount: string;
+  initial_amount: string;
   order_type: "Buy" | "Sell";
   price: string;
-  status: string;
+  status: 'Active' | 'Canceled' | 'Closed';
   user: string;
   timestamp: string;
 }
 
-export interface GetTradeOrderEventsParams {
+export interface GetMatchOrderEventsParams {
+  asset: string;
   limit: number;
-  user?: string;
-  asset?: string;
 }
 
-export interface TradeOrderEvent {
-  base_buy_order_id: string
-  base_sell_order_id: string
+export interface MatchOrderEvent {
   id: string
-  order_matcher: string
-  trade_price: string
-  trade_size: string
-  tx_id: string
+  owner: string
+  counterparty: string
+  asset: string
+  match_size: string
+  match_price: string
+  timestamp: string
 }
 
 export type Volume = {

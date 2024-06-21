@@ -17,9 +17,9 @@ export class Fetch {
       .then((data: GraphQLResponse<T>) => {
         if (data.errors) {
           throw new Error(data.errors[0].message);
-        } else {
-          return data.data;
         }
+
+        return data.data;
       });
   };
 
