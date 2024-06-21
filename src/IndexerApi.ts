@@ -1,9 +1,9 @@
 import { Fetch } from "./utils/Fetch";
 import {
-  GetOrdersParams,
   GetMatchOrderEventsParams,
-  Order,
+  GetOrdersParams,
   MatchOrderEvent,
+  Order,
   Volume,
 } from "./interface";
 
@@ -42,14 +42,14 @@ export class IndexerApi extends Fetch {
     const whereFilterParts: string[] = [];
 
     if (params.orderType) {
-      whereFilterParts.push(
-        `order_type: { _eq: "${params.orderType}" }`,
-      );
+      whereFilterParts.push(`order_type: { _eq: "${params.orderType}" }`);
     }
 
     if (params.status?.length) {
       if (params.status.length > 1) {
-        const statusConditions = params.status.map(status => `{ status: { _eq: "${status}" } }`).join(', ');
+        const statusConditions = params.status
+          .map((status) => `{ status: { _eq: "${status}" } }`)
+          .join(", ");
         whereFilterParts.push(`_or: [${statusConditions}]`);
       } else {
         whereFilterParts.push(`status: { _eq: "${params.status[0]}" }`);

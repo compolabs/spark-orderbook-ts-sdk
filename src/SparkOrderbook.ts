@@ -17,16 +17,16 @@ import { IndexerApi } from "./IndexerApi";
 import {
   Asset,
   AssetType,
-  GetOrdersParams,
   GetMatchOrderEventsParams,
+  GetOrdersParams,
   MarketCreateEvent,
+  MatchOrderEvent,
   Options,
   OptionsSpark,
   Order,
   OrderType,
   SparkParams,
   SpotOrderWithoutTimestamp,
-  MatchOrderEvent,
   Volume,
   WriteTransactionResponse,
 } from "./interface";
@@ -114,11 +114,14 @@ export class SparkOrderbook {
    */
   fetchMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
     // return this.indexerApi.getMarketCreateEvents();
-    return [{
-      id: '1',
-      assetId: '0xccceae45a7c23dcd4024f4083e959a0686a191694e76fa4fb76c449361ca01f7',
-      decimal: 9,
-    }]
+    return [
+      {
+        id: "1",
+        assetId:
+          "0xccceae45a7c23dcd4024f4083e959a0686a191694e76fa4fb76c449361ca01f7",
+        decimal: 9,
+      },
+    ];
   };
 
   fetchMarketPrice = async (baseToken: Asset): Promise<BN> => {
