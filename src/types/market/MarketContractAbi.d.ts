@@ -4,9 +4,9 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.89.2
+  Fuels version: 0.90.0
   Forc version: 0.60.0
-  Fuel-Core version: 0.27.0
+  Fuel-Core version: 0.30.0
 */
 
 import type {
@@ -96,36 +96,6 @@ interface MarketContractAbiInterface extends Interface {
     order_id: FunctionFragment;
     user_orders: FunctionFragment;
   };
-
-  encodeFunctionData(functionFragment: 'cancel_order', values: [string]): Uint8Array;
-  encodeFunctionData(functionFragment: 'deposit', values: []): Uint8Array;
-  encodeFunctionData(functionFragment: 'match_order_pair', values: [string, string]): Uint8Array;
-  encodeFunctionData(functionFragment: 'match_orders', values: [Vec<string>]): Uint8Array;
-  encodeFunctionData(functionFragment: 'open_order', values: [BigNumberish, AssetTypeInput, OrderTypeInput, BigNumberish]): Uint8Array;
-  encodeFunctionData(functionFragment: 'set_fee', values: [BigNumberish, Option<IdentityInput>]): Uint8Array;
-  encodeFunctionData(functionFragment: 'withdraw', values: [BigNumberish, AssetTypeInput]): Uint8Array;
-  encodeFunctionData(functionFragment: 'account', values: [IdentityInput]): Uint8Array;
-  encodeFunctionData(functionFragment: 'config', values: []): Uint8Array;
-  encodeFunctionData(functionFragment: 'fee', values: [Option<IdentityInput>]): Uint8Array;
-  encodeFunctionData(functionFragment: 'order', values: [string]): Uint8Array;
-  encodeFunctionData(functionFragment: 'order_change_info', values: [string]): Uint8Array;
-  encodeFunctionData(functionFragment: 'order_id', values: [AssetTypeInput, OrderTypeInput, IdentityInput, BigNumberish, BigNumberish]): Uint8Array;
-  encodeFunctionData(functionFragment: 'user_orders', values: [IdentityInput]): Uint8Array;
-
-  decodeFunctionData(functionFragment: 'cancel_order', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'deposit', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'match_order_pair', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'match_orders', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'open_order', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'set_fee', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'withdraw', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'account', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'config', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'fee', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'order', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'order_change_info', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'order_id', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'user_orders', data: BytesLike): DecodedValue;
 }
 
 export class MarketContractAbi extends Contract {
