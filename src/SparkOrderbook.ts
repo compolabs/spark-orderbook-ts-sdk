@@ -16,7 +16,8 @@ import {
 import { IndexerApi } from "./IndexerApi";
 import {
   Asset,
-  AssetType,
+  CreateOrderParams,
+  DepositParams,
   GetMatchOrderEventsParams,
   GetOrdersParams,
   MarketCreateEvent,
@@ -24,10 +25,10 @@ import {
   Options,
   OptionsSpark,
   Order,
-  OrderType,
   SparkParams,
   SpotOrderWithoutTimestamp,
   Volume,
+  WithdrawParams,
   WriteTransactionResponse,
 } from "./interface";
 import { ReadActions } from "./ReadActions";
@@ -63,24 +64,17 @@ export class SparkOrderbook {
   };
 
   createOrder = async (
-    amount: string,
-    token: Asset,
-    tokenType: AssetType,
-    price: string,
-    type: OrderType,
+    deposit: DepositParams,
+    order: CreateOrderParams,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.createOrder(
-      amount,
-      token,
-      tokenType,
-      price,
-      type,
-      this.getApiOptions(),
-    );
+    return this.write.createOrder(deposit, order, this.getApiOptions());
   };
 
-  cancelOrder = async (orderId: string): Promise<WriteTransactionResponse> => {
-    return this.write.cancelOrder(orderId, this.getApiOptions());
+  cancelOrder = async (
+    withdraw: WithdrawParams,
+    orderId: string,
+  ): Promise<WriteTransactionResponse> => {
+    return this.write.cancelOrder(withdraw, orderId, this.getApiOptions());
   };
 
   matchOrders = async (

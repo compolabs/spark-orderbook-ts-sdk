@@ -75,6 +75,8 @@ export enum AssetType {
   Quote = "Quote",
 }
 
+export type Status = "Active" | "Canceled" | "Closed";
+
 export interface SpotMarketCreateEvent {
   id: number;
   asset_id: string;
@@ -86,21 +88,38 @@ export interface SpotMarketCreateEvent {
 
 export interface GetOrdersParams {
   limit: number;
-  orderType?: "Buy" | "Sell";
-  status?: ("Active" | "Canceled" | "Closed")[];
+  orderType?: OrderType;
+  status?: Status[];
   user?: string;
   asset?: string;
+}
+
+export interface DepositParams {
+  amount: string;
+  asset: string;
+}
+
+export interface CreateOrderParams {
+  amount: string;
+  tokenType: AssetType;
+  price: string;
+  type: OrderType;
+}
+
+export interface WithdrawParams {
+  amount: string;
+  assetType: AssetType;
 }
 
 export interface Order {
   id: string;
   asset: string;
-  asset_type: "Base" | "Quote";
+  asset_type: AssetType;
   amount: string;
   initial_amount: string;
-  order_type: "Buy" | "Sell";
+  order_type: OrderType;
   price: string;
-  status: "Active" | "Canceled" | "Closed";
+  status: Status;
   user: string;
   timestamp: string;
 }

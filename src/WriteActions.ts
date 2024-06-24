@@ -15,9 +15,10 @@ import { IdentityInput } from "./types/src-20/TokenAbi";
 import BN from "./utils/BN";
 import {
   Asset,
-  AssetType,
+  CreateOrderParams,
+  DepositParams,
   Options,
-  OrderType,
+  WithdrawParams,
   WriteTransactionResponse,
 } from "./interface";
 
@@ -43,11 +44,8 @@ export class WriteActions {
   };
 
   createOrder = async (
-    amount: string,
-    token: Asset,
-    tokenType: AssetType,
-    price: string,
-    type: OrderType,
+    { amount: depositAmount, asset: depositAsset }: DepositParams,
+    { amount, tokenType, price, type }: CreateOrderParams,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const orderbookFactory = MarketContractAbi__factory.connect(
@@ -55,23 +53,20 @@ export class WriteActions {
       options.wallet,
     );
 
-    // const amountToSend = new BN(amount).times(price);
-    const amountF = BN.parseUnits(amount, token.decimals);
-
     const forward: CoinQuantityLike = {
-      amount: amountF.toString(),
-      assetId: token.address,
+      amount: depositAmount,
+      assetId: depositAsset,
     };
 
-    console.log("deposit", amountF.toString(), token.address);
+    // console.log("deposit", depositAmount.toString(), depositAsset);
 
-    console.log(
-      "open_order",
-      amount.toString(),
-      tokenType as unknown as AssetTypeInput,
-      type as unknown as OrderTypeInput,
-      price.toString(),
-    );
+    // console.log(
+    //   "open_order",
+    //   amount.toString(),
+    //   tokenType as unknown as AssetTypeInput,
+    //   type as unknown as OrderTypeInput,
+    //   price.toString(),
+    // );
 
     const tx = orderbookFactory
       .multiCall([
@@ -89,6 +84,7 @@ export class WriteActions {
   };
 
   cancelOrder = async (
+    { amount: withdrawAmount, assetType: withdrawAssetType }: WithdrawParams,
     orderId: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
@@ -97,11 +93,17 @@ export class WriteActions {
       options.wallet,
     );
 
-    const tx = await orderbookFactory.functions
-      .cancel_order(orderId)
+    const tx = orderbookFactory
+      .multiCall([
+        orderbookFactory.functions.cancel_order(orderId),
+        orderbookFactory.functions.withdraw(
+          withdrawAmount.toString(),
+          withdrawAssetType as unknown as AssetTypeInput,
+        ),
+      ])
       .txParams({ gasLimit: options.gasPrice });
 
-    return this.sendTransaction(tx, options);
+    return this.sendMultiTransaction(tx, options);
   };
 
   matchOrders = async (
