@@ -1,3 +1,4 @@
+import BN from "./utils/BN";
 import { Fetch } from "./utils/Fetch";
 import {
   GetMatchOrderEventsParams,
@@ -158,6 +159,14 @@ export class IndexerApi extends Fetch {
     >({
       query,
     });
+
+    if (!response.MatchOrderEvent.length) {
+      return {
+        volume24h: BN.ZERO.toString(),
+        high24h: BN.ZERO.toString(),
+        low24h: BN.ZERO.toString(),
+      };
+    }
 
     const data = response.MatchOrderEvent.reduce(
       (prev, currentData) => {
