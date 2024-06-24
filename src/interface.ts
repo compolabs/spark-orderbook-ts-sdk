@@ -5,7 +5,7 @@ import BN from "./utils/BN";
 export type MarketStatusOutput = "Opened" | "Paused" | "Closed";
 
 export interface OrderbookContracts {
-  spotMarket: string;
+  market: string;
   tokenFactory: string;
   pyth: string;
 }
@@ -40,47 +40,14 @@ export interface SparkParams {
   pythUrl?: string;
 }
 
-export interface SpotOrder {
-  id: string;
-  baseToken: string;
-  trader: string;
-  baseSize: BN;
-  orderPrice: BN;
-  blockTimestamp: number;
-}
-
 export interface SpotOrderWithoutTimestamp {
   id: string;
-  baseToken: string;
+  assetType: AssetType;
+  orderType: OrderType;
   trader: string;
   baseSize: BN;
   orderPrice: BN;
 }
-
-export interface SpotTrades {
-  baseToken: string;
-  buyer: string;
-  id: string;
-  matcher: string;
-  seller: string;
-  tradeAmount: BN;
-  price: BN;
-  timestamp: number;
-}
-
-export type FetchOrdersParams<T = string> = {
-  baseToken: T;
-  limit: number;
-  trader?: T;
-  type?: "BUY" | "SELL";
-  isActive?: boolean;
-};
-
-export type FetchTradesParams<T = string> = {
-  baseToken: T;
-  limit: number;
-  trader?: T;
-};
 
 export type MarketCreateEvent = {
   id: string;
@@ -88,22 +55,92 @@ export type MarketCreateEvent = {
   decimal: number;
 };
 
-export type SpotMarketVolume = {
-  low: BN;
-  high: BN;
-  volume: BN;
-};
-
 export type WriteTransactionResponse = {
   transactionId: string;
   value: unknown;
 };
 
-export type UserSupplyBorrow = {
-  supply: BN;
-  borrow: BN;
-};
 export interface GraphQLResponse<T> {
   data: T;
   errors?: { message: string }[];
 }
+
+export enum OrderType {
+  Buy = "Buy",
+  Sell = "Sell",
+}
+
+export enum AssetType {
+  Base = "Base",
+  Quote = "Quote",
+}
+
+export type Status = "Active" | "Canceled" | "Closed";
+
+export interface SpotMarketCreateEvent {
+  id: number;
+  asset_id: string;
+  asset_decimals: string;
+  timestamp: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GetOrdersParams {
+  limit: number;
+  orderType?: OrderType;
+  status?: Status[];
+  user?: string;
+  asset?: string;
+}
+
+export interface DepositParams {
+  amount: string;
+  asset: string;
+}
+
+export interface CreateOrderParams {
+  amount: string;
+  tokenType: AssetType;
+  price: string;
+  type: OrderType;
+}
+
+export interface WithdrawParams {
+  amount: string;
+  assetType: AssetType;
+}
+
+export interface Order {
+  id: string;
+  asset: string;
+  asset_type: AssetType;
+  amount: string;
+  initial_amount: string;
+  order_type: OrderType;
+  price: string;
+  status: Status;
+  user: string;
+  timestamp: string;
+}
+
+export interface GetMatchOrderEventsParams {
+  asset: string;
+  limit: number;
+}
+
+export interface MatchOrderEvent {
+  id: string;
+  owner: string;
+  counterparty: string;
+  asset: string;
+  match_size: string;
+  match_price: string;
+  timestamp: string;
+}
+
+export type Volume = {
+  volume24h: string;
+  high24h: string;
+  low24h: string;
+};

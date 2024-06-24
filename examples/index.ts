@@ -19,4 +19,4 @@ const spark = new SparkOrderbook({
   wallet,
 });
 
-spark.fetchSpotMarkets(1).then(console.log);
+spark.fetchMarkets(1).then(console.log);

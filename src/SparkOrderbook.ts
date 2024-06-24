@@ -1,4 +1,10 @@
-import { Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
+import {
+  Bech32Address,
+  Provider,
+  Wallet,
+  WalletLocked,
+  WalletUnlocked,
+} from "fuels";
 
 import BN from "./utils/BN";
 import { NETWORK_ERROR, NetworkError } from "./utils/NetworkError";
@@ -7,30 +13,35 @@ import {
   DEFAULT_GAS_LIMIT_MULTIPLIER,
   DEFAULT_GAS_PRICE,
 } from "./constants";
+import { IndexerApi } from "./IndexerApi";
 import {
   Asset,
-  FetchOrdersParams,
-  FetchTradesParams,
+  CreateOrderParams,
+  DepositParams,
+  GetMatchOrderEventsParams,
+  GetOrdersParams,
   MarketCreateEvent,
+  MatchOrderEvent,
   Options,
   OptionsSpark,
+  Order,
   SparkParams,
-  SpotMarketVolume,
-  SpotOrder,
   SpotOrderWithoutTimestamp,
-  SpotTrades,
+  Volume,
+  WithdrawParams,
   WriteTransactionResponse,
 } from "./interface";
 import { ReadActions } from "./ReadActions";
 import { WriteActions } from "./WriteActions";
 
 export class SparkOrderbook {
+  private read = new ReadActions();
   private write = new WriteActions();
-
-  private read: ReadActions;
 
   private providerPromise: Promise<Provider>;
   private options: OptionsSpark;
+
+  private indexerApi: IndexerApi;
 
   constructor(params: SparkParams) {
     this.options = {
@@ -41,7 +52,7 @@ export class SparkOrderbook {
         params.gasLimitMultiplier ?? DEFAULT_GAS_LIMIT_MULTIPLIER,
     };
 
-    this.read = new ReadActions(params.indexerApiUrl);
+    this.indexerApi = new IndexerApi(params.indexerApiUrl);
 
     this.providerPromise = Provider.create(params.networkUrl);
   }
@@ -52,32 +63,25 @@ export class SparkOrderbook {
     this.options = newOptions;
   };
 
-  createSpotOrder = async (
-    baseToken: Asset,
-    quoteToken: Asset,
-    size: string,
-    price: string,
+  createOrder = async (
+    deposit: DepositParams,
+    order: CreateOrderParams,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.createSpotOrder(
-      baseToken,
-      quoteToken,
-      size,
-      price,
-      this.getApiOptions(),
-    );
+    return this.write.createOrder(deposit, order, this.getApiOptions());
   };
 
-  cancelSpotOrder = async (
+  cancelOrder = async (
+    withdraw: WithdrawParams,
     orderId: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.cancelSpotOrder(orderId, this.getApiOptions());
+    return this.write.cancelOrder(withdraw, orderId, this.getApiOptions());
   };
 
-  matchSpotOrders = async (
+  matchOrders = async (
     sellOrderId: string,
     buyOrderId: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.matchSpotOrders(
+    return this.write.matchOrders(
       sellOrderId,
       buyOrderId,
       this.getApiOptions(),
@@ -91,39 +95,64 @@ export class SparkOrderbook {
     return this.write.mintToken(token, amount, this.getApiOptions());
   };
 
-  fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
-    return this.read.fetchSpotMarkets(limit);
+  deposit = async (
+    token: Asset,
+    amount: string,
+  ): Promise<WriteTransactionResponse> => {
+    return this.write.deposit(token, amount, this.getApiOptions());
   };
 
-  fetchSpotMarketPrice = async (baseToken: Asset): Promise<BN> => {
-    return this.read.fetchSpotMarketPrice(baseToken.address);
+  /**
+   * Not working! All data is hardcoded
+   * TODO: FIX IT
+   */
+  fetchMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
+    // return this.indexerApi.getMarketCreateEvents();
+    return [
+      {
+        id: "1",
+        assetId:
+          "0xccceae45a7c23dcd4024f4083e959a0686a191694e76fa4fb76c449361ca01f7",
+        decimal: 9,
+      },
+    ];
   };
 
-  fetchSpotOrders = async (params: FetchOrdersParams): Promise<SpotOrder[]> => {
-    return this.read.fetchSpotOrders(params);
+  fetchMarketPrice = async (baseToken: Asset): Promise<BN> => {
+    return this.read.fetchMarketPrice(baseToken.address);
   };
 
-  fetchSpotTrades = async (
-    params: FetchTradesParams,
-  ): Promise<SpotTrades[]> => {
-    return this.read.fetchSpotTrades(params);
+  fetchOrders = async (params: GetOrdersParams): Promise<Order[]> => {
+    return this.indexerApi.getOrders(params);
   };
 
-  fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
-    return this.read.fetchSpotVolume();
+  getMatchOrderEvents = async (
+    params: GetMatchOrderEventsParams,
+  ): Promise<MatchOrderEvent[]> => {
+    return this.indexerApi.getMatchOrderEvents(params);
   };
 
-  fetchSpotOrderById = async (
+  fetchVolume = async (): Promise<Volume> => {
+    return this.indexerApi.getVolume();
+  };
+
+  fetchOrderById = async (
     orderId: string,
   ): Promise<SpotOrderWithoutTimestamp | undefined> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchSpotOrderById(orderId, options);
+    return this.read.fetchOrderById(orderId, options);
   };
 
   fetchWalletBalance = async (asset: Asset): Promise<string> => {
     // We use getApiOptions because we need the user's wallet
     return this.read.fetchWalletBalance(asset.address, this.getApiOptions());
+  };
+
+  fetchOrderIdsByAddress = async (trader: Bech32Address): Promise<string[]> => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchOrderIdsByAddress(trader, options);
   };
 
   getProviderWallet = async () => {

@@ -1,80 +1,123 @@
-import { CoinQuantityLike, FunctionInvocationScope, hashMessage } from "fuels";
-import { DEFAULT_DECIMALS } from "src/constants";
+import {
+  CoinQuantityLike,
+  FunctionInvocationScope,
+  hashMessage,
+  MultiCallInvocationScope,
+} from "fuels";
 
-import { OrderbookAbi__factory } from "./types/orderbook";
-import { AssetIdInput, I64Input } from "./types/orderbook/OrderbookAbi";
+import { MarketContractAbi__factory } from "./types/market";
+import {
+  AssetTypeInput,
+  OrderTypeInput,
+} from "./types/market/MarketContractAbi";
 import { TokenAbi__factory } from "./types/src-20";
 import { IdentityInput } from "./types/src-20/TokenAbi";
 import BN from "./utils/BN";
-import { Asset, Options, WriteTransactionResponse } from "./interface";
+import {
+  Asset,
+  CreateOrderParams,
+  DepositParams,
+  Options,
+  WithdrawParams,
+  WriteTransactionResponse,
+} from "./interface";
 
 export class WriteActions {
-  createSpotOrder = async (
-    baseToken: Asset,
-    quoteToken: Asset,
-    size: string,
-    price: string,
+  deposit = async (
+    token: Asset,
+    amount: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const orderbookFactory = OrderbookAbi__factory.connect(
-      options.contractAddresses.spotMarket,
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
       options.wallet,
     );
 
-    const assetId: AssetIdInput = { bits: baseToken.address };
-    const isNegative = size.includes("-");
-    const absSize = size.replace("-", "");
-    const baseSize: I64Input = { value: absSize, negative: isNegative };
-
-    const amountToSend = new BN(absSize)
-      .times(price)
-      .dividedToIntegerBy(
-        new BN(10).pow(
-          DEFAULT_DECIMALS + baseToken.decimals - quoteToken.decimals,
-        ),
-      );
-
     const forward: CoinQuantityLike = {
-      amount: isNegative ? absSize : amountToSend.toString(),
-      assetId: isNegative ? baseToken.address : quoteToken.address,
+      amount,
+      assetId: token.address,
     };
 
-    const tx = await orderbookFactory.functions
-      .open_order(assetId, baseSize, price)
-      .callParams({ forward })
-      .txParams({ gasLimit: options.gasPrice });
+    const tx = orderbookFactory.functions.deposit().callParams({ forward });
 
     return this.sendTransaction(tx, options);
   };
 
-  cancelSpotOrder = async (
+  createOrder = async (
+    { amount: depositAmount, asset: depositAsset }: DepositParams,
+    { amount, tokenType, price, type }: CreateOrderParams,
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const forward: CoinQuantityLike = {
+      amount: depositAmount,
+      assetId: depositAsset,
+    };
+
+    // console.log("deposit", depositAmount.toString(), depositAsset);
+
+    // console.log(
+    //   "open_order",
+    //   amount.toString(),
+    //   tokenType as unknown as AssetTypeInput,
+    //   type as unknown as OrderTypeInput,
+    //   price.toString(),
+    // );
+
+    const tx = orderbookFactory
+      .multiCall([
+        orderbookFactory.functions.deposit().callParams({ forward }),
+        orderbookFactory.functions.open_order(
+          amount,
+          tokenType as unknown as AssetTypeInput,
+          type as unknown as OrderTypeInput,
+          price,
+        ),
+      ])
+      .txParams({ gasLimit: options.gasPrice });
+
+    return this.sendMultiTransaction(tx, options);
+  };
+
+  cancelOrder = async (
+    { amount: withdrawAmount, assetType: withdrawAssetType }: WithdrawParams,
     orderId: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const orderbookFactory = OrderbookAbi__factory.connect(
-      options.contractAddresses.spotMarket,
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
       options.wallet,
     );
 
-    const tx = await orderbookFactory.functions
-      .cancel_order(orderId)
+    const tx = orderbookFactory
+      .multiCall([
+        orderbookFactory.functions.cancel_order(orderId),
+        orderbookFactory.functions.withdraw(
+          withdrawAmount.toString(),
+          withdrawAssetType as unknown as AssetTypeInput,
+        ),
+      ])
       .txParams({ gasLimit: options.gasPrice });
 
-    return this.sendTransaction(tx, options);
+    return this.sendMultiTransaction(tx, options);
   };
 
-  matchSpotOrders = async (
+  matchOrders = async (
     sellOrderId: string,
     buyOrderId: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const orderbookFactory = OrderbookAbi__factory.connect(
-      options.contractAddresses.spotMarket,
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
       options.wallet,
     );
 
     const tx = orderbookFactory.functions
-      .match_orders(sellOrderId, buyOrderId)
+      .match_orders([sellOrderId, buyOrderId])
       .txParams({ gasLimit: options.gasPrice });
 
     return this.sendTransaction(tx, options);
@@ -113,6 +156,20 @@ export class WriteActions {
     const { gasUsed } = await tx.getTransactionCost();
     const gasLimit = gasUsed.mul(options.gasLimitMultiplier).toString();
     const res = await tx.txParams({ gasLimit }).call();
+
+    return {
+      transactionId: res.transactionId,
+      value: res.value,
+    };
+  };
+
+  private sendMultiTransaction = async (
+    txs: MultiCallInvocationScope,
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const { gasUsed } = await txs.getTransactionCost();
+    const gasLimit = gasUsed.mul(options.gasLimitMultiplier).toString();
+    const res = await txs.txParams({ gasLimit }).call();
 
     return {
       transactionId: res.transactionId,

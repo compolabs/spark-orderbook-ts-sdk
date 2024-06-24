@@ -19,5 +19,6 @@ export {
   TESTNET_NETWORK,
 };
 
-export * from "./types/orderbook";
+export * from "./interface";
+export * from "./types/market";
 export * from "./types/src-20";

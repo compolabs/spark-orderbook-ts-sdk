@@ -8,8 +8,7 @@ import Spark, {
   TESTNET_NETWORK,
 } from "../src";
 
-const PRIVATE_KEY_ALICE = Wallet.generate().privateKey;
-const TIMEOUT_DEADLINE = 60_000; // 1min
+import { PRIVATE_KEY_ALICE, TEST_TIMEOUT } from "./constants";
 
 const TOKENS_LIST = Object.values(BETA_TOKENS).map(
   ({ decimals, assetId, symbol, priceFeed }) => ({
@@ -44,7 +43,7 @@ describe("Basic Tests", () => {
   it(
     "Should get all orders",
     async () => {
-      const allOrders = await spark.fetchSpotOrders({
+      const allOrders = await spark.fetchOrders({
         baseToken: TOKENS_BY_SYMBOL["BTC"].address,
         limit: 10,
         isActive: true,
@@ -56,6 +55,6 @@ describe("Basic Tests", () => {
 
       console.log(allOrders);
     },
-    TIMEOUT_DEADLINE,
+    TEST_TIMEOUT,
   );
 });
