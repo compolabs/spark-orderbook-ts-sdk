@@ -124,8 +124,7 @@ export interface Order {
   timestamp: string;
 }
 
-export interface GetMatchOrderEventsParams {
-  asset: string;
+export interface GetTradeOrderEventsParams {
   limit: number;
 }
 
@@ -137,6 +136,13 @@ export interface MatchOrderEvent {
   match_size: string;
   match_price: string;
   timestamp: string;
+}
+
+export interface TradeOrderEvent {
+  id: string;
+  timestamp: string;
+  trade_price: string;
+  trade_size: string;
 }
 
 export type Volume = {
