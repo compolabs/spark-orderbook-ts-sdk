@@ -117,7 +117,7 @@ export class WriteActions {
     );
 
     const tx = orderbookFactory.functions
-      .match_orders([sellOrderId, buyOrderId])
+      .match_order_pair(sellOrderId, buyOrderId)
       .txParams({ gasLimit: options.gasPrice });
 
     return this.sendTransaction(tx, options);

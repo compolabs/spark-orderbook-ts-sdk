@@ -32,16 +32,16 @@ export enum AuthErrorInput { Unauthorized = 'Unauthorized' };
 export enum AuthErrorOutput { Unauthorized = 'Unauthorized' };
 export type IdentityInput = Enum<{ Address: AddressInput, ContractId: ContractIdInput }>;
 export type IdentityOutput = Enum<{ Address: AddressOutput, ContractId: ContractIdOutput }>;
-export type MatchErrorInput = Enum<{ CantMatch: [string, string], CantBatchMatch: [] }>;
+export type MatchErrorInput = Enum<{ CantMatch: [string, string], CantMatchMany: [], CantFulfillMany: [] }>;
 export type MatchErrorOutput = MatchErrorInput;
 export enum OrderChangeTypeInput { OrderOpened = 'OrderOpened', OrderCancelled = 'OrderCancelled', OrderMatched = 'OrderMatched' };
 export enum OrderChangeTypeOutput { OrderOpened = 'OrderOpened', OrderCancelled = 'OrderCancelled', OrderMatched = 'OrderMatched' };
-export type OrderErrorInput = Enum<{ OrderNotFound: string, PriceCannotBeZero: [], AmountCannotBeZero: [], FailedToRemove: string }>;
-export type OrderErrorOutput = OrderErrorInput;
+export type OrderErrorInput = Enum<{ OrderNotFound: string, PriceTooSmall: [BigNumberish, BigNumberish], ZeroOrderAmount: [], ZeroLockAmount: [], FailedToRemove: string }>;
+export type OrderErrorOutput = Enum<{ OrderNotFound: string, PriceTooSmall: [BN, BN], ZeroOrderAmount: [], ZeroLockAmount: [], FailedToRemove: string }>;
 export enum OrderTypeInput { Buy = 'Buy', Sell = 'Sell' };
 export enum OrderTypeOutput { Buy = 'Buy', Sell = 'Sell' };
-export enum ValueErrorInput { InvalidAmount = 'InvalidAmount', InvalidLength = 'InvalidLength' };
-export enum ValueErrorOutput { InvalidAmount = 'InvalidAmount', InvalidLength = 'InvalidLength' };
+export enum ValueErrorInput { InvalidAmount = 'InvalidAmount', InvalidSlippage = 'InvalidSlippage', InvalidArrayLength = 'InvalidArrayLength' };
+export enum ValueErrorOutput { InvalidAmount = 'InvalidAmount', InvalidSlippage = 'InvalidSlippage', InvalidArrayLength = 'InvalidArrayLength' };
 
 export type AccountInput = { liquid: BalanceInput, locked: BalanceInput };
 export type AccountOutput = { liquid: BalanceOutput, locked: BalanceOutput };
@@ -67,6 +67,8 @@ export type OrderChangeInfoInput = { change_type: OrderChangeTypeInput, block_he
 export type OrderChangeInfoOutput = { change_type: OrderChangeTypeOutput, block_height: number, sender: IdentityOutput, tx_id: string, amount_before: BN, amount_after: BN };
 export type SetFeeEventInput = { amount: BigNumberish, user: Option<IdentityInput> };
 export type SetFeeEventOutput = { amount: BN, user: Option<IdentityOutput> };
+export type TradeOrderEventInput = { base_sell_order_id: string, base_buy_order_id: string, order_matcher: IdentityInput, trade_size: BigNumberish, trade_price: BigNumberish, block_height: BigNumberish, tx_id: string };
+export type TradeOrderEventOutput = { base_sell_order_id: string, base_buy_order_id: string, order_matcher: IdentityOutput, trade_size: BN, trade_price: BN, block_height: number, tx_id: string };
 export type WithdrawEventInput = { amount: BigNumberish, asset: AssetIdInput, user: IdentityInput };
 export type WithdrawEventOutput = { amount: BN, asset: AssetIdOutput, user: IdentityOutput };
 
@@ -83,8 +85,9 @@ interface MarketContractAbiInterface extends Interface {
   functions: {
     cancel_order: FunctionFragment;
     deposit: FunctionFragment;
+    fulfill_order_many: FunctionFragment;
+    match_order_many: FunctionFragment;
     match_order_pair: FunctionFragment;
-    match_orders: FunctionFragment;
     open_order: FunctionFragment;
     set_fee: FunctionFragment;
     withdraw: FunctionFragment;
@@ -103,8 +106,9 @@ export class MarketContractAbi extends Contract {
   functions: {
     cancel_order: InvokeFunction<[order_id: string], void>;
     deposit: InvokeFunction<[], void>;
+    fulfill_order_many: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput, order_type: OrderTypeInput, price: BigNumberish, slippage: BigNumberish, orders: Vec<string>], string>;
+    match_order_many: InvokeFunction<[orders: Vec<string>], void>;
     match_order_pair: InvokeFunction<[order0_id: string, order1_id: string], void>;
-    match_orders: InvokeFunction<[orders: Vec<string>], void>;
     open_order: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput, order_type: OrderTypeInput, price: BigNumberish], string>;
     set_fee: InvokeFunction<[amount: BigNumberish, user: Option<IdentityInput>], void>;
     withdraw: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput], void>;
