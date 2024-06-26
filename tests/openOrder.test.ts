@@ -71,7 +71,7 @@ describe("Open Order Test", () => {
     TEST_TIMEOUT,
   );
 
-  it.only(
+  it.skip(
     "Fetch order",
     async () => {
       const data = await spark.fetchOrderById(
@@ -97,12 +97,19 @@ describe("Open Order Test", () => {
 
       const price = "";
 
-      const data = await spark.createOrder(
+      const createOrderParams = {
         amount,
-        usdc,
-        AssetType.Base,
+        tokenType: AssetType.Base,
         price,
-        OrderType.Buy,
+        type: OrderType.Buy,
+      };
+
+      const data = await spark.createOrder(
+        {
+          amount: "200000000",
+          asset: usdc.asset_id,
+        },
+        createOrderParams,
       );
 
       console.log("CREATE ORDER DATA", data);
@@ -117,18 +124,22 @@ describe("Open Order Test", () => {
     async () => {
       const usdc = TOKENS_BY_SYMBOL["USDC"];
       const amount = "100"; // USDC
-      // const amountToSend = BN.parseUnits(amount, usdc.decimals);
-
-      console.log("send amount", amount.toString());
 
       const price = "1";
 
-      const data = await spark.createOrder(
-        amount.toString(),
-        usdc,
-        AssetType.Quote,
+      const createOrderParams = {
+        amount,
+        tokenType: AssetType.Quote,
         price,
-        OrderType.Sell,
+        type: OrderType.Sell,
+      };
+
+      const data = await spark.createOrder(
+        {
+          amount: "200000000",
+          asset: usdc.asset_id,
+        },
+        createOrderParams,
       );
 
       console.log("CREATE ORDER DATA", data);

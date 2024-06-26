@@ -106,6 +106,15 @@ export interface CreateOrderParams {
   type: OrderType;
 }
 
+export interface MatchManyParams {
+  amount: number;
+  assetType: AssetType;
+  orderType: OrderType;
+  price: string;
+  slippage: string;
+  orders: string[];
+}
+
 export interface WithdrawParams {
   amount: string;
   assetType: AssetType;

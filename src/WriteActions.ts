@@ -17,6 +17,7 @@ import {
   Asset,
   CreateOrderParams,
   DepositParams,
+  MatchManyParams,
   Options,
   WithdrawParams,
   WriteTransactionResponse,
@@ -57,16 +58,6 @@ export class WriteActions {
       amount: depositAmount,
       assetId: depositAsset,
     };
-
-    // console.log("deposit", depositAmount.toString(), depositAsset);
-
-    // console.log(
-    //   "open_order",
-    //   amount.toString(),
-    //   tokenType as unknown as AssetTypeInput,
-    //   type as unknown as OrderTypeInput,
-    //   price.toString(),
-    // );
 
     const tx = orderbookFactory
       .multiCall([
@@ -121,6 +112,38 @@ export class WriteActions {
       .txParams({ gasLimit: options.gasPrice });
 
     return this.sendTransaction(tx, options);
+  };
+
+  matchOrdersMany = async (
+    { amount: depositAmount, asset: depositAsset }: DepositParams,
+    { amount, assetType, orderType, price, slippage, orders }: MatchManyParams,
+    options: Options,
+  ) => {
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const forward: CoinQuantityLike = {
+      amount: depositAmount,
+      assetId: depositAsset,
+    };
+
+    const tx = orderbookFactory
+      .multiCall([
+        orderbookFactory.functions.deposit().callParams({ forward }),
+        orderbookFactory.functions.fulfill_order_many(
+          amount,
+          assetType as unknown as AssetTypeInput,
+          orderType as unknown as OrderTypeInput,
+          price,
+          slippage,
+          orders,
+        ),
+      ])
+      .txParams({ gasLimit: options.gasPrice });
+
+    return this.sendMultiTransaction(tx, options);
   };
 
   mintToken = async (

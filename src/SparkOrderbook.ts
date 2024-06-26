@@ -21,6 +21,7 @@ import {
   GetMatchOrderEventsParams,
   GetOrdersParams,
   MarketCreateEvent,
+  MatchManyParams,
   MatchOrderEvent,
   Options,
   OptionsSpark,
@@ -86,6 +87,13 @@ export class SparkOrderbook {
       buyOrderId,
       this.getApiOptions(),
     );
+  };
+
+  matchOrdersMany = async (
+    deposit: DepositParams,
+    order: MatchManyParams,
+  ): Promise<WriteTransactionResponse> => {
+    return this.write.matchOrdersMany(deposit, order, this.getApiOptions());
   };
 
   mintToken = async (
