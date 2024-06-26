@@ -18,16 +18,16 @@ import {
   Asset,
   CreateOrderParams,
   DepositParams,
-  GetMatchOrderEventsParams,
   GetOrdersParams,
+  GetTradeOrderEventsParams,
   MarketCreateEvent,
   MatchManyParams,
-  MatchOrderEvent,
   Options,
   OptionsSpark,
   Order,
   SparkParams,
   SpotOrderWithoutTimestamp,
+  TradeOrderEvent,
   Volume,
   WithdrawParams,
   WriteTransactionResponse,
@@ -134,10 +134,10 @@ export class SparkOrderbook {
     return this.indexerApi.getOrders(params);
   };
 
-  getMatchOrderEvents = async (
-    params: GetMatchOrderEventsParams,
-  ): Promise<MatchOrderEvent[]> => {
-    return this.indexerApi.getMatchOrderEvents(params);
+  getTradeOrderEvents = async (
+    params: GetTradeOrderEventsParams,
+  ): Promise<TradeOrderEvent[]> => {
+    return this.indexerApi.getTradeOrderEvents(params);
   };
 
   fetchVolume = async (): Promise<Volume> => {
