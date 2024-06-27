@@ -93,9 +93,9 @@ describe("Open Order Test", () => {
     "Open buy order",
     async () => {
       const usdc = TOKENS_BY_SYMBOL["USDC"];
-      const amount = "200"; // USDC
+      const amount = "449110";
 
-      const price = "";
+      const price = "61143285305490";
 
       const createOrderParams = {
         amount,
@@ -106,7 +106,7 @@ describe("Open Order Test", () => {
 
       const data = await spark.createOrder(
         {
-          amount: "200000000",
+          amount: "274600608",
           asset: usdc.asset_id,
         },
         createOrderParams,

@@ -17,7 +17,7 @@ import {
   Asset,
   CreateOrderParams,
   DepositParams,
-  MatchManyParams,
+  FulfillOrderManyParams,
   Options,
   WithdrawParams,
   WriteTransactionResponse,
@@ -114,9 +114,16 @@ export class WriteActions {
     return this.sendTransaction(tx, options);
   };
 
-  matchOrdersMany = async (
+  fulfillOrderMany = async (
     { amount: depositAmount, asset: depositAsset }: DepositParams,
-    { amount, assetType, orderType, price, slippage, orders }: MatchManyParams,
+    {
+      amount,
+      assetType,
+      orderType,
+      price,
+      slippage,
+      orders,
+    }: FulfillOrderManyParams,
     options: Options,
   ) => {
     const orderbookFactory = MarketContractAbi__factory.connect(

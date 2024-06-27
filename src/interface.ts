@@ -106,8 +106,8 @@ export interface CreateOrderParams {
   type: OrderType;
 }
 
-export interface MatchManyParams {
-  amount: number;
+export interface FulfillOrderManyParams {
+  amount: string;
   assetType: AssetType;
   orderType: OrderType;
   price: string;

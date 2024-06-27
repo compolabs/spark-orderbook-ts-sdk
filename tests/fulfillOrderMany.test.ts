@@ -5,6 +5,7 @@ import Spark, {
   AssetType,
   BETA_CONTRACT_ADDRESSES,
   BETA_TOKENS,
+  FulfillOrderManyParams,
   OrderType,
   TESTNET_INDEXER_URL,
   TESTNET_NETWORK,
@@ -27,7 +28,7 @@ const TOKENS_BY_SYMBOL = TOKENS_LIST.reduce(
   {},
 );
 
-describe("Match Orders Test", () => {
+describe("Fulfill Order Many Test", () => {
   let wallet: WalletUnlocked;
   let spark: Spark;
 
@@ -53,7 +54,7 @@ describe("Match Orders Test", () => {
     "Match many orders",
     async () => {
       const usdc = TOKENS_BY_SYMBOL["USDC"];
-      const amount = "200000000"; // USDC
+      const amount = "2000"; // USDC
 
       const depositParams = {
         amount: amount,
@@ -64,19 +65,19 @@ describe("Match Orders Test", () => {
         limit: 10,
       });
 
-      const matchManyParams = {
-        amount: 10,
+      const fulfillOrderManyParams: FulfillOrderManyParams = {
+        amount: "1000",
         assetType: AssetType.Base,
         orderType: OrderType.Buy,
-        price: "1.0",
+        price: "61143285305490",
         slippage: "0.1",
         orders: orderResponse.map((order) => order.id),
       };
 
       try {
-        const result = await spark.matchOrdersMany(
+        const result = await spark.fulfillOrderMany(
           depositParams,
-          matchManyParams,
+          fulfillOrderManyParams,
         );
 
         console.log("MATCH ORDERS RESULT", result);
