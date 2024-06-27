@@ -136,6 +136,8 @@ export class WriteActions {
       assetId: depositAsset,
     };
 
+    console.log(forward, amount, assetType, orderType, price, slippage, orders);
+
     const tx = orderbookFactory
       .multiCall([
         orderbookFactory.functions.deposit().callParams({ forward }),

@@ -54,11 +54,11 @@ describe("Fulfill Order Many Test", () => {
     "Match many orders",
     async () => {
       const usdc = TOKENS_BY_SYMBOL["USDC"];
-      const amount = "2000"; // USDC
+      const amount = "2000";
 
       const depositParams = {
         amount: amount,
-        asset: usdc.id,
+        asset: usdc.address,
       };
 
       const orderResponse = await indexer.getOrders({
@@ -66,11 +66,11 @@ describe("Fulfill Order Many Test", () => {
       });
 
       const fulfillOrderManyParams: FulfillOrderManyParams = {
-        amount: "1000",
+        amount: 1000,
         assetType: AssetType.Base,
         orderType: OrderType.Buy,
         price: "61143285305490",
-        slippage: "0.1",
+        slippage: 100,
         orders: orderResponse.map((order) => order.id),
       };
 
