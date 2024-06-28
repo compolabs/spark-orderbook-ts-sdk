@@ -5,6 +5,7 @@ import Spark, {
   AssetType,
   BETA_CONTRACT_ADDRESSES,
   BETA_TOKENS,
+  BN,
   OrderType,
   TESTNET_INDEXER_URL,
   TESTNET_NETWORK,
@@ -89,16 +90,19 @@ describe("Open Order Test", () => {
     TEST_TIMEOUT,
   );
 
+  // amount: this.mode === ORDER_MODE.BUY ? this.inputTotal.toString() : this.inputAmount.toString(),
+  // asset: this.mode === ORDER_MODE.BUY ? market.quoteToken.assetId : market.baseToken.assetId,
+
   it(
     "Open buy order",
     async () => {
       const usdc = TOKENS_BY_SYMBOL["USDC"];
-      const amount = "449110";
+      const amount = new BN("1"); // BTC
 
-      const price = "61143285305490";
+      const price = "61386860766500";
 
       const createOrderParams = {
-        amount,
+        amount: "547820",
         tokenType: AssetType.Base,
         price,
         type: OrderType.Buy,
@@ -106,8 +110,9 @@ describe("Open Order Test", () => {
 
       const data = await spark.createOrder(
         {
-          amount: "274600608",
-          asset: usdc.asset_id,
+          amount: "336289500",
+          asset:
+            "0xfed3ee85624c79cb18a3a848092239f2e764ed6b0aa156ad10a18bfdbe74269f",
         },
         createOrderParams,
       );
@@ -122,22 +127,22 @@ describe("Open Order Test", () => {
   it(
     "Open sell order",
     async () => {
-      const usdc = TOKENS_BY_SYMBOL["USDC"];
+      const btc = TOKENS_BY_SYMBOL["BTC"];
       const amount = "100"; // USDC
 
-      const price = "1";
+      const price = "61143285305490";
 
       const createOrderParams = {
         amount,
-        tokenType: AssetType.Quote,
+        tokenType: AssetType.Base,
         price,
         type: OrderType.Sell,
       };
 
       const data = await spark.createOrder(
         {
-          amount: "200000000",
-          asset: usdc.asset_id,
+          amount,
+          asset: btc.address,
         },
         createOrderParams,
       );

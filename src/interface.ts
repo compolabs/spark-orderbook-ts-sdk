@@ -107,11 +107,11 @@ export interface CreateOrderParams {
 }
 
 export interface FulfillOrderManyParams {
-  amount: number;
+  amount: string;
   assetType: AssetType;
   orderType: OrderType;
   price: string;
-  slippage: number;
+  slippage: string;
   orders: string[];
 }
 

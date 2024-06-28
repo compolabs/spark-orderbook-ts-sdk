@@ -51,11 +51,53 @@ describe("Fulfill Order Many Test", () => {
   });
 
   it(
-    "Match many orders",
+    "Market Order Buy Fulfillment Test",
     async () => {
       const usdc = TOKENS_BY_SYMBOL["USDC"];
+      const buyToken = TOKENS_BY_SYMBOL["BTC"];
       const amount = "2000";
+      const price = "61143285305490";
+      const depositParams = {
+        amount: (Number(amount) * Number(price)).toString(),
+        asset: buyToken.address,
+      };
 
+      const orderResponse = await indexer.getOrders({
+        limit: 10,
+      });
+
+      const fulfillOrderManyParams: FulfillOrderManyParams = {
+        amount: amount,
+        assetType: AssetType.Base,
+        orderType: OrderType.Buy,
+        price,
+        slippage: "100",
+        orders: orderResponse.map((order) => order.id),
+      };
+
+      try {
+        const result = await spark.fulfillOrderMany(
+          depositParams,
+          fulfillOrderManyParams,
+        );
+
+        console.log("MATCH ORDERS RESULT", result);
+        expect(result).toBeDefined();
+      } catch (error) {
+        console.error("Error matching orders:", error);
+        expect(error).toBeUndefined();
+      }
+    },
+    TEST_TIMEOUT,
+  );
+
+  it(
+    "Market Order Sell Fulfillment Test",
+    async () => {
+      const usdc = TOKENS_BY_SYMBOL["USDC"];
+      const buyToken = TOKENS_BY_SYMBOL["BTC"];
+      const amount = "2000";
+      const price = "61143285305490";
       const depositParams = {
         amount: amount,
         asset: usdc.address,
@@ -66,11 +108,11 @@ describe("Fulfill Order Many Test", () => {
       });
 
       const fulfillOrderManyParams: FulfillOrderManyParams = {
-        amount: 1000,
+        amount: amount,
         assetType: AssetType.Base,
         orderType: OrderType.Buy,
-        price: "61143285305490",
-        slippage: 100,
+        price: price,
+        slippage: "100",
         orders: orderResponse.map((order) => order.id),
       };
 
