@@ -58,16 +58,6 @@ export class WriteActions {
       assetId: depositAsset,
     };
 
-    // console.log("deposit", depositAmount.toString(), depositAsset);
-
-    // console.log(
-    //   "open_order",
-    //   amount.toString(),
-    //   tokenType as unknown as AssetTypeInput,
-    //   type as unknown as OrderTypeInput,
-    //   price.toString(),
-    // );
-
     const tx = orderbookFactory
       .multiCall([
         orderbookFactory.functions.deposit().callParams({ forward }),

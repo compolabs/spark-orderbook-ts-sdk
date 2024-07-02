@@ -8,12 +8,47 @@ import {
   Options,
   OrderType,
   SpotOrderWithoutTimestamp,
+  UserMarketBalance,
 } from "./interface";
 
 export class ReadActions {
   fetchMarketPrice = async (baseToken: string): Promise<BN> => {
     console.warn("[fetchMarketPrice] NOT IMPLEMENTED FOR FUEL");
     return BN.ZERO;
+  };
+
+  fetchUserMarketBalance = async (
+    trader: Bech32Address,
+    options: Options,
+  ): Promise<UserMarketBalance> => {
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const traderAddress = new Address(trader).toB256();
+
+    const address: AddressInput = {
+      bits: traderAddress,
+    };
+
+    const user: IdentityInput = {
+      Address: address,
+    };
+
+    const result = await orderbookFactory.functions.account(user).get();
+
+    const liquid = result.value
+      ? result.value.liquid.toString()
+      : BN.ZERO.toString();
+    const locked = result.value
+      ? result.value.locked.toString()
+      : BN.ZERO.toString();
+
+    return {
+      liquid,
+      locked,
+    };
   };
 
   fetchOrderById = async (
