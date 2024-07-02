@@ -49,6 +49,11 @@ export interface SpotOrderWithoutTimestamp {
   orderPrice: BN;
 }
 
+export interface UserMarketBalance {
+  liquid: string;
+  locked: string;
+}
+
 export type MarketCreateEvent = {
   id: string;
   assetId: string;
