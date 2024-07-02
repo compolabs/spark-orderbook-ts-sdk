@@ -27,6 +27,7 @@ import {
   SparkParams,
   SpotOrderWithoutTimestamp,
   TradeOrderEvent,
+  UserMarketBalance,
   Volume,
   WithdrawParams,
   WriteTransactionResponse,
@@ -153,6 +154,14 @@ export class SparkOrderbook {
     const options = await this.getFetchOptions();
 
     return this.read.fetchOrderIdsByAddress(trader, options);
+  };
+
+  fetchUserMarketBalance = async (
+    trader: Bech32Address,
+  ): Promise<UserMarketBalance> => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchUserMarketBalance(trader, options);
   };
 
   getProviderWallet = async () => {
