@@ -50,8 +50,14 @@ export interface SpotOrderWithoutTimestamp {
 }
 
 export interface UserMarketBalance {
-  liquid: string;
-  locked: string;
+  liquid: {
+    base: string;
+    quote: string;
+  };
+  locked: {
+    base: string;
+    quote: string;
+  };
 }
 
 export type MarketCreateEvent = {

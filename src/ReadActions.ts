@@ -38,12 +38,15 @@ export class ReadActions {
 
     const result = await orderbookFactory.functions.account(user).get();
 
-    const liquid = result.value
-      ? result.value.liquid.toString()
-      : BN.ZERO.toString();
-    const locked = result.value
-      ? result.value.locked.toString()
-      : BN.ZERO.toString();
+    const locked = {
+      base: result.value?.locked.base.toString() ?? BN.ZERO.toString(),
+      quote: result.value?.locked.quote.toString() ?? BN.ZERO.toString(),
+    };
+
+    const liquid = {
+      base: result.value?.liquid.base.toString() ?? BN.ZERO.toString(),
+      quote: result.value?.liquid.quote.toString() ?? BN.ZERO.toString(),
+    };
 
     return {
       liquid,

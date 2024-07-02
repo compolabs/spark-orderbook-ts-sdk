@@ -15,6 +15,7 @@ import { IdentityInput } from "./types/src-20/TokenAbi";
 import BN from "./utils/BN";
 import {
   Asset,
+  AssetType,
   CreateOrderParams,
   DepositParams,
   Options,
@@ -39,6 +40,24 @@ export class WriteActions {
     };
 
     const tx = orderbookFactory.functions.deposit().callParams({ forward });
+
+    return this.sendTransaction(tx, options);
+  };
+
+  withdraw = async (
+    amount: string,
+    tokenType: AssetType,
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const tx = orderbookFactory.functions.withdraw(
+      amount,
+      tokenType as unknown as AssetTypeInput,
+    );
 
     return this.sendTransaction(tx, options);
   };
@@ -107,7 +126,7 @@ export class WriteActions {
     );
 
     const tx = orderbookFactory.functions
-      .match_orders([sellOrderId, buyOrderId])
+      .match_order_pair(sellOrderId, buyOrderId)
       .txParams({ gasLimit: options.gasPrice });
 
     return this.sendTransaction(tx, options);

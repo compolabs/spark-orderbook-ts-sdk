@@ -16,6 +16,7 @@ import {
 import { IndexerApi } from "./IndexerApi";
 import {
   Asset,
+  AssetType,
   CreateOrderParams,
   DepositParams,
   GetOrdersParams,
@@ -101,6 +102,13 @@ export class SparkOrderbook {
     amount: string,
   ): Promise<WriteTransactionResponse> => {
     return this.write.deposit(token, amount, this.getApiOptions());
+  };
+
+  withdraw = async (
+    amount: string,
+    tokenType: AssetType,
+  ): Promise<WriteTransactionResponse> => {
+    return this.write.withdraw(amount, tokenType, this.getApiOptions());
   };
 
   /**

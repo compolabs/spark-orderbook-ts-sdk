@@ -28,12 +28,12 @@ const _abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         }
       ],
@@ -72,7 +72,7 @@ const _abi = {
         },
         {
           "name": "__tuple_element",
-          "type": 33,
+          "type": 34,
           "typeArguments": null
         },
         {
@@ -82,12 +82,12 @@ const _abi = {
         },
         {
           "name": "__tuple_element",
-          "type": 33,
+          "type": 34,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 33,
+          "type": 34,
           "typeArguments": null
         }
       ],
@@ -179,7 +179,12 @@ const _abi = {
           "typeArguments": null
         },
         {
-          "name": "CantBatchMatch",
+          "name": "CantMatchMany",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
+          "name": "CantFulfillMany",
           "type": 0,
           "typeArguments": null
         }
@@ -237,12 +242,17 @@ const _abi = {
           "typeArguments": null
         },
         {
-          "name": "PriceCannotBeZero",
+          "name": "PriceTooSmall",
+          "type": 1,
+          "typeArguments": null
+        },
+        {
+          "name": "ZeroOrderAmount",
           "type": 0,
           "typeArguments": null
         },
         {
-          "name": "AmountCannotBeZero",
+          "name": "ZeroLockAmount",
           "type": 0,
           "typeArguments": null
         },
@@ -281,7 +291,12 @@ const _abi = {
           "typeArguments": null
         },
         {
-          "name": "InvalidLength",
+          "name": "InvalidSlippage",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
+          "name": "InvalidArrayLength",
           "type": 0,
           "typeArguments": null
         }
@@ -347,12 +362,12 @@ const _abi = {
       "components": [
         {
           "name": "base",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
           "name": "quote",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         }
       ],
@@ -388,7 +403,7 @@ const _abi = {
       "components": [
         {
           "name": "amount",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
@@ -435,12 +450,12 @@ const _abi = {
         },
         {
           "name": "match_size",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
           "name": "match_price",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         }
       ],
@@ -452,7 +467,7 @@ const _abi = {
       "components": [
         {
           "name": "amount",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
@@ -477,7 +492,7 @@ const _abi = {
         },
         {
           "name": "price",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
@@ -494,7 +509,7 @@ const _abi = {
       "components": [
         {
           "name": "amount",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
@@ -514,12 +529,12 @@ const _abi = {
         },
         {
           "name": "price",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
           "name": "block_height",
-          "type": 33,
+          "type": 34,
           "typeArguments": null
         }
       ],
@@ -536,7 +551,7 @@ const _abi = {
         },
         {
           "name": "block_height",
-          "type": 33,
+          "type": 34,
           "typeArguments": null
         },
         {
@@ -551,12 +566,12 @@ const _abi = {
         },
         {
           "name": "amount_before",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
           "name": "amount_after",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         }
       ],
@@ -573,7 +588,7 @@ const _abi = {
         },
         {
           "name": "cap",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         }
       ],
@@ -587,7 +602,7 @@ const _abi = {
       "components": [
         {
           "name": "amount",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
@@ -606,6 +621,48 @@ const _abi = {
     },
     {
       "typeId": 31,
+      "type": "struct TradeOrderEvent",
+      "components": [
+        {
+          "name": "base_sell_order_id",
+          "type": 4,
+          "typeArguments": null
+        },
+        {
+          "name": "base_buy_order_id",
+          "type": 4,
+          "typeArguments": null
+        },
+        {
+          "name": "order_matcher",
+          "type": 9,
+          "typeArguments": null
+        },
+        {
+          "name": "trade_size",
+          "type": 35,
+          "typeArguments": null
+        },
+        {
+          "name": "trade_price",
+          "type": 35,
+          "typeArguments": null
+        },
+        {
+          "name": "block_height",
+          "type": 34,
+          "typeArguments": null
+        },
+        {
+          "name": "tx_id",
+          "type": 4,
+          "typeArguments": null
+        }
+      ],
+      "typeParameters": null
+    },
+    {
+      "typeId": 32,
       "type": "struct Vec",
       "components": [
         {
@@ -621,7 +678,7 @@ const _abi = {
         },
         {
           "name": "len",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         }
       ],
@@ -630,12 +687,12 @@ const _abi = {
       ]
     },
     {
-      "typeId": 32,
+      "typeId": 33,
       "type": "struct WithdrawEvent",
       "components": [
         {
           "name": "amount",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
@@ -652,13 +709,13 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 33,
+      "typeId": 34,
       "type": "u32",
       "components": null,
       "typeParameters": null
     },
     {
-      "typeId": 34,
+      "typeId": 35,
       "type": "u64",
       "components": null,
       "typeParameters": null
@@ -714,6 +771,91 @@ const _abi = {
     {
       "inputs": [
         {
+          "name": "amount",
+          "type": 35,
+          "typeArguments": null
+        },
+        {
+          "name": "asset_type",
+          "type": 7,
+          "typeArguments": null
+        },
+        {
+          "name": "order_type",
+          "type": 14,
+          "typeArguments": null
+        },
+        {
+          "name": "price",
+          "type": 35,
+          "typeArguments": null
+        },
+        {
+          "name": "slippage",
+          "type": 35,
+          "typeArguments": null
+        },
+        {
+          "name": "orders",
+          "type": 32,
+          "typeArguments": [
+            {
+              "name": "",
+              "type": 4,
+              "typeArguments": null
+            }
+          ]
+        }
+      ],
+      "name": "fulfill_order_many",
+      "output": {
+        "name": "",
+        "type": 4,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read",
+            "write"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "orders",
+          "type": 32,
+          "typeArguments": [
+            {
+              "name": "",
+              "type": 4,
+              "typeArguments": null
+            }
+          ]
+        }
+      ],
+      "name": "match_order_many",
+      "output": {
+        "name": "",
+        "type": 0,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read",
+            "write"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
           "name": "order0_id",
           "type": 4,
           "typeArguments": null
@@ -743,38 +885,8 @@ const _abi = {
     {
       "inputs": [
         {
-          "name": "orders",
-          "type": 31,
-          "typeArguments": [
-            {
-              "name": "",
-              "type": 4,
-              "typeArguments": null
-            }
-          ]
-        }
-      ],
-      "name": "match_orders",
-      "output": {
-        "name": "",
-        "type": 0,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read",
-            "write"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
           "name": "amount",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
@@ -789,7 +901,7 @@ const _abi = {
         },
         {
           "name": "price",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         }
       ],
@@ -813,7 +925,7 @@ const _abi = {
       "inputs": [
         {
           "name": "amount",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
@@ -847,7 +959,7 @@ const _abi = {
       "inputs": [
         {
           "name": "amount",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
@@ -928,7 +1040,7 @@ const _abi = {
       "name": "fee",
       "output": {
         "name": "",
-        "type": 34,
+        "type": 35,
         "typeArguments": null
       },
       "attributes": [
@@ -980,7 +1092,7 @@ const _abi = {
       "name": "order_change_info",
       "output": {
         "name": "",
-        "type": 31,
+        "type": 32,
         "typeArguments": [
           {
             "name": "",
@@ -1017,12 +1129,12 @@ const _abi = {
         },
         {
           "name": "price",
-          "type": 34,
+          "type": 35,
           "typeArguments": null
         },
         {
           "name": "block_height",
-          "type": 33,
+          "type": 34,
           "typeArguments": null
         }
       ],
@@ -1045,7 +1157,7 @@ const _abi = {
       "name": "user_orders",
       "output": {
         "name": "",
-        "type": 31,
+        "type": 32,
         "typeArguments": [
           {
             "name": "",
@@ -1122,6 +1234,14 @@ const _abi = {
       }
     },
     {
+      "logId": "7812135309850120461",
+      "loggedType": {
+        "name": "",
+        "type": 26,
+        "typeArguments": []
+      }
+    },
+    {
       "logId": "2271581833574730066",
       "loggedType": {
         "name": "",
@@ -1130,18 +1250,18 @@ const _abi = {
       }
     },
     {
-      "logId": "15838754841496526215",
+      "logId": "18305104039093136274",
       "loggedType": {
         "name": "",
-        "type": 10,
+        "type": 31,
         "typeArguments": []
       }
     },
     {
-      "logId": "7812135309850120461",
+      "logId": "15838754841496526215",
       "loggedType": {
         "name": "",
-        "type": 26,
+        "type": 10,
         "typeArguments": []
       }
     },
@@ -1157,7 +1277,7 @@ const _abi = {
       "logId": "10918704871079408520",
       "loggedType": {
         "name": "",
-        "type": 32,
+        "type": 33,
         "typeArguments": []
       }
     }
@@ -1171,16 +1291,16 @@ const _abi = {
         "type": 20,
         "typeArguments": []
       },
-      "offset": 84208
+      "offset": 91296
     },
     {
       "name": "BASE_ASSET_DECIMALS",
       "configurableType": {
         "name": "",
-        "type": 33,
+        "type": 34,
         "typeArguments": null
       },
-      "offset": 84072
+      "offset": 91152
     },
     {
       "name": "OWNER",
@@ -1189,16 +1309,16 @@ const _abi = {
         "type": 19,
         "typeArguments": []
       },
-      "offset": 84152
+      "offset": 91240
     },
     {
       "name": "PRICE_DECIMALS",
       "configurableType": {
         "name": "",
-        "type": 33,
+        "type": 34,
         "typeArguments": null
       },
-      "offset": 84088
+      "offset": 91168
     },
     {
       "name": "QUOTE_ASSET",
@@ -1207,16 +1327,16 @@ const _abi = {
         "type": 20,
         "typeArguments": []
       },
-      "offset": 84240
+      "offset": 91328
     },
     {
       "name": "QUOTE_ASSET_DECIMALS",
       "configurableType": {
         "name": "",
-        "type": 33,
+        "type": 34,
         "typeArguments": null
       },
-      "offset": 84096
+      "offset": 91176
     }
   ]
 };
