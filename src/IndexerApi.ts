@@ -1,5 +1,7 @@
+import { gql } from "@apollo/client";
+
 import BN from "./utils/BN";
-import { Fetch } from "./utils/Fetch";
+import { GraphClient } from "./utils/GraphClient";
 import {
   GetOrdersParams,
   GetTradeOrderEventsParams,
@@ -8,7 +10,7 @@ import {
   Volume,
 } from "./interface";
 
-export class IndexerApi extends Fetch {
+export class IndexerApi extends GraphClient {
   // TODO: NOT IMPLEMENTED FOR NEW VERSION
   // getMarketCreateEvents = async (): Promise<SpotMarketCreateEvent[]> => {
   //   const query = `
@@ -40,77 +42,94 @@ export class IndexerApi extends Fetch {
   // };
 
   getOrders = async (params: GetOrdersParams): Promise<Order[]> => {
-    const whereFilterParts: string[] = [];
+    const generateWhereFilter = (params: GetOrdersParams) => {
+      const where: any = {};
 
-    if (params.orderType) {
-      whereFilterParts.push(`order_type: { _eq: "${params.orderType}" }`);
-    }
-
-    if (params.status?.length) {
-      if (params.status.length > 1) {
-        const statusConditions = params.status
-          .map((status) => `{ status: { _eq: "${status}" } }`)
-          .join(", ");
-        whereFilterParts.push(`_or: [${statusConditions}]`);
-      } else {
-        whereFilterParts.push(`status: { _eq: "${params.status[0]}" }`);
+      if (params.orderType) {
+        where.order_type = { _eq: params.orderType };
       }
-    }
 
-    if (params.user) {
-      whereFilterParts.push(`user: { _eq: "${params.user}" }`);
-    }
+      if (params.status?.length) {
+        if (params.status.length > 1) {
+          where._or = params.status.map((status: string) => ({
+            status: { _eq: status },
+          }));
+        } else {
+          where.status = { _eq: params.status[0] };
+        }
+      }
 
-    if (params.asset) {
-      whereFilterParts.push(`asset: { _eq: "${params.asset}" }`);
-    }
+      if (params.user) {
+        where.user = { _eq: params.user };
+      }
 
-    const whereFilter = whereFilterParts.join(", ");
+      if (params.asset) {
+        where.asset = { _eq: params.asset };
+      }
+
+      return where;
+    };
 
     const orderType = params.orderType === "Buy" ? "desc" : "asc";
 
-    const query = `query OrderQuery {
-      Order(limit: ${params.limit}, where: {${whereFilter}}, order_by: {price: ${orderType}}) {
-        id
-        asset
-        asset_type
-        amount
-        initial_amount
-        order_type
-        price
-        status
-        user
-        timestamp
+    const query = gql`
+      query OrderQuery(
+        $limit: Int!
+        $where: Order_bool_exp
+        $orderType: order_by!
+      ) {
+        Order(limit: $limit, where: $where, order_by: { price: $orderType }) {
+          id
+          asset
+          asset_type
+          amount
+          initial_amount
+          order_type
+          price
+          status
+          user
+          timestamp
+        }
       }
-    }
     `;
 
-    const response = await this.post<IndexerResponse<Order[], "Order">>({
+    const response = await this.client.query<{ Order: Order[] }>({
       query,
+      variables: {
+        limit: params.limit,
+        where: generateWhereFilter(params),
+        orderType,
+      },
     });
 
-    return response.Order;
+    return response.data.Order;
   };
 
   getTradeOrderEvents = async (
     params: GetTradeOrderEventsParams,
   ): Promise<TradeOrderEvent[]> => {
-    const query = `query TradeOrderEventQuery {
-      TradeOrderEvent(limit: ${params.limit}, order_by: { timestamp: desc }) {
-        id
-        trade_price
-        trade_size
-        timestamp
+    const query = gql`
+      query TradeOrderEventQuery($limit: Int!, $orderBy: order_by!) {
+        TradeOrderEvent(limit: $limit, order_by: { timestamp: $orderBy }) {
+          id
+          trade_price
+          trade_size
+          timestamp
+        }
       }
-    }`;
+    `;
 
-    const response = await this.post<
-      IndexerResponse<TradeOrderEvent[], "TradeOrderEvent">
-    >({
+    const response = await this.client.query<{
+      TradeOrderEvent: TradeOrderEvent[];
+    }>({
       query,
+      variables: {
+        ...params,
+        orderBy: "desc",
+      },
     });
 
-    return response.TradeOrderEvent;
+    return response.data.TradeOrderEvent;
   };
 
   getVolume = async (): Promise<Volume> => {
@@ -120,25 +139,30 @@ export class IndexerApi extends Fetch {
 
     const yesterdayISO = yesterday.toISOString();
 
-    const query = `query TradeOrderEventQuery {
-      TradeOrderEvent(where: {timestamp: {_gte: "${yesterdayISO}"}}) {
-        trade_size
-        trade_price
+    const query = gql`
+      query TradeOrderEventQuery($yesterdayISO: String!) {
+        TradeOrderEvent(where: { timestamp: { _gte: $yesterdayISO } }) {
+          trade_size
+          trade_price
+        }
       }
-    }`;
+    `;
 
     type TradeOrderEventPartial = Pick<
       TradeOrderEvent,
       "trade_size" | "trade_price"
     >;
 
-    const response = await this.post<
-      IndexerResponse<TradeOrderEventPartial[], "TradeOrderEvent">
-    >({
+    const response = await this.client.query<{
+      TradeOrderEvent: TradeOrderEventPartial[];
+    }>({
       query,
+      variables: {
+        yesterdayISO,
+      },
     });
 
-    if (!response.TradeOrderEvent.length) {
+    if (!response.data.TradeOrderEvent) {
       return {
         volume24h: BN.ZERO.toString(),
         high24h: BN.ZERO.toString(),
@@ -146,7 +170,7 @@ export class IndexerApi extends Fetch {
       };
     }
 
-    const data = response.TradeOrderEvent.reduce(
+    const data = response.data.TradeOrderEvent.reduce(
       (prev, currentData) => {
         const price = BigInt(currentData.trade_price);
         const size = BigInt(currentData.trade_size);
@@ -176,5 +200,3 @@ export class IndexerApi extends Fetch {
     };
   };
 }
-
-type IndexerResponse<T, K extends string> = Record<K, T>;
