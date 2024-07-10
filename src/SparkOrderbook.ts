@@ -1,5 +1,5 @@
 import {
-  Bech32Address,
+  B256Address,
   Provider,
   Wallet,
   WalletLocked,
@@ -158,14 +158,14 @@ export class SparkOrderbook {
     return this.read.fetchWalletBalance(asset.address, this.getApiOptions());
   };
 
-  fetchOrderIdsByAddress = async (trader: Bech32Address): Promise<string[]> => {
+  fetchOrderIdsByAddress = async (trader: B256Address): Promise<string[]> => {
     const options = await this.getFetchOptions();
 
     return this.read.fetchOrderIdsByAddress(trader, options);
   };
 
   fetchUserMarketBalance = async (
-    trader: Bech32Address,
+    trader: B256Address,
   ): Promise<UserMarketBalance> => {
     const options = await this.getFetchOptions();
 

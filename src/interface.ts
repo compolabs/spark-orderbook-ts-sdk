@@ -1,17 +1,17 @@
-import { WalletLocked, WalletUnlocked } from "fuels";
+import { B256Address, WalletLocked, WalletUnlocked } from "fuels";
 
 import BN from "./utils/BN";
 
 export type MarketStatusOutput = "Opened" | "Paused" | "Closed";
 
 export interface OrderbookContracts {
-  market: string;
-  tokenFactory: string;
-  pyth: string;
+  market: B256Address;
+  tokenFactory: B256Address;
+  pyth: B256Address;
 }
 
 export interface Asset {
-  address: string;
+  address: B256Address;
   symbol: string;
   decimals: number;
 }
@@ -44,7 +44,7 @@ export interface SpotOrderWithoutTimestamp {
   id: string;
   assetType: AssetType;
   orderType: OrderType;
-  trader: string;
+  trader: B256Address;
   baseSize: BN;
   orderPrice: BN;
 }
@@ -62,7 +62,7 @@ export interface UserMarketBalance {
 
 export type MarketCreateEvent = {
   id: string;
-  assetId: string;
+  assetId: B256Address;
   decimal: number;
 };
 
@@ -90,7 +90,7 @@ export type Status = "Active" | "Canceled" | "Closed";
 
 export interface SpotMarketCreateEvent {
   id: number;
-  asset_id: string;
+  asset_id: B256Address;
   asset_decimals: string;
   timestamp: string;
   createdAt: string;
@@ -101,13 +101,13 @@ export interface GetOrdersParams {
   limit: number;
   orderType?: OrderType;
   status?: Status[];
-  user?: string;
-  asset?: string;
+  user?: B256Address;
+  asset?: B256Address;
 }
 
 export interface DepositParams {
   amount: string;
-  asset: string;
+  asset: B256Address;
 }
 
 export interface CreateOrderParams {
@@ -124,14 +124,14 @@ export interface WithdrawParams {
 
 export interface Order {
   id: string;
-  asset: string;
+  asset: B256Address;
   asset_type: AssetType;
   amount: string;
   initial_amount: string;
   order_type: OrderType;
   price: string;
   status: Status;
-  user: string;
+  user: B256Address;
   timestamp: string;
 }
 
@@ -141,9 +141,9 @@ export interface GetTradeOrderEventsParams {
 
 export interface MatchOrderEvent {
   id: string;
-  owner: string;
-  counterparty: string;
-  asset: string;
+  owner: B256Address;
+  counterparty: B256Address;
+  asset: B256Address;
   match_size: string;
   match_price: string;
   timestamp: string;
