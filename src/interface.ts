@@ -30,9 +30,15 @@ export interface OptionsSpark extends BaseOptions {
   wallet?: WalletLocked | WalletUnlocked;
 }
 
+export interface GraphClientConfig {
+  httpUrl: string;
+  wsUrl: string;
+  shouldUseWsOnly: boolean;
+}
+
 export interface SparkParams {
   networkUrl: string;
-  indexerApiUrl: string;
+  indexerConfig: GraphClientConfig;
   contractAddresses?: OrderbookContracts;
   wallet?: WalletLocked | WalletUnlocked;
   gasPrice?: string;

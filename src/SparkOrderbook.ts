@@ -54,7 +54,7 @@ export class SparkOrderbook {
         params.gasLimitMultiplier ?? DEFAULT_GAS_LIMIT_MULTIPLIER,
     };
 
-    this.indexerApi = new IndexerApi(params.indexerApiUrl);
+    this.indexerApi = new IndexerApi(params.indexerConfig);
 
     this.providerPromise = Provider.create(params.networkUrl);
   }
