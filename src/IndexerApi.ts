@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { FetchResult, gql, Observable } from "@apollo/client";
 
 import BN from "./utils/BN";
 import { GraphClient } from "./utils/GraphClient";
@@ -41,7 +41,9 @@ export class IndexerApi extends GraphClient {
   //   }]
   // };
 
-  getOrders = async (params: GetOrdersParams): Promise<Order[]> => {
+  subscribeOrders = (
+    params: GetOrdersParams,
+  ): Observable<FetchResult<{ Order: Order[] }>> => {
     const generateWhereFilter = (params: GetOrdersParams) => {
       const where: any = {};
 
@@ -73,7 +75,7 @@ export class IndexerApi extends GraphClient {
     const orderType = params.orderType === "Buy" ? "desc" : "asc";
 
     const query = gql`
-      subscription OrderQuery(
+      subscription (
         $limit: Int!
         $where: Order_bool_exp
         $orderType: order_by!
@@ -93,7 +95,7 @@ export class IndexerApi extends GraphClient {
       }
     `;
 
-    const response = await this.client.query<{ Order: Order[] }>({
+    return this.client.subscribe<{ Order: Order[] }>({
       query,
       variables: {
         limit: params.limit,
@@ -101,15 +103,13 @@ export class IndexerApi extends GraphClient {
         orderType,
       },
     });
-
-    return response.data.Order;
   };
 
-  getTradeOrderEvents = async (
+  subscribeTradeOrderEvents = (
     params: GetTradeOrderEventsParams,
-  ): Promise<TradeOrderEvent[]> => {
+  ): Observable<FetchResult<{ TradeOrderEvent: TradeOrderEvent[] }>> => {
     const query = gql`
-      subscription TradeOrderEventQuery($limit: Int!, $orderBy: order_by!) {
+      subscription ($limit: Int!, $orderBy: order_by!) {
         TradeOrderEvent(limit: $limit, order_by: { timestamp: $orderBy }) {
           id
           trade_price
@@ -119,7 +119,7 @@ export class IndexerApi extends GraphClient {
       }
     `;
 
-    const response = await this.client.query<{
+    return this.client.subscribe<{
       TradeOrderEvent: TradeOrderEvent[];
     }>({
       query,
@@ -128,8 +128,6 @@ export class IndexerApi extends GraphClient {
         orderBy: "desc",
       },
     });
-
-    return response.data.TradeOrderEvent;
   };
 
   getVolume = async (): Promise<Volume> => {
@@ -140,7 +138,7 @@ export class IndexerApi extends GraphClient {
     const yesterdayISO = yesterday.toISOString();
 
     const query = gql`
-      subscription TradeOrderEventQuery($yesterdayISO: String!) {
+      query TradeOrderEventQuery($yesterdayISO: String!) {
         TradeOrderEvent(where: { timestamp: { _gte: $yesterdayISO } }) {
           trade_size
           trade_price
@@ -162,7 +160,7 @@ export class IndexerApi extends GraphClient {
       },
     });
 
-    if (!response.data.TradeOrderEvent) {
+    if (!response) {
       return {
         volume24h: BN.ZERO.toString(),
         high24h: BN.ZERO.toString(),

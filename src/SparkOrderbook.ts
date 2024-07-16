@@ -1,3 +1,4 @@
+import { FetchResult, Observable } from "@apollo/client";
 import {
   Bech32Address,
   Provider,
@@ -131,14 +132,16 @@ export class SparkOrderbook {
     return this.read.fetchMarketPrice(baseToken.address);
   };
 
-  fetchOrders = async (params: GetOrdersParams): Promise<Order[]> => {
-    return this.indexerApi.getOrders(params);
+  subscribeOrders = (
+    params: GetOrdersParams,
+  ): Observable<FetchResult<{ Order: Order[] }>> => {
+    return this.indexerApi.subscribeOrders(params);
   };
 
-  getTradeOrderEvents = async (
+  subscribeTradeOrderEvents = (
     params: GetTradeOrderEventsParams,
-  ): Promise<TradeOrderEvent[]> => {
-    return this.indexerApi.getTradeOrderEvents(params);
+  ): Observable<FetchResult<{ TradeOrderEvent: TradeOrderEvent[] }>> => {
+    return this.indexerApi.subscribeTradeOrderEvents(params);
   };
 
   fetchVolume = async (): Promise<Volume> => {

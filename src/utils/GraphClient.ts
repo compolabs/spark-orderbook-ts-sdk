@@ -13,7 +13,7 @@ import { GraphClientConfig } from "src/interface";
 export class GraphClient {
   client: ApolloClient<NormalizedCacheObject>;
 
-  constructor({ httpUrl, wsUrl, shouldUseWsOnly }: GraphClientConfig) {
+  constructor({ httpUrl, wsUrl }: GraphClientConfig) {
     const httpLink = new HttpLink({
       uri: httpUrl,
     });
@@ -28,9 +28,8 @@ export class GraphClient {
       ({ query }) => {
         const definition = getMainDefinition(query);
         return (
-          (definition.kind === "OperationDefinition" &&
-            definition.operation === "subscription") ||
-          shouldUseWsOnly
+          definition.kind === "OperationDefinition" &&
+          definition.operation === "subscription"
         );
       },
       wsLink,
@@ -38,7 +37,7 @@ export class GraphClient {
     );
 
     this.client = new ApolloClient({
-      link: splitLink,
+      link: wsLink,
       cache: new InMemoryCache(),
     });
   }

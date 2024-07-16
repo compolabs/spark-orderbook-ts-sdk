@@ -33,7 +33,6 @@ export interface OptionsSpark extends BaseOptions {
 export interface GraphClientConfig {
   httpUrl: string;
   wsUrl: string;
-  shouldUseWsOnly: boolean;
 }
 
 export interface SparkParams {
