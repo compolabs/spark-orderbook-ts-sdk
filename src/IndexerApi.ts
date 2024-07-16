@@ -73,7 +73,7 @@ export class IndexerApi extends GraphClient {
     const orderType = params.orderType === "Buy" ? "desc" : "asc";
 
     const query = gql`
-      query OrderQuery(
+      subscription OrderQuery(
         $limit: Int!
         $where: Order_bool_exp
         $orderType: order_by!
@@ -109,7 +109,7 @@ export class IndexerApi extends GraphClient {
     params: GetTradeOrderEventsParams,
   ): Promise<TradeOrderEvent[]> => {
     const query = gql`
-      query TradeOrderEventQuery($limit: Int!, $orderBy: order_by!) {
+      subscription TradeOrderEventQuery($limit: Int!, $orderBy: order_by!) {
         TradeOrderEvent(limit: $limit, order_by: { timestamp: $orderBy }) {
           id
           trade_price
@@ -140,7 +140,7 @@ export class IndexerApi extends GraphClient {
     const yesterdayISO = yesterday.toISOString();
 
     const query = gql`
-      query TradeOrderEventQuery($yesterdayISO: String!) {
+      subscription TradeOrderEventQuery($yesterdayISO: String!) {
         TradeOrderEvent(where: { timestamp: { _gte: $yesterdayISO } }) {
           trade_size
           trade_price
