@@ -72,15 +72,15 @@ export class IndexerApi extends GraphClient {
       return where;
     };
 
-    const orderType = params.orderType === "Buy" ? "desc" : "asc";
+    const priceOrder = params.orderType === "Buy" ? "desc" : "asc";
 
     const query = gql`
       subscription (
         $limit: Int!
         $where: Order_bool_exp
-        $orderType: order_by!
+        $priceOrder: order_by!
       ) {
-        Order(limit: $limit, where: $where, order_by: { price: $orderType }) {
+        Order(limit: $limit, where: $where, order_by: { price: $priceOrder }) {
           id
           asset
           asset_type
@@ -100,7 +100,7 @@ export class IndexerApi extends GraphClient {
       variables: {
         limit: params.limit,
         where: generateWhereFilter(params),
-        orderType,
+        priceOrder,
       },
     });
   };
