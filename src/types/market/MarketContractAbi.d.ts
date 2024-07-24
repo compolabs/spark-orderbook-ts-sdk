@@ -24,8 +24,8 @@ import type { Option, Enum, Vec } from "./common";
 
 export type AccountErrorInput = Enum<{ InsufficientBalance: [BigNumberish, BigNumberish] }>;
 export type AccountErrorOutput = Enum<{ InsufficientBalance: [BN, BN] }>;
-export enum AssetErrorInput { InvalidAsset = 'InvalidAsset', InvalidFeeAsset = 'InvalidFeeAsset' };
-export enum AssetErrorOutput { InvalidAsset = 'InvalidAsset', InvalidFeeAsset = 'InvalidFeeAsset' };
+export enum AssetErrorInput { InvalidAsset = 'InvalidAsset' };
+export enum AssetErrorOutput { InvalidAsset = 'InvalidAsset' };
 export enum AssetTypeInput { Base = 'Base', Quote = 'Quote' };
 export enum AssetTypeOutput { Base = 'Base', Quote = 'Quote' };
 export enum AuthErrorInput { Unauthorized = 'Unauthorized' };
@@ -40,8 +40,8 @@ export type OrderErrorInput = Enum<{ OrderNotFound: string, PriceTooSmall: [BigN
 export type OrderErrorOutput = Enum<{ OrderNotFound: string, PriceTooSmall: [BN, BN], ZeroOrderAmount: [], ZeroLockAmount: [], FailedToRemove: string }>;
 export enum OrderTypeInput { Buy = 'Buy', Sell = 'Sell' };
 export enum OrderTypeOutput { Buy = 'Buy', Sell = 'Sell' };
-export type ValueErrorInput = Enum<{ InvalidAmount: [], InvalidSlippage: [], InvalidArrayLength: [], InvalidFeeAmount: [BigNumberish, BigNumberish] }>;
-export type ValueErrorOutput = Enum<{ InvalidAmount: [], InvalidSlippage: [], InvalidArrayLength: [], InvalidFeeAmount: [number, number] }>;
+export enum ValueErrorInput { InvalidAmount = 'InvalidAmount', InvalidSlippage = 'InvalidSlippage', InvalidArrayLength = 'InvalidArrayLength' };
+export enum ValueErrorOutput { InvalidAmount = 'InvalidAmount', InvalidSlippage = 'InvalidSlippage', InvalidArrayLength = 'InvalidArrayLength' };
 
 export type AccountInput = { liquid: BalanceInput, locked: BalanceInput };
 export type AccountOutput = { liquid: BalanceOutput, locked: BalanceOutput };
@@ -61,14 +61,12 @@ export type MatchOrderEventInput = { order_id: string, asset: AssetIdInput, orde
 export type MatchOrderEventOutput = { order_id: string, asset: AssetIdOutput, order_matcher: IdentityOutput, owner: IdentityOutput, counterparty: IdentityOutput, match_size: BN, match_price: BN };
 export type OpenOrderEventInput = { amount: BigNumberish, asset: AssetIdInput, asset_type: AssetTypeInput, order_type: OrderTypeInput, order_id: string, price: BigNumberish, user: IdentityInput };
 export type OpenOrderEventOutput = { amount: BN, asset: AssetIdOutput, asset_type: AssetTypeOutput, order_type: OrderTypeOutput, order_id: string, price: BN, user: IdentityOutput };
-export type OrderInput = { amount: BigNumberish, asset_type: AssetTypeInput, order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish, matcher_fee: BigNumberish };
-export type OrderOutput = { amount: BN, asset_type: AssetTypeOutput, order_type: OrderTypeOutput, owner: IdentityOutput, price: BN, block_height: number, matcher_fee: number };
+export type OrderInput = { amount: BigNumberish, asset_type: AssetTypeInput, order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish };
+export type OrderOutput = { amount: BN, asset_type: AssetTypeOutput, order_type: OrderTypeOutput, owner: IdentityOutput, price: BN, block_height: number };
 export type OrderChangeInfoInput = { change_type: OrderChangeTypeInput, block_height: BigNumberish, sender: IdentityInput, tx_id: string, amount_before: BigNumberish, amount_after: BigNumberish };
 export type OrderChangeInfoOutput = { change_type: OrderChangeTypeOutput, block_height: number, sender: IdentityOutput, tx_id: string, amount_before: BN, amount_after: BN };
 export type SetFeeEventInput = { amount: BigNumberish, user: Option<IdentityInput> };
 export type SetFeeEventOutput = { amount: BN, user: Option<IdentityOutput> };
-export type SetMatcherRewardEventInput = { amount: BigNumberish };
-export type SetMatcherRewardEventOutput = { amount: number };
 export type TradeOrderEventInput = { base_sell_order_id: string, base_buy_order_id: string, order_matcher: IdentityInput, trade_size: BigNumberish, trade_price: BigNumberish, block_height: BigNumberish, tx_id: string };
 export type TradeOrderEventOutput = { base_sell_order_id: string, base_buy_order_id: string, order_matcher: IdentityOutput, trade_size: BN, trade_price: BN, block_height: number, tx_id: string };
 export type WithdrawEventInput = { amount: BigNumberish, asset: AssetIdInput, user: IdentityInput };
@@ -92,12 +90,10 @@ interface MarketContractAbiInterface extends Interface {
     match_order_pair: FunctionFragment;
     open_order: FunctionFragment;
     set_fee: FunctionFragment;
-    set_matcher_fee: FunctionFragment;
     withdraw: FunctionFragment;
     account: FunctionFragment;
     config: FunctionFragment;
     fee: FunctionFragment;
-    matcher_fee: FunctionFragment;
     order: FunctionFragment;
     order_change_info: FunctionFragment;
     order_id: FunctionFragment;
@@ -115,12 +111,10 @@ export class MarketContractAbi extends Contract {
     match_order_pair: InvokeFunction<[order0_id: string, order1_id: string], void>;
     open_order: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput, order_type: OrderTypeInput, price: BigNumberish], string>;
     set_fee: InvokeFunction<[amount: BigNumberish, user: Option<IdentityInput>], void>;
-    set_matcher_fee: InvokeFunction<[amount: BigNumberish], void>;
     withdraw: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput], void>;
     account: InvokeFunction<[user: IdentityInput], Option<AccountOutput>>;
     config: InvokeFunction<[], [AddressOutput, AssetIdOutput, number, AssetIdOutput, number, number]>;
     fee: InvokeFunction<[user: Option<IdentityInput>], BN>;
-    matcher_fee: InvokeFunction<[], number>;
     order: InvokeFunction<[order: string], Option<OrderOutput>>;
     order_change_info: InvokeFunction<[order_id: string], Vec<OrderChangeInfoOutput>>;
     order_id: InvokeFunction<[asset_type: AssetTypeInput, order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish], string>;

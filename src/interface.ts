@@ -30,9 +30,14 @@ export interface OptionsSpark extends BaseOptions {
   wallet?: WalletLocked | WalletUnlocked;
 }
 
+export interface GraphClientConfig {
+  httpUrl: string;
+  wsUrl: string;
+}
+
 export interface SparkParams {
   networkUrl: string;
-  indexerApiUrl: string;
+  indexerConfig: GraphClientConfig;
   contractAddresses?: OrderbookContracts;
   wallet?: WalletLocked | WalletUnlocked;
   gasPrice?: string;
@@ -47,6 +52,17 @@ export interface SpotOrderWithoutTimestamp {
   trader: string;
   baseSize: BN;
   orderPrice: BN;
+}
+
+export interface UserMarketBalance {
+  liquid: {
+    base: string;
+    quote: string;
+  };
+  locked: {
+    base: string;
+    quote: string;
+  };
 }
 
 export type MarketCreateEvent = {

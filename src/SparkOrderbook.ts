@@ -1,3 +1,4 @@
+import { FetchResult, Observable } from "@apollo/client";
 import {
   Bech32Address,
   Provider,
@@ -16,6 +17,7 @@ import {
 import { IndexerApi } from "./IndexerApi";
 import {
   Asset,
+  AssetType,
   CreateOrderParams,
   DepositParams,
   FulfillOrderManyParams,
@@ -28,6 +30,7 @@ import {
   SparkParams,
   SpotOrderWithoutTimestamp,
   TradeOrderEvent,
+  UserMarketBalance,
   Volume,
   WithdrawParams,
   WriteTransactionResponse,
@@ -53,7 +56,7 @@ export class SparkOrderbook {
         params.gasLimitMultiplier ?? DEFAULT_GAS_LIMIT_MULTIPLIER,
     };
 
-    this.indexerApi = new IndexerApi(params.indexerApiUrl);
+    this.indexerApi = new IndexerApi(params.indexerConfig);
 
     this.providerPromise = Provider.create(params.networkUrl);
   }
@@ -110,6 +113,13 @@ export class SparkOrderbook {
     return this.write.deposit(token, amount, this.getApiOptions());
   };
 
+  withdraw = async (
+    amount: string,
+    tokenType: AssetType,
+  ): Promise<WriteTransactionResponse> => {
+    return this.write.withdraw(amount, tokenType, this.getApiOptions());
+  };
+
   /**
    * Not working! All data is hardcoded
    * TODO: FIX IT
@@ -130,14 +140,16 @@ export class SparkOrderbook {
     return this.read.fetchMarketPrice(baseToken.address);
   };
 
-  fetchOrders = async (params: GetOrdersParams): Promise<Order[]> => {
-    return this.indexerApi.getOrders(params);
+  subscribeOrders = (
+    params: GetOrdersParams,
+  ): Observable<FetchResult<{ Order: Order[] }>> => {
+    return this.indexerApi.subscribeOrders(params);
   };
 
-  getTradeOrderEvents = async (
+  subscribeTradeOrderEvents = (
     params: GetTradeOrderEventsParams,
-  ): Promise<TradeOrderEvent[]> => {
-    return this.indexerApi.getTradeOrderEvents(params);
+  ): Observable<FetchResult<{ TradeOrderEvent: TradeOrderEvent[] }>> => {
+    return this.indexerApi.subscribeTradeOrderEvents(params);
   };
 
   fetchVolume = async (): Promise<Volume> => {
@@ -161,6 +173,14 @@ export class SparkOrderbook {
     const options = await this.getFetchOptions();
 
     return this.read.fetchOrderIdsByAddress(trader, options);
+  };
+
+  fetchUserMarketBalance = async (
+    trader: Bech32Address,
+  ): Promise<UserMarketBalance> => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchUserMarketBalance(trader, options);
   };
 
   getProviderWallet = async () => {
