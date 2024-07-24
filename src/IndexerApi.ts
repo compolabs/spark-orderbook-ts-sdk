@@ -1,4 +1,9 @@
-import {ApolloQueryResult, FetchResult, gql, Observable} from "@apollo/client";
+import {
+  ApolloQueryResult,
+  FetchResult,
+  gql,
+  Observable,
+} from "@apollo/client";
 
 import BN from "./utils/BN";
 import { GraphClient } from "./utils/GraphClient";
@@ -42,8 +47,8 @@ export class IndexerApi extends GraphClient {
   // };
 
   getOrders = (
-      params: GetOrdersParams,
-  ):  Promise<ApolloQueryResult<{ Order: Order[] }>> => {
+    params: GetOrdersParams,
+  ): Promise<ApolloQueryResult<{ Order: Order[] }>> => {
     const generateWhereFilter = (params: GetOrdersParams) => {
       const where: any = {};
 
@@ -75,7 +80,7 @@ export class IndexerApi extends GraphClient {
     const priceOrder = params.orderType === "Buy" ? "desc" : "asc";
 
     const query = gql`
-      query OrderQuery (
+      query OrderQuery(
         $limit: Int!
         $where: Order_bool_exp
         $priceOrder: order_by!

@@ -1,4 +1,4 @@
-import {ApolloQueryResult, FetchResult, Observable} from "@apollo/client";
+import { ApolloQueryResult, FetchResult, Observable } from "@apollo/client";
 import {
   Bech32Address,
   Provider,
@@ -140,7 +140,9 @@ export class SparkOrderbook {
     return this.read.fetchMarketPrice(baseToken.address);
   };
 
-  fetchOrders = async (params: GetOrdersParams): Promise<ApolloQueryResult<{ Order: Order[] }>> => {
+  fetchOrders = async (
+    params: GetOrdersParams,
+  ): Promise<ApolloQueryResult<{ Order: Order[] }>> => {
     return this.indexerApi.getOrders(params);
   };
 
