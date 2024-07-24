@@ -5,6 +5,7 @@ import Spark, {
   AssetType,
   BETA_CONTRACT_ADDRESSES,
   BETA_TOKENS,
+  BN,
   OrderType,
   TESTNET_INDEXER_URL,
   TESTNET_NETWORK,
@@ -71,7 +72,7 @@ describe("Open Order Test", () => {
     TEST_TIMEOUT,
   );
 
-  it.only(
+  it.skip(
     "Fetch order",
     async () => {
       const data = await spark.fetchOrderById(
@@ -89,20 +90,31 @@ describe("Open Order Test", () => {
     TEST_TIMEOUT,
   );
 
+  // amount: this.mode === ORDER_MODE.BUY ? this.inputTotal.toString() : this.inputAmount.toString(),
+  // asset: this.mode === ORDER_MODE.BUY ? market.quoteToken.assetId : market.baseToken.assetId,
+
   it(
     "Open buy order",
     async () => {
       const usdc = TOKENS_BY_SYMBOL["USDC"];
-      const amount = "200"; // USDC
+      const amount = new BN("1"); // BTC
 
-      const price = "";
+      const price = "61386860766500";
+
+      const createOrderParams = {
+        amount: "547820",
+        tokenType: AssetType.Base,
+        price,
+        type: OrderType.Buy,
+      };
 
       const data = await spark.createOrder(
-        amount,
-        usdc,
-        AssetType.Base,
-        price,
-        OrderType.Buy,
+        {
+          amount: "336289500",
+          asset:
+            "0xfed3ee85624c79cb18a3a848092239f2e764ed6b0aa156ad10a18bfdbe74269f",
+        },
+        createOrderParams,
       );
 
       console.log("CREATE ORDER DATA", data);
@@ -115,20 +127,24 @@ describe("Open Order Test", () => {
   it(
     "Open sell order",
     async () => {
-      const usdc = TOKENS_BY_SYMBOL["USDC"];
+      const btc = TOKENS_BY_SYMBOL["BTC"];
       const amount = "100"; // USDC
-      // const amountToSend = BN.parseUnits(amount, usdc.decimals);
 
-      console.log("send amount", amount.toString());
+      const price = "61143285305490";
 
-      const price = "1";
+      const createOrderParams = {
+        amount,
+        tokenType: AssetType.Base,
+        price,
+        type: OrderType.Sell,
+      };
 
       const data = await spark.createOrder(
-        amount.toString(),
-        usdc,
-        AssetType.Quote,
-        price,
-        OrderType.Sell,
+        {
+          amount,
+          asset: btc.address,
+        },
+        createOrderParams,
       );
 
       console.log("CREATE ORDER DATA", data);

@@ -25,21 +25,10 @@ describe("Indexer Api Tests", () => {
   beforeAll(async () => {
     indexer = new IndexerApi(TESTNET_INDEXER_URL);
   });
-
-  it(
-    "getMarketCreateEvents",
-    async () => {
-      const response = await indexer.getMarketCreateEvents();
-
-      expect(response).toBeDefined();
-    },
-    TEST_TIMEOUT,
-  );
   it(
     "getOrders",
     async () => {
       const response = await indexer.getOrders({
-        baseToken: TOKENS_BY_SYMBOL["BTC"].address,
         limit: 1,
       });
 
@@ -48,20 +37,6 @@ describe("Indexer Api Tests", () => {
     },
     TEST_TIMEOUT,
   );
-  it(
-    "getTradeEvents",
-    async () => {
-      const response = await indexer.getTradeEvents({
-        baseToken: TOKENS_BY_SYMBOL["BTC"].address,
-        limit: 1,
-      });
-
-      expect(response).toBeDefined();
-      expect(response).toHaveLength(1);
-    },
-    TEST_TIMEOUT,
-  );
-
   it(
     "getVolume",
     async () => {

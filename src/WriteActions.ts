@@ -18,6 +18,7 @@ import {
   AssetType,
   CreateOrderParams,
   DepositParams,
+  FulfillOrderManyParams,
   Options,
   WithdrawParams,
   WriteTransactionResponse,
@@ -130,6 +131,45 @@ export class WriteActions {
       .txParams({ gasLimit: options.gasPrice });
 
     return this.sendTransaction(tx, options);
+  };
+
+  fulfillOrderMany = async (
+    { amount: depositAmount, asset: depositAsset }: DepositParams,
+    {
+      amount,
+      assetType,
+      orderType,
+      price,
+      slippage,
+      orders,
+    }: FulfillOrderManyParams,
+    options: Options,
+  ) => {
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const forward: CoinQuantityLike = {
+      amount: depositAmount,
+      assetId: depositAsset,
+    };
+
+    const tx = orderbookFactory
+      .multiCall([
+        orderbookFactory.functions.deposit().callParams({ forward }),
+        orderbookFactory.functions.fulfill_order_many(
+          amount,
+          assetType as unknown as AssetTypeInput,
+          orderType as unknown as OrderTypeInput,
+          price,
+          slippage,
+          orders,
+        ),
+      ])
+      .txParams({ gasLimit: options.gasPrice });
+
+    return this.sendMultiTransaction(tx, options);
   };
 
   mintToken = async (

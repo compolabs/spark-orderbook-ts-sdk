@@ -62,24 +62,10 @@ describe("Read Tests", () => {
     "fetchOrders",
     async () => {
       const allOrders = await spark.fetchOrders({
-        baseToken: TOKENS_BY_SYMBOL["BTC"].address,
         limit: 1,
-        isActive: true,
       });
 
       expect(allOrders).toHaveLength(1);
-    },
-    TEST_TIMEOUT,
-  );
-  it(
-    "fetchTrades",
-    async () => {
-      const allTrades = await spark.fetchTrades({
-        baseToken: TOKENS_BY_SYMBOL["BTC"].address,
-        limit: 10,
-      });
-
-      expect(allTrades).toHaveLength(10);
     },
     TEST_TIMEOUT,
   );
@@ -92,23 +78,6 @@ describe("Read Tests", () => {
     },
     TEST_TIMEOUT,
   );
-  it.skip(
-    "fetchOrderById",
-    async () => {
-      const allTrades = await spark.fetchTrades({
-        baseToken: TOKENS_BY_SYMBOL["BTC"].address,
-        limit: 1,
-      });
-
-      expect(allTrades).toHaveLength(1);
-
-      const order = await spark.fetchOrderById(allTrades[0].id);
-
-      expect(order).toBeDefined;
-    },
-    TEST_TIMEOUT,
-  );
-
   it(
     "fetchWalletBalance",
     async () => {

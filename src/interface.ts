@@ -122,6 +122,15 @@ export interface CreateOrderParams {
   type: OrderType;
 }
 
+export interface FulfillOrderManyParams {
+  amount: string;
+  assetType: AssetType;
+  orderType: OrderType;
+  price: string;
+  slippage: string;
+  orders: string[];
+}
+
 export interface WithdrawParams {
   amount: string;
   assetType: AssetType;
