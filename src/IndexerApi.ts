@@ -1,4 +1,9 @@
-import { FetchResult, gql, Observable } from "@apollo/client";
+import {
+  ApolloQueryResult,
+  FetchResult,
+  gql,
+  Observable,
+} from "@apollo/client";
 
 import BN from "./utils/BN";
 import { GraphClient } from "./utils/GraphClient";
@@ -40,6 +45,70 @@ export class IndexerApi extends GraphClient {
   //     updatedAt: '',
   //   }]
   // };
+
+  getOrders = (
+    params: GetOrdersParams,
+  ): Promise<ApolloQueryResult<{ Order: Order[] }>> => {
+    const generateWhereFilter = (params: GetOrdersParams) => {
+      const where: any = {};
+
+      if (params.orderType) {
+        where.order_type = { _eq: params.orderType };
+      }
+
+      if (params.status?.length) {
+        if (params.status.length > 1) {
+          where._or = params.status.map((status: string) => ({
+            status: { _eq: status },
+          }));
+        } else {
+          where.status = { _eq: params.status[0] };
+        }
+      }
+
+      if (params.user) {
+        where.user = { _eq: params.user };
+      }
+
+      if (params.asset) {
+        where.asset = { _eq: params.asset };
+      }
+
+      return where;
+    };
+
+    const priceOrder = params.orderType === "Buy" ? "desc" : "asc";
+
+    const query = gql`
+      query OrderQuery(
+        $limit: Int!
+        $where: Order_bool_exp
+        $priceOrder: order_by!
+      ) {
+        Order(limit: $limit, where: $where, order_by: { price: $priceOrder }) {
+          id
+          asset
+          asset_type
+          amount
+          initial_amount
+          order_type
+          price
+          status
+          user
+          timestamp
+        }
+      }
+    `;
+
+    return this.client.query<{ Order: Order[] }>({
+      query,
+      variables: {
+        limit: params.limit,
+        where: generateWhereFilter(params),
+        priceOrder,
+      },
+    });
+  };
 
   subscribeOrders = (
     params: GetOrdersParams,
