@@ -8,12 +8,16 @@ import {
 import BN from "./utils/BN";
 import { GraphClient } from "./utils/GraphClient";
 import {
+  ActiveOrderReturn,
+  GetActiveOrdersParams,
   GetOrdersParams,
   GetTradeOrderEventsParams,
   Order,
+  OrderType,
   TradeOrderEvent,
   Volume,
 } from "./interface";
+import { getActiveOrdersQuery, getOrdersQuery } from "./query";
 
 export class IndexerApi extends GraphClient {
   // TODO: NOT IMPLEMENTED FOR NEW VERSION
@@ -49,129 +53,33 @@ export class IndexerApi extends GraphClient {
   getOrders = (
     params: GetOrdersParams,
   ): Promise<ApolloQueryResult<{ Order: Order[] }>> => {
-    const generateWhereFilter = (params: GetOrdersParams) => {
-      const where: any = {};
-
-      if (params.orderType) {
-        where.order_type = { _eq: params.orderType };
-      }
-
-      if (params.status?.length) {
-        if (params.status.length > 1) {
-          where._or = params.status.map((status: string) => ({
-            status: { _eq: status },
-          }));
-        } else {
-          where.status = { _eq: params.status[0] };
-        }
-      }
-
-      if (params.user) {
-        where.user = { _eq: params.user };
-      }
-
-      if (params.asset) {
-        where.asset = { _eq: params.asset };
-      }
-
-      return where;
-    };
-
-    const priceOrder = params.orderType === "Buy" ? "desc" : "asc";
-
-    const query = gql`
-      query OrderQuery(
-        $limit: Int!
-        $where: Order_bool_exp
-        $priceOrder: order_by!
-      ) {
-        Order(limit: $limit, where: $where, order_by: { price: $priceOrder }) {
-          id
-          asset
-          asset_type
-          amount
-          initial_amount
-          order_type
-          price
-          status
-          user
-          timestamp
-        }
-      }
-    `;
-
-    return this.client.query<{ Order: Order[] }>({
-      query,
-      variables: {
-        limit: params.limit,
-        where: generateWhereFilter(params),
-        priceOrder,
-      },
-    });
+    return this.client.query<{ Order: Order[] }>(
+      getOrdersQuery("query", params),
+    );
   };
 
   subscribeOrders = (
     params: GetOrdersParams,
   ): Observable<FetchResult<{ Order: Order[] }>> => {
-    const generateWhereFilter = (params: GetOrdersParams) => {
-      const where: any = {};
+    return this.client.subscribe<{ Order: Order[] }>(
+      getOrdersQuery("query", params),
+    );
+  };
 
-      if (params.orderType) {
-        where.order_type = { _eq: params.orderType };
-      }
+  getActiveOrders = <T extends OrderType>(
+    params: GetActiveOrdersParams,
+  ): Promise<ApolloQueryResult<ActiveOrderReturn<T>>> => {
+    return this.client.query<ActiveOrderReturn<T>>(
+      getActiveOrdersQuery("query", params),
+    );
+  };
 
-      if (params.status?.length) {
-        if (params.status.length > 1) {
-          where._or = params.status.map((status: string) => ({
-            status: { _eq: status },
-          }));
-        } else {
-          where.status = { _eq: params.status[0] };
-        }
-      }
-
-      if (params.user) {
-        where.user = { _eq: params.user };
-      }
-
-      if (params.asset) {
-        where.asset = { _eq: params.asset };
-      }
-
-      return where;
-    };
-
-    const priceOrder = params.orderType === "Buy" ? "desc" : "asc";
-
-    const query = gql`
-      subscription (
-        $limit: Int!
-        $where: Order_bool_exp
-        $priceOrder: order_by!
-      ) {
-        Order(limit: $limit, where: $where, order_by: { price: $priceOrder }) {
-          id
-          asset
-          asset_type
-          amount
-          initial_amount
-          order_type
-          price
-          status
-          user
-          timestamp
-        }
-      }
-    `;
-
-    return this.client.subscribe<{ Order: Order[] }>({
-      query,
-      variables: {
-        limit: params.limit,
-        where: generateWhereFilter(params),
-        priceOrder,
-      },
-    });
+  subscribeActiveOrders = <T extends OrderType>(
+    params: GetActiveOrdersParams,
+  ): Observable<FetchResult<ActiveOrderReturn<T>>> => {
+    return this.client.subscribe<ActiveOrderReturn<T>>(
+      getActiveOrdersQuery("subscription", params),
+    );
   };
 
   subscribeTradeOrderEvents = (
