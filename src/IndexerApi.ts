@@ -8,6 +8,7 @@ import {
 import BN from "./utils/BN";
 import { GraphClient } from "./utils/GraphClient";
 import {
+  GetActiveOrdersParams,
   GetOrdersParams,
   GetTradeOrderEventsParams,
   Order,
@@ -150,6 +151,116 @@ export class IndexerApi extends GraphClient {
         $priceOrder: order_by!
       ) {
         Order(limit: $limit, where: $where, order_by: { price: $priceOrder }) {
+          id
+          asset
+          asset_type
+          amount
+          initial_amount
+          order_type
+          price
+          status
+          user
+          timestamp
+        }
+      }
+    `;
+
+    return this.client.subscribe<{ Order: Order[] }>({
+      query,
+      variables: {
+        limit: params.limit,
+        where: generateWhereFilter(params),
+        priceOrder,
+      },
+    });
+  };
+
+  getActiveOrders = (
+    params: GetActiveOrdersParams,
+  ): Promise<ApolloQueryResult<{ Order: Order[] }>> => {
+    const generateWhereFilter = (params: GetActiveOrdersParams) => {
+      const where: any = {};
+
+      if (params.orderType) {
+        where.order_type = { _eq: params.orderType };
+      }
+
+      if (params.user) {
+        where.user = { _eq: params.user };
+      }
+
+      if (params.asset) {
+        where.asset = { _eq: params.asset };
+      }
+
+      return where;
+    };
+
+    const priceOrder = params.orderType === "Buy" ? "desc" : "asc";
+    const queryObject = `Active${params.orderType}Order`;
+
+    const query = gql`
+      query ActiveOrderQuery(
+        $limit: Int!
+        $where: Order_bool_exp
+        $priceOrder: order_by!
+      ) {
+        ${queryObject}(limit: $limit, where: $where, order_by: { price: $priceOrder }) {
+          id
+          asset
+          asset_type
+          amount
+          initial_amount
+          order_type
+          price
+          status
+          user
+          timestamp
+        }
+      }
+    `;
+
+    return this.client.query<{ Order: Order[] }>({
+      query,
+      variables: {
+        limit: params.limit,
+        where: generateWhereFilter(params),
+        priceOrder,
+      },
+    });
+  };
+
+  subscribeActiveOrders = (
+    params: GetActiveOrdersParams,
+  ): Observable<FetchResult<{ Order: Order[] }>> => {
+    const generateWhereFilter = (params: GetActiveOrdersParams) => {
+      const where: any = {};
+
+      if (params.orderType) {
+        where.order_type = { _eq: params.orderType };
+      }
+
+      if (params.user) {
+        where.user = { _eq: params.user };
+      }
+
+      if (params.asset) {
+        where.asset = { _eq: params.asset };
+      }
+
+      return where;
+    };
+
+    const priceOrder = params.orderType === "Buy" ? "desc" : "asc";
+    const queryObject = `Active${params.orderType}Order`;
+
+    const query = gql`
+      subscription (
+        $limit: Int!
+        $where: Order_bool_exp
+        $priceOrder: order_by!
+      ) {
+        ${queryObject}(limit: $limit, where: $where, order_by: { price: $priceOrder }) {
           id
           asset
           asset_type

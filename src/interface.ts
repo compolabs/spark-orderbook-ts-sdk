@@ -110,6 +110,13 @@ export interface GetOrdersParams {
   asset?: string;
 }
 
+export interface GetActiveOrdersParams {
+  limit: number;
+  orderType: OrderType;
+  user?: string;
+  asset?: string;
+}
+
 export interface DepositParams {
   amount: string;
   asset: string;
