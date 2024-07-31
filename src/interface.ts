@@ -118,8 +118,8 @@ export interface GetActiveOrdersParams {
 }
 
 export type ActiveOrderReturn<T extends OrderType> = T extends OrderType.Buy
-  ? { type: OrderType.Buy; ActiveBuyOrder: Order[] }
-  : { type: OrderType.Sell; ActiveSellOrder: Order[] };
+  ? { ActiveBuyOrder: Order[] }
+  : { ActiveSellOrder: Order[] };
 
 export interface DepositParams {
   amount: string;
