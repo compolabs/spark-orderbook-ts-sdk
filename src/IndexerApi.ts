@@ -8,10 +8,12 @@ import {
 import BN from "./utils/BN";
 import { GraphClient } from "./utils/GraphClient";
 import {
+  ActiveOrderReturn,
   GetActiveOrdersParams,
   GetOrdersParams,
   GetTradeOrderEventsParams,
   Order,
+  OrderType,
   TradeOrderEvent,
   Volume,
 } from "./interface";
@@ -175,9 +177,9 @@ export class IndexerApi extends GraphClient {
     });
   };
 
-  getActiveOrders = (
+  getActiveOrders = <T extends OrderType>(
     params: GetActiveOrdersParams,
-  ): Promise<ApolloQueryResult<{ Order: Order[] }>> => {
+  ): Promise<ApolloQueryResult<ActiveOrderReturn<T>>> => {
     const generateWhereFilter = (params: GetActiveOrdersParams) => {
       const where: any = {};
 
@@ -200,9 +202,9 @@ export class IndexerApi extends GraphClient {
     const queryObject = `Active${params.orderType}Order`;
 
     const query = gql`
-      query ActiveOrderQuery(
+      query ${queryObject}Query(
         $limit: Int!
-        $where: Order_bool_exp
+        $where: ${queryObject}_bool_exp
         $priceOrder: order_by!
       ) {
         ${queryObject}(limit: $limit, where: $where, order_by: { price: $priceOrder }) {
@@ -220,7 +222,7 @@ export class IndexerApi extends GraphClient {
       }
     `;
 
-    return this.client.query<{ Order: Order[] }>({
+    return this.client.query<ActiveOrderReturn<T>>({
       query,
       variables: {
         limit: params.limit,
@@ -230,9 +232,9 @@ export class IndexerApi extends GraphClient {
     });
   };
 
-  subscribeActiveOrders = (
+  subscribeActiveOrders = <T extends OrderType>(
     params: GetActiveOrdersParams,
-  ): Observable<FetchResult<{ Order: Order[] }>> => {
+  ): Observable<FetchResult<ActiveOrderReturn<T>>> => {
     const generateWhereFilter = (params: GetActiveOrdersParams) => {
       const where: any = {};
 
@@ -257,7 +259,7 @@ export class IndexerApi extends GraphClient {
     const query = gql`
       subscription (
         $limit: Int!
-        $where: Order_bool_exp
+        $where: ${queryObject}_bool_exp
         $priceOrder: order_by!
       ) {
         ${queryObject}(limit: $limit, where: $where, order_by: { price: $priceOrder }) {
@@ -275,7 +277,7 @@ export class IndexerApi extends GraphClient {
       }
     `;
 
-    return this.client.subscribe<{ Order: Order[] }>({
+    return this.client.subscribe<ActiveOrderReturn<T>>({
       query,
       variables: {
         limit: params.limit,

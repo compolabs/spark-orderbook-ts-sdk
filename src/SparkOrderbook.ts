@@ -16,17 +16,20 @@ import {
 } from "./constants";
 import { IndexerApi } from "./IndexerApi";
 import {
+  ActiveOrderReturn,
   Asset,
   AssetType,
   CreateOrderParams,
   DepositParams,
   FulfillOrderManyParams,
+  GetActiveOrdersParams,
   GetOrdersParams,
   GetTradeOrderEventsParams,
   MarketCreateEvent,
   Options,
   OptionsSpark,
   Order,
+  OrderType,
   SparkParams,
   SpotOrderWithoutTimestamp,
   TradeOrderEvent,
@@ -146,10 +149,22 @@ export class SparkOrderbook {
     return this.indexerApi.getOrders(params);
   };
 
+  fetchActiveOrders = async <T extends OrderType>(
+    params: GetActiveOrdersParams,
+  ): Promise<ApolloQueryResult<ActiveOrderReturn<T>>> => {
+    return this.indexerApi.getActiveOrders<T>(params);
+  };
+
   subscribeOrders = (
     params: GetOrdersParams,
   ): Observable<FetchResult<{ Order: Order[] }>> => {
     return this.indexerApi.subscribeOrders(params);
+  };
+
+  subscribeActiveOrders = <T extends OrderType>(
+    params: GetActiveOrdersParams,
+  ): Observable<FetchResult<ActiveOrderReturn<T>>> => {
+    return this.indexerApi.subscribeActiveOrders<T>(params);
   };
 
   subscribeTradeOrderEvents = (
