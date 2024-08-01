@@ -1,4 +1,4 @@
-import { Address, Bech32Address } from "fuels";
+import { B256Address } from "fuels";
 
 import { MarketContractAbi__factory } from "./types/market";
 import { AddressInput, IdentityInput } from "./types/market/MarketContractAbi";
@@ -18,7 +18,7 @@ export class ReadActions {
   };
 
   fetchUserMarketBalance = async (
-    trader: Bech32Address,
+    trader: B256Address,
     options: Options,
   ): Promise<UserMarketBalance> => {
     const orderbookFactory = MarketContractAbi__factory.connect(
@@ -26,10 +26,8 @@ export class ReadActions {
       options.wallet,
     );
 
-    const traderAddress = new Address(trader).toB256();
-
     const address: AddressInput = {
-      bits: traderAddress,
+      bits: trader,
     };
 
     const user: IdentityInput = {
@@ -81,7 +79,7 @@ export class ReadActions {
   };
 
   fetchOrderIdsByAddress = async (
-    trader: Bech32Address,
+    trader: B256Address,
     options: Options,
   ): Promise<string[]> => {
     const orderbookFactory = MarketContractAbi__factory.connect(
@@ -89,10 +87,8 @@ export class ReadActions {
       options.wallet,
     );
 
-    const traderAddress = new Address(trader).toB256();
-
     const address: AddressInput = {
-      bits: traderAddress,
+      bits: trader,
     };
 
     const user: IdentityInput = {
