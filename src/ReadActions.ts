@@ -1,7 +1,11 @@
 import { Address, Bech32Address } from "fuels";
 
 import { MarketContractAbi__factory } from "./types/market";
-import { AddressInput, IdentityInput } from "./types/market/MarketContractAbi";
+import {
+  AddressInput,
+  AssetTypeInput,
+  IdentityInput,
+} from "./types/market/MarketContractAbi";
 import BN from "./utils/BN";
 import {
   AssetType,
@@ -110,5 +114,33 @@ export class ReadActions {
   ): Promise<string> => {
     const balance = await options.wallet.getBalance(assetId);
     return balance.toString();
+  };
+
+  fetchProtocolFee = async (options: Options): Promise<number> => {
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const result = await orderbookFactory.functions.protocol_fee().get();
+
+    return result.value;
+  };
+
+  fetchProtocolFeeForAmount = async (
+    amount: string,
+    assetType: AssetType,
+    options: Options,
+  ): Promise<string> => {
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const result = await orderbookFactory.functions
+      .protocol_fee_amount(amount, assetType as unknown as AssetTypeInput)
+      .get();
+
+    return result.value.toString();
   };
 }

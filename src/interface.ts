@@ -91,6 +91,11 @@ export enum AssetType {
   Quote = "Quote",
 }
 
+export enum LimitType {
+  IOC = "IOC",
+  FOK = "FOK",
+}
+
 export type Status = "Active" | "Canceled" | "Closed";
 
 export interface SpotMarketCreateEvent {
@@ -128,7 +133,7 @@ export interface DepositParams {
 
 export interface CreateOrderParams {
   amount: string;
-  tokenType: AssetType;
+  assetType: AssetType;
   price: string;
   type: OrderType;
 }
@@ -137,6 +142,7 @@ export interface FulfillOrderManyParams {
   amount: string;
   assetType: AssetType;
   orderType: OrderType;
+  limitType: LimitType;
   price: string;
   slippage: string;
   orders: string[];

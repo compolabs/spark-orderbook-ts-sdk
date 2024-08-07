@@ -118,9 +118,9 @@ export class SparkOrderbook {
 
   withdraw = async (
     amount: string,
-    tokenType: AssetType,
+    assetType: AssetType,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.withdraw(amount, tokenType, this.getApiOptions());
+    return this.write.withdraw(amount, assetType, this.getApiOptions());
   };
 
   /**
@@ -202,6 +202,18 @@ export class SparkOrderbook {
     const options = await this.getFetchOptions();
 
     return this.read.fetchUserMarketBalance(trader, options);
+  };
+
+  fetchProtocolFee = async () => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchProtocolFee(options);
+  };
+
+  fetchProtocolFeeForAmount = async (amount: string, assetType: AssetType) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchProtocolFeeForAmount(amount, assetType, options);
   };
 
   getProviderWallet = async () => {

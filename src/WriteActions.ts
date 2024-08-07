@@ -8,6 +8,7 @@ import {
 import { MarketContractAbi__factory } from "./types/market";
 import {
   AssetTypeInput,
+  LimitTypeInput,
   OrderTypeInput,
 } from "./types/market/MarketContractAbi";
 import { TokenAbi__factory } from "./types/src-20";
@@ -47,7 +48,7 @@ export class WriteActions {
 
   withdraw = async (
     amount: string,
-    tokenType: AssetType,
+    assetType: AssetType,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const orderbookFactory = MarketContractAbi__factory.connect(
@@ -57,7 +58,7 @@ export class WriteActions {
 
     const tx = orderbookFactory.functions.withdraw(
       amount,
-      tokenType as unknown as AssetTypeInput,
+      assetType as unknown as AssetTypeInput,
     );
 
     return this.sendTransaction(tx, options);
@@ -65,7 +66,7 @@ export class WriteActions {
 
   createOrder = async (
     { amount: depositAmount, asset: depositAsset }: DepositParams,
-    { amount, tokenType, price, type }: CreateOrderParams,
+    { amount, assetType: assetType, price, type }: CreateOrderParams,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const orderbookFactory = MarketContractAbi__factory.connect(
@@ -83,7 +84,7 @@ export class WriteActions {
         orderbookFactory.functions.deposit().callParams({ forward }),
         orderbookFactory.functions.open_order(
           amount,
-          tokenType as unknown as AssetTypeInput,
+          assetType as unknown as AssetTypeInput,
           type as unknown as OrderTypeInput,
           price,
         ),
@@ -139,6 +140,7 @@ export class WriteActions {
       amount,
       assetType,
       orderType,
+      limitType,
       price,
       slippage,
       orders,
@@ -162,6 +164,7 @@ export class WriteActions {
           amount,
           assetType as unknown as AssetTypeInput,
           orderType as unknown as OrderTypeInput,
+          limitType as unknown as LimitTypeInput,
           price,
           slippage,
           orders,
@@ -205,10 +208,11 @@ export class WriteActions {
     const { gasUsed } = await tx.getTransactionCost();
     const gasLimit = gasUsed.mul(options.gasLimitMultiplier).toString();
     const res = await tx.txParams({ gasLimit }).call();
+    const data = await res.waitForResult();
 
     return {
       transactionId: res.transactionId,
-      value: res.value,
+      value: data.value,
     };
   };
 
@@ -219,10 +223,11 @@ export class WriteActions {
     const { gasUsed } = await txs.getTransactionCost();
     const gasLimit = gasUsed.mul(options.gasLimitMultiplier).toString();
     const res = await txs.txParams({ gasLimit }).call();
+    const data = await res.waitForResult();
 
     return {
       transactionId: res.transactionId,
-      value: res.value,
+      value: data.value,
     };
   };
 }
