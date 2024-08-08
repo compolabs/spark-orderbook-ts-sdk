@@ -35,25 +35,6 @@ const spark = new Spark({
 // Now you can use `spark` to interact with the library methods
 ```
 
-## Available Methods
-
-Below is a list of all the available methods in the spark-orderbook-ts-sdk. These methods enable interaction with spot market:
-
-1. **setActiveWallet(wallet?: WalletLocked | WalletUnlocked)** - Updates the active wallet used in the library.
-2. **createOrder(baseToken: Asset, quoteToken: Asset, size: string, price: string)** - Creates an order with the specified parameters.
-3. **cancelOrder(orderId: string)** - Cancels a specified order.
-4. **matchOrders(sellOrderId: string, buyOrderId: string)** - Matches a sell order with a buy order.
-5. **mintToken(token: Asset, amount: string)** - Mints the specified amount of a token.
-6. **fetchMarkets(limit: number)** - Retrieves a list of markets up to the specified limit.
-7. **fetchMarketPrice(baseToken: Asset)** - Fetches the current market price for a given market token.
-8. **fetchOrders(params: FetchOrdersParams)** - Fetches orders based on the specified parameters.
-9. **fetchTrades(params: FetchTradesParams)** - Retrieves trades for markets based on provided parameters.
-10. **fetchVolume()** - Retrieves the trading volume for markets.
-11. **fetchOrderById(orderId: string)** - Retrieves details of a specific order by its ID.
-12. **fetchWalletBalance(asset: Asset)** - Fetches the balance of a specified asset in the wallet.
-13. **getProviderWallet()** - Retrieves the wallet associated with the provider.
-14. **getProvider()** - Retrieves the provider used by the library.
-
 
 ## Contributing
 

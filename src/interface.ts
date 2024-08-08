@@ -91,6 +91,11 @@ export enum AssetType {
   Quote = "Quote",
 }
 
+export enum LimitType {
+  IOC = "IOC",
+  FOK = "FOK",
+}
+
 export type Status = "Active" | "Canceled" | "Closed";
 
 export interface SpotMarketCreateEvent {
@@ -121,30 +126,23 @@ export type ActiveOrderReturn<T extends OrderType> = T extends OrderType.Buy
   ? { ActiveBuyOrder: Order[] }
   : { ActiveSellOrder: Order[] };
 
-export interface DepositParams {
-  amount: string;
-  asset: string;
-}
-
 export interface CreateOrderParams {
   amount: string;
-  tokenType: AssetType;
+  assetType: AssetType;
   price: string;
   type: OrderType;
+  feeAssetId: string;
 }
 
 export interface FulfillOrderManyParams {
   amount: string;
   assetType: AssetType;
   orderType: OrderType;
+  limitType: LimitType;
   price: string;
   slippage: string;
   orders: string[];
-}
-
-export interface WithdrawParams {
-  amount: string;
-  assetType: AssetType;
+  feeAssetId: string;
 }
 
 export interface Order {
@@ -162,16 +160,6 @@ export interface Order {
 
 export interface GetTradeOrderEventsParams {
   limit: number;
-}
-
-export interface MatchOrderEvent {
-  id: string;
-  owner: string;
-  counterparty: string;
-  asset: string;
-  match_size: string;
-  match_price: string;
-  timestamp: string;
 }
 
 export interface TradeOrderEvent {

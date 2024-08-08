@@ -8,6 +8,7 @@ import {
 import { MarketContractAbi__factory } from "./types/market";
 import {
   AssetTypeInput,
+  LimitTypeInput,
   OrderTypeInput,
 } from "./types/market/MarketContractAbi";
 import { TokenAbi__factory } from "./types/src-20";
@@ -17,10 +18,8 @@ import {
   Asset,
   AssetType,
   CreateOrderParams,
-  DepositParams,
   FulfillOrderManyParams,
   Options,
-  WithdrawParams,
   WriteTransactionResponse,
 } from "./interface";
 
@@ -47,7 +46,7 @@ export class WriteActions {
 
   withdraw = async (
     amount: string,
-    tokenType: AssetType,
+    assetType: AssetType,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const orderbookFactory = MarketContractAbi__factory.connect(
@@ -57,15 +56,20 @@ export class WriteActions {
 
     const tx = orderbookFactory.functions.withdraw(
       amount,
-      tokenType as unknown as AssetTypeInput,
+      assetType as unknown as AssetTypeInput,
     );
 
     return this.sendTransaction(tx, options);
   };
 
   createOrder = async (
-    { amount: depositAmount, asset: depositAsset }: DepositParams,
-    { amount, tokenType, price, type }: CreateOrderParams,
+    {
+      amount,
+      assetType: assetType,
+      price,
+      type,
+      feeAssetId,
+    }: CreateOrderParams,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const orderbookFactory = MarketContractAbi__factory.connect(
@@ -73,27 +77,37 @@ export class WriteActions {
       options.wallet,
     );
 
-    const forward: CoinQuantityLike = {
-      amount: depositAmount,
-      assetId: depositAsset,
+    const assetTypeInput = assetType as unknown as AssetTypeInput;
+
+    const protocolFeeAmount = await orderbookFactory.functions
+      .protocol_fee_amount(amount, assetTypeInput)
+      .get();
+    const matcherFee = await orderbookFactory.functions.matcher_fee().get();
+    const totalAmount = new BN(protocolFeeAmount.value.toString()).plus(
+      matcherFee.value,
+    );
+
+    const forwardFee: CoinQuantityLike = {
+      amount: totalAmount.toString(),
+      assetId: feeAssetId,
     };
 
-    const tx = orderbookFactory
-      .multiCall([
-        orderbookFactory.functions.open_order(
-          amount,
-          tokenType as unknown as AssetTypeInput,
-          type as unknown as OrderTypeInput,
-          price,
-        ),
-      ])
+    console.log(forwardFee);
+
+    const tx = orderbookFactory.functions
+      .open_order(
+        amount,
+        assetTypeInput,
+        type as unknown as OrderTypeInput,
+        price,
+      )
+      .callParams({ forward: forwardFee })
       .txParams({ gasLimit: options.gasPrice });
 
-    return this.sendMultiTransaction(tx, options);
+    return this.sendTransaction(tx, options);
   };
 
   cancelOrder = async (
-    { amount: withdrawAmount, assetType: withdrawAssetType }: WithdrawParams,
     orderId: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
@@ -102,17 +116,11 @@ export class WriteActions {
       options.wallet,
     );
 
-    const tx = orderbookFactory
-      .multiCall([
-        orderbookFactory.functions.cancel_order(orderId),
-        orderbookFactory.functions.withdraw(
-          withdrawAmount.toString(),
-          withdrawAssetType as unknown as AssetTypeInput,
-        ),
-      ])
+    const tx = orderbookFactory.functions
+      .cancel_order(orderId)
       .txParams({ gasLimit: options.gasPrice });
 
-    return this.sendMultiTransaction(tx, options);
+    return this.sendTransaction(tx, options);
   };
 
   matchOrders = async (
@@ -133,14 +141,15 @@ export class WriteActions {
   };
 
   fulfillOrderMany = async (
-    { amount: depositAmount, asset: depositAsset }: DepositParams,
     {
       amount,
       assetType,
       orderType,
+      limitType,
       price,
       slippage,
       orders,
+      feeAssetId,
     }: FulfillOrderManyParams,
     options: Options,
   ) => {
@@ -149,25 +158,32 @@ export class WriteActions {
       options.wallet,
     );
 
-    const forward: CoinQuantityLike = {
-      amount: depositAmount,
-      assetId: depositAsset,
+    const assetTypeInput = assetType as unknown as AssetTypeInput;
+
+    const protocolFeeAmount = await orderbookFactory.functions
+      .protocol_fee_amount(amount, assetTypeInput)
+      .get();
+    const totalAmount = new BN(protocolFeeAmount.value.toString());
+
+    const forwardFee: CoinQuantityLike = {
+      amount: totalAmount.toString(),
+      assetId: feeAssetId,
     };
 
-    const tx = orderbookFactory
-      .multiCall([
-        orderbookFactory.functions.fulfill_order_many(
-          amount,
-          assetType as unknown as AssetTypeInput,
-          orderType as unknown as OrderTypeInput,
-          price,
-          slippage,
-          orders,
-        ),
-      ])
+    const tx = orderbookFactory.functions
+      .fulfill_order_many(
+        amount,
+        assetType as unknown as AssetTypeInput,
+        orderType as unknown as OrderTypeInput,
+        limitType as unknown as LimitTypeInput,
+        price,
+        slippage,
+        orders,
+      )
+      .callParams({ forward: forwardFee })
       .txParams({ gasLimit: options.gasPrice });
 
-    return this.sendMultiTransaction(tx, options);
+    return this.sendTransaction(tx, options);
   };
 
   mintToken = async (
@@ -203,10 +219,11 @@ export class WriteActions {
     const { gasUsed } = await tx.getTransactionCost();
     const gasLimit = gasUsed.mul(options.gasLimitMultiplier).toString();
     const res = await tx.txParams({ gasLimit }).call();
+    const data = await res.waitForResult();
 
     return {
       transactionId: res.transactionId,
-      value: res.value,
+      value: data.value,
     };
   };
 
@@ -217,10 +234,11 @@ export class WriteActions {
     const { gasUsed } = await txs.getTransactionCost();
     const gasLimit = gasUsed.mul(options.gasLimitMultiplier).toString();
     const res = await txs.txParams({ gasLimit }).call();
+    const data = await res.waitForResult();
 
     return {
       transactionId: res.transactionId,
-      value: res.value,
+      value: data.value,
     };
   };
 }

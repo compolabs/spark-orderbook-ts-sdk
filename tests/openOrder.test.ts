@@ -103,7 +103,7 @@ describe("Open Order Test", () => {
 
       const createOrderParams = {
         amount: "547820",
-        tokenType: AssetType.Base,
+        assetType: AssetType.Base,
         price,
         type: OrderType.Buy,
       };
@@ -134,7 +134,7 @@ describe("Open Order Test", () => {
 
       const createOrderParams = {
         amount,
-        tokenType: AssetType.Base,
+        assetType: AssetType.Base,
         price,
         type: OrderType.Sell,
       };
