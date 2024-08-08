@@ -18,10 +18,8 @@ import {
   Asset,
   AssetType,
   CreateOrderParams,
-  DepositParams,
   FulfillOrderManyParams,
   Options,
-  WithdrawParams,
   WriteTransactionResponse,
 } from "./interface";
 
@@ -65,7 +63,6 @@ export class WriteActions {
   };
 
   createOrder = async (
-    { amount: depositAmount, asset: depositAsset }: DepositParams,
     {
       amount,
       assetType: assetType,
@@ -79,11 +76,6 @@ export class WriteActions {
       options.contractAddresses.market,
       options.wallet,
     );
-
-    const forward: CoinQuantityLike = {
-      amount: depositAmount,
-      assetId: depositAsset,
-    };
 
     const assetTypeInput = assetType as unknown as AssetTypeInput;
 
@@ -102,25 +94,20 @@ export class WriteActions {
 
     console.log(forwardFee);
 
-    const tx = orderbookFactory
-      .multiCall([
-        orderbookFactory.functions.deposit().callParams({ forward }),
-        orderbookFactory.functions
-          .open_order(
-            amount,
-            assetTypeInput,
-            type as unknown as OrderTypeInput,
-            price,
-          )
-          .callParams({ forward: forwardFee }),
-      ])
+    const tx = orderbookFactory.functions
+      .open_order(
+        amount,
+        assetTypeInput,
+        type as unknown as OrderTypeInput,
+        price,
+      )
+      .callParams({ forward: forwardFee })
       .txParams({ gasLimit: options.gasPrice });
 
-    return this.sendMultiTransaction(tx, options);
+    return this.sendTransaction(tx, options);
   };
 
   cancelOrder = async (
-    { amount: withdrawAmount, assetType: withdrawAssetType }: WithdrawParams,
     orderId: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
@@ -129,17 +116,11 @@ export class WriteActions {
       options.wallet,
     );
 
-    const tx = orderbookFactory
-      .multiCall([
-        orderbookFactory.functions.cancel_order(orderId),
-        orderbookFactory.functions.withdraw(
-          withdrawAmount.toString(),
-          withdrawAssetType as unknown as AssetTypeInput,
-        ),
-      ])
+    const tx = orderbookFactory.functions
+      .cancel_order(orderId)
       .txParams({ gasLimit: options.gasPrice });
 
-    return this.sendMultiTransaction(tx, options);
+    return this.sendTransaction(tx, options);
   };
 
   matchOrders = async (
@@ -160,7 +141,6 @@ export class WriteActions {
   };
 
   fulfillOrderMany = async (
-    { amount: depositAmount, asset: depositAsset }: DepositParams,
     {
       amount,
       assetType,
@@ -178,11 +158,6 @@ export class WriteActions {
       options.wallet,
     );
 
-    const forward: CoinQuantityLike = {
-      amount: depositAmount,
-      assetId: depositAsset,
-    };
-
     const assetTypeInput = assetType as unknown as AssetTypeInput;
 
     const protocolFeeAmount = await orderbookFactory.functions
@@ -195,24 +170,20 @@ export class WriteActions {
       assetId: feeAssetId,
     };
 
-    const tx = orderbookFactory
-      .multiCall([
-        orderbookFactory.functions.deposit().callParams({ forward }),
-        orderbookFactory.functions
-          .fulfill_order_many(
-            amount,
-            assetType as unknown as AssetTypeInput,
-            orderType as unknown as OrderTypeInput,
-            limitType as unknown as LimitTypeInput,
-            price,
-            slippage,
-            orders,
-          )
-          .callParams({ forward: forwardFee }),
-      ])
+    const tx = orderbookFactory.functions
+      .fulfill_order_many(
+        amount,
+        assetType as unknown as AssetTypeInput,
+        orderType as unknown as OrderTypeInput,
+        limitType as unknown as LimitTypeInput,
+        price,
+        slippage,
+        orders,
+      )
+      .callParams({ forward: forwardFee })
       .txParams({ gasLimit: options.gasPrice });
 
-    return this.sendMultiTransaction(tx, options);
+    return this.sendTransaction(tx, options);
   };
 
   mintToken = async (
