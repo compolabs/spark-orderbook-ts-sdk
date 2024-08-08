@@ -62,7 +62,7 @@ export class IndexerApi extends GraphClient {
     params: GetOrdersParams,
   ): Observable<FetchResult<{ Order: Order[] }>> => {
     return this.client.subscribe<{ Order: Order[] }>(
-      getOrdersQuery("query", params),
+      getOrdersQuery("subscription", params),
     );
   };
 
