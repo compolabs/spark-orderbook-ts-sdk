@@ -20,7 +20,6 @@ import {
   Asset,
   AssetType,
   CreateOrderParams,
-  DepositParams,
   FulfillOrderManyParams,
   GetActiveOrdersParams,
   GetOrdersParams,
@@ -35,7 +34,6 @@ import {
   TradeOrderEvent,
   UserMarketBalance,
   Volume,
-  WithdrawParams,
   WriteTransactionResponse,
 } from "./interface";
 import { ReadActions } from "./ReadActions";
@@ -71,17 +69,13 @@ export class SparkOrderbook {
   };
 
   createOrder = async (
-    deposit: DepositParams,
     order: CreateOrderParams,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.createOrder(deposit, order, this.getApiOptions());
+    return this.write.createOrder(order, this.getApiOptions());
   };
 
-  cancelOrder = async (
-    withdraw: WithdrawParams,
-    orderId: string,
-  ): Promise<WriteTransactionResponse> => {
-    return this.write.cancelOrder(withdraw, orderId, this.getApiOptions());
+  cancelOrder = async (orderId: string): Promise<WriteTransactionResponse> => {
+    return this.write.cancelOrder(orderId, this.getApiOptions());
   };
 
   matchOrders = async (
@@ -96,10 +90,9 @@ export class SparkOrderbook {
   };
 
   fulfillOrderMany = async (
-    deposit: DepositParams,
     order: FulfillOrderManyParams,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.fulfillOrderMany(deposit, order, this.getApiOptions());
+    return this.write.fulfillOrderMany(order, this.getApiOptions());
   };
 
   mintToken = async (

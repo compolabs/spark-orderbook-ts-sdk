@@ -126,11 +126,6 @@ export type ActiveOrderReturn<T extends OrderType> = T extends OrderType.Buy
   ? { ActiveBuyOrder: Order[] }
   : { ActiveSellOrder: Order[] };
 
-export interface DepositParams {
-  amount: string;
-  asset: string;
-}
-
 export interface CreateOrderParams {
   amount: string;
   assetType: AssetType;
@@ -150,11 +145,6 @@ export interface FulfillOrderManyParams {
   feeAssetId: string;
 }
 
-export interface WithdrawParams {
-  amount: string;
-  assetType: AssetType;
-}
-
 export interface Order {
   id: string;
   asset: string;
@@ -170,16 +160,6 @@ export interface Order {
 
 export interface GetTradeOrderEventsParams {
   limit: number;
-}
-
-export interface MatchOrderEvent {
-  id: string;
-  owner: string;
-  counterparty: string;
-  asset: string;
-  match_size: string;
-  match_price: string;
-  timestamp: string;
 }
 
 export interface TradeOrderEvent {
