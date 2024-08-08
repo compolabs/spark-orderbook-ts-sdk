@@ -80,7 +80,6 @@ export class WriteActions {
 
     const tx = orderbookFactory
       .multiCall([
-        orderbookFactory.functions.deposit().callParams({ forward }),
         orderbookFactory.functions.open_order(
           amount,
           tokenType as unknown as AssetTypeInput,
@@ -157,7 +156,6 @@ export class WriteActions {
 
     const tx = orderbookFactory
       .multiCall([
-        orderbookFactory.functions.deposit().callParams({ forward }),
         orderbookFactory.functions.fulfill_order_many(
           amount,
           assetType as unknown as AssetTypeInput,
