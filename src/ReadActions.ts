@@ -116,6 +116,17 @@ export class ReadActions {
     return balance.toString();
   };
 
+  fetchMatcherFee = async (options: Options): Promise<number> => {
+    const orderbookFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const result = await orderbookFactory.functions.matcher_fee().get();
+
+    return result.value;
+  };
+
   fetchProtocolFee = async (options: Options): Promise<number> => {
     const orderbookFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,

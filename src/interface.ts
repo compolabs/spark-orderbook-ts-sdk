@@ -136,6 +136,7 @@ export interface CreateOrderParams {
   assetType: AssetType;
   price: string;
   type: OrderType;
+  feeAssetId: string;
 }
 
 export interface FulfillOrderManyParams {
@@ -146,6 +147,7 @@ export interface FulfillOrderManyParams {
   price: string;
   slippage: string;
   orders: string[];
+  feeAssetId: string;
 }
 
 export interface WithdrawParams {

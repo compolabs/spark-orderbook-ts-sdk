@@ -66,7 +66,13 @@ export class WriteActions {
 
   createOrder = async (
     { amount: depositAmount, asset: depositAsset }: DepositParams,
-    { amount, assetType: assetType, price, type }: CreateOrderParams,
+    {
+      amount,
+      assetType: assetType,
+      price,
+      type,
+      feeAssetId,
+    }: CreateOrderParams,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const orderbookFactory = MarketContractAbi__factory.connect(
@@ -79,15 +85,34 @@ export class WriteActions {
       assetId: depositAsset,
     };
 
+    const assetTypeInput = assetType as unknown as AssetTypeInput;
+
+    const protocolFeeAmount = await orderbookFactory.functions
+      .protocol_fee_amount(amount, assetTypeInput)
+      .get();
+    const matcherFee = await orderbookFactory.functions.matcher_fee().get();
+    const totalAmount = new BN(protocolFeeAmount.value.toString()).plus(
+      matcherFee.value,
+    );
+
+    const forwardFee: CoinQuantityLike = {
+      amount: totalAmount.toString(),
+      assetId: feeAssetId,
+    };
+
+    console.log(forwardFee);
+
     const tx = orderbookFactory
       .multiCall([
         orderbookFactory.functions.deposit().callParams({ forward }),
-        orderbookFactory.functions.open_order(
-          amount,
-          assetType as unknown as AssetTypeInput,
-          type as unknown as OrderTypeInput,
-          price,
-        ),
+        orderbookFactory.functions
+          .open_order(
+            amount,
+            assetTypeInput,
+            type as unknown as OrderTypeInput,
+            price,
+          )
+          .callParams({ forward: forwardFee }),
       ])
       .txParams({ gasLimit: options.gasPrice });
 
@@ -144,6 +169,7 @@ export class WriteActions {
       price,
       slippage,
       orders,
+      feeAssetId,
     }: FulfillOrderManyParams,
     options: Options,
   ) => {
@@ -157,18 +183,32 @@ export class WriteActions {
       assetId: depositAsset,
     };
 
+    const assetTypeInput = assetType as unknown as AssetTypeInput;
+
+    const protocolFeeAmount = await orderbookFactory.functions
+      .protocol_fee_amount(amount, assetTypeInput)
+      .get();
+    const totalAmount = new BN(protocolFeeAmount.value.toString());
+
+    const forwardFee: CoinQuantityLike = {
+      amount: totalAmount.toString(),
+      assetId: feeAssetId,
+    };
+
     const tx = orderbookFactory
       .multiCall([
         orderbookFactory.functions.deposit().callParams({ forward }),
-        orderbookFactory.functions.fulfill_order_many(
-          amount,
-          assetType as unknown as AssetTypeInput,
-          orderType as unknown as OrderTypeInput,
-          limitType as unknown as LimitTypeInput,
-          price,
-          slippage,
-          orders,
-        ),
+        orderbookFactory.functions
+          .fulfill_order_many(
+            amount,
+            assetType as unknown as AssetTypeInput,
+            orderType as unknown as OrderTypeInput,
+            limitType as unknown as LimitTypeInput,
+            price,
+            slippage,
+            orders,
+          )
+          .callParams({ forward: forwardFee }),
       ])
       .txParams({ gasLimit: options.gasPrice });
 
