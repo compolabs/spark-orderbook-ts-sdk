@@ -29,7 +29,7 @@ export class WriteActions {
     amount: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const orderbookFactory = MarketContractAbi__factory.connect(
+    const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -39,7 +39,7 @@ export class WriteActions {
       assetId: token.address,
     };
 
-    const tx = orderbookFactory.functions.deposit().callParams({ forward });
+    const tx = marketFactory.functions.deposit().callParams({ forward });
 
     return this.sendTransaction(tx, options);
   };
@@ -49,12 +49,12 @@ export class WriteActions {
     assetType: AssetType,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const orderbookFactory = MarketContractAbi__factory.connect(
+    const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
 
-    const tx = orderbookFactory.functions.withdraw(
+    const tx = marketFactory.functions.withdraw(
       amount,
       assetType as unknown as AssetTypeInput,
     );
@@ -63,26 +63,18 @@ export class WriteActions {
   };
 
   createOrder = async (
-    {
-      amount,
-      assetType: assetType,
-      price,
-      type,
-      feeAssetId,
-    }: CreateOrderParams,
+    { amount, price, type, feeAssetId }: CreateOrderParams,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const orderbookFactory = MarketContractAbi__factory.connect(
+    const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
 
-    const assetTypeInput = assetType as unknown as AssetTypeInput;
-
-    const protocolFeeAmount = await orderbookFactory.functions
-      .protocol_fee_amount(amount, assetTypeInput)
+    const protocolFeeAmount = await marketFactory.functions
+      .protocol_fee_amount(amount)
       .get();
-    const matcherFee = await orderbookFactory.functions.matcher_fee().get();
+    const matcherFee = await marketFactory.functions.matcher_fee().get();
     const totalAmount = new BN(protocolFeeAmount.value.toString()).plus(
       matcherFee.value,
     );
@@ -92,15 +84,8 @@ export class WriteActions {
       assetId: feeAssetId,
     };
 
-    console.log(forwardFee);
-
-    const tx = orderbookFactory.functions
-      .open_order(
-        amount,
-        assetTypeInput,
-        type as unknown as OrderTypeInput,
-        price,
-      )
+    const tx = marketFactory.functions
+      .open_order(amount, type as unknown as OrderTypeInput, price)
       .callParams({ forward: forwardFee })
       .txParams({ gasLimit: options.gasPrice });
 
@@ -111,12 +96,12 @@ export class WriteActions {
     orderId: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const orderbookFactory = MarketContractAbi__factory.connect(
+    const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
 
-    const tx = orderbookFactory.functions
+    const tx = marketFactory.functions
       .cancel_order(orderId)
       .txParams({ gasLimit: options.gasPrice });
 
@@ -128,12 +113,12 @@ export class WriteActions {
     buyOrderId: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const orderbookFactory = MarketContractAbi__factory.connect(
+    const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
 
-    const tx = orderbookFactory.functions
+    const tx = marketFactory.functions
       .match_order_pair(sellOrderId, buyOrderId)
       .txParams({ gasLimit: options.gasPrice });
 
@@ -143,7 +128,6 @@ export class WriteActions {
   fulfillOrderMany = async (
     {
       amount,
-      assetType,
       orderType,
       limitType,
       price,
@@ -153,15 +137,13 @@ export class WriteActions {
     }: FulfillOrderManyParams,
     options: Options,
   ) => {
-    const orderbookFactory = MarketContractAbi__factory.connect(
+    const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
 
-    const assetTypeInput = assetType as unknown as AssetTypeInput;
-
-    const protocolFeeAmount = await orderbookFactory.functions
-      .protocol_fee_amount(amount, assetTypeInput)
+    const protocolFeeAmount = await marketFactory.functions
+      .protocol_fee_amount(amount)
       .get();
     const totalAmount = new BN(protocolFeeAmount.value.toString());
 
@@ -170,10 +152,9 @@ export class WriteActions {
       assetId: feeAssetId,
     };
 
-    const tx = orderbookFactory.functions
+    const tx = marketFactory.functions
       .fulfill_order_many(
         amount,
-        assetType as unknown as AssetTypeInput,
         orderType as unknown as OrderTypeInput,
         limitType as unknown as LimitTypeInput,
         price,

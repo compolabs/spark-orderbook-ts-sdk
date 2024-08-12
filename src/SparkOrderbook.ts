@@ -24,7 +24,8 @@ import {
   GetActiveOrdersParams,
   GetOrdersParams,
   GetTradeOrderEventsParams,
-  MarketCreateEvent,
+  MarketInfo,
+  Markets,
   Options,
   OptionsSpark,
   Order,
@@ -116,20 +117,16 @@ export class SparkOrderbook {
     return this.write.withdraw(amount, assetType, this.getApiOptions());
   };
 
-  /**
-   * Not working! All data is hardcoded
-   * TODO: FIX IT
-   */
-  fetchMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
-    // return this.indexerApi.getMarketCreateEvents();
-    return [
-      {
-        id: "1",
-        assetId:
-          "0xccceae45a7c23dcd4024f4083e959a0686a191694e76fa4fb76c449361ca01f7",
-        decimal: 9,
-      },
-    ];
+  fetchMarkets = async (assetIds: string[]): Promise<Markets> => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchMarkets(assetIds, options);
+  };
+
+  fetchMarketConfig = async (marketAddress: string): Promise<MarketInfo> => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchMarketConfig(marketAddress, options);
   };
 
   fetchMarketPrice = async (baseToken: Asset): Promise<BN> => {
@@ -209,10 +206,10 @@ export class SparkOrderbook {
     return this.read.fetchProtocolFee(options);
   };
 
-  fetchProtocolFeeForAmount = async (amount: string, assetType: AssetType) => {
+  fetchProtocolFeeForAmount = async (amount: string) => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchProtocolFeeForAmount(amount, assetType, options);
+    return this.read.fetchProtocolFeeForAmount(amount, options);
   };
 
   getProviderWallet = async () => {
