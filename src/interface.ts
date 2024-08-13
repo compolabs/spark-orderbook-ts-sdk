@@ -94,7 +94,7 @@ export enum AssetType {
 export enum LimitType {
   IOC = "IOC",
   FOK = "FOK",
-  GTC = "GTC"
+  GTC = "GTC",
 }
 
 export type Status = "Active" | "Canceled" | "Closed";
@@ -124,8 +124,8 @@ export interface GetActiveOrdersParams {
 }
 
 export type ActiveOrderReturn<T extends OrderType> = T extends OrderType.Buy
-    ? { ActiveBuyOrder: Order[] }
-    : { ActiveSellOrder: Order[] };
+  ? { ActiveBuyOrder: Order[] }
+  : { ActiveSellOrder: Order[] };
 
 export interface CreateOrderParams {
   amount: string;
