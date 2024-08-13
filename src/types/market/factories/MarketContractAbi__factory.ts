@@ -508,11 +508,6 @@ const _abi = {
           "typeArguments": null
         },
         {
-          "name": "asset_type",
-          "type": 7,
-          "typeArguments": null
-        },
-        {
           "name": "order_type",
           "type": 15,
           "typeArguments": null
@@ -841,11 +836,6 @@ const _abi = {
           "typeArguments": null
         },
         {
-          "name": "asset_type",
-          "type": 7,
-          "typeArguments": null
-        },
-        {
           "name": "order_type",
           "type": 15,
           "typeArguments": null
@@ -961,11 +951,6 @@ const _abi = {
         {
           "name": "amount",
           "type": 38,
-          "typeArguments": null
-        },
-        {
-          "name": "asset_type",
-          "type": 7,
           "typeArguments": null
         },
         {
@@ -1215,11 +1200,6 @@ const _abi = {
     {
       "inputs": [
         {
-          "name": "asset_type",
-          "type": 7,
-          "typeArguments": null
-        },
-        {
           "name": "order_type",
           "type": 15,
           "typeArguments": null
@@ -1270,11 +1250,6 @@ const _abi = {
         {
           "name": "amount",
           "type": 38,
-          "typeArguments": null
-        },
-        {
-          "name": "asset_type",
-          "type": 7,
           "typeArguments": null
         }
       ],
@@ -1471,7 +1446,7 @@ const _abi = {
         "type": 21,
         "typeArguments": []
       },
-      "offset": 86752
+      "offset": 86032
     },
     {
       "name": "BASE_ASSET_DECIMALS",
@@ -1480,7 +1455,7 @@ const _abi = {
         "type": 37,
         "typeArguments": null
       },
-      "offset": 86784
+      "offset": 86064
     },
     {
       "name": "OWNER",
@@ -1489,7 +1464,7 @@ const _abi = {
         "type": 20,
         "typeArguments": []
       },
-      "offset": 86840
+      "offset": 86120
     },
     {
       "name": "PRICE_DECIMALS",
@@ -1498,7 +1473,7 @@ const _abi = {
         "type": 37,
         "typeArguments": null
       },
-      "offset": 86872
+      "offset": 86152
     },
     {
       "name": "QUOTE_ASSET",
@@ -1507,7 +1482,7 @@ const _abi = {
         "type": 21,
         "typeArguments": []
       },
-      "offset": 86880
+      "offset": 86160
     },
     {
       "name": "QUOTE_ASSET_DECIMALS",
@@ -1516,7 +1491,7 @@ const _abi = {
         "type": 37,
         "typeArguments": null
       },
-      "offset": 86912
+      "offset": 86192
     },
     {
       "name": "FUEL_ASSET",
@@ -1525,7 +1500,7 @@ const _abi = {
         "type": 21,
         "typeArguments": []
       },
-      "offset": 86808
+      "offset": 86088
     },
     {
       "name": "ETH_BASE_PRICE",
@@ -1534,7 +1509,7 @@ const _abi = {
         "type": 38,
         "typeArguments": null
       },
-      "offset": 86792
+      "offset": 86072
     },
     {
       "name": "ETH_QUOTE_PRICE",
@@ -1543,7 +1518,7 @@ const _abi = {
         "type": 38,
         "typeArguments": null
       },
-      "offset": 86800
+      "offset": 86080
     }
   ]
 };

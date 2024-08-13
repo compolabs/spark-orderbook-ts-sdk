@@ -1,4 +1,5 @@
 import { WalletLocked, WalletUnlocked } from "fuels";
+import { Undefinable } from "tsdef";
 
 import BN from "./utils/BN";
 
@@ -6,6 +7,7 @@ export type MarketStatusOutput = "Opened" | "Paused" | "Closed";
 
 export interface OrderbookContracts {
   market: string;
+  orderbook: string;
   tokenFactory: string;
   pyth: string;
 }
@@ -129,7 +131,6 @@ export type ActiveOrderReturn<T extends OrderType> = T extends OrderType.Buy
 
 export interface CreateOrderParams {
   amount: string;
-  assetType: AssetType;
   price: string;
   type: OrderType;
   feeAssetId: string;
@@ -137,7 +138,6 @@ export interface CreateOrderParams {
 
 export interface FulfillOrderManyParams {
   amount: string;
-  assetType: AssetType;
   orderType: OrderType;
   limitType: LimitType;
   price: string;
@@ -175,3 +175,15 @@ export type Volume = {
   high24h: string;
   low24h: string;
 };
+
+export type Markets = Record<string, Undefinable<string>>;
+
+export interface MarketInfo {
+  owner: string;
+  baseAssetId: string;
+  baseAssetDecimals: number;
+  quoteAssetId: string;
+  quoteAssetDecimals: number;
+  priceDecimals: number;
+  feeAssetId: string;
+}

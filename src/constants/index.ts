@@ -7,6 +7,8 @@ export const DEFAULT_GAS_LIMIT_MULTIPLIER = "2";
 
 export const BETA_CONTRACT_ADDRESSES: OrderbookContracts = {
   market: "0x08ca18ed550d6229f001641d43aac58e00f9eb7e25c9bea6d33716af61e43b2a",
+  orderbook:
+    "0x8fa518228af2d06fc495faa51fea2f670c793fee747b50c9637220e35e8ddca0",
   tokenFactory:
     "0x3141a3f11e3f784364d57860e3a4dcf9b73d42e23fd49038773cefb09c633348",
   pyth: "0x3cd5005f23321c8ae0ccfa98fb07d9a5ff325c483f21d2d9540d6897007600c9",
