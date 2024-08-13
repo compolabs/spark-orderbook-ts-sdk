@@ -33,10 +33,10 @@ export type AssetIdInput = { bits: string };
 export type AssetIdOutput = AssetIdInput;
 export type ContractIdInput = { bits: string };
 export type ContractIdOutput = ContractIdInput;
-export type MarketRegisterEventInput = { asset_id: AssetIdInput, market: ContractIdInput };
-export type MarketRegisterEventOutput = { asset_id: AssetIdOutput, market: ContractIdOutput };
-export type MarketUnregisterEventInput = { asset_id: AssetIdInput };
-export type MarketUnregisterEventOutput = { asset_id: AssetIdOutput };
+export type MarketRegisterEventInput = { base: AssetIdInput, quote: AssetIdInput, market: ContractIdInput };
+export type MarketRegisterEventOutput = { base: AssetIdOutput, quote: AssetIdOutput, market: ContractIdOutput };
+export type MarketUnregisterEventInput = { base: AssetIdInput, quote: AssetIdInput, market: ContractIdInput };
+export type MarketUnregisterEventOutput = { base: AssetIdOutput, quote: AssetIdOutput, market: ContractIdOutput };
 
 export type OrderbookContractAbiConfigurables = Partial<{
   OWNER: AddressInput;
@@ -45,8 +45,8 @@ export type OrderbookContractAbiConfigurables = Partial<{
 export interface OrderbookContractAbiInterface extends Interface {
   functions: {
     config: FunctionFragment;
+    markets: FunctionFragment;
     register_market: FunctionFragment;
-    registered_markets: FunctionFragment;
     unregister_market: FunctionFragment;
   };
 }
@@ -55,8 +55,8 @@ export class OrderbookContractAbi extends Contract {
   interface: OrderbookContractAbiInterface;
   functions: {
     config: InvokeFunction<[], AddressOutput>;
-    register_market: InvokeFunction<[asset_id: AssetIdInput, market: ContractIdInput], void>;
-    registered_markets: InvokeFunction<[asset_ids: Vec<AssetIdInput>], Vec<[AssetIdOutput, Option<ContractIdOutput>]>>;
-    unregister_market: InvokeFunction<[asset_id: AssetIdInput], void>;
+    markets: InvokeFunction<[market_assets: Vec<[AssetIdInput, AssetIdInput]>], Vec<[AssetIdOutput, AssetIdOutput, Option<ContractIdOutput>]>>;
+    register_market: InvokeFunction<[market: ContractIdInput], void>;
+    unregister_market: InvokeFunction<[market: ContractIdInput], void>;
   };
 }

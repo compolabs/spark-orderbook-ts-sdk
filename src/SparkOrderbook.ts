@@ -69,6 +69,16 @@ export class SparkOrderbook {
     this.options = newOptions;
   };
 
+  setActiveMarketAddress = (contractAddress: string) => {
+    this.options = {
+      ...this.options,
+      contractAddresses: {
+        ...this.options.contractAddresses,
+        market: contractAddress,
+      },
+    };
+  };
+
   createOrder = async (
     order: CreateOrderParams,
   ): Promise<WriteTransactionResponse> => {
@@ -117,10 +127,10 @@ export class SparkOrderbook {
     return this.write.withdraw(amount, assetType, this.getApiOptions());
   };
 
-  fetchMarkets = async (assetIds: string[]): Promise<Markets> => {
+  fetchMarkets = async (assetIdPairs: [string, string][]): Promise<Markets> => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchMarkets(assetIds, options);
+    return this.read.fetchMarkets(assetIdPairs, options);
   };
 
   fetchMarketConfig = async (marketAddress: string): Promise<MarketInfo> => {

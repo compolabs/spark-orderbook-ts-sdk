@@ -18,37 +18,34 @@ import {
 
 export class ReadActions {
   fetchMarkets = async (
-    assetIds: string[],
+    assetIdPairs: [string, string][],
     options: Options,
   ): Promise<Markets> => {
-    console.log(options.contractAddresses.orderbook);
     const orderbookFactory = OrderbookContractAbi__factory.connect(
       options.contractAddresses.orderbook,
       options.wallet,
     );
 
-    const assetIdInput: Vec<AssetIdInput> = assetIds.map((assetId) => ({
-      bits: assetId,
-    }));
+    const assetIdInput: Vec<[AssetIdInput, AssetIdInput]> = assetIdPairs.map(
+      ([baseTokenId, quoteTokenId]) => [
+        { bits: baseTokenId },
+        { bits: quoteTokenId },
+      ],
+    );
 
-    console.log("123123", assetIdInput);
+    const data = await orderbookFactory.functions.markets(assetIdInput).get();
 
-    const data = await orderbookFactory.functions
-      .registered_markets([
-        {
-          bits: "0xccceae45a7c23dcd4024f4083e959a0686a191694e76fa4fb76c449361ca01f7",
-        },
-      ])
-      .get();
+    const markets = data.value.reduce(
+      (prev, [baseAssetId, quoteAssetId, contractId]) => {
+        if (!contractId) return prev;
 
-    console.log("data", data);
-
-    const markets = data.value.reduce((prev, [assetId, contractId]) => {
-      return {
-        ...prev,
-        [assetId.bits]: contractId?.bits,
-      };
-    }, {} as Markets);
+        return {
+          ...prev,
+          [baseAssetId.bits]: contractId?.bits,
+        };
+      },
+      {} as Markets,
+    );
 
     return markets;
   };
