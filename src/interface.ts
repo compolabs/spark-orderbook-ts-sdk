@@ -94,6 +94,7 @@ export enum AssetType {
 export enum LimitType {
   IOC = "IOC",
   FOK = "FOK",
+  GTC = "GTC",
 }
 
 export type Status = "Active" | "Canceled" | "Closed";
