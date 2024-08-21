@@ -40,7 +40,7 @@ export interface GraphClientConfig {
 export interface SparkParams {
   networkUrl: string;
   indexerConfig: GraphClientConfig;
-  contractAddresses?: OrderbookContracts;
+  contractAddresses: OrderbookContracts;
   wallet?: WalletLocked | WalletUnlocked;
   gasPrice?: string;
   gasLimitMultiplier?: string;
