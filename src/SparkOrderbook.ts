@@ -9,11 +9,7 @@ import {
 
 import BN from "./utils/BN";
 import { NETWORK_ERROR, NetworkError } from "./utils/NetworkError";
-import {
-  BETA_CONTRACT_ADDRESSES,
-  DEFAULT_GAS_LIMIT_MULTIPLIER,
-  DEFAULT_GAS_PRICE,
-} from "./constants";
+import { DEFAULT_GAS_LIMIT_MULTIPLIER, DEFAULT_GAS_PRICE } from "./constants";
 import { IndexerApi } from "./IndexerApi";
 import {
   ActiveOrderReturn,
@@ -51,7 +47,7 @@ export class SparkOrderbook {
 
   constructor(params: SparkParams) {
     this.options = {
-      contractAddresses: params.contractAddresses ?? BETA_CONTRACT_ADDRESSES,
+      contractAddresses: params.contractAddresses,
       wallet: params.wallet,
       gasPrice: params.gasPrice ?? DEFAULT_GAS_PRICE,
       gasLimitMultiplier:
