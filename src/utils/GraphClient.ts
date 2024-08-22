@@ -18,26 +18,32 @@ export class GraphClient {
       uri: httpUrl,
     });
 
-    const wsLink = new GraphQLWsLink(
-      createClient({
-        url: wsUrl,
-      }),
-    );
+    const wsLink =
+      typeof window !== "undefined"
+        ? new GraphQLWsLink(
+            createClient({
+              url: wsUrl,
+            }),
+          )
+        : null;
 
-    const splitLink = split(
-      ({ query }) => {
-        const definition = getMainDefinition(query);
-        return (
-          definition.kind === "OperationDefinition" &&
-          definition.operation === "subscription"
-        );
-      },
-      wsLink,
-      httpLink,
-    );
+    const splitLink =
+      typeof window !== "undefined" && wsLink !== null
+        ? split(
+            ({ query }) => {
+              const def = getMainDefinition(query);
+              return (
+                def.kind === "OperationDefinition" &&
+                def.operation === "subscription"
+              );
+            },
+            wsLink,
+            httpLink,
+          )
+        : httpLink;
 
     this.client = new ApolloClient({
-      link: wsLink,
+      link: splitLink,
       cache: new InMemoryCache(),
     });
   }
