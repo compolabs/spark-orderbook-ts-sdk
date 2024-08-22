@@ -8,7 +8,6 @@ export interface OrderbookContracts {
   market: string;
   orderbook: string;
   tokenFactory: string;
-  pyth: string;
 }
 
 export interface Asset {
@@ -43,7 +42,6 @@ export interface SparkParams {
   wallet?: WalletLocked | WalletUnlocked;
   gasPrice?: string;
   gasLimitMultiplier?: string;
-  pythUrl?: string;
 }
 
 export interface SpotOrderWithoutTimestamp {
