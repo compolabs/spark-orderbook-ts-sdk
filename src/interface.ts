@@ -1,5 +1,4 @@
 import { WalletLocked, WalletUnlocked } from "fuels";
-import { Undefinable } from "tsdef";
 
 import BN from "./utils/BN";
 
@@ -176,7 +175,7 @@ export type Volume = {
   low24h: string;
 };
 
-export type Markets = Record<string, Undefinable<string>>;
+export type Markets = Record<string, string>;
 
 export interface MarketInfo {
   owner: string;

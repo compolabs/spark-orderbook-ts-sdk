@@ -1,4 +1,4 @@
-import { Address, Bech32Address } from "fuels";
+import { Address, Bech32Address, ZeroBytes32 } from "fuels";
 
 import { MarketContractAbi__factory } from "./types/market";
 import { AddressInput, IdentityInput } from "./types/market/MarketContractAbi";
@@ -41,7 +41,8 @@ export class ReadActions {
 
         return {
           ...prev,
-          [baseAssetId.bits]: contractId?.bits,
+          [`${baseAssetId.bits}-${quoteAssetId.bits}`]:
+            contractId?.bits ?? ZeroBytes32,
         };
       },
       {} as Markets,
