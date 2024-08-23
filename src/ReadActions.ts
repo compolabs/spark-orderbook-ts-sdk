@@ -1,7 +1,9 @@
 import { Address, Bech32Address, ZeroBytes32 } from "fuels";
+import { Undefinable } from "tsdef";
 
 import { MarketContract } from "./types/market";
 import { AddressInput, IdentityInput } from "./types/market/MarketContract";
+import { MultiassetContract } from "./types/multiasset";
 import { OrderbookContract } from "./types/orderbook";
 import { Vec } from "./types/orderbook/common";
 import { AssetIdInput } from "./types/orderbook/OrderbookContract";
@@ -33,6 +35,20 @@ export class ReadActions {
     };
   };
 
+  getAsset = async (
+    symbol: string,
+    options: Options,
+  ): Promise<Undefinable<string>> => {
+    const orderbookFactory = new MultiassetContract(
+      options.contractAddresses.multiAsset,
+      options.wallet,
+    );
+
+    const data = await orderbookFactory.functions.asset_get(symbol).get();
+
+    return data.value?.bits;
+  };
+
   fetchMarkets = async (
     assetIdPairs: [string, string][],
     options: Options,
@@ -42,6 +58,8 @@ export class ReadActions {
       options.wallet,
     );
 
+    console.log(options.contractAddresses.orderbook);
+
     const assetIdInput: Vec<[AssetIdInput, AssetIdInput]> = assetIdPairs.map(
       ([baseTokenId, quoteTokenId]) => [
         { bits: baseTokenId },
@@ -50,6 +68,8 @@ export class ReadActions {
     );
 
     const data = await orderbookFactory.functions.markets(assetIdInput).get();
+
+    console.log(data.value);
 
     const markets = data.value.reduce(
       (prev, [baseAssetId, quoteAssetId, contractId]) => {

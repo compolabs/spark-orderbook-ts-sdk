@@ -226,6 +226,12 @@ export class SparkOrderbook {
     return this.read.getOrderbookVersion(options);
   };
 
+  getAsset = async (symbol: string) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.getAsset(symbol, options);
+  };
+
   getProviderWallet = async () => {
     const provider = await this.getProvider();
     return Wallet.generate({ provider });
