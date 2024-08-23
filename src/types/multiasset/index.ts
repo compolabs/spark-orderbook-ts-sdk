@@ -8,5 +8,5 @@
   Fuels version: 0.94.1
 */
 
-export { OrderbookContract } from './OrderbookContract';
-export { OrderbookContractFactory } from './OrderbookContractFactory';
+export { MultiassetContract } from './MultiassetContract';
+export { MultiassetContractFactory } from './MultiassetContractFactory';

@@ -7,7 +7,7 @@ export type MarketStatusOutput = "Opened" | "Paused" | "Closed";
 export interface OrderbookContracts {
   market: string;
   orderbook: string;
-  tokenFactory: string;
+  multiAsset: string;
 }
 
 export interface Asset {

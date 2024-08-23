@@ -5,7 +5,7 @@ import {
   MatchErrorInput,
   OrderErrorInput,
   ValueErrorInput,
-} from "src/types/market/MarketContractAbi";
+} from "src/types/market/MarketContract";
 
 type EnsureArray<T> = T extends any[] ? T : [T];
 
@@ -30,25 +30,22 @@ type HumanReadableMessages = {
 };
 
 const humanReadableMessages: HumanReadableMessages = {
-  InsufficientBalance: (args) =>
-    `Insufficient balance. Available: ${args[0]?.toString()}, Required: ${args[1]?.toString()}.`,
-  InvalidAsset: () => `The asset provided is invalid.`,
-  InvalidFeeAsset: () => `The fee asset provided is invalid.`,
-  Unauthorized: () => `You are not authorized to perform this action.`,
-  CantMatch: () => `Can't match.`,
-  CantMatchMany: () => `Cannot match many.`,
-  CantFulfillMany: () => `Cannot fulfill many.`,
-  OrderNotFound: (args) => `Order with ID ${args[0]} was not found.`,
-  PriceTooSmall: (args) =>
-    `The price ${args[0]?.toString()} is too small. It should be at least ${args[1]?.toString()}.`,
-  ZeroOrderAmount: () => `Order amount cannot be zero.`,
-  ZeroLockAmount: () => `Lock amount cannot be zero.`,
-  FailedToRemove: (args) => `Failed to remove order with ID ${args[0]}.`,
-  InvalidAmount: () => `Invalid amount provided.`,
-  InvalidSlippage: () => `Invalid slippage provided.`,
-  InvalidArrayLength: () => `Invalid array length.`,
-  InvalidFeeAmount: (args) =>
-    `Fee ${args[0]?.toString()} is too low. Minimum fee required is ${args[1]?.toString()}.`,
+  InsufficientBalance: () => `Insufficient balance`,
+  InvalidAsset: () => `The asset provided is invalid`,
+  InvalidFeeAsset: () => `The fee asset provided is invalid`,
+  Unauthorized: () => `You are not authorized to perform this action`,
+  CantMatch: () => `Can't match`,
+  CantMatchMany: () => `Cannot match many`,
+  CantFulfillMany: () => `Cannot fulfill many`,
+  OrderNotFound: (args) => `Order with ID ${args[0]} was not found`,
+  PriceTooSmall: () => `The price is too small`,
+  ZeroOrderAmount: () => `Order amount cannot be zero`,
+  ZeroLockAmount: () => `Lock amount cannot be zero`,
+  FailedToRemove: (args) => `Failed to remove order with ID ${args[0]}`,
+  InvalidAmount: () => `Invalid amount provided`,
+  InvalidSlippage: () => `Invalid slippage provided`,
+  InvalidArrayLength: () => `Invalid array length`,
+  InvalidFeeAmount: () => `Fee is too low`,
 };
 
 export const getHumanReadableError = <K extends keyof HumanReadableMessages>(

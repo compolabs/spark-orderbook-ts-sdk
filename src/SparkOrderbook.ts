@@ -6,6 +6,7 @@ import {
   WalletLocked,
   WalletUnlocked,
 } from "fuels";
+import { Undefinable } from "tsdef";
 
 import BN from "./utils/BN";
 import { NETWORK_ERROR, NetworkError } from "./utils/NetworkError";
@@ -41,6 +42,7 @@ export class SparkOrderbook {
   private write = new WriteActions();
 
   private providerPromise: Promise<Provider>;
+  private provider: Undefinable<Provider>;
   private options: OptionsSpark;
 
   private indexerApi: IndexerApi;
@@ -218,13 +220,25 @@ export class SparkOrderbook {
     return this.read.fetchProtocolFeeForAmount(amount, options);
   };
 
+  getVersion = async () => {
+    const options = await this.getFetchOptions();
+
+    return this.read.getOrderbookVersion(options);
+  };
+
   getProviderWallet = async () => {
-    const provider = await this.providerPromise;
+    const provider = await this.getProvider();
     return Wallet.generate({ provider });
   };
 
   getProvider = async () => {
-    return this.providerPromise;
+    if (this.provider) {
+      return this.provider;
+    }
+
+    this.provider = await this.providerPromise;
+
+    return this.provider;
   };
 
   private getFetchOptions = async (): Promise<Options> => {
