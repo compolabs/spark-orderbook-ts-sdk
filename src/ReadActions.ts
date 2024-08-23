@@ -9,7 +9,6 @@ import { Vec } from "./types/orderbook/common";
 import { AssetIdInput } from "./types/orderbook/OrderbookContract";
 import BN from "./utils/BN";
 import {
-  AssetType,
   MarketInfo,
   Markets,
   Options,
@@ -168,7 +167,6 @@ export class ReadActions {
 
     return {
       id: orderId,
-      assetType: result.value.asset_type as unknown as AssetType,
       orderType: result.value.order_type as unknown as OrderType,
       trader: result.value.owner.Address?.bits ?? "",
       baseSize,

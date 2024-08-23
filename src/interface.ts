@@ -46,7 +46,6 @@ export interface SparkParams {
 
 export interface SpotOrderWithoutTimestamp {
   id: string;
-  assetType: AssetType;
   orderType: OrderType;
   trader: string;
   baseSize: BN;
@@ -146,7 +145,6 @@ export interface FulfillOrderManyParams {
 export interface Order {
   id: string;
   asset: string;
-  asset_type: AssetType;
   amount: string;
   initial_amount: string;
   order_type: OrderType;
