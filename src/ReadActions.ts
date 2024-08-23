@@ -1,10 +1,12 @@
 import { Address, Bech32Address, ZeroBytes32 } from "fuels";
+import { Undefinable } from "tsdef";
 
-import { MarketContractAbi__factory } from "./types/market";
-import { AddressInput, IdentityInput } from "./types/market/MarketContractAbi";
-import { OrderbookContractAbi__factory } from "./types/orderbook";
+import { MarketContract } from "./types/market";
+import { AddressInput, IdentityInput } from "./types/market/MarketContract";
+import { MultiassetContract } from "./types/multiasset";
+import { OrderbookContract } from "./types/orderbook";
 import { Vec } from "./types/orderbook/common";
-import { AssetIdInput } from "./types/orderbook/OrderbookContractAbi";
+import { AssetIdInput } from "./types/orderbook/OrderbookContract";
 import BN from "./utils/BN";
 import {
   AssetType,
@@ -17,14 +19,46 @@ import {
 } from "./interface";
 
 export class ReadActions {
+  getOrderbookVersion = async (
+    options: Options,
+  ): Promise<{ address: string; version: number }> => {
+    const orderbookFactory = new OrderbookContract(
+      options.contractAddresses.orderbook,
+      options.wallet,
+    );
+
+    const data = await orderbookFactory.functions.config().get();
+
+    return {
+      address: data.value[0].bits,
+      version: data.value[1],
+    };
+  };
+
+  getAsset = async (
+    symbol: string,
+    options: Options,
+  ): Promise<Undefinable<string>> => {
+    const orderbookFactory = new MultiassetContract(
+      options.contractAddresses.multiAsset,
+      options.wallet,
+    );
+
+    const data = await orderbookFactory.functions.asset_get(symbol).get();
+
+    return data.value?.bits;
+  };
+
   fetchMarkets = async (
     assetIdPairs: [string, string][],
     options: Options,
   ): Promise<Markets> => {
-    const orderbookFactory = OrderbookContractAbi__factory.connect(
+    const orderbookFactory = new OrderbookContract(
       options.contractAddresses.orderbook,
       options.wallet,
     );
+
+    console.log(options.contractAddresses.orderbook);
 
     const assetIdInput: Vec<[AssetIdInput, AssetIdInput]> = assetIdPairs.map(
       ([baseTokenId, quoteTokenId]) => [
@@ -34,6 +68,8 @@ export class ReadActions {
     );
 
     const data = await orderbookFactory.functions.markets(assetIdInput).get();
+
+    console.log(data.value);
 
     const markets = data.value.reduce(
       (prev, [baseAssetId, quoteAssetId, contractId]) => {
@@ -55,10 +91,7 @@ export class ReadActions {
     marketAddress: string,
     options: Options,
   ): Promise<MarketInfo> => {
-    const marketFactory = MarketContractAbi__factory.connect(
-      marketAddress,
-      options.wallet,
-    );
+    const marketFactory = new MarketContract(marketAddress, options.wallet);
 
     const data = await marketFactory.functions.config().get();
 
@@ -84,7 +117,7 @@ export class ReadActions {
     trader: Bech32Address,
     options: Options,
   ): Promise<UserMarketBalance> => {
-    const marketFactory = MarketContractAbi__factory.connect(
+    const marketFactory = new MarketContract(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -121,7 +154,7 @@ export class ReadActions {
     orderId: string,
     options: Options,
   ): Promise<SpotOrderWithoutTimestamp | undefined> => {
-    const marketFactory = MarketContractAbi__factory.connect(
+    const marketFactory = new MarketContract(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -147,7 +180,7 @@ export class ReadActions {
     trader: Bech32Address,
     options: Options,
   ): Promise<string[]> => {
-    const marketFactory = MarketContractAbi__factory.connect(
+    const marketFactory = new MarketContract(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -176,7 +209,7 @@ export class ReadActions {
   };
 
   fetchMatcherFee = async (options: Options): Promise<number> => {
-    const marketFactory = MarketContractAbi__factory.connect(
+    const marketFactory = new MarketContract(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -187,7 +220,7 @@ export class ReadActions {
   };
 
   fetchProtocolFee = async (options: Options): Promise<number> => {
-    const marketFactory = MarketContractAbi__factory.connect(
+    const marketFactory = new MarketContract(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -201,7 +234,7 @@ export class ReadActions {
     amount: string,
     options: Options,
   ): Promise<string> => {
-    const marketFactory = MarketContractAbi__factory.connect(
+    const marketFactory = new MarketContract(
       options.contractAddresses.market,
       options.wallet,
     );
