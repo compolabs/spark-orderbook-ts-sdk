@@ -32,10 +32,10 @@ export type IdentityInput = Enum<{ Address: AddressInput, ContractId: ContractId
 export type IdentityOutput = Enum<{ Address: AddressOutput, ContractId: ContractIdOutput }>;
 export enum InitializationErrorInput { CannotReinitialized = 'CannotReinitialized' };
 export enum InitializationErrorOutput { CannotReinitialized = 'CannotReinitialized' };
-export type StateInput = Enum<{ Uninitialized: [], Initialized: IdentityInput, Revoked: [] }>;
-export type StateOutput = Enum<{ Uninitialized: [], Initialized: IdentityOutput, Revoked: [] }>;
-export type ValueErrorInput = Enum<{ ZeroStringLength: [], ZeroValue: [], BadIntValue: BigNumberish }>;
-export type ValueErrorOutput = Enum<{ ZeroStringLength: [], ZeroValue: [], BadIntValue: number }>;
+export type StateInput = Enum<{ Uninitialized: undefined, Initialized: IdentityInput, Revoked: undefined }>;
+export type StateOutput = Enum<{ Uninitialized: void, Initialized: IdentityOutput, Revoked: void }>;
+export type ValueErrorInput = Enum<{ ZeroStringLength: undefined, ZeroValue: undefined, BadIntValue: BigNumberish }>;
+export type ValueErrorOutput = Enum<{ ZeroStringLength: void, ZeroValue: void, BadIntValue: number }>;
 
 export type AddressInput = { bits: string };
 export type AddressOutput = AddressInput;
@@ -52,335 +52,369 @@ export type OwnershipSetOutput = { new_owner: IdentityOutput };
 export type OwnershipTransferredInput = { new_owner: IdentityInput, previous_owner: IdentityInput };
 export type OwnershipTransferredOutput = { new_owner: IdentityOutput, previous_owner: IdentityOutput };
 
-const abi: any = {
-  "encoding": "1",
-  "types": [
+const abi = {
+  "programType": "contract",
+  "specVersion": "1",
+  "encodingVersion": "1",
+  "concreteTypes": [
     {
-      "typeId": 0,
       "type": "()",
-      "components": [],
-      "typeParameters": null
+      "concreteTypeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
     },
     {
-      "typeId": 1,
-      "type": "b256",
-      "components": null,
-      "typeParameters": null
+      "type": "enum errors::AssetError",
+      "concreteTypeId": "e0676030b211eb9ed3b9837fc852a3cf3b6533a31533dd3ab957e8b3f6e77dd3",
+      "metadataTypeId": 1
     },
     {
-      "typeId": 2,
-      "type": "enum AccessError",
-      "components": [
-        {
-          "name": "NotOwner",
-          "type": 0,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": null
+      "type": "enum errors::ValueError",
+      "concreteTypeId": "380bd4d6b96f9eaa3a3d8db8bb9753399443715fb3fd65460cc28d6ab4d3659b",
+      "metadataTypeId": 2
     },
     {
-      "typeId": 3,
-      "type": "enum AssetError",
-      "components": [
-        {
-          "name": "AssetNotFound",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "AssetAlreadyExists",
-          "type": 12,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": null
+      "type": "enum standards::src5::AccessError",
+      "concreteTypeId": "3f702ea3351c9c1ece2b84048006c8034a24cbc2bad2e740d0412b4172951d3d",
+      "metadataTypeId": 3
     },
     {
-      "typeId": 4,
-      "type": "enum Identity",
-      "components": [
-        {
-          "name": "Address",
-          "type": 11,
-          "typeArguments": null
-        },
-        {
-          "name": "ContractId",
-          "type": 16,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": null
+      "type": "enum standards::src5::State",
+      "concreteTypeId": "192bc7098e2fe60635a9918afb563e4e5419d386da2bdbf0d716b4bc8549802c",
+      "metadataTypeId": 4
     },
     {
-      "typeId": 5,
-      "type": "enum InitializationError",
-      "components": [
-        {
-          "name": "CannotReinitialized",
-          "type": 0,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": null
+      "type": "enum std::identity::Identity",
+      "concreteTypeId": "ab7cd04e05be58e3fc15d424c2c4a57f824a2a2d97d67252440a3925ebdc1335",
+      "metadataTypeId": 5
     },
     {
-      "typeId": 6,
-      "type": "enum Option",
-      "components": [
-        {
-          "name": "None",
-          "type": 0,
-          "typeArguments": null
-        },
-        {
-          "name": "Some",
-          "type": 9,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": [
-        9
+      "type": "enum std::option::Option<struct std::asset_id::AssetId>",
+      "concreteTypeId": "191bf2140761b3c5ab6c43992d162bb3dc9d7f2272b2ee5f5eeea411ddedcd32",
+      "metadataTypeId": 6,
+      "typeArguments": [
+        "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974"
       ]
     },
     {
-      "typeId": 7,
-      "type": "enum State",
-      "components": [
-        {
-          "name": "Uninitialized",
-          "type": 0,
-          "typeArguments": null
-        },
-        {
-          "name": "Initialized",
-          "type": 4,
-          "typeArguments": null
-        },
-        {
-          "name": "Revoked",
-          "type": 0,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": null
+      "type": "enum std::option::Option<struct std::string::String>",
+      "concreteTypeId": "7c06d929390a9aeeb8ffccf8173ac0d101a9976d99dda01cce74541a81e75ac0",
+      "metadataTypeId": 6,
+      "typeArguments": [
+        "9a7f1d3e963c10e0a4ea70a8e20a4813d1dc5682e28f74cb102ae50d32f7f98c"
+      ]
     },
     {
-      "typeId": 8,
-      "type": "enum ValueError",
+      "type": "enum std::option::Option<u64>",
+      "concreteTypeId": "d852149004cc9ec0bbe7dc4e37bffea1d41469b759512b6136f2e865a4c06e7d",
+      "metadataTypeId": 6,
+      "typeArguments": [
+        "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
+      ]
+    },
+    {
+      "type": "enum std::option::Option<u8>",
+      "concreteTypeId": "2da102c46c7263beeed95818cd7bee801716ba8303dddafdcd0f6c9efda4a0f1",
+      "metadataTypeId": 6,
+      "typeArguments": [
+        "c89951a24c6ca28c13fd1cfdc646b2b656d69e61a92b91023be7eb58eb914b6b"
+      ]
+    },
+    {
+      "type": "enum sway_libs::ownership::errors::InitializationError",
+      "concreteTypeId": "1dfe7feadc1d9667a4351761230f948744068a090fe91b1bc6763a90ed5d3893",
+      "metadataTypeId": 7
+    },
+    {
+      "type": "struct events::AssetMinted",
+      "concreteTypeId": "ab8d49ec0c44a3ac2976b0446ce663148727a910d4689489fd655216d435b9a3",
+      "metadataTypeId": 10
+    },
+    {
+      "type": "struct events::AssetNew",
+      "concreteTypeId": "7dd57ab0e1794721fca1ecad4d9eb5ec9771a3d365310d6e6df1772f24c5d842",
+      "metadataTypeId": 11
+    },
+    {
+      "type": "struct std::asset_id::AssetId",
+      "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974",
+      "metadataTypeId": 13
+    },
+    {
+      "type": "struct std::string::String",
+      "concreteTypeId": "9a7f1d3e963c10e0a4ea70a8e20a4813d1dc5682e28f74cb102ae50d32f7f98c",
+      "metadataTypeId": 17
+    },
+    {
+      "type": "struct sway_libs::ownership::events::OwnershipSet",
+      "concreteTypeId": "e1ef35033ea9d2956f17c3292dea4a46ce7d61fdf37bbebe03b7b965073f43b5",
+      "metadataTypeId": 18
+    },
+    {
+      "type": "struct sway_libs::ownership::events::OwnershipTransferred",
+      "concreteTypeId": "b3fffbcb3158d7c010c31b194b60fb7857adb4ad61bdcf4b8b42958951d9f308",
+      "metadataTypeId": 19
+    },
+    {
+      "type": "u64",
+      "concreteTypeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
+    },
+    {
+      "type": "u8",
+      "concreteTypeId": "c89951a24c6ca28c13fd1cfdc646b2b656d69e61a92b91023be7eb58eb914b6b"
+    }
+  ],
+  "metadataTypes": [
+    {
+      "type": "b256",
+      "metadataTypeId": 0
+    },
+    {
+      "type": "enum errors::AssetError",
+      "metadataTypeId": 1,
+      "components": [
+        {
+          "name": "AssetNotFound",
+          "typeId": 13
+        },
+        {
+          "name": "AssetAlreadyExists",
+          "typeId": 13
+        }
+      ]
+    },
+    {
+      "type": "enum errors::ValueError",
+      "metadataTypeId": 2,
       "components": [
         {
           "name": "ZeroStringLength",
-          "type": 0,
-          "typeArguments": null
+          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
         },
         {
           "name": "ZeroValue",
-          "type": 0,
-          "typeArguments": null
+          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
         },
         {
           "name": "BadIntValue",
-          "type": 22,
-          "typeArguments": null
+          "typeId": "c89951a24c6ca28c13fd1cfdc646b2b656d69e61a92b91023be7eb58eb914b6b"
         }
-      ],
-      "typeParameters": null
+      ]
     },
     {
-      "typeId": 9,
+      "type": "enum standards::src5::AccessError",
+      "metadataTypeId": 3,
+      "components": [
+        {
+          "name": "NotOwner",
+          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
+        }
+      ]
+    },
+    {
+      "type": "enum standards::src5::State",
+      "metadataTypeId": 4,
+      "components": [
+        {
+          "name": "Uninitialized",
+          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
+        },
+        {
+          "name": "Initialized",
+          "typeId": 5
+        },
+        {
+          "name": "Revoked",
+          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
+        }
+      ]
+    },
+    {
+      "type": "enum std::identity::Identity",
+      "metadataTypeId": 5,
+      "components": [
+        {
+          "name": "Address",
+          "typeId": 12
+        },
+        {
+          "name": "ContractId",
+          "typeId": 16
+        }
+      ]
+    },
+    {
+      "type": "enum std::option::Option",
+      "metadataTypeId": 6,
+      "components": [
+        {
+          "name": "None",
+          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
+        },
+        {
+          "name": "Some",
+          "typeId": 8
+        }
+      ],
+      "typeParameters": [
+        8
+      ]
+    },
+    {
+      "type": "enum sway_libs::ownership::errors::InitializationError",
+      "metadataTypeId": 7,
+      "components": [
+        {
+          "name": "CannotReinitialized",
+          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
+        }
+      ]
+    },
+    {
       "type": "generic T",
-      "components": null,
-      "typeParameters": null
+      "metadataTypeId": 8
     },
     {
-      "typeId": 10,
       "type": "raw untyped ptr",
-      "components": null,
-      "typeParameters": null
+      "metadataTypeId": 9
     },
     {
-      "typeId": 11,
-      "type": "struct Address",
-      "components": [
-        {
-          "name": "bits",
-          "type": 1,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": null
-    },
-    {
-      "typeId": 12,
-      "type": "struct AssetId",
-      "components": [
-        {
-          "name": "bits",
-          "type": 1,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": null
-    },
-    {
-      "typeId": 13,
-      "type": "struct AssetMinted",
+      "type": "struct events::AssetMinted",
+      "metadataTypeId": 10,
       "components": [
         {
           "name": "recipient",
-          "type": 4,
-          "typeArguments": null
+          "typeId": 5
         },
         {
           "name": "asset",
-          "type": 12,
-          "typeArguments": null
+          "typeId": 13
         },
         {
           "name": "amount",
-          "type": 21,
-          "typeArguments": null
+          "typeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
         },
         {
           "name": "minter",
-          "type": 4,
-          "typeArguments": null
+          "typeId": 5
         }
-      ],
-      "typeParameters": null
+      ]
     },
     {
-      "typeId": 14,
-      "type": "struct AssetNew",
+      "type": "struct events::AssetNew",
+      "metadataTypeId": 11,
       "components": [
         {
           "name": "asset",
-          "type": 12,
-          "typeArguments": null
+          "typeId": 13
         },
         {
           "name": "name",
-          "type": 20,
-          "typeArguments": null
+          "typeId": 17
         },
         {
           "name": "symbol",
-          "type": 20,
-          "typeArguments": null
+          "typeId": 17
         },
         {
           "name": "decimals",
-          "type": 22,
-          "typeArguments": null
+          "typeId": "c89951a24c6ca28c13fd1cfdc646b2b656d69e61a92b91023be7eb58eb914b6b"
         },
         {
           "name": "creator",
-          "type": 4,
-          "typeArguments": null
+          "typeId": 5
         }
-      ],
-      "typeParameters": null
+      ]
     },
     {
-      "typeId": 15,
-      "type": "struct Bytes",
-      "components": [
-        {
-          "name": "buf",
-          "type": 19,
-          "typeArguments": null
-        },
-        {
-          "name": "len",
-          "type": 21,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": null
-    },
-    {
-      "typeId": 16,
-      "type": "struct ContractId",
+      "type": "struct std::address::Address",
+      "metadataTypeId": 12,
       "components": [
         {
           "name": "bits",
-          "type": 1,
-          "typeArguments": null
+          "typeId": 0
         }
-      ],
-      "typeParameters": null
+      ]
     },
     {
-      "typeId": 17,
-      "type": "struct OwnershipSet",
+      "type": "struct std::asset_id::AssetId",
+      "metadataTypeId": 13,
       "components": [
         {
-          "name": "new_owner",
-          "type": 4,
-          "typeArguments": null
+          "name": "bits",
+          "typeId": 0
         }
-      ],
-      "typeParameters": null
+      ]
     },
     {
-      "typeId": 18,
-      "type": "struct OwnershipTransferred",
+      "type": "struct std::bytes::Bytes",
+      "metadataTypeId": 14,
       "components": [
         {
-          "name": "new_owner",
-          "type": 4,
-          "typeArguments": null
+          "name": "buf",
+          "typeId": 15
         },
         {
-          "name": "previous_owner",
-          "type": 4,
-          "typeArguments": null
+          "name": "len",
+          "typeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
         }
-      ],
-      "typeParameters": null
+      ]
     },
     {
-      "typeId": 19,
-      "type": "struct RawBytes",
+      "type": "struct std::bytes::RawBytes",
+      "metadataTypeId": 15,
       "components": [
         {
           "name": "ptr",
-          "type": 10,
-          "typeArguments": null
+          "typeId": 9
         },
         {
           "name": "cap",
-          "type": 21,
-          "typeArguments": null
+          "typeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
         }
-      ],
-      "typeParameters": null
+      ]
     },
     {
-      "typeId": 20,
-      "type": "struct String",
+      "type": "struct std::contract_id::ContractId",
+      "metadataTypeId": 16,
+      "components": [
+        {
+          "name": "bits",
+          "typeId": 0
+        }
+      ]
+    },
+    {
+      "type": "struct std::string::String",
+      "metadataTypeId": 17,
       "components": [
         {
           "name": "bytes",
-          "type": 15,
-          "typeArguments": null
+          "typeId": 14
         }
-      ],
-      "typeParameters": null
+      ]
     },
     {
-      "typeId": 21,
-      "type": "u64",
-      "components": null,
-      "typeParameters": null
+      "type": "struct sway_libs::ownership::events::OwnershipSet",
+      "metadataTypeId": 18,
+      "components": [
+        {
+          "name": "new_owner",
+          "typeId": 5
+        }
+      ]
     },
     {
-      "typeId": 22,
-      "type": "u8",
-      "components": null,
-      "typeParameters": null
+      "type": "struct sway_libs::ownership::events::OwnershipTransferred",
+      "metadataTypeId": 19,
+      "components": [
+        {
+          "name": "new_owner",
+          "typeId": 5
+        },
+        {
+          "name": "previous_owner",
+          "typeId": 5
+        }
+      ]
     }
   ],
   "functions": [
@@ -388,22 +422,11 @@ const abi: any = {
       "inputs": [
         {
           "name": "asset",
-          "type": 12,
-          "typeArguments": null
+          "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974"
         }
       ],
       "name": "decimals",
-      "output": {
-        "name": "",
-        "type": 6,
-        "typeArguments": [
-          {
-            "name": "",
-            "type": 22,
-            "typeArguments": null
-          }
-        ]
-      },
+      "output": "2da102c46c7263beeed95818cd7bee801716ba8303dddafdcd0f6c9efda4a0f1",
       "attributes": [
         {
           "name": "storage",
@@ -417,22 +440,11 @@ const abi: any = {
       "inputs": [
         {
           "name": "asset",
-          "type": 12,
-          "typeArguments": null
+          "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974"
         }
       ],
       "name": "name",
-      "output": {
-        "name": "",
-        "type": 6,
-        "typeArguments": [
-          {
-            "name": "",
-            "type": 20,
-            "typeArguments": null
-          }
-        ]
-      },
+      "output": "7c06d929390a9aeeb8ffccf8173ac0d101a9976d99dda01cce74541a81e75ac0",
       "attributes": [
         {
           "name": "storage",
@@ -446,22 +458,11 @@ const abi: any = {
       "inputs": [
         {
           "name": "asset",
-          "type": 12,
-          "typeArguments": null
+          "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974"
         }
       ],
       "name": "symbol",
-      "output": {
-        "name": "",
-        "type": 6,
-        "typeArguments": [
-          {
-            "name": "",
-            "type": 20,
-            "typeArguments": null
-          }
-        ]
-      },
+      "output": "7c06d929390a9aeeb8ffccf8173ac0d101a9976d99dda01cce74541a81e75ac0",
       "attributes": [
         {
           "name": "storage",
@@ -474,11 +475,7 @@ const abi: any = {
     {
       "inputs": [],
       "name": "total_assets",
-      "output": {
-        "name": "",
-        "type": 21,
-        "typeArguments": null
-      },
+      "output": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0",
       "attributes": [
         {
           "name": "storage",
@@ -492,22 +489,11 @@ const abi: any = {
       "inputs": [
         {
           "name": "asset",
-          "type": 12,
-          "typeArguments": null
+          "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974"
         }
       ],
       "name": "total_supply",
-      "output": {
-        "name": "",
-        "type": 6,
-        "typeArguments": [
-          {
-            "name": "",
-            "type": 21,
-            "typeArguments": null
-          }
-        ]
-      },
+      "output": "d852149004cc9ec0bbe7dc4e37bffea1d41469b759512b6136f2e865a4c06e7d",
       "attributes": [
         {
           "name": "storage",
@@ -520,11 +506,7 @@ const abi: any = {
     {
       "inputs": [],
       "name": "owner",
-      "output": {
-        "name": "",
-        "type": 7,
-        "typeArguments": null
-      },
+      "output": "192bc7098e2fe60635a9918afb563e4e5419d386da2bdbf0d716b4bc8549802c",
       "attributes": [
         {
           "name": "storage",
@@ -538,22 +520,11 @@ const abi: any = {
       "inputs": [
         {
           "name": "symbol",
-          "type": 20,
-          "typeArguments": null
+          "concreteTypeId": "9a7f1d3e963c10e0a4ea70a8e20a4813d1dc5682e28f74cb102ae50d32f7f98c"
         }
       ],
       "name": "asset_get",
-      "output": {
-        "name": "",
-        "type": 6,
-        "typeArguments": [
-          {
-            "name": "",
-            "type": 12,
-            "typeArguments": null
-          }
-        ]
-      },
+      "output": "191bf2140761b3c5ab6c43992d162bb3dc9d7f2272b2ee5f5eeea411ddedcd32",
       "attributes": [
         {
           "name": "storage",
@@ -567,26 +538,19 @@ const abi: any = {
       "inputs": [
         {
           "name": "name",
-          "type": 20,
-          "typeArguments": null
+          "concreteTypeId": "9a7f1d3e963c10e0a4ea70a8e20a4813d1dc5682e28f74cb102ae50d32f7f98c"
         },
         {
           "name": "symbol",
-          "type": 20,
-          "typeArguments": null
+          "concreteTypeId": "9a7f1d3e963c10e0a4ea70a8e20a4813d1dc5682e28f74cb102ae50d32f7f98c"
         },
         {
           "name": "decimals",
-          "type": 22,
-          "typeArguments": null
+          "concreteTypeId": "c89951a24c6ca28c13fd1cfdc646b2b656d69e61a92b91023be7eb58eb914b6b"
         }
       ],
       "name": "asset_new",
-      "output": {
-        "name": "",
-        "type": 12,
-        "typeArguments": null
-      },
+      "output": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974",
       "attributes": [
         {
           "name": "storage",
@@ -601,16 +565,11 @@ const abi: any = {
       "inputs": [
         {
           "name": "new_owner",
-          "type": 4,
-          "typeArguments": null
+          "concreteTypeId": "ab7cd04e05be58e3fc15d424c2c4a57f824a2a2d97d67252440a3925ebdc1335"
         }
       ],
       "name": "initialize_ownership",
-      "output": {
-        "name": "",
-        "type": 0,
-        "typeArguments": null
-      },
+      "output": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d",
       "attributes": [
         {
           "name": "storage",
@@ -625,26 +584,19 @@ const abi: any = {
       "inputs": [
         {
           "name": "recipient",
-          "type": 4,
-          "typeArguments": null
+          "concreteTypeId": "ab7cd04e05be58e3fc15d424c2c4a57f824a2a2d97d67252440a3925ebdc1335"
         },
         {
           "name": "asset",
-          "type": 12,
-          "typeArguments": null
+          "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974"
         },
         {
           "name": "amount",
-          "type": 21,
-          "typeArguments": null
+          "concreteTypeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
         }
       ],
       "name": "mint",
-      "output": {
-        "name": "",
-        "type": 0,
-        "typeArguments": null
-      },
+      "output": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d",
       "attributes": [
         {
           "name": "storage",
@@ -659,16 +611,11 @@ const abi: any = {
       "inputs": [
         {
           "name": "new_owner",
-          "type": 4,
-          "typeArguments": null
+          "concreteTypeId": "ab7cd04e05be58e3fc15d424c2c4a57f824a2a2d97d67252440a3925ebdc1335"
         }
       ],
       "name": "transfer_ownership",
-      "output": {
-        "name": "",
-        "type": 0,
-        "typeArguments": null
-      },
+      "output": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d",
       "attributes": [
         {
           "name": "storage",
@@ -683,67 +630,35 @@ const abi: any = {
   "loggedTypes": [
     {
       "logId": "4038555509566971562",
-      "loggedType": {
-        "name": "",
-        "type": 8,
-        "typeArguments": []
-      }
+      "concreteTypeId": "380bd4d6b96f9eaa3a3d8db8bb9753399443715fb3fd65460cc28d6ab4d3659b"
     },
     {
       "logId": "16169998749359270814",
-      "loggedType": {
-        "name": "",
-        "type": 3,
-        "typeArguments": []
-      }
+      "concreteTypeId": "e0676030b211eb9ed3b9837fc852a3cf3b6533a31533dd3ab957e8b3f6e77dd3"
     },
     {
       "logId": "9067288324896016161",
-      "loggedType": {
-        "name": "",
-        "type": 14,
-        "typeArguments": []
-      }
+      "concreteTypeId": "7dd57ab0e1794721fca1ecad4d9eb5ec9771a3d365310d6e6df1772f24c5d842"
     },
     {
       "logId": "2161305517876418151",
-      "loggedType": {
-        "name": "",
-        "type": 5,
-        "typeArguments": []
-      }
+      "concreteTypeId": "1dfe7feadc1d9667a4351761230f948744068a090fe91b1bc6763a90ed5d3893"
     },
     {
       "logId": "16280289466020123285",
-      "loggedType": {
-        "name": "",
-        "type": 17,
-        "typeArguments": []
-      }
+      "concreteTypeId": "e1ef35033ea9d2956f17c3292dea4a46ce7d61fdf37bbebe03b7b965073f43b5"
     },
     {
       "logId": "12361617830368813996",
-      "loggedType": {
-        "name": "",
-        "type": 13,
-        "typeArguments": []
-      }
+      "concreteTypeId": "ab8d49ec0c44a3ac2976b0446ce663148727a910d4689489fd655216d435b9a3"
     },
     {
       "logId": "4571204900286667806",
-      "loggedType": {
-        "name": "",
-        "type": 2,
-        "typeArguments": []
-      }
+      "concreteTypeId": "3f702ea3351c9c1ece2b84048006c8034a24cbc2bad2e740d0412b4172951d3d"
     },
     {
       "logId": "12970362301975156672",
-      "loggedType": {
-        "name": "",
-        "type": 18,
-        "typeArguments": []
-      }
+      "concreteTypeId": "b3fffbcb3158d7c010c31b194b60fb7857adb4ad61bdcf4b8b42958951d9f308"
     }
   ],
   "messagesTypes": [],
