@@ -21,7 +21,8 @@ import {
   AssetType,
   CreateOrderParams,
   FulfillOrderManyParams,
-  Options, WithdrawAllType,
+  Options,
+  WithdrawAllType,
   WriteTransactionResponse,
 } from "./interface";
 
@@ -65,22 +66,24 @@ export class WriteActions {
   };
 
   withdrawAll = async (
-      assets: WithdrawAllType[],
-      options: Options,
+    assets: WithdrawAllType[],
+    options: Options,
   ): Promise<WriteTransactionResponse> => {
     const marketFactory = new MarketContract(
-        options.contractAddresses.market,
-        options.wallet,
+      options.contractAddresses.market,
+      options.wallet,
     );
 
-    const assetFactory = assets.map((el) => (
-        marketFactory.functions.withdraw(
-          el.amount,
-          el.assetType as unknown as AssetTypeInput,
-    )))
+    const assetCall = assets.map((el) =>
+      marketFactory.functions.withdraw(
+        el.amount,
+        el.assetType as unknown as AssetTypeInput,
+      ),
+    );
+
     const tx = marketFactory
-        .multiCall(assetFactory)
-        .txParams({ gasLimit: options.gasPrice });
+      .multiCall(assetCall)
+      .txParams({ gasLimit: options.gasPrice });
 
     return this.sendMultiTransaction(tx, options);
   };

@@ -98,8 +98,8 @@ export enum LimitType {
 export type Status = "Active" | "Canceled" | "Closed";
 
 export interface WithdrawAllType {
-  amount: string,
-  assetType: AssetType,
+  amount: string;
+  assetType: AssetType;
 }
 
 export interface SpotMarketCreateEvent {

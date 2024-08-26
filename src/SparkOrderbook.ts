@@ -31,7 +31,8 @@ import {
   SpotOrderWithoutTimestamp,
   TradeOrderEvent,
   UserMarketBalance,
-  Volume, WithdrawAllType,
+  Volume,
+  WithdrawAllType,
   WriteTransactionResponse,
 } from "./interface";
 import { ReadActions } from "./ReadActions";
@@ -126,10 +127,10 @@ export class SparkOrderbook {
   };
 
   withdrawAll = async (
-      assets: WithdrawAllType[],
+    assets: WithdrawAllType[],
   ): Promise<WriteTransactionResponse> => {
     return this.write.withdrawAll(assets, this.getApiOptions());
-  }
+  };
 
   fetchMarkets = async (assetIdPairs: [string, string][]): Promise<Markets> => {
     const options = await this.getFetchOptions();
