@@ -70,7 +70,7 @@ export class WriteActions {
     assets: WithdrawAllType[],
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const marketFactory = new MarketContract(
+    const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
