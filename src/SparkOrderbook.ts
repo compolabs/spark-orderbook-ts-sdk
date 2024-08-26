@@ -32,6 +32,7 @@ import {
   TradeOrderEvent,
   UserMarketBalance,
   Volume,
+  WithdrawAllType,
   WriteTransactionResponse,
 } from "./interface";
 import { ReadActions } from "./ReadActions";
@@ -123,6 +124,12 @@ export class SparkOrderbook {
     assetType: AssetType,
   ): Promise<WriteTransactionResponse> => {
     return this.write.withdraw(amount, assetType, this.getApiOptions());
+  };
+
+  withdrawAll = async (
+    assets: WithdrawAllType[],
+  ): Promise<WriteTransactionResponse> => {
+    return this.write.withdrawAll(assets, this.getApiOptions());
   };
 
   fetchMarkets = async (assetIdPairs: [string, string][]): Promise<Markets> => {
