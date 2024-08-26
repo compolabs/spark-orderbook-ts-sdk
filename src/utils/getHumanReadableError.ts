@@ -5,7 +5,7 @@ import {
   MatchErrorInput,
   OrderErrorInput,
   ValueErrorInput,
-} from "src/types/market/MarketContract";
+} from "src/types/market/MarketContractAbi";
 
 type EnsureArray<T> = T extends any[] ? T : [T];
 

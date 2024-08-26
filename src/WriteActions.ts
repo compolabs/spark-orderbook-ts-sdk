@@ -4,17 +4,18 @@ import {
   MultiCallInvocationScope,
 } from "fuels";
 
-import { MarketContract } from "./types/market";
+import { MarketContractAbi__factory } from "./types/market";
 import {
   AssetTypeInput,
   LimitTypeInput,
   OrderTypeInput,
-} from "./types/market/MarketContract";
-import { MultiassetContract } from "./types/multiasset";
+} from "./types/market/MarketContractAbi";
+import { MultiassetContractAbi__factory } from "./types/multiasset";
 import {
   AssetIdInput,
   IdentityInput,
-} from "./types/multiasset/MultiassetContract";
+} from "./types/multiasset/MultiassetContractAbi";
+
 import BN from "./utils/BN";
 import {
   Asset,
@@ -32,7 +33,7 @@ export class WriteActions {
     amount: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const marketFactory = new MarketContract(
+    const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -52,7 +53,7 @@ export class WriteActions {
     assetType: AssetType,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const marketFactory = new MarketContract(
+    const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -92,7 +93,7 @@ export class WriteActions {
     { amount, price, type, feeAssetId }: CreateOrderParams,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const marketFactory = new MarketContract(
+    const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -122,7 +123,7 @@ export class WriteActions {
     orderId: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const marketFactory = new MarketContract(
+    const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -139,7 +140,7 @@ export class WriteActions {
     buyOrderId: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const marketFactory = new MarketContract(
+    const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -163,7 +164,7 @@ export class WriteActions {
     }: FulfillOrderManyParams,
     options: Options,
   ) => {
-    const marketFactory = new MarketContract(
+    const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -199,7 +200,7 @@ export class WriteActions {
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const tokenFactory = options.contractAddresses.multiAsset;
-    const tokenFactoryContract = new MultiassetContract(
+    const tokenFactoryContract = MultiassetContractAbi__factory.connect(
       tokenFactory,
       options.wallet,
     );
