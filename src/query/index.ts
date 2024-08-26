@@ -45,7 +45,6 @@ export const getOrdersQuery = (
       Order(limit: $limit, where: $where, order_by: { price: $priceOrder }) {
         id
         asset
-        asset_type
         amount
         initial_amount
         order_type
