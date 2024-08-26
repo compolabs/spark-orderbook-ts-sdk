@@ -61,8 +61,6 @@ export class ReadActions {
       options.wallet,
     );
 
-    console.log(options.contractAddresses.orderbook);
-
     const assetIdInput: Vec<[AssetIdInput, AssetIdInput]> = assetIdPairs.map(
       ([baseTokenId, quoteTokenId]) => [
         { bits: baseTokenId },
@@ -71,8 +69,6 @@ export class ReadActions {
     );
 
     const data = await orderbookFactory.functions.markets(assetIdInput).get();
-
-    console.log(data.value);
 
     const markets = data.value.reduce(
       (prev, [baseAssetId, quoteAssetId, contractId]) => {

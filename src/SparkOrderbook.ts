@@ -48,7 +48,6 @@ export class SparkOrderbook {
   private indexerApi: IndexerApi;
 
   constructor(params: SparkParams) {
-    console.log("1");
     this.options = {
       contractAddresses: params.contractAddresses,
       wallet: params.wallet,

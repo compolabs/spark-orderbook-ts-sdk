@@ -155,15 +155,6 @@ export class WriteActions {
       assetId: feeAssetId,
     };
 
-    console.log(
-      amount,
-      orderType as unknown as OrderTypeInput,
-      limitType as unknown as LimitTypeInput,
-      price,
-      slippage,
-      orders,
-    );
-
     const tx = marketFactory.functions
       .fulfill_order_many(
         amount,
