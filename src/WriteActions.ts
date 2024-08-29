@@ -40,7 +40,7 @@ export class WriteActions {
 
     const forward: CoinQuantityLike = {
       amount,
-      assetId: token.address,
+      assetId: token.assetId,
     };
 
     const tx = marketFactory.functions.deposit().callParams({ forward });
@@ -208,7 +208,7 @@ export class WriteActions {
     const mintAmount = BN.parseUnits(amount, token.decimals);
 
     const asset: AssetIdInput = {
-      bits: token.address,
+      bits: token.assetId,
     };
 
     const identity: IdentityInput = {

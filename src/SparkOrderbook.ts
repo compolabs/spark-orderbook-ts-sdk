@@ -145,7 +145,7 @@ export class SparkOrderbook {
   };
 
   fetchMarketPrice = async (baseToken: Asset): Promise<BN> => {
-    return this.read.fetchMarketPrice(baseToken.address);
+    return this.read.fetchMarketPrice(baseToken.assetId);
   };
 
   fetchOrders = async (
@@ -192,7 +192,7 @@ export class SparkOrderbook {
 
   fetchWalletBalance = async (asset: Asset): Promise<string> => {
     // We use getApiOptions because we need the user's wallet
-    return this.read.fetchWalletBalance(asset.address, this.getApiOptions());
+    return this.read.fetchWalletBalance(asset.assetId, this.getApiOptions());
   };
 
   fetchOrderIdsByAddress = async (trader: Bech32Address): Promise<string[]> => {

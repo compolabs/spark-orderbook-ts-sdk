@@ -11,7 +11,7 @@ export interface OrderbookContracts {
 }
 
 export interface Asset {
-  address: string;
+  assetId: string;
   symbol: string;
   decimals: number;
 }
