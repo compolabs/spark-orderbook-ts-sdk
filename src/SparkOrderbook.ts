@@ -21,6 +21,7 @@ import {
   GetActiveOrdersParams,
   GetOrdersParams,
   GetTradeOrderEventsParams,
+  GraphClientConfig,
   MarketInfo,
   Markets,
   Options,
@@ -46,20 +47,29 @@ export class SparkOrderbook {
   private provider: Undefinable<Provider>;
   private options: OptionsSpark;
 
-  private indexerApi: IndexerApi;
+  private indexerApi: Undefinable<IndexerApi>;
 
   constructor(params: SparkParams) {
     this.options = {
-      contractAddresses: params.contractAddresses,
+      contractAddresses: {
+        ...params.contractAddresses,
+        market: "",
+      },
       wallet: params.wallet,
       gasPrice: params.gasPrice ?? DEFAULT_GAS_PRICE,
       gasLimitMultiplier:
         params.gasLimitMultiplier ?? DEFAULT_GAS_LIMIT_MULTIPLIER,
     };
 
-    this.indexerApi = new IndexerApi(params.indexerConfig);
-
     this.providerPromise = Provider.create(params.networkUrl);
+  }
+
+  get activeIndexerApi() {
+    if (!this.indexerApi) {
+      throw new Error("Please set correct active indexer");
+    }
+
+    return this.indexerApi;
   }
 
   setActiveWallet = (wallet?: WalletLocked | WalletUnlocked) => {
@@ -68,7 +78,7 @@ export class SparkOrderbook {
     this.options = newOptions;
   };
 
-  setActiveMarketAddress = (contractAddress: string) => {
+  setActiveMarket = (contractAddress: string, indexer: GraphClientConfig) => {
     this.options = {
       ...this.options,
       contractAddresses: {
@@ -76,6 +86,8 @@ export class SparkOrderbook {
         market: contractAddress,
       },
     };
+
+    this.indexerApi = new IndexerApi(indexer);
   };
 
   createOrder = async (
@@ -151,35 +163,35 @@ export class SparkOrderbook {
   fetchOrders = async (
     params: GetOrdersParams,
   ): Promise<ApolloQueryResult<{ Order: Order[] }>> => {
-    return this.indexerApi.getOrders(params);
+    return this.activeIndexerApi.getOrders(params);
   };
 
   fetchActiveOrders = async <T extends OrderType>(
     params: GetActiveOrdersParams,
   ): Promise<ApolloQueryResult<ActiveOrderReturn<T>>> => {
-    return this.indexerApi.getActiveOrders<T>(params);
+    return this.activeIndexerApi.getActiveOrders<T>(params);
   };
 
   subscribeOrders = (
     params: GetOrdersParams,
   ): Observable<FetchResult<{ Order: Order[] }>> => {
-    return this.indexerApi.subscribeOrders(params);
+    return this.activeIndexerApi.subscribeOrders(params);
   };
 
   subscribeActiveOrders = <T extends OrderType>(
     params: GetActiveOrdersParams,
   ): Observable<FetchResult<ActiveOrderReturn<T>>> => {
-    return this.indexerApi.subscribeActiveOrders<T>(params);
+    return this.activeIndexerApi.subscribeActiveOrders<T>(params);
   };
 
   subscribeTradeOrderEvents = (
     params: GetTradeOrderEventsParams,
   ): Observable<FetchResult<{ TradeOrderEvent: TradeOrderEvent[] }>> => {
-    return this.indexerApi.subscribeTradeOrderEvents(params);
+    return this.activeIndexerApi.subscribeTradeOrderEvents(params);
   };
 
   fetchVolume = async (): Promise<Volume> => {
-    return this.indexerApi.getVolume();
+    return this.activeIndexerApi.getVolume();
   };
 
   fetchOrderById = async (

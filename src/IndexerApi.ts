@@ -20,36 +20,6 @@ import {
 import { getActiveOrdersQuery, getOrdersQuery } from "./query";
 
 export class IndexerApi extends GraphClient {
-  // TODO: NOT IMPLEMENTED FOR NEW VERSION
-  // getMarketCreateEvents = async (): Promise<SpotMarketCreateEvent[]> => {
-  //   const query = `
-  //     query SpotMarketCreateEventQuery {
-  //       SpotMarketCreateEvent {
-  //         id,
-  //         asset_id,
-  //         asset_decimals,
-  //         timestamp,
-  //       }
-  //     }
-  //   `;
-  //   const response = await this.post<
-  //     IndexerResponse<SpotMarketCreateEvent[], "SpotMarketCreateEvent">
-  //   >({
-  //     query,
-  //   });
-
-  //   // return response.SpotMarketCreateEvent;
-
-  //   return [{
-  //     id: 1,
-  //     asset_id: '',
-  //     asset_decimals: '',
-  //     timestamp: '',
-  //     createdAt: '',
-  //     updatedAt: '',
-  //   }]
-  // };
-
   getOrders = (
     params: GetOrdersParams,
   ): Promise<ApolloQueryResult<{ Order: Order[] }>> => {
