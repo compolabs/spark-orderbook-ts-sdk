@@ -87,6 +87,10 @@ export class SparkOrderbook {
       },
     };
 
+    if (this.indexerApi) {
+      this.indexerApi.close();
+    }
+
     this.indexerApi = new IndexerApi(indexer);
   };
 
@@ -233,10 +237,10 @@ export class SparkOrderbook {
     return this.read.fetchProtocolFee(options);
   };
 
-  fetchProtocolFeeForAmount = async (amount: string) => {
+  fetchProtocolFeeForUser = async (trader: Bech32Address) => {
     const options = await this.getFetchOptions();
 
-    return this.read.fetchProtocolFeeForAmount(amount, options);
+    return this.read.fetchProtocolFeeForUser(trader, options);
   };
 
   getVersion = async () => {

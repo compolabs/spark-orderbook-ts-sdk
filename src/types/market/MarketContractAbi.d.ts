@@ -22,8 +22,8 @@ import type {
 
 import type { Option, Enum, Vec } from "./common";
 
-export type AccountErrorInput = Enum<{ InsufficientBalance: [BigNumberish, BigNumberish] }>;
-export type AccountErrorOutput = Enum<{ InsufficientBalance: [BN, BN] }>;
+export type AccountErrorInput = Enum<{ InsufficientBalance: [BigNumberish, BigNumberish, boolean] }>;
+export type AccountErrorOutput = Enum<{ InsufficientBalance: [BN, BN, boolean] }>;
 export enum AssetErrorInput { InvalidAsset = 'InvalidAsset', InvalidFeeAsset = 'InvalidFeeAsset' };
 export enum AssetErrorOutput { InvalidAsset = 'InvalidAsset', InvalidFeeAsset = 'InvalidFeeAsset' };
 export enum AssetTypeInput { Base = 'Base', Quote = 'Quote' };
@@ -38,14 +38,14 @@ export type MatchErrorInput = Enum<{ CantMatch: [string, string], CantMatchMany:
 export type MatchErrorOutput = MatchErrorInput;
 export enum OrderChangeTypeInput { OrderOpened = 'OrderOpened', OrderCancelled = 'OrderCancelled', OrderMatched = 'OrderMatched' };
 export enum OrderChangeTypeOutput { OrderOpened = 'OrderOpened', OrderCancelled = 'OrderCancelled', OrderMatched = 'OrderMatched' };
-export type OrderErrorInput = Enum<{ OrderNotFound: string, PriceTooSmall: [BigNumberish, BigNumberish], ZeroOrderAmount: [], ZeroLockAmount: [], FailedToRemove: string }>;
-export type OrderErrorOutput = Enum<{ OrderNotFound: string, PriceTooSmall: [BN, BN], ZeroOrderAmount: [], ZeroLockAmount: [], FailedToRemove: string }>;
+export type OrderErrorInput = Enum<{ OrderDuplicate: string, OrderNotFound: string, PriceTooSmall: [BigNumberish, BigNumberish], ZeroOrderAmount: [], ZeroLockAmount: [], ZeroUnlockAmount: [], ZeroTransferAmount: [], FailedToRemove: string }>;
+export type OrderErrorOutput = Enum<{ OrderDuplicate: string, OrderNotFound: string, PriceTooSmall: [BN, BN], ZeroOrderAmount: [], ZeroLockAmount: [], ZeroUnlockAmount: [], ZeroTransferAmount: [], FailedToRemove: string }>;
 export enum OrderTypeInput { Buy = 'Buy', Sell = 'Sell' };
 export enum OrderTypeOutput { Buy = 'Buy', Sell = 'Sell' };
 export enum ReentrancyErrorInput { NonReentrant = 'NonReentrant' };
 export enum ReentrancyErrorOutput { NonReentrant = 'NonReentrant' };
-export type ValueErrorInput = Enum<{ InvalidAmount: [], InvalidSlippage: [], InvalidArrayLength: [], InvalidFeeAmount: [BigNumberish, BigNumberish] }>;
-export type ValueErrorOutput = Enum<{ InvalidAmount: [], InvalidSlippage: [], InvalidArrayLength: [], InvalidFeeAmount: [BN, BN] }>;
+export type ValueErrorInput = Enum<{ InvalidAmount: [], InvalidSlippage: [], InvalidArrayLength: [], InvalidFeeAmount: [BigNumberish, BigNumberish], InvalidEpoch: [BigNumberish, BigNumberish, BigNumberish, BigNumberish], InvalidFeeSorting: [], InvalidFeeZeroBased: [], InvalidValueSame: [] }>;
+export type ValueErrorOutput = Enum<{ InvalidAmount: [], InvalidSlippage: [], InvalidArrayLength: [], InvalidFeeAmount: [BN, BN], InvalidEpoch: [BN, BN, BN, BN], InvalidFeeSorting: [], InvalidFeeZeroBased: [], InvalidValueSame: [] }>;
 
 export type AccountInput = { liquid: BalanceInput, locked: BalanceInput };
 export type AccountOutput = { liquid: BalanceOutput, locked: BalanceOutput };
@@ -65,31 +65,30 @@ export type MatchOrderEventInput = { order_id: string, asset: AssetIdInput, orde
 export type MatchOrderEventOutput = { order_id: string, asset: AssetIdOutput, order_matcher: IdentityOutput, owner: IdentityOutput, counterparty: IdentityOutput, match_size: BN, match_price: BN };
 export type OpenOrderEventInput = { amount: BigNumberish, asset: AssetIdInput, order_type: OrderTypeInput, order_id: string, price: BigNumberish, user: IdentityInput };
 export type OpenOrderEventOutput = { amount: BN, asset: AssetIdOutput, order_type: OrderTypeOutput, order_id: string, price: BN, user: IdentityOutput };
-export type OrderInput = { amount: BigNumberish, asset_type: AssetTypeInput, order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish, matcher_fee: BigNumberish, protocol_fee: BigNumberish };
-export type OrderOutput = { amount: BN, asset_type: AssetTypeOutput, order_type: OrderTypeOutput, owner: IdentityOutput, price: BN, block_height: number, matcher_fee: number, protocol_fee: BN };
+export type OrderInput = { amount: BigNumberish, asset_type: AssetTypeInput, order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish, order_height: BigNumberish, matcher_fee: BigNumberish, protocol_maker_fee: BigNumberish, protocol_taker_fee: BigNumberish };
+export type OrderOutput = { amount: BN, asset_type: AssetTypeOutput, order_type: OrderTypeOutput, owner: IdentityOutput, price: BN, block_height: number, order_height: BN, matcher_fee: BN, protocol_maker_fee: BN, protocol_taker_fee: BN };
 export type OrderChangeInfoInput = { change_type: OrderChangeTypeInput, block_height: BigNumberish, sender: IdentityInput, tx_id: string, amount_before: BigNumberish, amount_after: BigNumberish };
 export type OrderChangeInfoOutput = { change_type: OrderChangeTypeOutput, block_height: number, sender: IdentityOutput, tx_id: string, amount_before: BN, amount_after: BN };
+export type ProtocolFeeInput = { maker_fee: BigNumberish, taker_fee: BigNumberish, volume_threshold: BigNumberish };
+export type ProtocolFeeOutput = { maker_fee: BN, taker_fee: BN, volume_threshold: BN };
+export type SetEpochEventInput = { epoch: BigNumberish, epoch_duration: BigNumberish };
+export type SetEpochEventOutput = { epoch: BN, epoch_duration: BN };
 export type SetMatcherRewardEventInput = { amount: BigNumberish };
-export type SetMatcherRewardEventOutput = { amount: number };
-export type SetProtocolFeeEventInput = { amount: BigNumberish };
-export type SetProtocolFeeEventOutput = { amount: number };
+export type SetMatcherRewardEventOutput = { amount: BN };
+export type SetProtocolFeeEventInput = { protocol_fee: Vec<ProtocolFeeInput> };
+export type SetProtocolFeeEventOutput = { protocol_fee: Vec<ProtocolFeeOutput> };
 export type TradeOrderEventInput = { base_sell_order_id: string, base_buy_order_id: string, order_matcher: IdentityInput, trade_size: BigNumberish, trade_price: BigNumberish, block_height: BigNumberish, tx_id: string };
 export type TradeOrderEventOutput = { base_sell_order_id: string, base_buy_order_id: string, order_matcher: IdentityOutput, trade_size: BN, trade_price: BN, block_height: number, tx_id: string };
 export type WithdrawEventInput = { amount: BigNumberish, asset: AssetIdInput, user: IdentityInput };
 export type WithdrawEventOutput = { amount: BN, asset: AssetIdOutput, user: IdentityOutput };
-export type WithdrawProtocolFeeEventInput = { amount: BigNumberish, to: IdentityInput, owner: IdentityInput };
-export type WithdrawProtocolFeeEventOutput = { amount: BN, to: IdentityOutput, owner: IdentityOutput };
 
 export type MarketContractAbiConfigurables = Partial<{
   BASE_ASSET: AssetIdInput;
   BASE_ASSET_DECIMALS: BigNumberish;
-  OWNER: AddressInput;
-  PRICE_DECIMALS: BigNumberish;
   QUOTE_ASSET: AssetIdInput;
   QUOTE_ASSET_DECIMALS: BigNumberish;
-  FUEL_ASSET: AssetIdInput;
-  ETH_BASE_PRICE: BigNumberish;
-  ETH_QUOTE_PRICE: BigNumberish;
+  OWNER: IdentityInput;
+  PRICE_DECIMALS: BigNumberish;
   VERSION: BigNumberish;
 }>;
 
@@ -101,19 +100,20 @@ export interface MarketContractAbiInterface extends Interface {
     match_order_many: FunctionFragment;
     match_order_pair: FunctionFragment;
     open_order: FunctionFragment;
+    set_epoch: FunctionFragment;
     set_matcher_fee: FunctionFragment;
     set_protocol_fee: FunctionFragment;
     withdraw: FunctionFragment;
-    withdraw_protocol_fee: FunctionFragment;
     account: FunctionFragment;
     config: FunctionFragment;
+    get_epoch: FunctionFragment;
     matcher_fee: FunctionFragment;
     order: FunctionFragment;
     order_change_info: FunctionFragment;
     order_id: FunctionFragment;
     protocol_fee: FunctionFragment;
-    protocol_fee_amount: FunctionFragment;
-    total_protocol_fee: FunctionFragment;
+    protocol_fee_user: FunctionFragment;
+    protocol_fee_user_amount: FunctionFragment;
     user_orders: FunctionFragment;
   };
 }
@@ -127,19 +127,20 @@ export class MarketContractAbi extends Contract {
     match_order_many: InvokeFunction<[orders: Vec<string>], void>;
     match_order_pair: InvokeFunction<[order0_id: string, order1_id: string], void>;
     open_order: InvokeFunction<[amount: BigNumberish, order_type: OrderTypeInput, price: BigNumberish], string>;
+    set_epoch: InvokeFunction<[epoch: BigNumberish, epoch_duration: BigNumberish], void>;
     set_matcher_fee: InvokeFunction<[amount: BigNumberish], void>;
-    set_protocol_fee: InvokeFunction<[amount: BigNumberish], void>;
+    set_protocol_fee: InvokeFunction<[protocol_fee: Vec<ProtocolFeeInput>], void>;
     withdraw: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput], void>;
-    withdraw_protocol_fee: InvokeFunction<[to: IdentityInput], void>;
-    account: InvokeFunction<[user: IdentityInput], Option<AccountOutput>>;
-    config: InvokeFunction<[], [AddressOutput, AssetIdOutput, number, AssetIdOutput, number, number, AssetIdOutput, number]>;
-    matcher_fee: InvokeFunction<[], number>;
+    account: InvokeFunction<[user: IdentityInput], AccountOutput>;
+    config: InvokeFunction<[], [AssetIdOutput, number, AssetIdOutput, number, IdentityOutput, number, number]>;
+    get_epoch: InvokeFunction<[], [BN, BN]>;
+    matcher_fee: InvokeFunction<[], BN>;
     order: InvokeFunction<[order: string], Option<OrderOutput>>;
     order_change_info: InvokeFunction<[order_id: string], Vec<OrderChangeInfoOutput>>;
-    order_id: InvokeFunction<[order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish], string>;
-    protocol_fee: InvokeFunction<[], number>;
-    protocol_fee_amount: InvokeFunction<[amount: BigNumberish], BN>;
-    total_protocol_fee: InvokeFunction<[], BN>;
+    order_id: InvokeFunction<[order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish, order_height: BigNumberish], string>;
+    protocol_fee: InvokeFunction<[], Vec<ProtocolFeeOutput>>;
+    protocol_fee_user: InvokeFunction<[user: IdentityInput], [BN, BN]>;
+    protocol_fee_user_amount: InvokeFunction<[amount: BigNumberish, user: IdentityInput], [BN, BN]>;
     user_orders: InvokeFunction<[user: IdentityInput], Vec<string>>;
   };
 }

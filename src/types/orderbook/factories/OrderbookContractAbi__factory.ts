@@ -424,7 +424,7 @@ const _abi = {
         "type": 10,
         "typeArguments": []
       },
-      "offset": 16264
+      "offset": 16344
     },
     {
       "name": "VERSION",
@@ -433,7 +433,7 @@ const _abi = {
         "type": 17,
         "typeArguments": null
       },
-      "offset": 16296
+      "offset": 16376
     }
   ]
 };

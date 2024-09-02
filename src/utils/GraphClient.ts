@@ -9,9 +9,11 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
 import { GraphClientConfig } from "src/interface";
+import { Nullable } from "tsdef";
 
 export class GraphClient {
   client: ApolloClient<NormalizedCacheObject>;
+  wsConnection: Nullable<GraphQLWsLink>;
 
   constructor({ httpUrl, wsUrl }: GraphClientConfig) {
     const httpLink = new HttpLink({
@@ -46,5 +48,12 @@ export class GraphClient {
       link: splitLink,
       cache: new InMemoryCache(),
     });
+    this.wsConnection = wsLink;
   }
+
+  close = () => {
+    this.wsConnection?.client.dispose();
+    this.client.clearStore();
+    this.client.stop();
+  };
 }

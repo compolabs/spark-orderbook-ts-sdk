@@ -30,14 +30,21 @@ const humanReadableMessages: HumanReadableMessages = {
   CantMatchMany: "Cannot match many",
   CantFulfillMany: "Cannot fulfill many",
   OrderNotFound: "Order was not found",
+  OrderDuplicate: "Order is duplicate",
   PriceTooSmall: "The price is too small",
-  ZeroOrderAmount: "Order amount cannot be zero",
-  ZeroLockAmount: "Lock amount cannot be zero",
   FailedToRemove: "Failed to remove order",
   InvalidAmount: "Invalid amount provided",
   InvalidSlippage: "Invalid slippage provided",
   InvalidArrayLength: "Invalid array length",
   InvalidFeeAmount: "Fee is too low",
+  InvalidEpoch: "Invalid epoch value",
+  InvalidFeeSorting: "Invalid fee sorting",
+  InvalidFeeZeroBased: "Fee value should be zero-based",
+  InvalidValueSame: "Values should not be the same",
+  ZeroOrderAmount: "Order amount cannot be zero",
+  ZeroLockAmount: "Lock amount cannot be zero",
+  ZeroTransferAmount: "Transfer amount cannot be zero",
+  ZeroUnlockAmount: "Unlock amount cannot be zero",
 };
 
 const humanReadableMessagesKeys = Object.keys(humanReadableMessages);

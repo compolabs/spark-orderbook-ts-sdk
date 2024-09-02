@@ -178,11 +178,11 @@ export type Volume = {
 export type Markets = Record<string, string>;
 
 export interface MarketInfo {
-  owner: string;
   baseAssetId: string;
   baseAssetDecimals: number;
   quoteAssetId: string;
   quoteAssetDecimals: number;
+  owner: string;
   priceDecimals: number;
-  feeAssetId: string;
+  version: number;
 }

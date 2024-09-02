@@ -98,13 +98,14 @@ export class ReadActions {
     const data = await marketFactory.functions.config().get();
 
     const market: MarketInfo = {
-      owner: data.value[0].bits,
-      baseAssetId: data.value[1].bits,
-      baseAssetDecimals: data.value[2],
-      quoteAssetId: data.value[3].bits,
-      quoteAssetDecimals: data.value[4],
+      baseAssetId: data.value[0].bits,
+      baseAssetDecimals: data.value[1],
+      quoteAssetId: data.value[2].bits,
+      quoteAssetDecimals: data.value[3],
+      owner:
+        data.value[4].Address?.bits ?? data.value[4].ContractId?.bits ?? "",
       priceDecimals: data.value[5],
-      feeAssetId: data.value[6].bits,
+      version: data.value[6],
     };
 
     return market;
@@ -209,7 +210,7 @@ export class ReadActions {
     return balance.toString();
   };
 
-  fetchMatcherFee = async (options: Options): Promise<number> => {
+  fetchMatcherFee = async (options: Options): Promise<string> => {
     const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
@@ -217,10 +218,10 @@ export class ReadActions {
 
     const result = await marketFactory.functions.matcher_fee().get();
 
-    return result.value;
+    return result.value.toString();
   };
 
-  fetchProtocolFee = async (options: Options): Promise<number> => {
+  fetchProtocolFee = async (options: Options): Promise<string> => {
     const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
@@ -228,11 +229,11 @@ export class ReadActions {
 
     const result = await marketFactory.functions.protocol_fee().get();
 
-    return result.value;
+    return result.value.toString();
   };
 
-  fetchProtocolFeeForAmount = async (
-    amount: string,
+  fetchProtocolFeeForUser = async (
+    trader: Bech32Address,
     options: Options,
   ): Promise<string> => {
     const marketFactory = MarketContractAbi__factory.connect(
@@ -240,8 +241,14 @@ export class ReadActions {
       options.wallet,
     );
 
+    const identity: IdentityInput = {
+      Address: {
+        bits: new Address(trader).toB256(),
+      },
+    };
+
     const result = await marketFactory.functions
-      .protocol_fee_amount(amount)
+      .protocol_fee_user(identity)
       .get();
 
     return result.value.toString();

@@ -98,12 +98,20 @@ export class WriteActions {
       options.wallet,
     );
 
-    const protocolFeeAmount = await marketFactory.functions
-      .protocol_fee_amount(amount)
+    const identity: IdentityInput = {
+      Address: {
+        bits: options.wallet.address.toB256(),
+      },
+    };
+
+    const protocolFee = await marketFactory.functions
+      .protocol_fee_user_amount(amount, identity)
       .get();
+    const [maker, taker] = protocolFee.value;
+
     const matcherFee = await marketFactory.functions.matcher_fee().get();
-    const totalAmount = new BN(protocolFeeAmount.value.toString()).plus(
-      matcherFee.value,
+    const totalAmount = new BN(taker.toString()).plus(
+      matcherFee.value.toString(),
     );
 
     const forwardFee: CoinQuantityLike = {
@@ -113,7 +121,7 @@ export class WriteActions {
 
     const tx = marketFactory.functions
       .open_order(amount, type as unknown as OrderTypeInput, price)
-      .callParams({ forward: forwardFee })
+      // .callParams({ forward: forwardFee })
       .txParams({ gasLimit: options.gasPrice });
 
     return this.sendTransaction(tx, options);
@@ -169,10 +177,17 @@ export class WriteActions {
       options.wallet,
     );
 
-    const protocolFeeAmount = await marketFactory.functions
-      .protocol_fee_amount(amount)
+    const identity: IdentityInput = {
+      Address: {
+        bits: options.wallet.address.toB256(),
+      },
+    };
+
+    const protocolFee = await marketFactory.functions
+      .protocol_fee_user_amount(amount, identity)
       .get();
-    const totalAmount = new BN(protocolFeeAmount.value.toString());
+    const [maker, taker] = protocolFee.value;
+    const totalAmount = new BN(maker.toString());
 
     const forwardFee: CoinQuantityLike = {
       amount: totalAmount.toString(),
