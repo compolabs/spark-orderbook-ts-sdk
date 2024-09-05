@@ -133,7 +133,6 @@ export interface CreateOrderParams {
   amount: string;
   price: string;
   type: OrderType;
-  feeAssetId: string;
 }
 
 export interface FulfillOrderManyParams {
@@ -143,7 +142,6 @@ export interface FulfillOrderManyParams {
   price: string;
   slippage: string;
   orders: string[];
-  feeAssetId: string;
 }
 
 export interface Order {
@@ -185,4 +183,15 @@ export interface MarketInfo {
   owner: string;
   priceDecimals: number;
   version: number;
+}
+
+export interface ProtocolFee {
+  takerFee: string;
+  makerFee: string;
+  volumeThreshold: string;
+}
+
+export interface UserProtocolFee {
+  takerFee: string;
+  makerFee: string;
 }

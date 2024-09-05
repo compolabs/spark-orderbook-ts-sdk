@@ -243,6 +243,15 @@ export class SparkOrderbook {
     return this.read.fetchProtocolFeeForUser(trader, options);
   };
 
+  fetchProtocolFeeAmountForUser = async (
+    amount: string,
+    trader: Bech32Address,
+  ) => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchProtocolFeeAmountForUser(amount, trader, options);
+  };
+
   getVersion = async () => {
     const options = await this.getFetchOptions();
 

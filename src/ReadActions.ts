@@ -17,8 +17,10 @@ import {
   Markets,
   Options,
   OrderType,
+  ProtocolFee,
   SpotOrderWithoutTimestamp,
   UserMarketBalance,
+  UserProtocolFee,
 } from "./interface";
 
 export class ReadActions {
@@ -221,7 +223,7 @@ export class ReadActions {
     return result.value.toString();
   };
 
-  fetchProtocolFee = async (options: Options): Promise<string> => {
+  fetchProtocolFee = async (options: Options): Promise<ProtocolFee[]> => {
     const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
@@ -229,13 +231,19 @@ export class ReadActions {
 
     const result = await marketFactory.functions.protocol_fee().get();
 
-    return result.value.toString();
+    const data = result.value.map((fee) => ({
+      makerFee: fee.maker_fee.toString(),
+      takerFee: fee.taker_fee.toString(),
+      volumeThreshold: fee.volume_threshold.toString(),
+    }));
+
+    return data;
   };
 
   fetchProtocolFeeForUser = async (
     trader: Bech32Address,
     options: Options,
-  ): Promise<string> => {
+  ): Promise<UserProtocolFee> => {
     const marketFactory = MarketContractAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
@@ -251,6 +259,35 @@ export class ReadActions {
       .protocol_fee_user(identity)
       .get();
 
-    return result.value.toString();
+    return {
+      makerFee: result.value[0].toString(),
+      takerFee: result.value[1].toString(),
+    };
+  };
+
+  fetchProtocolFeeAmountForUser = async (
+    amount: string,
+    trader: Bech32Address,
+    options: Options,
+  ): Promise<UserProtocolFee> => {
+    const marketFactory = MarketContractAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const identity: IdentityInput = {
+      Address: {
+        bits: new Address(trader).toB256(),
+      },
+    };
+
+    const result = await marketFactory.functions
+      .protocol_fee_user_amount(amount, identity)
+      .get();
+
+    return {
+      makerFee: result.value[0].toString(),
+      takerFee: result.value[1].toString(),
+    };
   };
 }

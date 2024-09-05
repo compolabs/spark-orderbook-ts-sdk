@@ -82,15 +82,13 @@ export class WriteActions {
       ),
     );
 
-    const tx = marketFactory
-      .multiCall(assetCall)
-      .txParams({ gasLimit: options.gasPrice });
+    const tx = marketFactory.multiCall(assetCall);
 
     return this.sendMultiTransaction(tx, options);
   };
 
   createOrder = async (
-    { amount, price, type, feeAssetId }: CreateOrderParams,
+    { amount, price, type }: CreateOrderParams,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const marketFactory = MarketContractAbi__factory.connect(
@@ -98,31 +96,11 @@ export class WriteActions {
       options.wallet,
     );
 
-    const identity: IdentityInput = {
-      Address: {
-        bits: options.wallet.address.toB256(),
-      },
-    };
-
-    const protocolFee = await marketFactory.functions
-      .protocol_fee_user_amount(amount, identity)
-      .get();
-    const [maker, taker] = protocolFee.value;
-
-    const matcherFee = await marketFactory.functions.matcher_fee().get();
-    const totalAmount = new BN(taker.toString()).plus(
-      matcherFee.value.toString(),
+    const tx = marketFactory.functions.open_order(
+      amount,
+      type as unknown as OrderTypeInput,
+      price,
     );
-
-    const forwardFee: CoinQuantityLike = {
-      amount: totalAmount.toString(),
-      assetId: feeAssetId,
-    };
-
-    const tx = marketFactory.functions
-      .open_order(amount, type as unknown as OrderTypeInput, price)
-      // .callParams({ forward: forwardFee })
-      .txParams({ gasLimit: options.gasPrice });
 
     return this.sendTransaction(tx, options);
   };
@@ -136,9 +114,7 @@ export class WriteActions {
       options.wallet,
     );
 
-    const tx = marketFactory.functions
-      .cancel_order(orderId)
-      .txParams({ gasLimit: options.gasPrice });
+    const tx = marketFactory.functions.cancel_order(orderId);
 
     return this.sendTransaction(tx, options);
   };
@@ -153,9 +129,10 @@ export class WriteActions {
       options.wallet,
     );
 
-    const tx = marketFactory.functions
-      .match_order_pair(sellOrderId, buyOrderId)
-      .txParams({ gasLimit: options.gasPrice });
+    const tx = marketFactory.functions.match_order_pair(
+      sellOrderId,
+      buyOrderId,
+    );
 
     return this.sendTransaction(tx, options);
   };
@@ -168,7 +145,6 @@ export class WriteActions {
       price,
       slippage,
       orders,
-      feeAssetId,
     }: FulfillOrderManyParams,
     options: Options,
   ) => {
@@ -177,34 +153,14 @@ export class WriteActions {
       options.wallet,
     );
 
-    const identity: IdentityInput = {
-      Address: {
-        bits: options.wallet.address.toB256(),
-      },
-    };
-
-    const protocolFee = await marketFactory.functions
-      .protocol_fee_user_amount(amount, identity)
-      .get();
-    const [maker, taker] = protocolFee.value;
-    const totalAmount = new BN(maker.toString());
-
-    const forwardFee: CoinQuantityLike = {
-      amount: totalAmount.toString(),
-      assetId: feeAssetId,
-    };
-
-    const tx = marketFactory.functions
-      .fulfill_order_many(
-        amount,
-        orderType as unknown as OrderTypeInput,
-        limitType as unknown as LimitTypeInput,
-        price,
-        slippage,
-        orders,
-      )
-      .callParams({ forward: forwardFee })
-      .txParams({ gasLimit: options.gasPrice });
+    const tx = marketFactory.functions.fulfill_order_many(
+      amount,
+      orderType as unknown as OrderTypeInput,
+      limitType as unknown as LimitTypeInput,
+      price,
+      slippage,
+      orders,
+    );
 
     return this.sendTransaction(tx, options);
   };
@@ -232,9 +188,11 @@ export class WriteActions {
       },
     };
 
-    const tx = await tokenFactoryContract.functions
-      .mint(identity, asset, mintAmount.toString())
-      .txParams({ gasLimit: options.gasPrice });
+    const tx = await tokenFactoryContract.functions.mint(
+      identity,
+      asset,
+      mintAmount.toString(),
+    );
 
     return this.sendTransaction(tx, options);
   };
