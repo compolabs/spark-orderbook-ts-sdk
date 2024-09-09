@@ -118,6 +118,46 @@ export class ReadActions {
     return BN.ZERO;
   };
 
+  fetchUserMarketBalanceByContracts = async (
+    trader: Bech32Address,
+    options: Options,
+    contractsAddresses: string[],
+  ): Promise<UserMarketBalance[]> => {
+    const traderAddress = new Address(trader).toB256();
+
+    const address: AddressInput = {
+      bits: traderAddress,
+    };
+
+    const user: IdentityInput = {
+      Address: address,
+    };
+
+    const promises = contractsAddresses.map(async (contractAddress) => {
+      const marketFactory = MarketContractAbi__factory.connect(
+        contractAddress,
+        options.wallet,
+      );
+
+      const result = await marketFactory.functions.account(user).get();
+
+      const locked = {
+        base: result.value?.locked.base.toString() ?? BN.ZERO.toString(),
+        quote: result.value?.locked.quote.toString() ?? BN.ZERO.toString(),
+      };
+
+      const liquid = {
+        base: result.value?.liquid.base.toString() ?? BN.ZERO.toString(),
+        quote: result.value?.liquid.quote.toString() ?? BN.ZERO.toString(),
+      };
+
+      return {
+        liquid,
+        locked,
+      };
+    });
+    return Promise.all(promises);
+  };
   fetchUserMarketBalance = async (
     trader: Bech32Address,
     options: Options,
