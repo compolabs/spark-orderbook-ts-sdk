@@ -9,6 +9,6 @@
   Fuel-Core version: 0.31.0
 */
 
-export type { OrderbookContractAbi } from './OrderbookContractAbi';
+export type { SparkRegistryAbi } from './SparkRegistryAbi';
 
-export { OrderbookContractAbi__factory } from './factories/OrderbookContractAbi__factory';
+export { SparkRegistryAbi__factory } from './factories/SparkRegistryAbi__factory';

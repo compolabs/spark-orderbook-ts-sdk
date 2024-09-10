@@ -9,6 +9,6 @@
   Fuel-Core version: 0.31.0
 */
 
-export type { MarketContractAbi } from './MarketContractAbi';
+export type { SparkMarketAbi } from './SparkMarketAbi';
 
-export { MarketContractAbi__factory } from './factories/MarketContractAbi__factory';
+export { SparkMarketAbi__factory } from './factories/SparkMarketAbi__factory';

@@ -4,12 +4,12 @@ import {
   MultiCallInvocationScope,
 } from "fuels";
 
-import { MarketContractAbi__factory } from "./types/market";
+import { SparkMarketAbi__factory } from "./types/market";
 import {
   AssetTypeInput,
   LimitTypeInput,
   OrderTypeInput,
-} from "./types/market/MarketContractAbi";
+} from "./types/market/SparkMarketAbi";
 import { MultiassetContractAbi__factory } from "./types/multiasset";
 import {
   AssetIdInput,
@@ -33,7 +33,7 @@ export class WriteActions {
     amount: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const marketFactory = MarketContractAbi__factory.connect(
+    const marketFactory = SparkMarketAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -53,7 +53,7 @@ export class WriteActions {
     assetType: AssetType,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const marketFactory = MarketContractAbi__factory.connect(
+    const marketFactory = SparkMarketAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -70,7 +70,7 @@ export class WriteActions {
     assets: WithdrawAllType[],
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const marketFactory = MarketContractAbi__factory.connect(
+    const marketFactory = SparkMarketAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -91,7 +91,7 @@ export class WriteActions {
     { amount, price, type }: CreateOrderParams,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const marketFactory = MarketContractAbi__factory.connect(
+    const marketFactory = SparkMarketAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -109,7 +109,7 @@ export class WriteActions {
     orderId: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const marketFactory = MarketContractAbi__factory.connect(
+    const marketFactory = SparkMarketAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -124,7 +124,7 @@ export class WriteActions {
     buyOrderId: string,
     options: Options,
   ): Promise<WriteTransactionResponse> => {
-    const marketFactory = MarketContractAbi__factory.connect(
+    const marketFactory = SparkMarketAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -148,7 +148,7 @@ export class WriteActions {
     }: FulfillOrderManyParams,
     options: Options,
   ) => {
-    const marketFactory = MarketContractAbi__factory.connect(
+    const marketFactory = SparkMarketAbi__factory.connect(
       options.contractAddresses.market,
       options.wallet,
     );

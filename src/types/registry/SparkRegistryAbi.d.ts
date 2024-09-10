@@ -24,8 +24,8 @@ import type { Option, Enum, Vec } from "./common";
 
 export enum AuthErrorInput { Unauthorized = 'Unauthorized' };
 export enum AuthErrorOutput { Unauthorized = 'Unauthorized' };
-export enum OrderbookErrorInput { MarketAlreadyRegistered = 'MarketAlreadyRegistered', MarketNotRegistered = 'MarketNotRegistered' };
-export enum OrderbookErrorOutput { MarketAlreadyRegistered = 'MarketAlreadyRegistered', MarketNotRegistered = 'MarketNotRegistered' };
+export enum MarketRegistryErrorInput { MarketAlreadyRegistered = 'MarketAlreadyRegistered', MarketNotRegistered = 'MarketNotRegistered' };
+export enum MarketRegistryErrorOutput { MarketAlreadyRegistered = 'MarketAlreadyRegistered', MarketNotRegistered = 'MarketNotRegistered' };
 
 export type AddressInput = { bits: string };
 export type AddressOutput = AddressInput;
@@ -38,12 +38,12 @@ export type MarketRegisterEventOutput = { base: AssetIdOutput, quote: AssetIdOut
 export type MarketUnregisterEventInput = { base: AssetIdInput, quote: AssetIdInput, market: ContractIdInput };
 export type MarketUnregisterEventOutput = { base: AssetIdOutput, quote: AssetIdOutput, market: ContractIdOutput };
 
-export type OrderbookContractAbiConfigurables = Partial<{
+export type SparkRegistryAbiConfigurables = Partial<{
   OWNER: AddressInput;
   VERSION: BigNumberish;
 }>;
 
-export interface OrderbookContractAbiInterface extends Interface {
+export interface SparkRegistryAbiInterface extends Interface {
   functions: {
     config: FunctionFragment;
     markets: FunctionFragment;
@@ -52,8 +52,8 @@ export interface OrderbookContractAbiInterface extends Interface {
   };
 }
 
-export class OrderbookContractAbi extends Contract {
-  interface: OrderbookContractAbiInterface;
+export class SparkRegistryAbi extends Contract {
+  interface: SparkRegistryAbiInterface;
   functions: {
     config: InvokeFunction<[], [AddressOutput, number]>;
     markets: InvokeFunction<[market_assets: Vec<[AssetIdInput, AssetIdInput]>], Vec<[AssetIdOutput, AssetIdOutput, Option<ContractIdOutput>]>>;

@@ -11,7 +11,7 @@
 
 import { Interface, Contract, ContractFactory } from "fuels";
 import type { Provider, Account, AbstractAddress, BytesLike, DeployContractOptions, StorageSlot, DeployContractResult } from "fuels";
-import type { MarketContractAbi, MarketContractAbiInterface } from "../MarketContractAbi";
+import type { SparkMarketAbi, SparkMarketAbiInterface } from "../SparkMarketAbi";
 
 const _abi = {
   "encoding": "1",
@@ -239,6 +239,11 @@ const _abi = {
       "type": "enum LimitType",
       "components": [
         {
+          "name": "GTC",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
           "name": "IOC",
           "type": 0,
           "typeArguments": null
@@ -267,6 +272,11 @@ const _abi = {
         },
         {
           "name": "CantFulfillMany",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
+          "name": "CantFulfillFOK",
           "type": 0,
           "typeArguments": null
         }
@@ -514,6 +524,11 @@ const _abi = {
         {
           "name": "order_id",
           "type": 6,
+          "typeArguments": null
+        },
+        {
+          "name": "user",
+          "type": 12,
           "typeArguments": null
         }
       ],
@@ -829,6 +844,16 @@ const _abi = {
           "typeArguments": null
         },
         {
+          "name": "base_sell_order_limit",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
+          "name": "base_buy_order_limit",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
           "name": "order_matcher",
           "type": 12,
           "typeArguments": null
@@ -851,6 +876,16 @@ const _abi = {
         {
           "name": "tx_id",
           "type": 6,
+          "typeArguments": null
+        },
+        {
+          "name": "order_seller",
+          "type": 12,
+          "typeArguments": null
+        },
+        {
+          "name": "order_buyer",
+          "type": 12,
           "typeArguments": null
         }
       ],
@@ -933,6 +968,24 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Cancels an existing order with the specified order ID."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param order_id The unique identifier of the order to be canceled."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
+        {
           "name": "storage",
           "arguments": [
             "read",
@@ -950,6 +1003,30 @@ const _abi = {
         "typeArguments": null
       },
       "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Deposits a specified amount of an asset into the caller's account."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice The function requires that the sender sends a non-zero amount of the specified asset."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param None - The function doesn't take any input parameters; it uses context information."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
         {
           "name": "payable",
           "arguments": []
@@ -1010,6 +1087,84 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Attempts to fulfill a single order by matching it against multiple orders from a provided list."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @dev This function creates a new order with the given parameters and iterates through the list of existing orders,"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      attempting to match the new order with existing orders. It handles full and partial matches according to the specified limit type:"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      - 'GTC' (Good-Til-Canceled): The order remains active until it is either fully filled or canceled."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      - 'IOC' (Immediate-Or-Cancel): The order can be partially filled immediately, and any unfilled portion is canceled."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      - 'FOK' (Fill-Or-Kill): The order must be fully filled immediately, or the entire transaction fails."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param amount The amount of the asset to be fulfilled in the new order."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param order_type The type of the order being fulfilled (e.g., buy or sell)."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param limit_type The limit type for the new order: 'GTC', 'IOC', or 'FOK'."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param price The price at which the new order is to be fulfilled."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param slippage The maximum allowable slippage (as a percentage) for the price during the matching process."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param orders A vector of order IDs representing the existing orders to match against the new order."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return b256 The unique identifier of the newly created order. If the order is partially matched and canceled (in the case of 'IOC'), the ID corresponds to the canceled order."
+          ]
+        },
+        {
           "name": "payable",
           "arguments": []
         },
@@ -1044,6 +1199,24 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Attempts to match multiple orders provided in a list."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param orders A vector containing the unique identifiers of the orders to be matched."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
+        {
           "name": "storage",
           "arguments": [
             "read",
@@ -1072,6 +1245,30 @@ const _abi = {
         "typeArguments": null
       },
       "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Matches two orders identified by their respective order IDs."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param order0_id The unique identifier of the first order to be matched."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param order1_id The unique identifier of the second order to be matched."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
         {
           "name": "storage",
           "arguments": [
@@ -1107,6 +1304,36 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Opens a new order with a specified amount, order type, and price."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param amount The amount of the asset to be used in the order."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param order_type The type of the order being created (e.g., buy or sell)."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param price The price at which the order should be placed."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return b256 The unique identifier of the newly opened order."
+          ]
+        },
+        {
           "name": "storage",
           "arguments": [
             "read",
@@ -1136,6 +1363,48 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Sets the current epoch and its duration."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @dev This function allows the contract owner to set a new epoch and its duration."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      It ensures that the new epoch is not in the past and that the epoch plus its duration extends beyond the current time."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      The function is restricted to the contract owner and logs an event after the epoch is set."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param epoch The new epoch value to be set. Must be greater than or equal to the current epoch."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param epoch_duration The duration of the epoch in seconds. The epoch plus its duration must extend beyond the current time."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
+        {
           "name": "storage",
           "arguments": [
             "write"
@@ -1158,6 +1427,42 @@ const _abi = {
         "typeArguments": null
       },
       "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Sets the matcher fee to a specified amount."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @dev This function allows the contract owner to update the matcher fee."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      It checks that the new fee amount is different from the current one to avoid redundant updates."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      The function is restricted to the contract owner and logs an event after the matcher fee is set."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param amount The new matcher fee amount to be set. It must be different from the current matcher fee."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
         {
           "name": "storage",
           "arguments": [
@@ -1189,6 +1494,48 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Sets the protocol fees based on volume thresholds."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @dev This function allows the contract owner to set a list of protocol fees."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      It ensures that the first fee in the list has a volume threshold of zero and that the fees are sorted by volume threshold."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      The function is restricted to the contract owner and logs an event after the protocol fees are set."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param protocol_fee A vector of 'ProtocolFee' structures that define the fee rates and their corresponding volume thresholds."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "                     The first element must have a volume threshold of zero, and the list must be sorted by volume threshold."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
+        {
           "name": "storage",
           "arguments": [
             "write"
@@ -1216,6 +1563,30 @@ const _abi = {
         "typeArguments": null
       },
       "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Withdraws a specified amount of a given asset from the caller's account."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param amount The amount of the asset to be withdrawn. Must be greater than zero."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param asset_type The type of the asset to be withdrawn."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
         {
           "name": "storage",
           "arguments": [
@@ -1629,7 +2000,7 @@ const _abi = {
         "type": 25,
         "typeArguments": []
       },
-      "offset": 80552
+      "offset": 81368
     },
     {
       "name": "BASE_ASSET_DECIMALS",
@@ -1638,7 +2009,7 @@ const _abi = {
         "type": 42,
         "typeArguments": null
       },
-      "offset": 80584
+      "offset": 81400
     },
     {
       "name": "QUOTE_ASSET",
@@ -1647,7 +2018,7 @@ const _abi = {
         "type": 25,
         "typeArguments": []
       },
-      "offset": 80640
+      "offset": 81456
     },
     {
       "name": "QUOTE_ASSET_DECIMALS",
@@ -1656,7 +2027,7 @@ const _abi = {
         "type": 42,
         "typeArguments": null
       },
-      "offset": 80672
+      "offset": 81488
     },
     {
       "name": "OWNER",
@@ -1665,7 +2036,7 @@ const _abi = {
         "type": 12,
         "typeArguments": []
       },
-      "offset": 80592
+      "offset": 81408
     },
     {
       "name": "PRICE_DECIMALS",
@@ -1674,7 +2045,7 @@ const _abi = {
         "type": 42,
         "typeArguments": null
       },
-      "offset": 80632
+      "offset": 81448
     },
     {
       "name": "VERSION",
@@ -1683,7 +2054,7 @@ const _abi = {
         "type": 42,
         "typeArguments": null
       },
-      "offset": 80680
+      "offset": 81496
     }
   ]
 };
@@ -1691,7 +2062,7 @@ const _abi = {
 const _storageSlots: StorageSlot[] = [
   {
     "key": "0dbee7545bd5cbe89afb5ff6e66c02ee06d2105f0878cfb45b8a489221b9ea9d",
-    "value": "000000000028de80000000000000000000000000000000000000000000000000"
+    "value": "00000000002820a8000000000000000000000000000000000000000000000000"
   },
   {
     "key": "3493c96d5901ca6a92009e6e8732dee2d274b75731fc3355e9888ea296e15c0c",
@@ -1707,30 +2078,30 @@ const _storageSlots: StorageSlot[] = [
   }
 ];
 
-export const MarketContractAbi__factory = {
+export const SparkMarketAbi__factory = {
   abi: _abi,
 
   storageSlots: _storageSlots,
 
-  createInterface(): MarketContractAbiInterface {
-    return new Interface(_abi) as unknown as MarketContractAbiInterface
+  createInterface(): SparkMarketAbiInterface {
+    return new Interface(_abi) as unknown as SparkMarketAbiInterface
   },
 
   connect(
     id: string | AbstractAddress,
     accountOrProvider: Account | Provider
-  ): MarketContractAbi {
-    return new Contract(id, _abi, accountOrProvider) as unknown as MarketContractAbi
+  ): SparkMarketAbi {
+    return new Contract(id, _abi, accountOrProvider) as unknown as SparkMarketAbi
   },
 
   async deployContract(
     bytecode: BytesLike,
     wallet: Account,
     options: DeployContractOptions = {}
-  ): Promise<DeployContractResult<MarketContractAbi>> {
+  ): Promise<DeployContractResult<SparkMarketAbi>> {
     const factory = new ContractFactory(bytecode, _abi, wallet);
 
-    return factory.deployContract<MarketContractAbi>({
+    return factory.deployContract<SparkMarketAbi>({
       storageSlots: _storageSlots,
       ...options,
     });

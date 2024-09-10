@@ -32,9 +32,9 @@ export enum AuthErrorInput { Unauthorized = 'Unauthorized' };
 export enum AuthErrorOutput { Unauthorized = 'Unauthorized' };
 export type IdentityInput = Enum<{ Address: AddressInput, ContractId: ContractIdInput }>;
 export type IdentityOutput = Enum<{ Address: AddressOutput, ContractId: ContractIdOutput }>;
-export enum LimitTypeInput { IOC = 'IOC', FOK = 'FOK' };
-export enum LimitTypeOutput { IOC = 'IOC', FOK = 'FOK' };
-export type MatchErrorInput = Enum<{ CantMatch: [string, string], CantMatchMany: [], CantFulfillMany: [] }>;
+export enum LimitTypeInput { GTC = 'GTC', IOC = 'IOC', FOK = 'FOK' };
+export enum LimitTypeOutput { GTC = 'GTC', IOC = 'IOC', FOK = 'FOK' };
+export type MatchErrorInput = Enum<{ CantMatch: [string, string], CantMatchMany: [], CantFulfillMany: [], CantFulfillFOK: [] }>;
 export type MatchErrorOutput = MatchErrorInput;
 export enum OrderChangeTypeInput { OrderOpened = 'OrderOpened', OrderCancelled = 'OrderCancelled', OrderMatched = 'OrderMatched' };
 export enum OrderChangeTypeOutput { OrderOpened = 'OrderOpened', OrderCancelled = 'OrderCancelled', OrderMatched = 'OrderMatched' };
@@ -55,8 +55,8 @@ export type AssetIdInput = { bits: string };
 export type AssetIdOutput = AssetIdInput;
 export type BalanceInput = { base: BigNumberish, quote: BigNumberish };
 export type BalanceOutput = { base: BN, quote: BN };
-export type CancelOrderEventInput = { order_id: string };
-export type CancelOrderEventOutput = CancelOrderEventInput;
+export type CancelOrderEventInput = { order_id: string, user: IdentityInput };
+export type CancelOrderEventOutput = { order_id: string, user: IdentityOutput };
 export type ContractIdInput = { bits: string };
 export type ContractIdOutput = ContractIdInput;
 export type DepositEventInput = { amount: BigNumberish, asset: AssetIdInput, user: IdentityInput };
@@ -77,12 +77,12 @@ export type SetMatcherRewardEventInput = { amount: BigNumberish };
 export type SetMatcherRewardEventOutput = { amount: BN };
 export type SetProtocolFeeEventInput = { protocol_fee: Vec<ProtocolFeeInput> };
 export type SetProtocolFeeEventOutput = { protocol_fee: Vec<ProtocolFeeOutput> };
-export type TradeOrderEventInput = { base_sell_order_id: string, base_buy_order_id: string, order_matcher: IdentityInput, trade_size: BigNumberish, trade_price: BigNumberish, block_height: BigNumberish, tx_id: string };
-export type TradeOrderEventOutput = { base_sell_order_id: string, base_buy_order_id: string, order_matcher: IdentityOutput, trade_size: BN, trade_price: BN, block_height: number, tx_id: string };
+export type TradeOrderEventInput = { base_sell_order_id: string, base_buy_order_id: string, base_sell_order_limit: LimitTypeInput, base_buy_order_limit: LimitTypeInput, order_matcher: IdentityInput, trade_size: BigNumberish, trade_price: BigNumberish, block_height: BigNumberish, tx_id: string, order_seller: IdentityInput, order_buyer: IdentityInput };
+export type TradeOrderEventOutput = { base_sell_order_id: string, base_buy_order_id: string, base_sell_order_limit: LimitTypeOutput, base_buy_order_limit: LimitTypeOutput, order_matcher: IdentityOutput, trade_size: BN, trade_price: BN, block_height: number, tx_id: string, order_seller: IdentityOutput, order_buyer: IdentityOutput };
 export type WithdrawEventInput = { amount: BigNumberish, asset: AssetIdInput, user: IdentityInput };
 export type WithdrawEventOutput = { amount: BN, asset: AssetIdOutput, user: IdentityOutput };
 
-export type MarketContractAbiConfigurables = Partial<{
+export type SparkMarketAbiConfigurables = Partial<{
   BASE_ASSET: AssetIdInput;
   BASE_ASSET_DECIMALS: BigNumberish;
   QUOTE_ASSET: AssetIdInput;
@@ -92,7 +92,7 @@ export type MarketContractAbiConfigurables = Partial<{
   VERSION: BigNumberish;
 }>;
 
-export interface MarketContractAbiInterface extends Interface {
+export interface SparkMarketAbiInterface extends Interface {
   functions: {
     cancel_order: FunctionFragment;
     deposit: FunctionFragment;
@@ -118,8 +118,8 @@ export interface MarketContractAbiInterface extends Interface {
   };
 }
 
-export class MarketContractAbi extends Contract {
-  interface: MarketContractAbiInterface;
+export class SparkMarketAbi extends Contract {
+  interface: SparkMarketAbiInterface;
   functions: {
     cancel_order: InvokeFunction<[order_id: string], void>;
     deposit: InvokeFunction<[], void>;

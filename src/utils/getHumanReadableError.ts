@@ -5,7 +5,7 @@ import {
   MatchErrorInput,
   OrderErrorInput,
   ValueErrorInput,
-} from "src/types/market/MarketContractAbi";
+} from "src/types/market/SparkMarketAbi";
 
 type HumanReadableMessages = {
   [K in keyof AccountErrorInput]: string;
@@ -29,6 +29,7 @@ const humanReadableMessages: HumanReadableMessages = {
   CantMatch: "Can't match",
   CantMatchMany: "Cannot match many",
   CantFulfillMany: "Cannot fulfill many",
+  CantFulfillFOK: "Cannot fulfill FOK",
   OrderNotFound: "Order was not found",
   OrderDuplicate: "Order is duplicate",
   PriceTooSmall: "The price is too small",

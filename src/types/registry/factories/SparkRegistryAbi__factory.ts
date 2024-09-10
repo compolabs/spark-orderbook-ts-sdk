@@ -11,7 +11,7 @@
 
 import { Interface, Contract, ContractFactory } from "fuels";
 import type { Provider, Account, AbstractAddress, BytesLike, DeployContractOptions, StorageSlot, DeployContractResult } from "fuels";
-import type { OrderbookContractAbi, OrderbookContractAbiInterface } from "../OrderbookContractAbi";
+import type { SparkRegistryAbi, SparkRegistryAbiInterface } from "../SparkRegistryAbi";
 
 const _abi = {
   "encoding": "1",
@@ -72,7 +72,7 @@ const _abi = {
         },
         {
           "name": "__tuple_element",
-          "type": 6,
+          "type": 7,
           "typeArguments": [
             {
               "name": "",
@@ -104,6 +104,23 @@ const _abi = {
     },
     {
       "typeId": 6,
+      "type": "enum MarketRegistryError",
+      "components": [
+        {
+          "name": "MarketAlreadyRegistered",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
+          "name": "MarketNotRegistered",
+          "type": 0,
+          "typeArguments": null
+        }
+      ],
+      "typeParameters": null
+    },
+    {
+      "typeId": 7,
       "type": "enum Option",
       "components": [
         {
@@ -120,23 +137,6 @@ const _abi = {
       "typeParameters": [
         8
       ]
-    },
-    {
-      "typeId": 7,
-      "type": "enum OrderbookError",
-      "components": [
-        {
-          "name": "MarketAlreadyRegistered",
-          "type": 0,
-          "typeArguments": null
-        },
-        {
-          "name": "MarketNotRegistered",
-          "type": 0,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": null
     },
     {
       "typeId": 8,
@@ -296,7 +296,26 @@ const _abi = {
         "type": 1,
         "typeArguments": null
       },
-      "attributes": null
+      "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Retrieves the contract's configuration details, including the owner address and version number."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @dev This function returns the owner address and the version number of the contract."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return A tuple containing the owner's 'Address' and the contract's version number as a 'u32'."
+          ]
+        }
+      ]
     },
     {
       "inputs": [
@@ -326,6 +345,42 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Retrieves the contract IDs of markets for a given list of base and quote asset pairs."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @dev This function takes a list of asset pairs and returns a vector containing each pair along with the corresponding market's contract ID if it is registered."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      If a market is not registered, 'None' is returned for the contract ID."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param market_assets A vector of tuples, where each tuple contains a base 'AssetId' and a quote 'AssetId'."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return A vector of tuples, where each tuple contains the base 'AssetId', the quote 'AssetId', and an 'Option<ContractId>' representing the market's contract ID."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "         The 'Option<ContractId>' is 'None' if the market is not registered."
+          ]
+        },
+        {
           "name": "storage",
           "arguments": [
             "read"
@@ -348,6 +403,42 @@ const _abi = {
         "typeArguments": null
       },
       "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Registers a new market with the given contract ID."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @dev This function allows the contract owner to register a new market. It retrieves the base and quote assets associated with the market,"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      generates a unique market ID, and checks if the market is already registered. If the market is not registered, it is stored in the"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      contract's storage and a 'MarketRegisterEvent' is logged. The function enforces that only the contract owner can call it."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param market The 'ContractId' of the market to be registered."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
         {
           "name": "storage",
           "arguments": [
@@ -373,6 +464,42 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Unregisters an existing market identified by the given contract ID."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @dev This function allows the contract owner to unregister a market. It retrieves the base and quote assets associated with the market,"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      generates the market ID, and checks if the market is currently registered. If the market is registered, it is removed from the"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      contract's storage and a 'MarketUnregisterEvent' is logged. The function enforces that only the contract owner can call it."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param market The 'ContractId' of the market to be unregistered."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
+        {
           "name": "storage",
           "arguments": [
             "write"
@@ -391,10 +518,10 @@ const _abi = {
       }
     },
     {
-      "logId": "4518596228011428544",
+      "logId": "12854673644547923665",
       "loggedType": {
         "name": "",
-        "type": 7,
+        "type": 6,
         "typeArguments": []
       }
     },
@@ -440,30 +567,30 @@ const _abi = {
 
 const _storageSlots: StorageSlot[] = [];
 
-export const OrderbookContractAbi__factory = {
+export const SparkRegistryAbi__factory = {
   abi: _abi,
 
   storageSlots: _storageSlots,
 
-  createInterface(): OrderbookContractAbiInterface {
-    return new Interface(_abi) as unknown as OrderbookContractAbiInterface
+  createInterface(): SparkRegistryAbiInterface {
+    return new Interface(_abi) as unknown as SparkRegistryAbiInterface
   },
 
   connect(
     id: string | AbstractAddress,
     accountOrProvider: Account | Provider
-  ): OrderbookContractAbi {
-    return new Contract(id, _abi, accountOrProvider) as unknown as OrderbookContractAbi
+  ): SparkRegistryAbi {
+    return new Contract(id, _abi, accountOrProvider) as unknown as SparkRegistryAbi
   },
 
   async deployContract(
     bytecode: BytesLike,
     wallet: Account,
     options: DeployContractOptions = {}
-  ): Promise<DeployContractResult<OrderbookContractAbi>> {
+  ): Promise<DeployContractResult<SparkRegistryAbi>> {
     const factory = new ContractFactory(bytecode, _abi, wallet);
 
-    return factory.deployContract<OrderbookContractAbi>({
+    return factory.deployContract<SparkRegistryAbi>({
       storageSlots: _storageSlots,
       ...options,
     });
