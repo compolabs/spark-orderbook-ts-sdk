@@ -2,7 +2,11 @@ import { Address, Bech32Address, ZeroBytes32 } from "fuels";
 import { Undefinable } from "tsdef";
 
 import { SparkMarketAbi__factory } from "./types/market";
-import { AddressInput, IdentityInput } from "./types/market/SparkMarketAbi";
+import {
+  AccountOutput,
+  AddressInput,
+  IdentityInput,
+} from "./types/market/SparkMarketAbi";
 import { MultiassetContractAbi__factory } from "./types/multiasset";
 import { SparkRegistryAbi__factory } from "./types/registry";
 import { Vec } from "./types/registry/common";
@@ -150,6 +154,49 @@ export class ReadActions {
       liquid,
       locked,
     };
+  };
+
+  fetchUserMarketBalanceByContracts = async (
+    trader: Bech32Address,
+    contractsAddresses: string[],
+    options: Options,
+  ): Promise<UserMarketBalance[]> => {
+    const traderAddress = new Address(trader).toB256();
+
+    const address: AddressInput = {
+      bits: traderAddress,
+    };
+
+    const user: IdentityInput = {
+      Address: address,
+    };
+
+    const baseMarketContract = SparkMarketAbi__factory.connect(
+      contractsAddresses[0],
+      options.wallet,
+    );
+
+    const promises = contractsAddresses.map((contractAddress) => {
+      return SparkMarketAbi__factory.connect(
+        contractAddress,
+        options.wallet,
+      ).functions.account(user);
+    });
+
+    const result = await baseMarketContract.multiCall(promises).get();
+
+    console.log(result);
+
+    return result.value.map((data: AccountOutput) => ({
+      liquid: {
+        base: data.locked.base.toString() ?? BN.ZERO.toString(),
+        quote: data.locked.quote.toString() ?? BN.ZERO.toString(),
+      },
+      locked: {
+        base: data.locked.base.toString() ?? BN.ZERO.toString(),
+        quote: data.locked.quote.toString() ?? BN.ZERO.toString(),
+      },
+    }));
   };
 
   fetchOrderById = async (

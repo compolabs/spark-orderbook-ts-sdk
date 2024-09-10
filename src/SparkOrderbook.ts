@@ -225,6 +225,19 @@ export class SparkOrderbook {
     return this.read.fetchUserMarketBalance(trader, options);
   };
 
+  fetchUserMarketBalanceByContracts = async (
+    trader: Bech32Address,
+    contractsAddresses: string[],
+  ): Promise<UserMarketBalance[]> => {
+    const options = await this.getFetchOptions();
+
+    return this.read.fetchUserMarketBalanceByContracts(
+      trader,
+      contractsAddresses,
+      options,
+    );
+  };
+
   fetchMatcherFee = async () => {
     const options = await this.getFetchOptions();
 
