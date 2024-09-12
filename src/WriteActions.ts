@@ -17,7 +17,7 @@ import {
 } from "./types/multiasset/MultiassetContractAbi";
 
 import BN from "./utils/BN";
-import { prepareDepositAndWithdrawals } from "./utils/getDepositData";
+import { prepareDepositAndWithdrawals } from "./utils/prepareDepositAndWithdrawals";
 import {
   Asset,
   AssetType,
