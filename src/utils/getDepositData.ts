@@ -94,13 +94,25 @@ export const prepareDepositAndWithdrawals = async ({
     );
   }
 
-  // Create withdraw promises for each contract if it has non-zero balance
+  let remainingAmountToWithdraw = new BN(amountToSpend);
+
+  // Create withdraw promises for each contract, withdrawing only what's necessary
   const withdrawPromises = allMarketContracts
     .map((contractAddress, i) => {
-      const amount = contractBalances[i];
+      let amount = contractBalances[i];
 
-      if (amount.isZero()) {
+      // Skip if there's no need to withdraw funds or if the contract balance is zero
+      if (amount.isZero() || remainingAmountToWithdraw.isZero()) {
         return null;
+      }
+
+      // If the contract balance exceeds the remaining amount, withdraw only the remaining amount
+      if (amount.gt(remainingAmountToWithdraw)) {
+        amount = remainingAmountToWithdraw;
+        remainingAmountToWithdraw = BN.ZERO;
+      } else {
+        // Otherwise, subtract the contract balance from the remaining amount and continue
+        remainingAmountToWithdraw = remainingAmountToWithdraw.minus(amount);
       }
 
       return getMarketContract(contractAddress, wallet).functions.withdraw(
