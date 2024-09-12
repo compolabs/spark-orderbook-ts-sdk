@@ -24,11 +24,13 @@ import {
   CreateOrderParams,
   CreateOrderWithDepositParams,
   FulfillOrderManyParams,
+  FulfillOrderManyWithDepositParams,
   Options,
   OrderType,
   WithdrawAllType,
   WriteTransactionResponse,
 } from "./interface";
+import { prepareDepositAndWithdrawals } from "./utils/getDepositData";
 
 export class WriteActions {
   deposit = async (
@@ -114,10 +116,10 @@ export class WriteActions {
       amountToSpend,
       price,
       type,
-      baseAssetId,
-      quoteAssetId,
+      depositAssetId,
+      assetType,
     }: CreateOrderWithDepositParams,
-    allMarketContracts: string[], // Contracts with same assets
+    allMarketContracts: string[],
     options: Options,
   ): Promise<WriteTransactionResponse> => {
     const baseMarketFactory = SparkMarketAbi__factory.connect(
@@ -125,68 +127,17 @@ export class WriteActions {
       options.wallet,
     );
 
-    const identity: IdentityInput = {
-      Address: {
-        bits: options.wallet.address.toB256(),
-      },
-    };
-
-    const isBuy = type === OrderType.Buy;
-    const depositAsset = isBuy ? baseAssetId : quoteAssetId;
-    const assetType = isBuy ? AssetTypeInput.Base : AssetTypeInput.Quote;
-
-    console.log("isBuy", isBuy);
-    console.log("depositAsset", depositAsset);
-    console.log("assetType", assetType);
-
-    // Fetch contract balance
-    const getBalancePromises = allMarketContracts.map((contractAddress) => {
-      return SparkMarketAbi__factory.connect(
-        contractAddress,
-        options.wallet,
-      ).functions.account(identity);
-    });
-
-    const balanceMultiCallResult = await baseMarketFactory
-      .multiCall(getBalancePromises)
-      .get();
-
-    // Calculate balance
-    const balancesTotal = balanceMultiCallResult.value.reduce(
-      (acc: BN, b: AccountOutput) => {
-        const asset = isBuy ? b.liquid.base : b.liquid.quote;
-        return acc.plus(new BN(asset.toString()));
-      },
-      BN.ZERO,
-    );
-
-    const walletBalance = await options.wallet.getBalance(depositAsset);
-
-    // Total balance
-    const totalBalance = balancesTotal.plus(walletBalance);
-
-    if (totalBalance < amountToSpend) {
-      console.log("totalBalance", totalBalance, "amountToSpend", amountToSpend);
-      throw new Error("Not enough balance");
-    }
-
-    const withdrawPromises = allMarketContracts.map((contractAddress, i) => {
-      const balance = balanceMultiCallResult.value[i];
-      const amount = isBuy ? balance.liquid.base : balance.liquid.quote;
-      return SparkMarketAbi__factory.connect(
-        contractAddress,
-        options.wallet,
-      ).functions.withdraw(amount, assetType);
-    });
-
-    const forward: CoinQuantityLike = {
-      amount: amountToSpend,
-      assetId: depositAsset,
-    };
+    const depositAndWithdrawalTxs = await prepareDepositAndWithdrawals({
+      baseMarketFactory,
+      wallet: options.wallet,
+      amountToSpend,
+      depositAssetId,
+      assetType,
+      allMarketContracts
+    })
 
     const txs = baseMarketFactory.multiCall([
-      ...withdrawPromises,
-      baseMarketFactory.functions.deposit().callParams({ forward }),
+      ...depositAndWithdrawalTxs,
       baseMarketFactory.functions.open_order(
         amount,
         type as unknown as OrderTypeInput,
@@ -255,6 +206,50 @@ export class WriteActions {
     );
 
     return this.sendTransaction(tx, options);
+  };
+
+  fulfillOrderManyWithDeposit = async (
+    {
+      amount,
+      orderType,
+      limitType,
+      price,
+      slippage,
+      orders,
+      amountToSpend,
+      assetType,
+      depositAssetId
+    }: FulfillOrderManyWithDepositParams,
+    allMarketContracts: string[],
+    options: Options,
+  ) => {
+    const baseMarketFactory = SparkMarketAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const depositAndWithdrawalTxs = await prepareDepositAndWithdrawals({
+      baseMarketFactory,
+      wallet: options.wallet,
+      amountToSpend,
+      depositAssetId,
+      assetType,
+      allMarketContracts
+    })
+
+    const txs = baseMarketFactory.multiCall([
+      ...depositAndWithdrawalTxs,
+      baseMarketFactory.functions.fulfill_order_many(
+        amount,
+        orderType as unknown as OrderTypeInput,
+        limitType as unknown as LimitTypeInput,
+        price,
+        slippage,
+        orders,
+      )
+    ]);
+
+    return this.sendMultiTransaction(txs, options);
   };
 
   mintToken = async (

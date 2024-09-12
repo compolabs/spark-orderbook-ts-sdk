@@ -25,12 +25,9 @@ importers:
         specifier: 4.18.0
         version: 4.18.0
     devDependencies:
-      '@fuels/ts-config':
-        specifier: ^0.18.1
-        version: 0.18.1(typescript@5.6.2)
       '@fuels/tsup-config':
-        specifier: ^0.18.1
-        version: 0.18.1(tsup@8.2.4(typescript@5.6.2)(yaml@2.4.5))
+        specifier: ^0.23.0
+        version: 0.23.0(tsup@8.2.4(typescript@5.6.2)(yaml@2.4.5))
       '@jest/globals':
         specifier: ^29.7.0
         version: 29.7.0
@@ -649,13 +646,8 @@ packages:
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
     hasBin: true
 
-  '@fuels/ts-config@0.18.1':
-    resolution: {integrity: sha512-zcOP4wki+mapUEeV7Q/y3nHCnV3yjlqtoB2lmMs6XBDkQ6PjyHLPrHJZL7HoozhwH7qz46XWj5v4hr/ilBcQXg==}
-    peerDependencies:
-      typescript: 5.2.2
-
-  '@fuels/tsup-config@0.18.1':
-    resolution: {integrity: sha512-CgMm5DdiFc1Ljb1+CaiGt9sYHLXf4DXVlA5B2EWS9YV7qlgO2tN7ih5omplC0y/gYF9UpTgMbIWPNkh9IP1zeA==}
+  '@fuels/tsup-config@0.23.0':
+    resolution: {integrity: sha512-E7d3bnBQe0qemxgh6aBmHth6yCXA+KvgRFq2BcADaIIyNPtMg+FHNMii4bGULQ/JAB0y8yY6QFeDnzYj5uOi5g==}
     peerDependencies:
       tsup: ^7.2.0
 
@@ -3624,11 +3616,7 @@ snapshots:
       chalk: 4.1.2
       cli-table: 0.3.11
 
-  '@fuels/ts-config@0.18.1(typescript@5.6.2)':
-    dependencies:
-      typescript: 5.6.2
-
-  '@fuels/tsup-config@0.18.1(tsup@8.2.4(typescript@5.6.2)(yaml@2.4.5))':
+  '@fuels/tsup-config@0.23.0(tsup@8.2.4(typescript@5.6.2)(yaml@2.4.5))':
     dependencies:
       dotenv: 16.4.5
       react: 18.3.1

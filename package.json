@@ -48,8 +48,7 @@
     "tsdef": "^0.0.14"
   },
   "devDependencies": {
-    "@fuels/ts-config": "^0.18.1",
-    "@fuels/tsup-config": "^0.18.1",
+    "@fuels/tsup-config": "^0.23.0",
     "@jest/globals": "^29.7.0",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
@@ -74,5 +73,6 @@
   },
   "engines": {
     "node": ">=18"
-  }
+  },
+  "packageManager": "pnpm@9.10.0+sha256.355a8ab8dbb6ad41befbef39bc4fd6b5df85e12761d2724bd01f13e878de4b13"
 }

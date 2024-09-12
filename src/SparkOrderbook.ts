@@ -17,6 +17,7 @@ import {
   Asset,
   AssetType,
   CreateOrderParams,
+  CreateOrderWithDepositParams,
   FulfillOrderManyParams,
   GetActiveOrdersParams,
   GetOrdersParams,
@@ -98,6 +99,13 @@ export class SparkOrderbook {
     order: CreateOrderParams,
   ): Promise<WriteTransactionResponse> => {
     return this.write.createOrder(order, this.getApiOptions());
+  };
+
+  createOrderWithDeposit = async (
+    order: CreateOrderWithDepositParams,
+    allMarketContracts: string[]
+  ): Promise<WriteTransactionResponse> => {
+    return this.write.createOrderWithDeposit(order, allMarketContracts, this.getApiOptions());
   };
 
   cancelOrder = async (orderId: string): Promise<WriteTransactionResponse> => {
