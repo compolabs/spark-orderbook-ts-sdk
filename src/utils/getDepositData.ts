@@ -1,21 +1,24 @@
 import {
-  FunctionInvocationScope,
   CoinQuantityLike,
-  WalletUnlocked,
+  FunctionInvocationScope,
   WalletLocked,
+  WalletUnlocked,
 } from "fuels";
 import { AssetType } from "src/interface";
 import { SparkMarketAbi__factory } from "src/types/market";
 import {
-  IdentityInput,
   AccountOutput,
   AssetTypeInput,
+  IdentityInput,
   SparkMarketAbi,
 } from "src/types/market/SparkMarketAbi";
+
 import BN from "./BN";
 
-const getMarketContract = (contractAddress: string, wallet: WalletLocked | WalletUnlocked) =>
-  SparkMarketAbi__factory.connect(contractAddress, wallet);
+const getMarketContract = (
+  contractAddress: string,
+  wallet: WalletLocked | WalletUnlocked,
+) => SparkMarketAbi__factory.connect(contractAddress, wallet);
 
 // Helper function to get the total balance (contract + wallet)
 const getTotalBalance = async ({
@@ -40,17 +43,19 @@ const getTotalBalance = async ({
   const baseMarketFactory = getMarketContract(contracts[0], wallet);
 
   const getBalancePromises = contracts.map((contractAddress) =>
-    getMarketContract(contractAddress, wallet).functions.account(identity)
+    getMarketContract(contractAddress, wallet).functions.account(identity),
   );
 
   const balanceMultiCallResult = await baseMarketFactory
     .multiCall(getBalancePromises)
     .get();
 
-  const contractBalances: BN[] = balanceMultiCallResult.value.map((balance: AccountOutput) => {
-    const asset = isBase ? balance.liquid.base : balance.liquid.quote;
-    return new BN(asset.toString());
-  });
+  const contractBalances: BN[] = balanceMultiCallResult.value.map(
+    (balance: AccountOutput) => {
+      const asset = isBase ? balance.liquid.base : balance.liquid.quote;
+      return new BN(asset.toString());
+    },
+  );
 
   const contractsBalance = new BN(BN.sum(...contractBalances));
 
@@ -84,7 +89,9 @@ export const prepareDepositAndWithdrawals = async ({
   });
 
   if (totalBalance.lte(amountToSpend)) {
-    throw new Error(`Insufficient balance: Need ${amountToSpend}, but only have ${totalBalance}`);
+    throw new Error(
+      `Insufficient balance: Need ${amountToSpend}, but only have ${totalBalance}`,
+    );
   }
 
   // Create withdraw promises for each contract if it has non-zero balance
@@ -98,7 +105,7 @@ export const prepareDepositAndWithdrawals = async ({
 
       return getMarketContract(contractAddress, wallet).functions.withdraw(
         amount.toString(),
-        assetType as unknown as AssetTypeInput
+        assetType as unknown as AssetTypeInput,
       );
     })
     .filter(Boolean) as FunctionInvocationScope[];

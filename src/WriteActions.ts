@@ -6,7 +6,6 @@ import {
 
 import { SparkMarketAbi__factory } from "./types/market";
 import {
-  AccountOutput,
   AssetTypeInput,
   LimitTypeInput,
   OrderTypeInput,
@@ -18,6 +17,7 @@ import {
 } from "./types/multiasset/MultiassetContractAbi";
 
 import BN from "./utils/BN";
+import { prepareDepositAndWithdrawals } from "./utils/getDepositData";
 import {
   Asset,
   AssetType,
@@ -26,11 +26,9 @@ import {
   FulfillOrderManyParams,
   FulfillOrderManyWithDepositParams,
   Options,
-  OrderType,
   WithdrawAllType,
   WriteTransactionResponse,
 } from "./interface";
-import { prepareDepositAndWithdrawals } from "./utils/getDepositData";
 
 export class WriteActions {
   deposit = async (
@@ -133,8 +131,8 @@ export class WriteActions {
       amountToSpend,
       depositAssetId,
       assetType,
-      allMarketContracts
-    })
+      allMarketContracts,
+    });
 
     const txs = baseMarketFactory.multiCall([
       ...depositAndWithdrawalTxs,
@@ -218,7 +216,7 @@ export class WriteActions {
       orders,
       amountToSpend,
       assetType,
-      depositAssetId
+      depositAssetId,
     }: FulfillOrderManyWithDepositParams,
     allMarketContracts: string[],
     options: Options,
@@ -234,8 +232,8 @@ export class WriteActions {
       amountToSpend,
       depositAssetId,
       assetType,
-      allMarketContracts
-    })
+      allMarketContracts,
+    });
 
     const txs = baseMarketFactory.multiCall([
       ...depositAndWithdrawalTxs,
@@ -246,7 +244,7 @@ export class WriteActions {
         price,
         slippage,
         orders,
-      )
+      ),
     ]);
 
     return this.sendMultiTransaction(txs, options);

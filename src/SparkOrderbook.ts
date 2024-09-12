@@ -103,9 +103,13 @@ export class SparkOrderbook {
 
   createOrderWithDeposit = async (
     order: CreateOrderWithDepositParams,
-    allMarketContracts: string[]
+    allMarketContracts: string[],
   ): Promise<WriteTransactionResponse> => {
-    return this.write.createOrderWithDeposit(order, allMarketContracts, this.getApiOptions());
+    return this.write.createOrderWithDeposit(
+      order,
+      allMarketContracts,
+      this.getApiOptions(),
+    );
   };
 
   cancelOrder = async (orderId: string): Promise<WriteTransactionResponse> => {
