@@ -6,6 +6,7 @@ import {
 
 import { SparkMarketAbi__factory } from "./types/market";
 import {
+  AccountOutput,
   AssetTypeInput,
   LimitTypeInput,
   OrderTypeInput,
@@ -21,8 +22,10 @@ import {
   Asset,
   AssetType,
   CreateOrderParams,
+  CreateOrderWithDepositParams,
   FulfillOrderManyParams,
   Options,
+  OrderType,
   WithdrawAllType,
   WriteTransactionResponse,
 } from "./interface";
@@ -103,6 +106,95 @@ export class WriteActions {
     );
 
     return this.sendTransaction(tx, options);
+  };
+
+  createOrderWithDeposit = async (
+    {
+      amount,
+      amountToSpend,
+      price,
+      type,
+      baseAssetId,
+      quoteAssetId,
+    }: CreateOrderWithDepositParams,
+    allMarketContracts: string[], // Contracts with same assets
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const baseMarketFactory = SparkMarketAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const identity: IdentityInput = {
+      Address: {
+        bits: options.wallet.address.toB256(),
+      },
+    };
+
+    const isBuy = type === OrderType.Buy;
+    const depositAsset = isBuy ? baseAssetId : quoteAssetId;
+    const assetType = isBuy ? AssetTypeInput.Base : AssetTypeInput.Quote;
+
+    console.log("isBuy", isBuy);
+    console.log("depositAsset", depositAsset);
+    console.log("assetType", assetType);
+
+    // Fetch contract balance
+    const getBalancePromises = allMarketContracts.map((contractAddress) => {
+      return SparkMarketAbi__factory.connect(
+        contractAddress,
+        options.wallet,
+      ).functions.account(identity);
+    });
+
+    const balanceMultiCallResult = await baseMarketFactory
+      .multiCall(getBalancePromises)
+      .get();
+
+    // Calculate balance
+    const balancesTotal = balanceMultiCallResult.value.reduce(
+      (acc: BN, b: AccountOutput) => {
+        const asset = isBuy ? b.liquid.base : b.liquid.quote;
+        return acc.plus(new BN(asset.toString()));
+      },
+      BN.ZERO,
+    );
+
+    const walletBalance = await options.wallet.getBalance(depositAsset);
+
+    // Total balance
+    const totalBalance = balancesTotal.plus(walletBalance);
+
+    if (totalBalance < amountToSpend) {
+      console.log("totalBalance", totalBalance, "amountToSpend", amountToSpend);
+      throw new Error("Not enough balance");
+    }
+
+    const withdrawPromises = allMarketContracts.map((contractAddress, i) => {
+      const balance = balanceMultiCallResult.value[i];
+      const amount = isBuy ? balance.liquid.base : balance.liquid.quote;
+      return SparkMarketAbi__factory.connect(
+        contractAddress,
+        options.wallet,
+      ).functions.withdraw(amount, assetType);
+    });
+
+    const forward: CoinQuantityLike = {
+      amount: amountToSpend,
+      assetId: depositAsset,
+    };
+
+    const txs = baseMarketFactory.multiCall([
+      ...withdrawPromises,
+      baseMarketFactory.functions.deposit().callParams({ forward }),
+      baseMarketFactory.functions.open_order(
+        amount,
+        type as unknown as OrderTypeInput,
+        price,
+      ),
+    ]);
+
+    return this.sendMultiTransaction(txs, options);
   };
 
   cancelOrder = async (
