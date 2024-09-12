@@ -25,11 +25,13 @@ const getTotalBalance = async ({
   wallet,
   assetType,
   depositAssetId,
+  feeAssetId,
   contracts,
 }: {
   wallet: WalletLocked | WalletUnlocked;
   assetType: AssetType;
   depositAssetId: string;
+  feeAssetId: string;
   contracts: string[];
 }) => {
   const isBase = assetType === AssetType.Base;
@@ -60,9 +62,10 @@ const getTotalBalance = async ({
   const contractsBalance = new BN(BN.sum(...contractBalances));
 
   const walletBalance = await wallet.getBalance(depositAssetId);
+  const walletFeeBalance = await wallet.getBalance(feeAssetId);
   const totalBalance = contractsBalance.plus(walletBalance.toString());
 
-  return { totalBalance, contractBalances };
+  return { totalBalance, contractBalances, walletFeeBalance };
 };
 
 // Function to get deposit data and withdraw funds if necessary
@@ -72,25 +75,37 @@ export const prepareDepositAndWithdrawals = async ({
   assetType,
   allMarketContracts,
   depositAssetId,
+  feeAssetId,
   amountToSpend,
+  amountFee,
 }: {
   baseMarketFactory: SparkMarketAbi;
   wallet: WalletLocked | WalletUnlocked;
   assetType: AssetType;
   allMarketContracts: string[];
   depositAssetId: string;
+  feeAssetId: string;
   amountToSpend: string;
+  amountFee: string;
 }) => {
-  const { totalBalance, contractBalances } = await getTotalBalance({
-    wallet,
-    assetType,
-    depositAssetId,
-    contracts: allMarketContracts,
-  });
+  const { totalBalance, contractBalances, walletFeeBalance } =
+    await getTotalBalance({
+      wallet,
+      assetType,
+      depositAssetId,
+      feeAssetId,
+      contracts: allMarketContracts,
+    });
 
   if (totalBalance.lte(amountToSpend)) {
     throw new Error(
       `Insufficient balance: Need ${amountToSpend}, but only have ${totalBalance}`,
+    );
+  }
+
+  if (walletFeeBalance.lte(amountFee)) {
+    throw new Error(
+      `Insufficient fee balance: Need ${amountFee}, but only have ${walletFeeBalance}`,
     );
   }
 
@@ -127,8 +142,14 @@ export const prepareDepositAndWithdrawals = async ({
     assetId: depositAssetId,
   };
 
+  const forwardFee: CoinQuantityLike = {
+    amount: amountFee,
+    assetId: feeAssetId,
+  };
+
   return [
     ...withdrawPromises,
+    baseMarketFactory.functions.deposit().callParams({ forward: forwardFee }),
     baseMarketFactory.functions.deposit().callParams({ forward }),
   ];
 };

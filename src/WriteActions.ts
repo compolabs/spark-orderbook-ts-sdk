@@ -136,9 +136,11 @@ export class WriteActions {
     {
       amount,
       amountToSpend,
+      amountFee,
       price,
       type,
       depositAssetId,
+      feeAssetId,
       assetType,
     }: CreateOrderWithDepositParams,
     allMarketContracts: string[],
@@ -154,6 +156,8 @@ export class WriteActions {
       wallet: options.wallet,
       amountToSpend,
       depositAssetId,
+      feeAssetId,
+      amountFee,
       assetType,
       allMarketContracts,
     });
@@ -239,8 +243,10 @@ export class WriteActions {
       slippage,
       orders,
       amountToSpend,
+      amountFee,
       assetType,
       depositAssetId,
+      feeAssetId,
     }: FulfillOrderManyWithDepositParams,
     allMarketContracts: string[],
     options: Options,
@@ -257,6 +263,8 @@ export class WriteActions {
       depositAssetId,
       assetType,
       allMarketContracts,
+      amountFee,
+      feeAssetId,
     });
 
     const txs = baseMarketFactory.multiCall([
