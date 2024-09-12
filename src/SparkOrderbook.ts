@@ -19,6 +19,7 @@ import {
   CreateOrderParams,
   CreateOrderWithDepositParams,
   FulfillOrderManyParams,
+  FulfillOrderManyWithDepositParams,
   GetActiveOrdersParams,
   GetOrdersParams,
   GetTradeOrderEventsParams,
@@ -112,6 +113,17 @@ export class SparkOrderbook {
     );
   };
 
+  fulfillOrderManyWithDeposit = async (
+    order: FulfillOrderManyWithDepositParams,
+    allMarketContracts: string[],
+  ): Promise<WriteTransactionResponse> => {
+    return this.write.fulfillOrderManyWithDeposit(
+      order,
+      allMarketContracts,
+      this.getApiOptions(),
+    );
+  };
+
   cancelOrder = async (orderId: string): Promise<WriteTransactionResponse> => {
     return this.write.cancelOrder(orderId, this.getApiOptions());
   };
@@ -158,6 +170,17 @@ export class SparkOrderbook {
     assets: WithdrawAllType[],
   ): Promise<WriteTransactionResponse> => {
     return this.write.withdrawAll(assets, this.getApiOptions());
+  };
+
+  withdrawAllMax = async (
+    assetType: AssetType,
+    allMarketContracts: string[],
+  ): Promise<WriteTransactionResponse> => {
+    return this.write.withdrawAllMax(
+      assetType,
+      allMarketContracts,
+      this.getApiOptions(),
+    );
   };
 
   fetchMarkets = async (assetIdPairs: [string, string][]): Promise<Markets> => {

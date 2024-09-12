@@ -17,7 +17,10 @@ import {
 } from "./types/multiasset/MultiassetContractAbi";
 
 import BN from "./utils/BN";
-import { prepareDepositAndWithdrawals } from "./utils/prepareDepositAndWithdrawals";
+import {
+  prepareDepositAndWithdrawals,
+  prepareFullWithdrawals,
+} from "./utils/prepareDepositAndWithdrawals";
 import {
   Asset,
   AssetType,
@@ -86,6 +89,27 @@ export class WriteActions {
     );
 
     const tx = marketFactory.multiCall(assetCall);
+
+    return this.sendMultiTransaction(tx, options);
+  };
+
+  withdrawAllMax = async (
+    assetType: AssetType,
+    allMarketContracts: string[],
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const marketFactory = SparkMarketAbi__factory.connect(
+      allMarketContracts[0],
+      options.wallet,
+    );
+
+    const withdrawTxs = await prepareFullWithdrawals({
+      wallet: options.wallet,
+      allMarketContracts,
+      assetType,
+    });
+
+    const tx = marketFactory.multiCall(withdrawTxs);
 
     return this.sendMultiTransaction(tx, options);
   };

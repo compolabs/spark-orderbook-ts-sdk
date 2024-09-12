@@ -132,3 +132,54 @@ export const prepareDepositAndWithdrawals = async ({
     baseMarketFactory.functions.deposit().callParams({ forward }),
   ];
 };
+
+// Function to withdraw the full balance from each contract
+export const prepareFullWithdrawals = async ({
+  wallet,
+  assetType,
+  allMarketContracts,
+}: {
+  wallet: WalletLocked | WalletUnlocked;
+  assetType: AssetType;
+  allMarketContracts: string[];
+}) => {
+  const identity: IdentityInput = {
+    Address: {
+      bits: wallet.address.toB256(),
+    },
+  };
+
+  // Fetch total balances for each contract
+  const getBalancePromises = allMarketContracts.map((contractAddress) =>
+    getMarketContract(contractAddress, wallet).functions.account(identity),
+  );
+
+  const baseMarketFactory = getMarketContract(allMarketContracts[0], wallet);
+
+  const balanceMultiCallResult = await baseMarketFactory
+    .multiCall(getBalancePromises)
+    .get();
+
+  const isBase = assetType === AssetType.Base;
+
+  // Create withdraw promises for each contract, withdrawing only what's necessary
+  const withdrawPromises = allMarketContracts
+    .map((contractAddress, i) => {
+      const balance = balanceMultiCallResult.value[i];
+      const amount = isBase
+        ? new BN(balance.liquid.base.toString())
+        : new BN(balance.liquid.quote.toString());
+
+      if (amount.isZero()) {
+        return null; // Skip if the balance is zero
+      }
+
+      return getMarketContract(contractAddress, wallet).functions.withdraw(
+        amount.toString(),
+        assetType as unknown as AssetTypeInput,
+      );
+    })
+    .filter(Boolean) as FunctionInvocationScope[];
+
+  return withdrawPromises;
+};
