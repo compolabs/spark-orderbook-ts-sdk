@@ -18,10 +18,16 @@ import {
 
 import BN from "./utils/BN";
 import {
+  prepareDepositAndWithdrawals,
+  prepareFullWithdrawals,
+} from "./utils/prepareDepositAndWithdrawals";
+import {
   Asset,
   AssetType,
   CreateOrderParams,
+  CreateOrderWithDepositParams,
   FulfillOrderManyParams,
+  FulfillOrderManyWithDepositParams,
   Options,
   WithdrawAllType,
   WriteTransactionResponse,
@@ -87,6 +93,27 @@ export class WriteActions {
     return this.sendMultiTransaction(tx, options);
   };
 
+  withdrawAllMax = async (
+    assetType: AssetType,
+    allMarketContracts: string[],
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const marketFactory = SparkMarketAbi__factory.connect(
+      allMarketContracts[0],
+      options.wallet,
+    );
+
+    const withdrawTxs = await prepareFullWithdrawals({
+      wallet: options.wallet,
+      allMarketContracts,
+      assetType,
+    });
+
+    const tx = marketFactory.multiCall(withdrawTxs);
+
+    return this.sendMultiTransaction(tx, options);
+  };
+
   createOrder = async (
     { amount, price, type }: CreateOrderParams,
     options: Options,
@@ -103,6 +130,48 @@ export class WriteActions {
     );
 
     return this.sendTransaction(tx, options);
+  };
+
+  createOrderWithDeposit = async (
+    {
+      amount,
+      amountToSpend,
+      amountFee,
+      price,
+      type,
+      depositAssetId,
+      feeAssetId,
+      assetType,
+    }: CreateOrderWithDepositParams,
+    allMarketContracts: string[],
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const baseMarketFactory = SparkMarketAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const depositAndWithdrawalTxs = await prepareDepositAndWithdrawals({
+      baseMarketFactory,
+      wallet: options.wallet,
+      amountToSpend,
+      depositAssetId,
+      feeAssetId,
+      amountFee,
+      assetType,
+      allMarketContracts,
+    });
+
+    const txs = baseMarketFactory.multiCall([
+      ...depositAndWithdrawalTxs,
+      baseMarketFactory.functions.open_order(
+        amount,
+        type as unknown as OrderTypeInput,
+        price,
+      ),
+    ]);
+
+    return this.sendMultiTransaction(txs, options);
   };
 
   cancelOrder = async (
@@ -163,6 +232,54 @@ export class WriteActions {
     );
 
     return this.sendTransaction(tx, options);
+  };
+
+  fulfillOrderManyWithDeposit = async (
+    {
+      amount,
+      orderType,
+      limitType,
+      price,
+      slippage,
+      orders,
+      amountToSpend,
+      amountFee,
+      assetType,
+      depositAssetId,
+      feeAssetId,
+    }: FulfillOrderManyWithDepositParams,
+    allMarketContracts: string[],
+    options: Options,
+  ) => {
+    const baseMarketFactory = SparkMarketAbi__factory.connect(
+      options.contractAddresses.market,
+      options.wallet,
+    );
+
+    const depositAndWithdrawalTxs = await prepareDepositAndWithdrawals({
+      baseMarketFactory,
+      wallet: options.wallet,
+      amountToSpend,
+      depositAssetId,
+      assetType,
+      allMarketContracts,
+      amountFee,
+      feeAssetId,
+    });
+
+    const txs = baseMarketFactory.multiCall([
+      ...depositAndWithdrawalTxs,
+      baseMarketFactory.functions.fulfill_order_many(
+        amount,
+        orderType as unknown as OrderTypeInput,
+        limitType as unknown as LimitTypeInput,
+        price,
+        slippage,
+        orders,
+      ),
+    ]);
+
+    return this.sendMultiTransaction(txs, options);
   };
 
   mintToken = async (

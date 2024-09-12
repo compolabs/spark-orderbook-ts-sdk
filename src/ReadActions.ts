@@ -185,8 +185,6 @@ export class ReadActions {
 
     const result = await baseMarketContract.multiCall(promises).get();
 
-    console.log(result);
-
     return result.value.map((data: AccountOutput) => ({
       liquid: {
         base: data.locked.base.toString() ?? BN.ZERO.toString(),
