@@ -162,6 +162,8 @@ export class WriteActions {
       allMarketContracts,
     });
 
+    console.log("depositAndWithdrawalTxs", depositAndWithdrawalTxs);
+
     const txs = baseMarketFactory.multiCall([
       ...depositAndWithdrawalTxs,
       baseMarketFactory.functions.open_order(
@@ -266,6 +268,8 @@ export class WriteActions {
       amountFee,
       feeAssetId,
     });
+
+    console.log("depositAndWithdrawalTxs", depositAndWithdrawalTxs);
 
     const txs = baseMarketFactory.multiCall([
       ...depositAndWithdrawalTxs,
