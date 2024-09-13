@@ -187,8 +187,8 @@ export class ReadActions {
 
     return result.value.map((data: AccountOutput) => ({
       liquid: {
-        base: data.locked.base.toString() ?? BN.ZERO.toString(),
-        quote: data.locked.quote.toString() ?? BN.ZERO.toString(),
+        base: data.liquid.base.toString() ?? BN.ZERO.toString(),
+        quote: data.liquid.quote.toString() ?? BN.ZERO.toString(),
       },
       locked: {
         base: data.locked.base.toString() ?? BN.ZERO.toString(),
