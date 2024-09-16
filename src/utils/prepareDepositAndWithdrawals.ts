@@ -159,10 +159,12 @@ export const prepareFullWithdrawals = async ({
   wallet,
   assetType,
   allMarketContracts,
+  amount,
 }: {
   wallet: WalletLocked | WalletUnlocked;
   assetType: AssetType;
   allMarketContracts: string[];
+  amount?: string;
 }) => {
   const identity: IdentityInput = {
     Address: {
@@ -183,20 +185,31 @@ export const prepareFullWithdrawals = async ({
 
   const isBase = assetType === AssetType.Base;
 
+  const specifiedAmount = amount ? new BN(amount) : null;
+
   // Create withdraw promises for each contract, withdrawing only what's necessary
   const withdrawPromises = allMarketContracts
     .map((contractAddress, i) => {
       const balance = balanceMultiCallResult.value[i];
-      const amount = isBase
+      const maxAmount = isBase
         ? new BN(balance.liquid.base.toString())
         : new BN(balance.liquid.quote.toString());
 
-      if (amount.isZero()) {
+      let withdrawAmount: BN;
+      if (specifiedAmount) {
+        withdrawAmount = specifiedAmount.gt(maxAmount)
+          ? maxAmount
+          : specifiedAmount;
+      } else {
+        withdrawAmount = maxAmount;
+      }
+
+      if (withdrawAmount.isZero()) {
         return null; // Skip if the balance is zero
       }
 
       return getMarketContract(contractAddress, wallet).functions.withdraw(
-        amount.toString(),
+        withdrawAmount.toString(),
         assetType as unknown as AssetTypeInput,
       );
     })

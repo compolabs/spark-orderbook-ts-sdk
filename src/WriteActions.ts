@@ -97,6 +97,7 @@ export class WriteActions {
     assetType: AssetType,
     allMarketContracts: string[],
     options: Options,
+    amount?: string,
   ): Promise<WriteTransactionResponse> => {
     const marketFactory = SparkMarketAbi__factory.connect(
       allMarketContracts[0],
@@ -107,6 +108,7 @@ export class WriteActions {
       wallet: options.wallet,
       allMarketContracts,
       assetType,
+      amount,
     });
 
     const tx = marketFactory.multiCall(withdrawTxs);
