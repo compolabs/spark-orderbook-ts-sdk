@@ -93,7 +93,7 @@ export class WriteActions {
     return this.sendMultiTransaction(tx, options);
   };
 
-  withdrawAllMax = async (
+  withdrawAssets = async (
     assetType: AssetType,
     allMarketContracts: string[],
     options: Options,
@@ -112,6 +112,36 @@ export class WriteActions {
     });
 
     const tx = marketFactory.multiCall(withdrawTxs);
+
+    return this.sendMultiTransaction(tx, options);
+  };
+
+  withdrawAllAssets = async (
+    allMarketContracts: string[],
+    options: Options,
+  ): Promise<WriteTransactionResponse> => {
+    const marketFactory = SparkMarketAbi__factory.connect(
+      allMarketContracts[0],
+      options.wallet,
+    );
+
+    const withdrawTxsBase = await prepareFullWithdrawals({
+      wallet: options.wallet,
+      allMarketContracts,
+      assetType: AssetType.Base,
+      amount: undefined,
+    });
+    const withdrawTxsQuote = await prepareFullWithdrawals({
+      wallet: options.wallet,
+      allMarketContracts,
+      assetType: AssetType.Quote,
+      amount: undefined,
+    });
+
+    const tx = marketFactory.multiCall([
+      ...withdrawTxsBase,
+      ...withdrawTxsQuote,
+    ]);
 
     return this.sendMultiTransaction(tx, options);
   };

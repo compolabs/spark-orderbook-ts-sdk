@@ -172,16 +172,25 @@ export class SparkOrderbook {
     return this.write.withdrawAll(assets, this.getApiOptions());
   };
 
-  withdrawAllMax = async (
+  withdrawAssets = async (
     assetType: AssetType,
     allMarketContracts: string[],
     amount?: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.withdrawAllMax(
+    return this.write.withdrawAssets(
       assetType,
       allMarketContracts,
       this.getApiOptions(),
       amount,
+    );
+  };
+
+  withdrawAllAssets = async (
+    allMarketContracts: string[],
+  ): Promise<WriteTransactionResponse> => {
+    return this.write.withdrawAllAssets(
+      allMarketContracts,
+      this.getApiOptions(),
     );
   };
 
