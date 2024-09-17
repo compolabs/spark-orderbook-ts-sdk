@@ -97,13 +97,13 @@ export const prepareDepositAndWithdrawals = async ({
       contracts: allMarketContracts,
     });
 
-  if (totalBalance.lte(amountToSpend)) {
+  if (totalBalance.lt(amountToSpend)) {
     throw new Error(
       `Insufficient balance: Need ${amountToSpend}, but only have ${totalBalance}`,
     );
   }
 
-  if (walletFeeBalance.lte(amountFee)) {
+  if (walletFeeBalance.lt(amountFee)) {
     throw new Error(
       `Insufficient fee balance: Need ${amountFee}, but only have ${walletFeeBalance}`,
     );
