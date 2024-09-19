@@ -116,6 +116,7 @@ export interface GetOrdersParams {
   status?: Status[];
   user?: string;
   asset?: string;
+  offset?: number;
 }
 
 export interface GetActiveOrdersParams {
@@ -123,6 +124,7 @@ export interface GetActiveOrdersParams {
   orderType: OrderType;
   user?: string;
   asset?: string;
+  offset?: number;
 }
 
 export type ActiveOrderReturn<T extends OrderType> = T extends OrderType.Buy

@@ -35,14 +35,16 @@ export const getOrdersQuery = (
   };
 
   const priceOrder = params.orderType === "Buy" ? "desc" : "asc";
+  const offsetInRange = params.offset ?? 0;
 
   const query = gql`
     ${type} OrderQuery(
       $limit: Int!
+      $offset: Int!
       $where: Order_bool_exp
       $priceOrder: order_by!
     ) {
-      Order(limit: $limit, where: $where, order_by: { price: $priceOrder }) {
+      Order(limit: $limit, offset: $offset, where: $where, order_by: { price: $priceOrder }) {
         id
         asset
         amount
@@ -60,6 +62,7 @@ export const getOrdersQuery = (
     query,
     variables: {
       limit: params.limit,
+      offset: offsetInRange,
       where: generateWhereFilter(params),
       priceOrder,
     },
@@ -90,14 +93,16 @@ export const getActiveOrdersQuery = (
 
   const priceOrder = params.orderType === "Buy" ? "desc" : "asc";
   const queryObject = `Active${params.orderType}Order`;
+  const offsetInRange = params.offset ?? 0;
 
   const query = gql`
     ${type} ${queryObject}Query(
       $limit: Int!
+      $offset: Int!
       $where: ${queryObject}_bool_exp
       $priceOrder: order_by!
     ) {
-      ${queryObject}(limit: $limit, where: $where, order_by: { price: $priceOrder }) {
+      ${queryObject}(limit: $limit, offset: $offset, where: $where, order_by: { price: $priceOrder }) {
         id
         asset
         amount
@@ -115,6 +120,7 @@ export const getActiveOrdersQuery = (
     query,
     variables: {
       limit: params.limit,
+      offset: offsetInRange,
       where: generateWhereFilter(params),
       priceOrder,
     },
