@@ -194,16 +194,18 @@ export class WriteActions {
       allMarketContracts,
     });
 
-    console.log("depositAndWithdrawalTxs", depositAndWithdrawalTxs);
+    console.log("depositAndWithdrawalTxs 2", depositAndWithdrawalTxs);
 
-    const txs = baseMarketFactory.multiCall([
-      ...depositAndWithdrawalTxs,
-      baseMarketFactory.functions.open_order(
-        amount,
-        type as unknown as OrderTypeInput,
-        price,
-      ),
-    ]);
+    const txs = baseMarketFactory
+      .multiCall([
+        ...depositAndWithdrawalTxs,
+        baseMarketFactory.functions.open_order(
+          amount,
+          type as unknown as OrderTypeInput,
+          price,
+        ),
+      ])
+      .txParams({ variableOutputs: 2 });
 
     return this.sendMultiTransaction(txs, options);
   };
@@ -301,19 +303,21 @@ export class WriteActions {
       feeAssetId,
     });
 
-    console.log("depositAndWithdrawalTxs", depositAndWithdrawalTxs);
+    console.log("depositAndWithdrawalTxs 1", depositAndWithdrawalTxs);
 
-    const txs = baseMarketFactory.multiCall([
-      ...depositAndWithdrawalTxs,
-      baseMarketFactory.functions.fulfill_order_many(
-        amount,
-        orderType as unknown as OrderTypeInput,
-        limitType as unknown as LimitTypeInput,
-        price,
-        slippage,
-        orders,
-      ),
-    ]);
+    const txs = baseMarketFactory
+      .multiCall([
+        ...depositAndWithdrawalTxs,
+        baseMarketFactory.functions.fulfill_order_many(
+          amount,
+          orderType as unknown as OrderTypeInput,
+          limitType as unknown as LimitTypeInput,
+          price,
+          slippage,
+          orders,
+        ),
+      ])
+      .txParams({ variableOutputs: 2 });
 
     return this.sendMultiTransaction(txs, options);
   };

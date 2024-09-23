@@ -149,8 +149,8 @@ export const prepareDepositAndWithdrawals = async ({
 
   return [
     ...withdrawPromises,
-    baseMarketFactory.functions.deposit().callParams({ forward: forwardFee }),
     baseMarketFactory.functions.deposit().callParams({ forward }),
+    baseMarketFactory.functions.deposit().callParams({ forward: forwardFee }),
   ];
 };
 
