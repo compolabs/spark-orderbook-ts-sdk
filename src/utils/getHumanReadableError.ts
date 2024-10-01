@@ -5,7 +5,7 @@ import {
   MatchErrorInput,
   OrderErrorInput,
   ValueErrorInput,
-} from "src/types/market/SparkMarketAbi";
+} from "src/types/market/SparkMarket";
 
 type HumanReadableMessages = {
   [K in keyof AccountErrorInput]: string;
@@ -46,6 +46,8 @@ const humanReadableMessages: HumanReadableMessages = {
   ZeroLockAmount: "Lock amount cannot be zero",
   ZeroTransferAmount: "Transfer amount cannot be zero",
   ZeroUnlockAmount: "Unlock amount cannot be zero",
+  InvalidMarketAsset: "Invalid market asset",
+  InvalidMarketSame: "Invalid market asset same",
 };
 
 const humanReadableMessagesKeys = Object.keys(humanReadableMessages);

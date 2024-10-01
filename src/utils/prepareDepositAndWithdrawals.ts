@@ -5,20 +5,19 @@ import {
   WalletUnlocked,
 } from "fuels";
 import { AssetType } from "src/interface";
-import { SparkMarketAbi__factory } from "src/types/market";
+import { SparkMarket } from "src/types/market";
 import {
   AccountOutput,
   AssetTypeInput,
   IdentityInput,
-  SparkMarketAbi,
-} from "src/types/market/SparkMarketAbi";
+} from "src/types/market/SparkMarket";
 
 import BN from "./BN";
 
 const getMarketContract = (
   contractAddress: string,
   wallet: WalletLocked | WalletUnlocked,
-) => SparkMarketAbi__factory.connect(contractAddress, wallet);
+) => new SparkMarket(contractAddress, wallet);
 
 // Helper function to get the total balance (contract + wallet)
 const getTotalBalance = async ({
@@ -79,7 +78,7 @@ export const prepareDepositAndWithdrawals = async ({
   amountToSpend,
   amountFee,
 }: {
-  baseMarketFactory: SparkMarketAbi;
+  baseMarketFactory: SparkMarket;
   wallet: WalletLocked | WalletUnlocked;
   assetType: AssetType;
   allMarketContracts: string[];
