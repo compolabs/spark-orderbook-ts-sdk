@@ -28,12 +28,12 @@ export class ReadActions {
   getOrderbookVersion = async (
     options: Options,
   ): Promise<{ address: string; version: number }> => {
-    const orderbookFactory = new SparkMarket(
-      options.contractAddresses.orderbook,
+    const registryFactory = new SparkRegistry(
+      options.contractAddresses.registry,
       options.wallet,
     );
 
-    const data = await orderbookFactory.functions.config().get();
+    const data = await registryFactory.functions.config().get();
 
     return {
       address: data.value[0].bits,
@@ -45,12 +45,12 @@ export class ReadActions {
     symbol: string,
     options: Options,
   ): Promise<Undefinable<string>> => {
-    const orderbookFactory = new MultiassetContract(
+    const assetsFactory = new MultiassetContract(
       options.contractAddresses.multiAsset,
       options.wallet,
     );
 
-    const data = await orderbookFactory.functions.asset_get(symbol).get();
+    const data = await assetsFactory.functions.asset_get(symbol).get();
 
     return data.value?.bits;
   };
@@ -59,8 +59,8 @@ export class ReadActions {
     assetIdPairs: [string, string][],
     options: Options,
   ): Promise<Markets> => {
-    const orderbookFactory = new SparkRegistry(
-      options.contractAddresses.orderbook,
+    const registryFactory = new SparkRegistry(
+      options.contractAddresses.registry,
       options.wallet,
     );
 
@@ -71,7 +71,7 @@ export class ReadActions {
       ],
     );
 
-    const data = await orderbookFactory.functions.markets(assetIdInput).get();
+    const data = await registryFactory.functions.markets(assetIdInput).get();
 
     const markets = data.value.reduce(
       (prev, [baseAssetId, quoteAssetId, contractId]) => {
