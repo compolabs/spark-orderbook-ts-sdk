@@ -55,9 +55,27 @@ export class IndexerApi extends GraphClient {
   subscribeTradeOrderEvents = (
     params: GetTradeOrderEventsParams,
   ): Observable<FetchResult<{ TradeOrderEvent: TradeOrderEvent[] }>> => {
+    const generateWhereFilter = (params: GetTradeOrderEventsParams) => {
+      const where: any = {};
+
+      if (params.market) {
+        where.market = { _eq: params.market };
+      }
+
+      return where;
+    };
+
     const query = gql`
-      subscription ($limit: Int!, $orderBy: order_by!) {
-        TradeOrderEvent(limit: $limit, order_by: { timestamp: $orderBy }) {
+      subscription (
+        $limit: Int!
+        $where: TradeOrderEvent_bool_exp
+        $orderBy: order_by!
+      ) {
+        TradeOrderEvent(
+          limit: $limit
+          where: $where
+          order_by: { timestamp: $orderBy }
+        ) {
           id
           trade_price
           trade_size
@@ -71,22 +89,40 @@ export class IndexerApi extends GraphClient {
     }>({
       query,
       variables: {
-        ...params,
+        limit: params.limit,
         orderBy: "desc",
+        where: generateWhereFilter(params),
       },
     });
   };
 
-  getVolume = async (): Promise<Volume> => {
+  getVolume = async (params: GetTradeOrderEventsParams): Promise<Volume> => {
+    const generateWhereFilter = (
+      params: GetTradeOrderEventsParams & {
+        timestamp: string;
+      },
+    ) => {
+      const where: any = {};
+
+      if (params.market) {
+        where.market = { _eq: params.market };
+      }
+
+      if (params.timestamp) {
+        where.timestamp = { _gte: params.timestamp };
+      }
+
+      return where;
+    };
     const now = new Date();
     const dayMilliseconds = 24 * 60 * 60 * 1000;
     const yesterday = new Date(now.getTime() - dayMilliseconds);
 
-    const yesterdayISO = yesterday.toISOString();
+    const timestamp = yesterday.toISOString();
 
     const query = gql`
-      query TradeOrderEventQuery($yesterdayISO: String!) {
-        TradeOrderEvent(where: { timestamp: { _gte: $yesterdayISO } }) {
+      query TradeOrderEventQuery($where: TradeOrderEvent_bool_exp) {
+        TradeOrderEvent(where: $where) {
           trade_size
           trade_price
         }
@@ -103,7 +139,10 @@ export class IndexerApi extends GraphClient {
     }>({
       query,
       variables: {
-        yesterdayISO,
+        where: generateWhereFilter({
+          ...params,
+          timestamp,
+        }),
       },
     });
 

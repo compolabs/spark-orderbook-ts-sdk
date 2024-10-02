@@ -5,29 +5,31 @@ import {
   WalletUnlocked,
 } from "fuels";
 import { AssetType } from "src/interface";
-import { SparkMarketAbi__factory } from "src/types/market";
+import { SparkMarket } from "src/types/market";
 import {
   AccountOutput,
   AssetTypeInput,
+  ContractIdInput,
   IdentityInput,
-  SparkMarketAbi,
-} from "src/types/market/SparkMarketAbi";
+} from "src/types/market/SparkMarket";
 
 import BN from "./BN";
 
 const getMarketContract = (
   contractAddress: string,
   wallet: WalletLocked | WalletUnlocked,
-) => SparkMarketAbi__factory.connect(contractAddress, wallet);
+) => new SparkMarket(contractAddress, wallet);
 
 // Helper function to get the total balance (contract + wallet)
 const getTotalBalance = async ({
+  targetMarketFactory,
   wallet,
   assetType,
   depositAssetId,
   feeAssetId,
   contracts,
 }: {
+  targetMarketFactory: SparkMarket;
   wallet: WalletLocked | WalletUnlocked;
   assetType: AssetType;
   depositAssetId: string;
@@ -61,11 +63,25 @@ const getTotalBalance = async ({
 
   const contractsBalance = new BN(BN.sum(...contractBalances));
 
-  const walletBalance = await wallet.getBalance(depositAssetId);
-  const walletFeeBalance = await wallet.getBalance(feeAssetId);
+  const [walletBalance, walletFeeBalance] = await Promise.all([
+    wallet.getBalance(depositAssetId),
+    wallet.getBalance(feeAssetId),
+  ]);
   const totalBalance = contractsBalance.plus(walletBalance.toString());
 
-  return { totalBalance, contractBalances, walletFeeBalance };
+  const targetMarketBalanceResult = await targetMarketFactory.functions
+    .account(identity)
+    .get();
+  const targetMarketBalance = isBase
+    ? new BN(targetMarketBalanceResult.value.liquid.base.toString())
+    : new BN(targetMarketBalanceResult.value.liquid.quote.toString());
+
+  return {
+    totalBalance,
+    contractBalances,
+    walletFeeBalance,
+    targetMarketBalance,
+  };
 };
 
 // Function to get deposit data and withdraw funds if necessary
@@ -79,7 +95,7 @@ export const prepareDepositAndWithdrawals = async ({
   amountToSpend,
   amountFee,
 }: {
-  baseMarketFactory: SparkMarketAbi;
+  baseMarketFactory: SparkMarket;
   wallet: WalletLocked | WalletUnlocked;
   assetType: AssetType;
   allMarketContracts: string[];
@@ -88,14 +104,19 @@ export const prepareDepositAndWithdrawals = async ({
   amountToSpend: string;
   amountFee: string;
 }) => {
-  const { totalBalance, contractBalances, walletFeeBalance } =
-    await getTotalBalance({
-      wallet,
-      assetType,
-      depositAssetId,
-      feeAssetId,
-      contracts: allMarketContracts,
-    });
+  const {
+    totalBalance,
+    contractBalances,
+    walletFeeBalance,
+    targetMarketBalance,
+  } = await getTotalBalance({
+    targetMarketFactory: baseMarketFactory,
+    wallet,
+    assetType,
+    depositAssetId,
+    feeAssetId,
+    contracts: allMarketContracts,
+  });
 
   if (totalBalance.lt(amountToSpend)) {
     throw new Error(
@@ -109,7 +130,8 @@ export const prepareDepositAndWithdrawals = async ({
     );
   }
 
-  let remainingAmountToWithdraw = new BN(amountToSpend);
+  const amountToSpendBN = new BN(amountToSpend);
+  let remainingAmountNeeded = amountToSpendBN.minus(targetMarketBalance);
 
   // Create withdraw promises for each contract, withdrawing only what's necessary
   const withdrawPromises = allMarketContracts
@@ -117,41 +139,60 @@ export const prepareDepositAndWithdrawals = async ({
       let amount = contractBalances[i];
 
       // Skip if there's no need to withdraw funds or if the contract balance is zero
-      if (amount.isZero() || remainingAmountToWithdraw.isZero()) {
+      if (
+        amount.isZero() ||
+        remainingAmountNeeded.isZero() ||
+        remainingAmountNeeded.isNegative()
+      ) {
         return null;
       }
 
       // If the contract balance exceeds the remaining amount, withdraw only the remaining amount
-      if (amount.gt(remainingAmountToWithdraw)) {
-        amount = remainingAmountToWithdraw;
-        remainingAmountToWithdraw = BN.ZERO;
+      if (amount.gt(remainingAmountNeeded)) {
+        amount = remainingAmountNeeded;
+        remainingAmountNeeded = BN.ZERO;
       } else {
         // Otherwise, subtract the contract balance from the remaining amount and continue
-        remainingAmountToWithdraw = remainingAmountToWithdraw.minus(amount);
+        remainingAmountNeeded = remainingAmountNeeded.minus(amount);
       }
 
-      return getMarketContract(contractAddress, wallet).functions.withdraw(
+      const marketInput: ContractIdInput = {
+        bits: baseMarketFactory.id.toAddress(),
+      };
+
+      return getMarketContract(
+        contractAddress,
+        wallet,
+      ).functions.withdraw_to_market(
         amount.toString(),
         assetType as unknown as AssetTypeInput,
+        marketInput,
       );
     })
     .filter(Boolean) as FunctionInvocationScope[];
-
-  const forward: CoinQuantityLike = {
-    amount: amountToSpend,
-    assetId: depositAssetId,
-  };
 
   const forwardFee: CoinQuantityLike = {
     amount: amountFee,
     assetId: feeAssetId,
   };
 
-  return [
+  const contractCalls = [
     ...withdrawPromises,
     baseMarketFactory.functions.deposit().callParams({ forward: forwardFee }),
-    baseMarketFactory.functions.deposit().callParams({ forward }),
   ];
+
+  if (remainingAmountNeeded.isPositive()) {
+    const forward: CoinQuantityLike = {
+      amount: amountToSpend,
+      assetId: depositAssetId,
+    };
+
+    contractCalls.push(
+      baseMarketFactory.functions.deposit().callParams({ forward }),
+    );
+  }
+
+  return contractCalls;
 };
 
 // Function to withdraw the full balance from each contract

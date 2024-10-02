@@ -1,16 +1,16 @@
 import { Address, Bech32Address, ZeroBytes32 } from "fuels";
 import { Undefinable } from "tsdef";
 
-import { SparkMarketAbi__factory } from "./types/market";
+import { SparkMarket } from "./types/market";
 import {
   AccountOutput,
   AddressInput,
   IdentityInput,
-} from "./types/market/SparkMarketAbi";
-import { MultiassetContractAbi__factory } from "./types/multiasset";
-import { SparkRegistryAbi__factory } from "./types/registry";
+} from "./types/market/SparkMarket";
+import { MultiassetContract } from "./types/multiasset";
+import { SparkRegistry } from "./types/registry";
 import { Vec } from "./types/registry/common";
-import { AssetIdInput } from "./types/registry/SparkRegistryAbi";
+import { AssetIdInput } from "./types/registry/SparkRegistry";
 
 import BN from "./utils/BN";
 import {
@@ -28,12 +28,12 @@ export class ReadActions {
   getOrderbookVersion = async (
     options: Options,
   ): Promise<{ address: string; version: number }> => {
-    const orderbookFactory = SparkRegistryAbi__factory.connect(
-      options.contractAddresses.orderbook,
+    const registryFactory = new SparkRegistry(
+      options.contractAddresses.registry,
       options.wallet,
     );
 
-    const data = await orderbookFactory.functions.config().get();
+    const data = await registryFactory.functions.config().get();
 
     return {
       address: data.value[0].bits,
@@ -45,12 +45,12 @@ export class ReadActions {
     symbol: string,
     options: Options,
   ): Promise<Undefinable<string>> => {
-    const orderbookFactory = MultiassetContractAbi__factory.connect(
+    const assetsFactory = new MultiassetContract(
       options.contractAddresses.multiAsset,
       options.wallet,
     );
 
-    const data = await orderbookFactory.functions.asset_get(symbol).get();
+    const data = await assetsFactory.functions.asset_get(symbol).get();
 
     return data.value?.bits;
   };
@@ -59,8 +59,8 @@ export class ReadActions {
     assetIdPairs: [string, string][],
     options: Options,
   ): Promise<Markets> => {
-    const orderbookFactory = SparkRegistryAbi__factory.connect(
-      options.contractAddresses.orderbook,
+    const registryFactory = new SparkRegistry(
+      options.contractAddresses.registry,
       options.wallet,
     );
 
@@ -71,7 +71,7 @@ export class ReadActions {
       ],
     );
 
-    const data = await orderbookFactory.functions.markets(assetIdInput).get();
+    const data = await registryFactory.functions.markets(assetIdInput).get();
 
     const markets = data.value.reduce(
       (prev, [baseAssetId, quoteAssetId, contractId]) => {
@@ -93,10 +93,7 @@ export class ReadActions {
     marketAddress: string,
     options: Options,
   ): Promise<MarketInfo> => {
-    const marketFactory = SparkMarketAbi__factory.connect(
-      marketAddress,
-      options.wallet,
-    );
+    const marketFactory = new SparkMarket(marketAddress, options.wallet);
 
     const data = await marketFactory.functions.config().get();
 
@@ -123,7 +120,7 @@ export class ReadActions {
     trader: Bech32Address,
     options: Options,
   ): Promise<UserMarketBalance> => {
-    const marketFactory = SparkMarketAbi__factory.connect(
+    const marketFactory = new SparkMarket(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -171,16 +168,15 @@ export class ReadActions {
       Address: address,
     };
 
-    const baseMarketContract = SparkMarketAbi__factory.connect(
+    const baseMarketContract = new SparkMarket(
       contractsAddresses[0],
       options.wallet,
     );
 
     const promises = contractsAddresses.map((contractAddress) => {
-      return SparkMarketAbi__factory.connect(
-        contractAddress,
-        options.wallet,
-      ).functions.account(user);
+      return new SparkMarket(contractAddress, options.wallet).functions.account(
+        user,
+      );
     });
 
     const result = await baseMarketContract.multiCall(promises).get();
@@ -201,7 +197,7 @@ export class ReadActions {
     orderId: string,
     options: Options,
   ): Promise<SpotOrderWithoutTimestamp | undefined> => {
-    const marketFactory = SparkMarketAbi__factory.connect(
+    const marketFactory = new SparkMarket(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -226,7 +222,7 @@ export class ReadActions {
     trader: Bech32Address,
     options: Options,
   ): Promise<string[]> => {
-    const marketFactory = SparkMarketAbi__factory.connect(
+    const marketFactory = new SparkMarket(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -255,7 +251,7 @@ export class ReadActions {
   };
 
   fetchMatcherFee = async (options: Options): Promise<string> => {
-    const marketFactory = SparkMarketAbi__factory.connect(
+    const marketFactory = new SparkMarket(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -266,7 +262,7 @@ export class ReadActions {
   };
 
   fetchProtocolFee = async (options: Options): Promise<ProtocolFee[]> => {
-    const marketFactory = SparkMarketAbi__factory.connect(
+    const marketFactory = new SparkMarket(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -286,7 +282,7 @@ export class ReadActions {
     trader: Bech32Address,
     options: Options,
   ): Promise<UserProtocolFee> => {
-    const marketFactory = SparkMarketAbi__factory.connect(
+    const marketFactory = new SparkMarket(
       options.contractAddresses.market,
       options.wallet,
     );
@@ -312,7 +308,7 @@ export class ReadActions {
     trader: Bech32Address,
     options: Options,
   ): Promise<UserProtocolFee> => {
-    const marketFactory = SparkMarketAbi__factory.connect(
+    const marketFactory = new SparkMarket(
       options.contractAddresses.market,
       options.wallet,
     );

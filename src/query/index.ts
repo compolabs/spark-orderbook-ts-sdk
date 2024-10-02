@@ -13,6 +13,10 @@ export const getOrdersQuery = (
       where.order_type = { _eq: params.orderType };
     }
 
+    if (params.market) {
+      where.market = { _eq: params.market };
+    }
+
     if (params.status?.length) {
       if (params.status.length > 1) {
         where._or = params.status.map((status: string) => ({
@@ -78,6 +82,10 @@ export const getActiveOrdersQuery = (
 
     if (params.orderType) {
       where.order_type = { _eq: params.orderType };
+    }
+
+    if (params.market) {
+      where.market = { _eq: params.market };
     }
 
     if (params.user) {

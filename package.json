@@ -1,6 +1,6 @@
 {
   "name": "@compolabs/spark-orderbook-ts-sdk",
-  "version": "1.8.8",
+  "version": "1.9.0",
   "type": "module",
   "main": "./dist/index.сjs",
   "module": "./dist/index.js",
@@ -39,7 +39,7 @@
     "copy-dts": "copyfiles -u 1 \"src/**/*.d.ts\" dist"
   },
   "peerDependencies": {
-    "fuels": ">=0.93.0"
+    "fuels": ">=0.94.8"
   },
   "dependencies": {
     "@apollo/client": "^3.10.8",
@@ -61,7 +61,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-unused-imports": "^3.0.0",
-    "fuels": "0.93.0",
+    "fuels": "0.94.8",
     "husky": "^9.0.11",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.2",
@@ -74,5 +74,5 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "pnpm@9.10.0+sha256.355a8ab8dbb6ad41befbef39bc4fd6b5df85e12761d2724bd01f13e878de4b13"
+  "packageManager": "pnpm@9.11.0+sha256.1c0e33f70e5df9eede84a357bdfa0b1f9dba6e58194628d48a1055756f553754"
 }
