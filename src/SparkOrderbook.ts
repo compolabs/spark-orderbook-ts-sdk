@@ -240,8 +240,8 @@ export class SparkOrderbook {
     return this.activeIndexerApi.subscribeTradeOrderEvents(params);
   };
 
-  fetchVolume = async (): Promise<Volume> => {
-    return this.activeIndexerApi.getVolume();
+  fetchVolume = async (params: GetTradeOrderEventsParams): Promise<Volume> => {
+    return this.activeIndexerApi.getVolume(params);
   };
 
   fetchOrderById = async (

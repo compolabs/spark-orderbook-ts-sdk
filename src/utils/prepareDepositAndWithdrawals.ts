@@ -176,10 +176,23 @@ export const prepareDepositAndWithdrawals = async ({
     assetId: feeAssetId,
   };
 
-  return [
+  const contractCalls = [
     ...withdrawPromises,
     baseMarketFactory.functions.deposit().callParams({ forward: forwardFee }),
   ];
+
+  if (remainingAmountNeeded.isPositive()) {
+    const forward: CoinQuantityLike = {
+      amount: amountToSpend,
+      assetId: depositAssetId,
+    };
+
+    contractCalls.push(
+      baseMarketFactory.functions.deposit().callParams({ forward }),
+    );
+  }
+
+  return contractCalls;
 };
 
 // Function to withdraw the full balance from each contract
