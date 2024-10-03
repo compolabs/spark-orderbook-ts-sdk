@@ -8,7 +8,6 @@ import {
 } from "fuels";
 import { Undefinable } from "tsdef";
 
-import BN from "./utils/BN";
 import { NETWORK_ERROR, NetworkError } from "./utils/NetworkError";
 import { DEFAULT_GAS_LIMIT_MULTIPLIER, DEFAULT_GAS_PRICE } from "./constants";
 import { IndexerApi } from "./IndexerApi";
@@ -42,7 +41,6 @@ import { ReadActions } from "./ReadActions";
 import { WriteActions } from "./WriteActions";
 
 export class SparkOrderbook {
-  private read = new ReadActions();
   private write = new WriteActions();
 
   private providerPromise: Promise<Provider>;
@@ -74,6 +72,19 @@ export class SparkOrderbook {
     return this.indexerApi;
   }
 
+  getRead = async (shouldWrite?: boolean) => {
+    const optionsFunc = shouldWrite
+      ? this.getWriteOptions
+      : this.getReadOptions;
+    const options = await optionsFunc();
+    return new ReadActions(options);
+  };
+
+  getWrite = () => {
+    const options = this.getWriteOptions();
+    return new WriteActions(options);
+  };
+
   setActiveWallet = (wallet?: WalletLocked | WalletUnlocked) => {
     const newOptions = { ...this.options };
     newOptions.wallet = wallet;
@@ -99,7 +110,7 @@ export class SparkOrderbook {
   createOrder = async (
     order: CreateOrderParams,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.createOrder(order, this.getApiOptions());
+    return this.write.createOrder(order, this.getWriteOptions());
   };
 
   createOrderWithDeposit = async (
@@ -109,7 +120,7 @@ export class SparkOrderbook {
     return this.write.createOrderWithDeposit(
       order,
       allMarketContracts,
-      this.getApiOptions(),
+      this.getWriteOptions(),
     );
   };
 
@@ -120,12 +131,12 @@ export class SparkOrderbook {
     return this.write.fulfillOrderManyWithDeposit(
       order,
       allMarketContracts,
-      this.getApiOptions(),
+      this.getWriteOptions(),
     );
   };
 
   cancelOrder = async (orderId: string): Promise<WriteTransactionResponse> => {
-    return this.write.cancelOrder(orderId, this.getApiOptions());
+    return this.write.cancelOrder(orderId, this.getWriteOptions());
   };
 
   matchOrders = async (
@@ -135,41 +146,41 @@ export class SparkOrderbook {
     return this.write.matchOrders(
       sellOrderId,
       buyOrderId,
-      this.getApiOptions(),
+      this.getWriteOptions(),
     );
   };
 
   fulfillOrderMany = async (
     order: FulfillOrderManyParams,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.fulfillOrderMany(order, this.getApiOptions());
+    return this.write.fulfillOrderMany(order, this.getWriteOptions());
   };
 
   mintToken = async (
     token: Asset,
     amount: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.mintToken(token, amount, this.getApiOptions());
+    return this.write.mintToken(token, amount, this.getWriteOptions());
   };
 
   deposit = async (
     token: Asset,
     amount: string,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.deposit(token, amount, this.getApiOptions());
+    return this.write.deposit(token, amount, this.getWriteOptions());
   };
 
   withdraw = async (
     amount: string,
     assetType: AssetType,
   ): Promise<WriteTransactionResponse> => {
-    return this.write.withdraw(amount, assetType, this.getApiOptions());
+    return this.write.withdraw(amount, assetType, this.getWriteOptions());
   };
 
   withdrawAll = async (
     assets: WithdrawAllType[],
   ): Promise<WriteTransactionResponse> => {
-    return this.write.withdrawAll(assets, this.getApiOptions());
+    return this.write.withdrawAll(assets, this.getWriteOptions());
   };
 
   withdrawAssets = async (
@@ -180,7 +191,7 @@ export class SparkOrderbook {
     return this.write.withdrawAssets(
       assetType,
       allMarketContracts,
-      this.getApiOptions(),
+      this.getWriteOptions(),
       amount,
     );
   };
@@ -190,24 +201,8 @@ export class SparkOrderbook {
   ): Promise<WriteTransactionResponse> => {
     return this.write.withdrawAllAssets(
       allMarketContracts,
-      this.getApiOptions(),
+      this.getWriteOptions(),
     );
-  };
-
-  fetchMarkets = async (assetIdPairs: [string, string][]): Promise<Markets> => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchMarkets(assetIdPairs, options);
-  };
-
-  fetchMarketConfig = async (marketAddress: string): Promise<MarketInfo> => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchMarketConfig(marketAddress, options);
-  };
-
-  fetchMarketPrice = async (baseToken: Asset): Promise<BN> => {
-    return this.read.fetchMarketPrice(baseToken.assetId);
   };
 
   fetchOrders = async (
@@ -244,83 +239,79 @@ export class SparkOrderbook {
     return this.activeIndexerApi.getVolume(params);
   };
 
+  fetchMarkets = async (assetIdPairs: [string, string][]): Promise<Markets> => {
+    const read = await this.getRead();
+    return read.fetchMarkets(assetIdPairs);
+  };
+
+  fetchMarketConfig = async (marketAddress: string): Promise<MarketInfo> => {
+    const read = await this.getRead();
+    return read.fetchMarketConfig(marketAddress);
+  };
+
   fetchOrderById = async (
     orderId: string,
   ): Promise<SpotOrderWithoutTimestamp | undefined> => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchOrderById(orderId, options);
+    const read = await this.getRead();
+    return read.fetchOrderById(orderId);
   };
 
   fetchWalletBalance = async (asset: Asset): Promise<string> => {
-    // We use getApiOptions because we need the user's wallet
-    return this.read.fetchWalletBalance(asset.assetId, this.getApiOptions());
+    const read = await this.getRead(true);
+    return read.fetchWalletBalance(asset.assetId);
   };
 
   fetchOrderIdsByAddress = async (trader: Bech32Address): Promise<string[]> => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchOrderIdsByAddress(trader, options);
+    const read = await this.getRead();
+    return read.fetchOrderIdsByAddress(trader);
   };
 
   fetchUserMarketBalance = async (
     trader: Bech32Address,
   ): Promise<UserMarketBalance> => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchUserMarketBalance(trader, options);
+    const read = await this.getRead();
+    return read.fetchUserMarketBalance(trader);
   };
 
   fetchUserMarketBalanceByContracts = async (
     trader: Bech32Address,
     contractsAddresses: string[],
   ): Promise<UserMarketBalance[]> => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchUserMarketBalanceByContracts(
-      trader,
-      contractsAddresses,
-      options,
-    );
+    const read = await this.getRead();
+    return read.fetchUserMarketBalanceByContracts(trader, contractsAddresses);
   };
 
   fetchMatcherFee = async () => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchMatcherFee(options);
+    const read = await this.getRead();
+    return read.fetchMatcherFee();
   };
 
   fetchProtocolFee = async () => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchProtocolFee(options);
+    const read = await this.getRead();
+    return read.fetchProtocolFee();
   };
 
   fetchProtocolFeeForUser = async (trader: Bech32Address) => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchProtocolFeeForUser(trader, options);
+    const read = await this.getRead();
+    return read.fetchProtocolFeeForUser(trader);
   };
 
   fetchProtocolFeeAmountForUser = async (
     amount: string,
     trader: Bech32Address,
   ) => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchProtocolFeeAmountForUser(amount, trader, options);
+    const read = await this.getRead();
+    return read.fetchProtocolFeeAmountForUser(amount, trader);
   };
 
   getVersion = async () => {
-    const options = await this.getFetchOptions();
-
-    return this.read.getOrderbookVersion(options);
+    const read = await this.getRead();
+    return read.getOrderbookVersion();
   };
 
   getAsset = async (symbol: string) => {
-    const options = await this.getFetchOptions();
-
-    return this.read.getAsset(symbol, options);
+    const read = await this.getRead();
+    return read.getAsset(symbol);
   };
 
   getProviderWallet = async () => {
@@ -338,14 +329,14 @@ export class SparkOrderbook {
     return this.provider;
   };
 
-  private getFetchOptions = async (): Promise<Options> => {
+  private getReadOptions = async (): Promise<Options> => {
     const providerWallet = await this.getProviderWallet();
     const options: Options = { ...this.options, wallet: providerWallet };
 
     return options;
   };
 
-  private getApiOptions = (): Options => {
+  private getWriteOptions = (): Options => {
     if (!this.options.wallet) {
       throw new NetworkError(NETWORK_ERROR.UNKNOWN_WALLET);
     }
