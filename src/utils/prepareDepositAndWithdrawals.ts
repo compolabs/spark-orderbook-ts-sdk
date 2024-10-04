@@ -76,8 +76,6 @@ const getTotalBalance = async ({
     ? new BN(targetMarketBalanceResult.value.liquid.base.toString())
     : new BN(targetMarketBalanceResult.value.liquid.quote.toString());
 
-  console.log("wtf");
-
   return {
     totalBalance,
     contractBalances,
@@ -106,8 +104,6 @@ export const prepareDepositAndWithdrawals = async ({
   amountToSpend: string;
   amountFee: string;
 }) => {
-  console.log("2", amountFee);
-
   const {
     totalBalance,
     contractBalances,
@@ -121,8 +117,6 @@ export const prepareDepositAndWithdrawals = async ({
     feeAssetId,
     contracts: allMarketContracts,
   });
-
-  console.log("2-1");
 
   if (totalBalance.lt(amountToSpend)) {
     throw new Error(
@@ -138,8 +132,6 @@ export const prepareDepositAndWithdrawals = async ({
 
   const amountToSpendBN = new BN(amountToSpend);
   let remainingAmountNeeded = amountToSpendBN.minus(targetMarketBalance);
-
-  console.log("2-2");
 
   // Create withdraw promises for each contract, withdrawing only what's necessary
   const withdrawPromises = allMarketContracts
@@ -169,8 +161,6 @@ export const prepareDepositAndWithdrawals = async ({
         remainingAmountNeeded = remainingAmountNeeded.minus(amount);
       }
 
-      console.log("132123", baseMarketFactory);
-
       const marketInput: ContractIdInput = {
         bits: baseMarketFactory.id.toB256(),
       };
@@ -186,8 +176,6 @@ export const prepareDepositAndWithdrawals = async ({
     })
     .filter(Boolean) as FunctionInvocationScope[];
 
-  console.log("2-3");
-
   const forwardFee: CoinQuantityLike = {
     amount: amountFee,
     assetId: feeAssetId,
@@ -197,8 +185,6 @@ export const prepareDepositAndWithdrawals = async ({
     ...withdrawPromises,
     baseMarketFactory.functions.deposit().callParams({ forward: forwardFee }),
   ];
-
-  console.log("2-4");
 
   if (remainingAmountNeeded.isPositive()) {
     const forward: CoinQuantityLike = {
@@ -210,8 +196,6 @@ export const prepareDepositAndWithdrawals = async ({
       baseMarketFactory.functions.deposit().callParams({ forward }),
     );
   }
-
-  console.log("2-5");
 
   return contractCalls;
 };

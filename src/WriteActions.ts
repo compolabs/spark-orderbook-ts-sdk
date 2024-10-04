@@ -285,14 +285,10 @@ export class WriteActions {
     allMarketContracts: string[],
     options: Options,
   ) => {
-    console.log("1");
-
     const baseMarketFactory = new SparkMarket(
       options.contractAddresses.market,
       options.wallet,
     );
-
-    console.log("1-2");
 
     const depositAndWithdrawalTxs = await prepareDepositAndWithdrawals({
       baseMarketFactory,
@@ -304,8 +300,6 @@ export class WriteActions {
       amountFee,
       feeAssetId,
     });
-
-    console.log("1-3");
 
     console.log("depositAndWithdrawalTxs", depositAndWithdrawalTxs);
 
