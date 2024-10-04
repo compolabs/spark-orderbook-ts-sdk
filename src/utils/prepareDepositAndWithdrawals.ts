@@ -135,6 +135,11 @@ export const prepareDepositAndWithdrawals = async ({
 
   // Create withdraw promises for each contract, withdrawing only what's necessary
   const withdrawPromises = allMarketContracts
+    .filter(
+      (contractAddress) =>
+        contractAddress.toLowerCase() !==
+        baseMarketFactory.id.toB256().toLowerCase(),
+    )
     .map((contractAddress, i) => {
       let amount = contractBalances[i];
 
@@ -157,7 +162,7 @@ export const prepareDepositAndWithdrawals = async ({
       }
 
       const marketInput: ContractIdInput = {
-        bits: baseMarketFactory.id.toAddress(),
+        bits: baseMarketFactory.id.toB256(),
       };
 
       return getMarketContract(
@@ -183,7 +188,7 @@ export const prepareDepositAndWithdrawals = async ({
 
   if (remainingAmountNeeded.isPositive()) {
     const forward: CoinQuantityLike = {
-      amount: amountToSpend,
+      amount: remainingAmountNeeded.toString(),
       assetId: depositAssetId,
     };
 
