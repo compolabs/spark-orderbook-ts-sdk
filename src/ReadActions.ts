@@ -36,7 +36,8 @@ export class ReadActions {
     const data = await registryFactory.functions.config().get();
 
     return {
-      address: data.value[0].bits,
+      address:
+        data.value[0]?.Address?.bits ?? data.value[0]?.ContractId?.bits ?? "",
       version: data.value[1],
     };
   };
@@ -103,7 +104,7 @@ export class ReadActions {
       quoteAssetId: data.value[2].bits,
       quoteAssetDecimals: data.value[3],
       owner:
-        data.value[4].Address?.bits ?? data.value[4].ContractId?.bits ?? "",
+        data.value[4]?.Address?.bits ?? data.value[4]?.ContractId?.bits ?? "",
       priceDecimals: data.value[5],
       version: data.value[6],
     };
