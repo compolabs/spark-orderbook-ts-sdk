@@ -16,10 +16,8 @@ import {
 
 import BN from "./utils/BN";
 import { createContract } from "./utils/createContract";
-import {
-  prepareDepositAndWithdrawals,
-  prepareFullWithdrawals,
-} from "./utils/prepareDepositAndWithdrawals";
+import { prepareDepositAndWithdrawals } from "./utils/prepareDepositAndWithdrawals";
+import { prepareFullWithdrawals } from "./utils/prepareFullWithdrawals";
 import {
   Asset,
   AssetType,
