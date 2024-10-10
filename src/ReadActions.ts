@@ -53,7 +53,8 @@ export class ReadActions {
     const data = await this.registryFactory.functions.config().get();
 
     return {
-      address: data.value[0].bits,
+      address:
+        data.value[0]?.Address?.bits ?? data.value[0]?.ContractId?.bits ?? "",
       version: data.value[1],
     };
   }
@@ -105,7 +106,7 @@ export class ReadActions {
     ] = data.value;
 
     const owner =
-      ownerIdentity.Address?.bits ?? ownerIdentity.ContractId?.bits ?? "";
+      ownerIdentity?.Address?.bits ?? ownerIdentity?.ContractId?.bits ?? "";
 
     return {
       baseAssetId: baseAssetId.bits,

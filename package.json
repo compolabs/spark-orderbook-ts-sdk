@@ -1,6 +1,6 @@
 {
   "name": "@compolabs/spark-orderbook-ts-sdk",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "type": "module",
   "main": "./dist/index.сjs",
   "module": "./dist/index.js",
