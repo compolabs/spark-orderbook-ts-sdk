@@ -2,8 +2,6 @@ import { WalletLocked, WalletUnlocked } from "fuels";
 
 import BN from "./utils/BN";
 
-export type MarketStatusOutput = "Opened" | "Paused" | "Closed";
-
 export interface OrderbookContracts {
   market: string;
   registry: string;
@@ -62,12 +60,6 @@ export interface UserMarketBalance {
   };
 }
 
-export type MarketCreateEvent = {
-  id: string;
-  assetId: string;
-  decimal: number;
-};
-
 export type WriteTransactionResponse = {
   transactionId: string;
   value: unknown;
@@ -99,15 +91,6 @@ export type Status = "Active" | "Canceled" | "Closed";
 export interface WithdrawAllType {
   amount: string;
   assetType: AssetType;
-}
-
-export interface SpotMarketCreateEvent {
-  id: number;
-  asset_id: string;
-  asset_decimals: string;
-  timestamp: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface GetOrdersParams {

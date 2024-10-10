@@ -4,23 +4,20 @@ import {
   MultiCallInvocationScope,
 } from "fuels";
 
-import { SparkMarket } from "./types/market";
 import {
   AssetTypeInput,
   LimitTypeInput,
   OrderTypeInput,
 } from "./types/market/SparkMarket";
-import { MultiassetContract } from "./types/multiasset";
 import {
   AssetIdInput,
   IdentityInput,
 } from "./types/multiasset/MultiassetContract";
 
 import BN from "./utils/BN";
-import {
-  prepareDepositAndWithdrawals,
-  prepareFullWithdrawals,
-} from "./utils/prepareDepositAndWithdrawals";
+import { createContract } from "./utils/createContract";
+import { prepareDepositAndWithdrawals } from "./utils/prepareDepositAndWithdrawals";
+import { prepareFullWithdrawals } from "./utils/prepareFullWithdrawals";
 import {
   Asset,
   AssetType,
@@ -34,138 +31,122 @@ import {
 } from "./interface";
 
 export class WriteActions {
-  deposit = async (
+  private options: Options;
+
+  constructor(options: Options) {
+    this.options = options;
+  }
+
+  private get marketFactory() {
+    return createContract(
+      "SparkMarket",
+      this.options,
+      this.options.contractAddresses.market,
+    );
+  }
+
+  private get multiAssetContract() {
+    return createContract(
+      "MultiassetContract",
+      this.options,
+      this.options.contractAddresses.multiAsset,
+    );
+  }
+
+  async deposit(
     token: Asset,
     amount: string,
-    options: Options,
-  ): Promise<WriteTransactionResponse> => {
-    const marketFactory = new SparkMarket(
-      options.contractAddresses.market,
-      options.wallet,
-    );
-
+  ): Promise<WriteTransactionResponse> {
     const forward: CoinQuantityLike = {
       amount,
       assetId: token.assetId,
     };
 
-    const tx = marketFactory.functions.deposit().callParams({ forward });
+    const tx = this.marketFactory.functions.deposit().callParams({ forward });
+    return this.sendTransaction(tx);
+  }
 
-    return this.sendTransaction(tx, options);
-  };
-
-  withdraw = async (
+  async withdraw(
     amount: string,
     assetType: AssetType,
-    options: Options,
-  ): Promise<WriteTransactionResponse> => {
-    const marketFactory = new SparkMarket(
-      options.contractAddresses.market,
-      options.wallet,
-    );
-
-    const tx = marketFactory.functions.withdraw(
+  ): Promise<WriteTransactionResponse> {
+    const tx = this.marketFactory.functions.withdraw(
       amount,
       assetType as unknown as AssetTypeInput,
     );
+    return this.sendTransaction(tx);
+  }
 
-    return this.sendTransaction(tx, options);
-  };
-
-  withdrawAll = async (
+  async withdrawAll(
     assets: WithdrawAllType[],
-    options: Options,
-  ): Promise<WriteTransactionResponse> => {
-    const marketFactory = new SparkMarket(
-      options.contractAddresses.market,
-      options.wallet,
-    );
-
-    const assetCall = assets.map((el) =>
-      marketFactory.functions.withdraw(
-        el.amount,
-        el.assetType as unknown as AssetTypeInput,
+  ): Promise<WriteTransactionResponse> {
+    const txs = assets.map((asset) =>
+      this.marketFactory.functions.withdraw(
+        asset.amount,
+        asset.assetType as unknown as AssetTypeInput,
       ),
     );
 
-    const tx = marketFactory.multiCall(assetCall);
+    const multiTx = this.marketFactory.multiCall(txs);
+    return this.sendMultiTransaction(multiTx);
+  }
 
-    return this.sendMultiTransaction(tx, options);
-  };
-
-  withdrawAssets = async (
+  async withdrawAssets(
     assetType: AssetType,
     allMarketContracts: string[],
-    options: Options,
     amount?: string,
-  ): Promise<WriteTransactionResponse> => {
-    const marketFactory = new SparkMarket(
-      allMarketContracts[0],
-      options.wallet,
-    );
-
+  ): Promise<WriteTransactionResponse> {
     const withdrawTxs = await prepareFullWithdrawals({
-      wallet: options.wallet,
+      wallet: this.options.wallet,
       allMarketContracts,
       assetType,
       amount,
     });
 
-    const tx = marketFactory.multiCall(withdrawTxs);
+    const multiTx = this.marketFactory.multiCall(withdrawTxs);
+    return this.sendMultiTransaction(multiTx);
+  }
 
-    return this.sendMultiTransaction(tx, options);
-  };
-
-  withdrawAllAssets = async (
+  async withdrawAllAssets(
     allMarketContracts: string[],
-    options: Options,
-  ): Promise<WriteTransactionResponse> => {
-    const marketFactory = new SparkMarket(
-      allMarketContracts[0],
-      options.wallet,
-    );
+  ): Promise<WriteTransactionResponse> {
+    const [withdrawTxsBase, withdrawTxsQuote] = await Promise.all([
+      prepareFullWithdrawals({
+        wallet: this.options.wallet,
+        allMarketContracts,
+        assetType: AssetType.Base,
+      }),
+      prepareFullWithdrawals({
+        wallet: this.options.wallet,
+        allMarketContracts,
+        assetType: AssetType.Quote,
+      }),
+    ]);
 
-    const withdrawTxsBase = await prepareFullWithdrawals({
-      wallet: options.wallet,
-      allMarketContracts,
-      assetType: AssetType.Base,
-      amount: undefined,
-    });
-    const withdrawTxsQuote = await prepareFullWithdrawals({
-      wallet: options.wallet,
-      allMarketContracts,
-      assetType: AssetType.Quote,
-      amount: undefined,
-    });
-
-    const tx = marketFactory.multiCall([
+    const multiTx = this.marketFactory.multiCall([
       ...withdrawTxsBase,
       ...withdrawTxsQuote,
     ]);
+    return this.sendMultiTransaction(multiTx);
+  }
 
-    return this.sendMultiTransaction(tx, options);
-  };
-
-  createOrder = async (
-    { amount, price, type }: CreateOrderParams,
-    options: Options,
-  ): Promise<WriteTransactionResponse> => {
-    const marketFactory = new SparkMarket(
-      options.contractAddresses.market,
-      options.wallet,
-    );
-
-    const tx = marketFactory.functions.open_order(
+  async createOrder(
+    params: CreateOrderParams,
+  ): Promise<WriteTransactionResponse> {
+    const { amount, price, type } = params;
+    const tx = this.marketFactory.functions.open_order(
       amount,
       type as unknown as OrderTypeInput,
       price,
     );
+    return this.sendTransaction(tx);
+  }
 
-    return this.sendTransaction(tx, options);
-  };
-
-  createOrderWithDeposit = async (
-    {
+  async createOrderWithDeposit(
+    params: CreateOrderWithDepositParams,
+    allMarketContracts: string[],
+  ): Promise<WriteTransactionResponse> {
+    const {
       amount,
       amountToSpend,
       amountFee,
@@ -174,18 +155,11 @@ export class WriteActions {
       depositAssetId,
       feeAssetId,
       assetType,
-    }: CreateOrderWithDepositParams,
-    allMarketContracts: string[],
-    options: Options,
-  ): Promise<WriteTransactionResponse> => {
-    const baseMarketFactory = new SparkMarket(
-      options.contractAddresses.market,
-      options.wallet,
-    );
+    } = params;
 
     const depositAndWithdrawalTxs = await prepareDepositAndWithdrawals({
-      baseMarketFactory,
-      wallet: options.wallet,
+      baseMarketFactory: this.marketFactory,
+      wallet: this.options.wallet,
       amountToSpend,
       depositAssetId,
       feeAssetId,
@@ -194,69 +168,40 @@ export class WriteActions {
       allMarketContracts,
     });
 
-    console.log("depositAndWithdrawalTxs", depositAndWithdrawalTxs);
-
-    const txs = baseMarketFactory.multiCall([
+    const txs = [
       ...depositAndWithdrawalTxs,
-      baseMarketFactory.functions.open_order(
+      this.marketFactory.functions.open_order(
         amount,
         type as unknown as OrderTypeInput,
         price,
       ),
-    ]);
+    ];
 
-    return this.sendMultiTransaction(txs, options);
-  };
+    const multiTx = this.marketFactory.multiCall(txs);
+    return this.sendMultiTransaction(multiTx);
+  }
 
-  cancelOrder = async (
-    orderId: string,
-    options: Options,
-  ): Promise<WriteTransactionResponse> => {
-    const marketFactory = new SparkMarket(
-      options.contractAddresses.market,
-      options.wallet,
-    );
+  async cancelOrder(orderId: string): Promise<WriteTransactionResponse> {
+    const tx = this.marketFactory.functions.cancel_order(orderId);
+    return this.sendTransaction(tx);
+  }
 
-    const tx = marketFactory.functions.cancel_order(orderId);
-
-    return this.sendTransaction(tx, options);
-  };
-
-  matchOrders = async (
+  async matchOrders(
     sellOrderId: string,
     buyOrderId: string,
-    options: Options,
-  ): Promise<WriteTransactionResponse> => {
-    const marketFactory = new SparkMarket(
-      options.contractAddresses.market,
-      options.wallet,
-    );
-
-    const tx = marketFactory.functions.match_order_pair(
+  ): Promise<WriteTransactionResponse> {
+    const tx = this.marketFactory.functions.match_order_pair(
       sellOrderId,
       buyOrderId,
     );
+    return this.sendTransaction(tx);
+  }
 
-    return this.sendTransaction(tx, options);
-  };
-
-  fulfillOrderMany = async (
-    {
-      amount,
-      orderType,
-      limitType,
-      price,
-      slippage,
-      orders,
-    }: FulfillOrderManyParams,
-    options: Options,
-  ) => {
-    const marketFactory = new SparkMarket(
-      options.contractAddresses.market,
-      options.wallet,
-    );
-
-    const tx = marketFactory.functions.fulfill_order_many(
+  async fulfillOrderMany(
+    params: FulfillOrderManyParams,
+  ): Promise<WriteTransactionResponse> {
+    const { amount, orderType, limitType, price, slippage, orders } = params;
+    const tx = this.marketFactory.functions.fulfill_order_many(
       amount,
       orderType as unknown as OrderTypeInput,
       limitType as unknown as LimitTypeInput,
@@ -264,12 +209,14 @@ export class WriteActions {
       slippage,
       orders,
     );
+    return this.sendTransaction(tx);
+  }
 
-    return this.sendTransaction(tx, options);
-  };
-
-  fulfillOrderManyWithDeposit = async (
-    {
+  async fulfillOrderManyWithDeposit(
+    params: FulfillOrderManyWithDepositParams,
+    allMarketContracts: string[],
+  ): Promise<WriteTransactionResponse> {
+    const {
       amount,
       orderType,
       limitType,
@@ -281,18 +228,11 @@ export class WriteActions {
       assetType,
       depositAssetId,
       feeAssetId,
-    }: FulfillOrderManyWithDepositParams,
-    allMarketContracts: string[],
-    options: Options,
-  ) => {
-    const baseMarketFactory = new SparkMarket(
-      options.contractAddresses.market,
-      options.wallet,
-    );
+    } = params;
 
     const depositAndWithdrawalTxs = await prepareDepositAndWithdrawals({
-      baseMarketFactory,
-      wallet: options.wallet,
+      baseMarketFactory: this.marketFactory,
+      wallet: this.options.wallet,
       amountToSpend,
       depositAssetId,
       assetType,
@@ -301,11 +241,9 @@ export class WriteActions {
       feeAssetId,
     });
 
-    console.log("depositAndWithdrawalTxs", depositAndWithdrawalTxs);
-
-    const txs = baseMarketFactory.multiCall([
+    const txs = [
       ...depositAndWithdrawalTxs,
-      baseMarketFactory.functions.fulfill_order_many(
+      this.marketFactory.functions.fulfill_order_many(
         amount,
         orderType as unknown as OrderTypeInput,
         limitType as unknown as LimitTypeInput,
@@ -313,49 +251,37 @@ export class WriteActions {
         slippage,
         orders,
       ),
-    ]);
+    ];
 
-    return this.sendMultiTransaction(txs, options);
-  };
+    const multiTx = this.marketFactory.multiCall(txs);
+    return this.sendMultiTransaction(multiTx);
+  }
 
-  mintToken = async (
+  async mintToken(
     token: Asset,
     amount: string,
-    options: Options,
-  ): Promise<WriteTransactionResponse> => {
-    const tokenFactory = options.contractAddresses.multiAsset;
-    const tokenFactoryContract = new MultiassetContract(
-      tokenFactory,
-      options.wallet,
-    );
-
+  ): Promise<WriteTransactionResponse> {
     const mintAmount = BN.parseUnits(amount, token.decimals);
 
-    const asset: AssetIdInput = {
-      bits: token.assetId,
-    };
-
+    const asset: AssetIdInput = { bits: token.assetId };
     const identity: IdentityInput = {
-      Address: {
-        bits: options.wallet.address.toB256(),
-      },
+      Address: { bits: this.options.wallet.address.toB256() },
     };
 
-    const tx = await tokenFactoryContract.functions.mint(
+    const tx = this.multiAssetContract.functions.mint(
       identity,
       asset,
       mintAmount.toString(),
     );
 
-    return this.sendTransaction(tx, options);
-  };
+    return this.sendTransaction(tx);
+  }
 
-  private sendTransaction = async (
+  private async sendTransaction(
     tx: FunctionInvocationScope,
-    options: Options,
-  ): Promise<WriteTransactionResponse> => {
+  ): Promise<WriteTransactionResponse> {
     const { gasUsed } = await tx.getTransactionCost();
-    const gasLimit = gasUsed.mul(options.gasLimitMultiplier).toString();
+    const gasLimit = gasUsed.mul(this.options.gasLimitMultiplier).toString();
     const res = await tx.txParams({ gasLimit }).call();
     const data = await res.waitForResult();
 
@@ -363,14 +289,13 @@ export class WriteActions {
       transactionId: res.transactionId,
       value: data.value,
     };
-  };
+  }
 
-  private sendMultiTransaction = async (
+  private async sendMultiTransaction(
     txs: MultiCallInvocationScope,
-    options: Options,
-  ): Promise<WriteTransactionResponse> => {
+  ): Promise<WriteTransactionResponse> {
     const { gasUsed } = await txs.getTransactionCost();
-    const gasLimit = gasUsed.mul(options.gasLimitMultiplier).toString();
+    const gasLimit = gasUsed.mul(this.options.gasLimitMultiplier).toString();
     const res = await txs.txParams({ gasLimit }).call();
     const data = await res.waitForResult();
 
@@ -378,5 +303,5 @@ export class WriteActions {
       transactionId: res.transactionId,
       value: data.value,
     };
-  };
+  }
 }
