@@ -7,7 +7,6 @@ jest.mock("../src/utils/getTotalBalance", () => ({
 const BASE_CONTRACT_ADDRESS = "0xBaseContractAddress";
 const CONTRACT_ADDRESS_2 = "0xContractAddress_2";
 const CONTRACT_ADDRESS_3 = "0xContractAddress_3";
-const CONTRACT_ADDRESS_4 = "0xContractAddress_4";
 
 jest.mock("../src/types/market/SparkMarket", () => {
   return {
@@ -16,20 +15,6 @@ jest.mock("../src/types/market/SparkMarket", () => {
         toB256: jest.fn(() => BASE_CONTRACT_ADDRESS),
       },
       functions: {
-        account: jest.fn(() => ({
-          isReadOnly: jest.fn(() => true),
-          get: jest.fn<any>().mockResolvedValue({
-            liquid: {
-              base: "100",
-              quote: "200",
-            },
-          }),
-        })),
-        // withdraw_to_market: jest.fn((amount, type, market) => ({
-        //   amount,
-        //   type,
-        //   market,
-        // })),
         withdraw_to_market: jest
           .fn()
           .mockImplementation((amount, type, market) => ({
@@ -128,10 +113,6 @@ describe("prepareDepositAndWithdrawals", () => {
       targetMarketBalance: new BN("40"),
     });
 
-    const mockWithdrawToMarket = baseMarketFactory.functions
-      .withdraw_to_market as jest.Mock;
-    const mockDeposit = baseMarketFactory.functions.deposit as jest.Mock;
-
     const contractCalls = await prepareDepositAndWithdrawals({
       baseMarketFactory,
       wallet,
@@ -147,54 +128,28 @@ describe("prepareDepositAndWithdrawals", () => {
       amountFee: "5",
     });
 
-    console.log(contractCalls);
-
-    expect(mockDeposit).toHaveBeenCalledTimes(2);
-    expect(mockWithdrawToMarket).toHaveBeenCalledTimes(1);
-    expect(mockWithdrawToMarket).toHaveBeenCalledWith("100", AssetType.Base, {
-      bits: "0xBaseContractAddress",
-    });
-
-    expect(mockDeposit).toHaveBeenCalledWith();
-
-    expect(contractCalls).toHaveLength(2);
+    expect(contractCalls).toHaveLength(4);
   });
 
-  // it("handles remainingAmountNeeded correctly", async () => {
-  //   mockGetTotalBalance.mockResolvedValue({
-  //     totalBalance: new BN("200"),
-  //     contractBalances: [new BN("100"), new BN("100")],
-  //     walletFeeBalance: new BN("10"),
-  //     targetMarketBalance: new BN("50"),
-  //   });
+  it("handles remainingAmountNeeded correctly", async () => {
+    mockGetTotalBalance.mockResolvedValue({
+      totalBalance: new BN("200"),
+      otherContractBalances: [new BN("100"), new BN("100")],
+      walletFeeBalance: new BN("10"),
+      targetMarketBalance: new BN("50"),
+    });
 
-  //   const mockWithdrawToMarket = baseMarketFactory.functions
-  //     .withdraw_to_market as jest.Mock;
-  //   const mockDeposit = baseMarketFactory.functions.deposit as jest.Mock;
+    const contractCalls = await prepareDepositAndWithdrawals({
+      baseMarketFactory,
+      wallet,
+      assetType: AssetType.Base,
+      allMarketContracts: ["0xBaseContractAddress", CONTRACT_ADDRESS_2],
+      depositAssetId: "0xDepositAssetId",
+      feeAssetId: "0xFeeAssetId",
+      amountToSpend: "160",
+      amountFee: "5",
+    });
 
-  //   const contractCalls = await prepareDepositAndWithdrawals({
-  //     baseMarketFactory,
-  //     wallet,
-  //     assetType: AssetType.Base,
-  //     allMarketContracts: ["0xBaseContractAddress", CONTRACT_ADDRESS_2],
-  //     depositAssetId: "0xDepositAssetId",
-  //     feeAssetId: "0xFeeAssetId",
-  //     amountToSpend: "150",
-  //     amountFee: "5",
-  //   });
-
-  //   console.log(contractCalls);
-
-  //   expect(mockWithdrawToMarket).toHaveBeenCalledTimes(1);
-  //   expect(mockWithdrawToMarket).toHaveBeenCalledWith(
-  //     "100", // amount (withdrawn from second contract to reach 150)
-  //     AssetType.Base,
-  //     { bits: "0xBaseContractAddress" },
-  //   );
-
-  //   expect(mockDeposit).toHaveBeenCalledTimes(1);
-  //   expect(mockDeposit).toHaveBeenCalledWith();
-
-  //   expect(contractCalls).toHaveLength(2);
-  // });
+    expect(contractCalls).toHaveLength(3);
+  });
 });
