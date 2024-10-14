@@ -8,7 +8,6 @@ import {
 } from "fuels";
 import { Undefinable } from "tsdef";
 
-import BN from "./utils/BN";
 import { NETWORK_ERROR, NetworkError } from "./utils/NetworkError";
 import { DEFAULT_GAS_LIMIT_MULTIPLIER, DEFAULT_GAS_PRICE } from "./constants";
 import { IndexerApi } from "./IndexerApi";
@@ -30,10 +29,12 @@ import {
   OptionsSpark,
   Order,
   OrderType,
+  ProtocolFee,
   SparkParams,
   SpotOrderWithoutTimestamp,
   TradeOrderEvent,
   UserMarketBalance,
+  UserProtocolFee,
   Volume,
   WithdrawAllType,
   WriteTransactionResponse,
@@ -42,14 +43,10 @@ import { ReadActions } from "./ReadActions";
 import { WriteActions } from "./WriteActions";
 
 export class SparkOrderbook {
-  private read = new ReadActions();
-  private write = new WriteActions();
-
   private providerPromise: Promise<Provider>;
-  private provider: Undefinable<Provider>;
+  private provider?: Provider;
   private options: OptionsSpark;
-
-  private indexerApi: Undefinable<IndexerApi>;
+  private indexerApi?: IndexerApi;
 
   constructor(params: SparkParams) {
     this.options = {
@@ -66,290 +63,256 @@ export class SparkOrderbook {
     this.providerPromise = Provider.create(params.networkUrl);
   }
 
-  get activeIndexerApi() {
+  private get activeIndexerApi(): IndexerApi {
     if (!this.indexerApi) {
-      throw new Error("Please set correct active indexer");
+      throw new Error("Please set the correct active indexer.");
     }
-
     return this.indexerApi;
   }
 
-  setActiveWallet = (wallet?: WalletLocked | WalletUnlocked) => {
-    const newOptions = { ...this.options };
-    newOptions.wallet = wallet;
-    this.options = newOptions;
-  };
+  async getProvider(): Promise<Provider> {
+    if (!this.provider) {
+      this.provider = await this.providerPromise;
+    }
+    return this.provider;
+  }
 
-  setActiveMarket = (contractAddress: string, indexer: GraphClientConfig) => {
-    this.options = {
-      ...this.options,
-      contractAddresses: {
-        ...this.options.contractAddresses,
-        market: contractAddress,
-      },
-    };
+  async getProviderWallet(): Promise<WalletUnlocked> {
+    const provider = await this.getProvider();
+    return Wallet.generate({ provider });
+  }
+
+  private async getReadOptions(): Promise<Options> {
+    const providerWallet = await this.getProviderWallet();
+    return { ...this.options, wallet: providerWallet };
+  }
+
+  private getWriteOptions(): Options {
+    if (!this.options.wallet) {
+      throw new NetworkError(NETWORK_ERROR.UNKNOWN_WALLET);
+    }
+    return this.options as Options;
+  }
+
+  private async getRead(shouldWrite = false): Promise<ReadActions> {
+    const options = shouldWrite
+      ? this.getWriteOptions()
+      : await this.getReadOptions();
+    return new ReadActions(options);
+  }
+
+  private getWrite(): WriteActions {
+    const options = this.getWriteOptions();
+    return new WriteActions(options);
+  }
+
+  setActiveWallet(wallet?: WalletLocked | WalletUnlocked): void {
+    this.options.wallet = wallet;
+  }
+
+  setActiveMarket(contractAddress: string, indexer: GraphClientConfig): void {
+    this.options.contractAddresses.market = contractAddress;
 
     if (this.indexerApi) {
       this.indexerApi.close();
     }
 
     this.indexerApi = new IndexerApi(indexer);
-  };
+  }
 
-  createOrder = async (
+  async createOrder(
     order: CreateOrderParams,
-  ): Promise<WriteTransactionResponse> => {
-    return this.write.createOrder(order, this.getApiOptions());
-  };
+  ): Promise<WriteTransactionResponse> {
+    return this.getWrite().createOrder(order);
+  }
 
-  createOrderWithDeposit = async (
+  async createOrderWithDeposit(
     order: CreateOrderWithDepositParams,
     allMarketContracts: string[],
-  ): Promise<WriteTransactionResponse> => {
-    return this.write.createOrderWithDeposit(
-      order,
-      allMarketContracts,
-      this.getApiOptions(),
-    );
-  };
+  ): Promise<WriteTransactionResponse> {
+    return this.getWrite().createOrderWithDeposit(order, allMarketContracts);
+  }
 
-  fulfillOrderManyWithDeposit = async (
+  async fulfillOrderManyWithDeposit(
     order: FulfillOrderManyWithDepositParams,
     allMarketContracts: string[],
-  ): Promise<WriteTransactionResponse> => {
-    return this.write.fulfillOrderManyWithDeposit(
+  ): Promise<WriteTransactionResponse> {
+    return this.getWrite().fulfillOrderManyWithDeposit(
       order,
       allMarketContracts,
-      this.getApiOptions(),
     );
-  };
+  }
 
-  cancelOrder = async (orderId: string): Promise<WriteTransactionResponse> => {
-    return this.write.cancelOrder(orderId, this.getApiOptions());
-  };
+  async cancelOrder(orderId: string): Promise<WriteTransactionResponse> {
+    return this.getWrite().cancelOrder(orderId);
+  }
 
-  matchOrders = async (
+  async matchOrders(
     sellOrderId: string,
     buyOrderId: string,
-  ): Promise<WriteTransactionResponse> => {
-    return this.write.matchOrders(
-      sellOrderId,
-      buyOrderId,
-      this.getApiOptions(),
-    );
-  };
+  ): Promise<WriteTransactionResponse> {
+    return this.getWrite().matchOrders(sellOrderId, buyOrderId);
+  }
 
-  fulfillOrderMany = async (
+  async fulfillOrderMany(
     order: FulfillOrderManyParams,
-  ): Promise<WriteTransactionResponse> => {
-    return this.write.fulfillOrderMany(order, this.getApiOptions());
-  };
+  ): Promise<WriteTransactionResponse> {
+    return this.getWrite().fulfillOrderMany(order);
+  }
 
-  mintToken = async (
+  async mintToken(
     token: Asset,
     amount: string,
-  ): Promise<WriteTransactionResponse> => {
-    return this.write.mintToken(token, amount, this.getApiOptions());
-  };
+  ): Promise<WriteTransactionResponse> {
+    return this.getWrite().mintToken(token, amount);
+  }
 
-  deposit = async (
+  async deposit(
     token: Asset,
     amount: string,
-  ): Promise<WriteTransactionResponse> => {
-    return this.write.deposit(token, amount, this.getApiOptions());
-  };
+  ): Promise<WriteTransactionResponse> {
+    return this.getWrite().deposit(token, amount);
+  }
 
-  withdraw = async (
+  async withdraw(
     amount: string,
     assetType: AssetType,
-  ): Promise<WriteTransactionResponse> => {
-    return this.write.withdraw(amount, assetType, this.getApiOptions());
-  };
+  ): Promise<WriteTransactionResponse> {
+    return this.getWrite().withdraw(amount, assetType);
+  }
 
-  withdrawAll = async (
+  async withdrawAll(
     assets: WithdrawAllType[],
-  ): Promise<WriteTransactionResponse> => {
-    return this.write.withdrawAll(assets, this.getApiOptions());
-  };
+  ): Promise<WriteTransactionResponse> {
+    return this.getWrite().withdrawAll(assets);
+  }
 
-  withdrawAssets = async (
+  async withdrawAssets(
     assetType: AssetType,
     allMarketContracts: string[],
     amount?: string,
-  ): Promise<WriteTransactionResponse> => {
-    return this.write.withdrawAssets(
+  ): Promise<WriteTransactionResponse> {
+    return this.getWrite().withdrawAssets(
       assetType,
       allMarketContracts,
-      this.getApiOptions(),
       amount,
     );
-  };
+  }
 
-  withdrawAllAssets = async (
+  async withdrawAllAssets(
     allMarketContracts: string[],
-  ): Promise<WriteTransactionResponse> => {
-    return this.write.withdrawAllAssets(
-      allMarketContracts,
-      this.getApiOptions(),
-    );
-  };
+  ): Promise<WriteTransactionResponse> {
+    return this.getWrite().withdrawAllAssets(allMarketContracts);
+  }
 
-  fetchMarkets = async (assetIdPairs: [string, string][]): Promise<Markets> => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchMarkets(assetIdPairs, options);
-  };
-
-  fetchMarketConfig = async (marketAddress: string): Promise<MarketInfo> => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchMarketConfig(marketAddress, options);
-  };
-
-  fetchMarketPrice = async (baseToken: Asset): Promise<BN> => {
-    return this.read.fetchMarketPrice(baseToken.assetId);
-  };
-
-  fetchOrders = async (
+  async fetchOrders(
     params: GetOrdersParams,
-  ): Promise<ApolloQueryResult<{ Order: Order[] }>> => {
+  ): Promise<ApolloQueryResult<{ Order: Order[] }>> {
     return this.activeIndexerApi.getOrders(params);
-  };
+  }
 
-  fetchActiveOrders = async <T extends OrderType>(
+  async fetchActiveOrders<T extends OrderType>(
     params: GetActiveOrdersParams,
-  ): Promise<ApolloQueryResult<ActiveOrderReturn<T>>> => {
+  ): Promise<ApolloQueryResult<ActiveOrderReturn<T>>> {
     return this.activeIndexerApi.getActiveOrders<T>(params);
-  };
+  }
 
-  subscribeOrders = (
+  subscribeOrders(
     params: GetOrdersParams,
-  ): Observable<FetchResult<{ Order: Order[] }>> => {
+  ): Observable<FetchResult<{ Order: Order[] }>> {
     return this.activeIndexerApi.subscribeOrders(params);
-  };
+  }
 
-  subscribeActiveOrders = <T extends OrderType>(
+  subscribeActiveOrders<T extends OrderType>(
     params: GetActiveOrdersParams,
-  ): Observable<FetchResult<ActiveOrderReturn<T>>> => {
+  ): Observable<FetchResult<ActiveOrderReturn<T>>> {
     return this.activeIndexerApi.subscribeActiveOrders<T>(params);
-  };
+  }
 
-  subscribeTradeOrderEvents = (
+  subscribeTradeOrderEvents(
     params: GetTradeOrderEventsParams,
-  ): Observable<FetchResult<{ TradeOrderEvent: TradeOrderEvent[] }>> => {
+  ): Observable<FetchResult<{ TradeOrderEvent: TradeOrderEvent[] }>> {
     return this.activeIndexerApi.subscribeTradeOrderEvents(params);
-  };
+  }
 
-  fetchVolume = async (params: GetTradeOrderEventsParams): Promise<Volume> => {
+  async fetchVolume(params: GetTradeOrderEventsParams): Promise<Volume> {
     return this.activeIndexerApi.getVolume(params);
-  };
+  }
 
-  fetchOrderById = async (
+  async fetchMarkets(assetIdPairs: [string, string][]): Promise<Markets> {
+    const read = await this.getRead();
+    return read.fetchMarkets(assetIdPairs);
+  }
+
+  async fetchMarketConfig(marketAddress: string): Promise<MarketInfo> {
+    const read = await this.getRead();
+    return read.fetchMarketConfig(marketAddress);
+  }
+
+  async fetchOrderById(
     orderId: string,
-  ): Promise<SpotOrderWithoutTimestamp | undefined> => {
-    const options = await this.getFetchOptions();
+  ): Promise<SpotOrderWithoutTimestamp | undefined> {
+    const read = await this.getRead();
+    return read.fetchOrderById(orderId);
+  }
 
-    return this.read.fetchOrderById(orderId, options);
-  };
+  async fetchWalletBalance(asset: Asset): Promise<string> {
+    const read = await this.getRead(true);
+    return read.fetchWalletBalance(asset.assetId);
+  }
 
-  fetchWalletBalance = async (asset: Asset): Promise<string> => {
-    // We use getApiOptions because we need the user's wallet
-    return this.read.fetchWalletBalance(asset.assetId, this.getApiOptions());
-  };
+  async fetchOrderIdsByAddress(trader: Bech32Address): Promise<string[]> {
+    const read = await this.getRead();
+    return read.fetchOrderIdsByAddress(trader);
+  }
 
-  fetchOrderIdsByAddress = async (trader: Bech32Address): Promise<string[]> => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchOrderIdsByAddress(trader, options);
-  };
-
-  fetchUserMarketBalance = async (
+  async fetchUserMarketBalance(
     trader: Bech32Address,
-  ): Promise<UserMarketBalance> => {
-    const options = await this.getFetchOptions();
+  ): Promise<UserMarketBalance> {
+    const read = await this.getRead();
+    return read.fetchUserMarketBalance(trader);
+  }
 
-    return this.read.fetchUserMarketBalance(trader, options);
-  };
-
-  fetchUserMarketBalanceByContracts = async (
+  async fetchUserMarketBalanceByContracts(
     trader: Bech32Address,
     contractsAddresses: string[],
-  ): Promise<UserMarketBalance[]> => {
-    const options = await this.getFetchOptions();
+  ): Promise<UserMarketBalance[]> {
+    const read = await this.getRead();
+    return read.fetchUserMarketBalanceByContracts(trader, contractsAddresses);
+  }
 
-    return this.read.fetchUserMarketBalanceByContracts(
-      trader,
-      contractsAddresses,
-      options,
-    );
-  };
+  async fetchMatcherFee(): Promise<string> {
+    const read = await this.getRead();
+    return read.fetchMatcherFee();
+  }
 
-  fetchMatcherFee = async () => {
-    const options = await this.getFetchOptions();
+  async fetchProtocolFee(): Promise<ProtocolFee[]> {
+    const read = await this.getRead();
+    return read.fetchProtocolFee();
+  }
 
-    return this.read.fetchMatcherFee(options);
-  };
+  async fetchProtocolFeeForUser(
+    trader: Bech32Address,
+  ): Promise<UserProtocolFee> {
+    const read = await this.getRead();
+    return read.fetchProtocolFeeForUser(trader);
+  }
 
-  fetchProtocolFee = async () => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchProtocolFee(options);
-  };
-
-  fetchProtocolFeeForUser = async (trader: Bech32Address) => {
-    const options = await this.getFetchOptions();
-
-    return this.read.fetchProtocolFeeForUser(trader, options);
-  };
-
-  fetchProtocolFeeAmountForUser = async (
+  async fetchProtocolFeeAmountForUser(
     amount: string,
     trader: Bech32Address,
-  ) => {
-    const options = await this.getFetchOptions();
+  ): Promise<UserProtocolFee> {
+    const read = await this.getRead();
+    return read.fetchProtocolFeeAmountForUser(amount, trader);
+  }
 
-    return this.read.fetchProtocolFeeAmountForUser(amount, trader, options);
-  };
+  async getVersion(): Promise<{ address: string; version: number }> {
+    const read = await this.getRead();
+    return read.getOrderbookVersion();
+  }
 
-  getVersion = async () => {
-    const options = await this.getFetchOptions();
-
-    return this.read.getOrderbookVersion(options);
-  };
-
-  getAsset = async (symbol: string) => {
-    const options = await this.getFetchOptions();
-
-    return this.read.getAsset(symbol, options);
-  };
-
-  getProviderWallet = async () => {
-    const provider = await this.getProvider();
-    return Wallet.generate({ provider });
-  };
-
-  getProvider = async () => {
-    if (this.provider) {
-      return this.provider;
-    }
-
-    this.provider = await this.providerPromise;
-
-    return this.provider;
-  };
-
-  private getFetchOptions = async (): Promise<Options> => {
-    const providerWallet = await this.getProviderWallet();
-    const options: Options = { ...this.options, wallet: providerWallet };
-
-    return options;
-  };
-
-  private getApiOptions = (): Options => {
-    if (!this.options.wallet) {
-      throw new NetworkError(NETWORK_ERROR.UNKNOWN_WALLET);
-    }
-
-    return this.options as Options;
-  };
+  async getAsset(symbol: string): Promise<Undefinable<string>> {
+    const read = await this.getRead();
+    return read.getAsset(symbol);
+  }
 }

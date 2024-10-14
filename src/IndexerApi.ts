@@ -146,7 +146,7 @@ export class IndexerApi extends GraphClient {
       },
     });
 
-    if (!response) {
+    if (!response.data.TradeOrderEvent.length) {
       return {
         volume24h: BN.ZERO.toString(),
         high24h: BN.ZERO.toString(),
