@@ -1,4 +1,4 @@
-import { ApolloQueryResult } from "@apollo/client";
+import { ApolloQueryResult, FetchResult, Observable } from "@apollo/client";
 import {
   Bech32Address,
   Provider,
@@ -32,6 +32,7 @@ import {
   ProtocolFee,
   SparkParams,
   SpotOrderWithoutTimestamp,
+  TradeOrderEvent,
   UserMarketBalance,
   UserProtocolFee,
   Volume,
@@ -69,14 +70,14 @@ export class SparkOrderbook {
     return this.indexerApi;
   }
 
-  private async getProvider(): Promise<Provider> {
+  async getProvider(): Promise<Provider> {
     if (!this.provider) {
       this.provider = await this.providerPromise;
     }
     return this.provider;
   }
 
-  private async getProviderWallet(): Promise<WalletUnlocked> {
+  async getProviderWallet(): Promise<WalletUnlocked> {
     const provider = await this.getProvider();
     return Wallet.generate({ provider });
   }
@@ -216,16 +217,22 @@ export class SparkOrderbook {
     return this.activeIndexerApi.getActiveOrders<T>(params);
   }
 
-  subscribeOrders(params: GetOrdersParams): void {
-    this.activeIndexerApi.subscribeOrders(params);
+  subscribeOrders(
+    params: GetOrdersParams,
+  ): Observable<FetchResult<{ Order: Order[] }>> {
+    return this.activeIndexerApi.subscribeOrders(params);
   }
 
-  subscribeActiveOrders(params: GetActiveOrdersParams): void {
-    this.activeIndexerApi.subscribeActiveOrders(params);
+  subscribeActiveOrders<T extends OrderType>(
+    params: GetActiveOrdersParams,
+  ): Observable<FetchResult<ActiveOrderReturn<T>>> {
+    return this.activeIndexerApi.subscribeActiveOrders<T>(params);
   }
 
-  subscribeTradeOrderEvents(params: GetTradeOrderEventsParams): void {
-    this.activeIndexerApi.subscribeTradeOrderEvents(params);
+  subscribeTradeOrderEvents(
+    params: GetTradeOrderEventsParams,
+  ): Observable<FetchResult<{ TradeOrderEvent: TradeOrderEvent[] }>> {
+    return this.activeIndexerApi.subscribeTradeOrderEvents(params);
   }
 
   async fetchVolume(params: GetTradeOrderEventsParams): Promise<Volume> {
