@@ -160,8 +160,8 @@ export interface Order {
   id: string;
   asset: string;
   amount: string;
-  initial_amount: string;
-  order_type: OrderType;
+  initialAmount: string;
+  orderType: OrderType;
   price: string;
   status: Status;
   user: string;
@@ -176,8 +176,8 @@ export interface GetTradeOrderEventsParams {
 export interface TradeOrderEvent {
   id: string;
   timestamp: string;
-  trade_price: string;
-  trade_size: string;
+  tradePrice: string;
+  tradeSize: string;
 }
 
 export type Volume = {

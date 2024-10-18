@@ -77,8 +77,18 @@ export class IndexerApi extends GraphClient {
           order_by: { timestamp: $orderBy }
         ) {
           id
-          trade_price
-          trade_size
+          market
+          tradeSize
+          tradePrice
+          buyer
+          buyOrderId
+          buyerBaseAmount
+          buyerQuoteAmount
+          seller
+          sellOrderId
+          sellerBaseAmount
+          sellerQuoteAmount
+          sellerIsMaker
           timestamp
         }
       }
@@ -123,15 +133,15 @@ export class IndexerApi extends GraphClient {
     const query = gql`
       query TradeOrderEventQuery($where: TradeOrderEvent_bool_exp) {
         TradeOrderEvent(where: $where) {
-          trade_size
-          trade_price
+          tradeSize
+          tradePrice
         }
       }
     `;
 
     type TradeOrderEventPartial = Pick<
       TradeOrderEvent,
-      "trade_size" | "trade_price"
+      "tradeSize" | "tradePrice"
     >;
 
     const response = await this.client.query<{
@@ -156,8 +166,8 @@ export class IndexerApi extends GraphClient {
 
     const data = response.data.TradeOrderEvent.reduce(
       (prev, currentData) => {
-        const price = BigInt(currentData.trade_price);
-        const size = BigInt(currentData.trade_size);
+        const price = BigInt(currentData.tradePrice);
+        const size = BigInt(currentData.tradeSize);
         prev.volume24h += size;
 
         if (prev.high24h < price) {

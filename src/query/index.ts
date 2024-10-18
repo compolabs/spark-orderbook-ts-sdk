@@ -10,7 +10,7 @@ export const getOrdersQuery = (
     const where: any = {};
 
     if (params.orderType) {
-      where.order_type = { _eq: params.orderType };
+      where.orderType = { _eq: params.orderType };
     }
 
     if (params.market) {
@@ -52,8 +52,8 @@ export const getOrdersQuery = (
         id
         asset
         amount
-        initial_amount
-        order_type
+        initialAmount
+        orderType
         price
         status
         user
@@ -81,7 +81,7 @@ export const getActiveOrdersQuery = (
     const where: any = {};
 
     if (params.orderType) {
-      where.order_type = { _eq: params.orderType };
+      where.orderType = { _eq: params.orderType };
     }
 
     if (params.market) {
@@ -114,8 +114,8 @@ export const getActiveOrdersQuery = (
         id
         asset
         amount
-        initial_amount
-        order_type
+        initialAmount
+        orderType
         price
         status
         user
