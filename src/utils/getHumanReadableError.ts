@@ -42,12 +42,12 @@ const humanReadableMessages: HumanReadableMessages = {
   InvalidFeeSorting: "Invalid fee sorting",
   InvalidFeeZeroBased: "Fee value should be zero-based",
   InvalidValueSame: "Values should not be the same",
-  ZeroOrderAmount: "Order amount cannot be zero",
   ZeroLockAmount: "Lock amount cannot be zero",
   ZeroTransferAmount: "Transfer amount cannot be zero",
   ZeroUnlockAmount: "Unlock amount cannot be zero",
   InvalidMarketAsset: "Invalid market asset",
   InvalidMarketSame: "Invalid market asset same",
+  OrderSizeTooSmall: "Order size too small",
 };
 
 const humanReadableMessagesKeys = Object.keys(humanReadableMessages);

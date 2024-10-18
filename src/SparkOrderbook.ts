@@ -315,4 +315,9 @@ export class SparkOrderbook {
     const read = await this.getRead();
     return read.getAsset(symbol);
   }
+
+  async fetchMinOrderSize(): Promise<string> {
+    const read = await this.getRead();
+    return read.fetchMinOrderSize();
+  }
 }

@@ -238,4 +238,10 @@ export class ReadActions {
       takerFee: result.value[1].toString(),
     };
   }
+
+  async fetchMinOrderSize(): Promise<string> {
+    const result = await this.marketFactory.functions.min_order_size().get();
+
+    return result.value.toString();
+  }
 }
