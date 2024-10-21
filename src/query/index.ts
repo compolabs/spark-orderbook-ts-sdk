@@ -1,4 +1,5 @@
 import { gql, QueryOptions } from "@apollo/client";
+import { generateWhereFilter } from "src/utils/generateWhereFilter";
 
 import { GetActiveOrdersParams, GetOrdersParams } from "..";
 
@@ -6,40 +7,9 @@ export const getOrdersQuery = (
   type: "query" | "subscription",
   params: GetOrdersParams,
 ): QueryOptions => {
-  const generateWhereFilter = (params: GetOrdersParams) => {
-    const where: any = {};
-
-    if (params.orderType) {
-      where.orderType = { _eq: params.orderType };
-    }
-
-    if (params.market) {
-      where.market = { _eq: params.market };
-    }
-
-    if (params.status?.length) {
-      if (params.status.length > 1) {
-        where._or = params.status.map((status: string) => ({
-          status: { _eq: status },
-        }));
-      } else {
-        where.status = { _eq: params.status[0] };
-      }
-    }
-
-    if (params.user) {
-      where.user = { _eq: params.user };
-    }
-
-    if (params.asset) {
-      where.asset = { _eq: params.asset };
-    }
-
-    return where;
-  };
-
-  const priceOrder = params.orderType === "Buy" ? "desc" : "asc";
-  const offsetInRange = params.offset ?? 0;
+  const { limit, orderType, offset, ...restParams } = params;
+  const priceOrder = orderType === "Buy" ? "desc" : "asc";
+  const offsetInRange = offset ?? 0;
 
   const query = gql`
     ${type} OrderQuery(
@@ -58,6 +28,7 @@ export const getOrdersQuery = (
         status
         user
         timestamp
+        market
       }
     }
   `;
@@ -65,9 +36,9 @@ export const getOrdersQuery = (
   return {
     query,
     variables: {
-      limit: params.limit,
+      limit,
       offset: offsetInRange,
-      where: generateWhereFilter(params),
+      where: generateWhereFilter(restParams),
       priceOrder,
     },
   };
@@ -77,31 +48,10 @@ export const getActiveOrdersQuery = (
   type: "query" | "subscription",
   params: GetActiveOrdersParams,
 ): QueryOptions => {
-  const generateWhereFilter = (params: GetActiveOrdersParams) => {
-    const where: any = {};
-
-    if (params.orderType) {
-      where.orderType = { _eq: params.orderType };
-    }
-
-    if (params.market) {
-      where.market = { _eq: params.market };
-    }
-
-    if (params.user) {
-      where.user = { _eq: params.user };
-    }
-
-    if (params.asset) {
-      where.asset = { _eq: params.asset };
-    }
-
-    return where;
-  };
-
-  const priceOrder = params.orderType === "Buy" ? "desc" : "asc";
-  const queryObject = `Active${params.orderType}Order`;
-  const offsetInRange = params.offset ?? 0;
+  const { limit, orderType, offset, ...restParams } = params;
+  const priceOrder = orderType === "Buy" ? "desc" : "asc";
+  const queryObject = `Active${orderType}Order`;
+  const offsetInRange = offset ?? 0;
 
   const query = gql`
     ${type} ${queryObject}Query(
@@ -120,6 +70,7 @@ export const getActiveOrdersQuery = (
         status
         user
         timestamp
+        market
       }
     }
   `;
@@ -127,9 +78,9 @@ export const getActiveOrdersQuery = (
   return {
     query,
     variables: {
-      limit: params.limit,
+      limit,
       offset: offsetInRange,
-      where: generateWhereFilter(params),
+      where: generateWhereFilter(restParams),
       priceOrder,
     },
   };

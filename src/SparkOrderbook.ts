@@ -320,4 +320,31 @@ export class SparkOrderbook {
     const read = await this.getRead();
     return read.fetchMinOrderSize();
   }
+
+  /**
+   * @experimental
+   * Returns the current instance to allow method chaining.
+   * @returns {this} The current instance of the object.
+   */
+  chain(): this {
+    return this;
+  }
+
+  /**
+   * @experimental
+   * Returns the current instance to allow method chaining.
+   * @returns {this} The current instance of the object.
+   */
+  writeWithMarket(marketAddress: string): SparkOrderbook {
+    const params = {
+      ...this.options,
+      contractAddresses: {
+        ...this.options.contractAddresses,
+        market: marketAddress,
+      },
+      networkUrl: this.provider!.url,
+    };
+
+    return new SparkOrderbook(params);
+  }
 }
