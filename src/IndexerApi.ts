@@ -6,6 +6,7 @@ import {
 } from "@apollo/client";
 
 import BN from "./utils/BN";
+import { generateWhereFilter } from "./utils/generateWhereFilter";
 import { GraphClient } from "./utils/GraphClient";
 import {
   ActiveOrderReturn,
@@ -55,15 +56,7 @@ export class IndexerApi extends GraphClient {
   subscribeTradeOrderEvents = (
     params: GetTradeOrderEventsParams,
   ): Observable<FetchResult<{ TradeOrderEvent: TradeOrderEvent[] }>> => {
-    const generateWhereFilter = (params: GetTradeOrderEventsParams) => {
-      const where: any = {};
-
-      if (params.market) {
-        where.market = { _eq: params.market };
-      }
-
-      return where;
-    };
+    const { limit, ...restParams } = params;
 
     const query = gql`
       subscription (
@@ -99,31 +92,15 @@ export class IndexerApi extends GraphClient {
     }>({
       query,
       variables: {
-        limit: params.limit,
+        limit,
         orderBy: "desc",
-        where: generateWhereFilter(params),
+        where: generateWhereFilter(restParams),
       },
     });
   };
 
   getVolume = async (params: GetTradeOrderEventsParams): Promise<Volume> => {
-    const generateWhereFilter = (
-      params: GetTradeOrderEventsParams & {
-        timestamp: string;
-      },
-    ) => {
-      const where: any = {};
-
-      if (params.market) {
-        where.market = { _eq: params.market };
-      }
-
-      if (params.timestamp) {
-        where.timestamp = { _gte: params.timestamp };
-      }
-
-      return where;
-    };
+    const { limit, ...restParams } = params;
     const now = new Date();
     const dayMilliseconds = 24 * 60 * 60 * 1000;
     const yesterday = new Date(now.getTime() - dayMilliseconds);
@@ -150,7 +127,7 @@ export class IndexerApi extends GraphClient {
       query,
       variables: {
         where: generateWhereFilter({
-          ...params,
+          ...restParams,
           timestamp,
         }),
       },

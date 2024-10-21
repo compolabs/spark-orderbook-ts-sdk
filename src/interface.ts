@@ -95,7 +95,7 @@ export interface WithdrawAllType {
 
 export interface GetOrdersParams {
   limit: number;
-  market: string[];
+  market?: string[];
   orderType?: OrderType;
   status?: Status[];
   user?: string;
@@ -166,6 +166,7 @@ export interface Order {
   status: Status;
   user: string;
   timestamp: string;
+  market: string;
 }
 
 export interface GetTradeOrderEventsParams {
