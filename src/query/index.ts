@@ -17,6 +17,16 @@ export const getOrdersQuery = (
       where.market = { _eq: params.market };
     }
 
+    if (params.market?.length) {
+      if (params.market.length > 1) {
+        where._or = params.market.map((market: string) => ({
+          market: { _eq: market },
+        }));
+      } else {
+        where.market = { _eq: params.market[0] };
+      }
+    }
+
     if (params.status?.length) {
       if (params.status.length > 1) {
         where._or = params.status.map((status: string) => ({
