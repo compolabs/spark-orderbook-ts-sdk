@@ -51,8 +51,8 @@ export class SparkOrderbook {
   constructor(params: SparkParams) {
     this.options = {
       contractAddresses: {
-        ...params.contractAddresses,
         market: "",
+        ...params.contractAddresses,
       },
       wallet: params.wallet,
       gasPrice: params.gasPrice ?? DEFAULT_GAS_PRICE,
