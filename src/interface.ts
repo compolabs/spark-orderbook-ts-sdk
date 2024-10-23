@@ -179,6 +179,7 @@ export interface TradeOrderEvent {
   timestamp: string;
   tradePrice: string;
   tradeSize: string;
+  sellerIsMaker: boolean;
 }
 
 export type Volume = {
