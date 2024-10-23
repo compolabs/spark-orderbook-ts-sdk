@@ -126,12 +126,14 @@ export class IndexerApi extends GraphClient {
     }>({
       query,
       variables: {
-        where: generateWhereFilter({
-          ...restParams,
-          timestamp,
-        }),
+        where: {
+          ...generateWhereFilter(restParams),
+          timestamp: { _gte: timestamp },
+        },
       },
     });
+
+    console.log(response);
 
     if (!response.data.TradeOrderEvent.length) {
       return {
