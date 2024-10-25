@@ -244,4 +244,10 @@ export class ReadActions {
 
     return result.value.toString();
   }
+
+  async fetchMinOrderPrice(): Promise<string> {
+    const result = await this.marketFactory.functions.min_order_price().get();
+
+    return result.value.toString();
+  }
 }

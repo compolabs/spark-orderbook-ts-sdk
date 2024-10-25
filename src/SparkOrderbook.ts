@@ -33,6 +33,8 @@ import {
   SparkParams,
   SpotOrderWithoutTimestamp,
   TradeOrderEvent,
+  UserInfo,
+  UserInfoParams,
   UserMarketBalance,
   UserProtocolFee,
   Volume,
@@ -239,6 +241,10 @@ export class SparkOrderbook {
     return this.activeIndexerApi.getVolume(params);
   }
 
+  async fetchUserInfo(params: UserInfoParams): Promise<Undefinable<UserInfo>> {
+    return this.activeIndexerApi.getUserInfo(params);
+  }
+
   async fetchMarkets(assetIdPairs: [string, string][]): Promise<Markets> {
     const read = await this.getRead();
     return read.fetchMarkets(assetIdPairs);
@@ -319,6 +325,11 @@ export class SparkOrderbook {
   async fetchMinOrderSize(): Promise<string> {
     const read = await this.getRead();
     return read.fetchMinOrderSize();
+  }
+
+  async fetchMinOrderPrice(): Promise<string> {
+    const read = await this.getRead();
+    return read.fetchMinOrderPrice();
   }
 
   /**
