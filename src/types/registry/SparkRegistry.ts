@@ -26,6 +26,8 @@ export enum AccessErrorInput { NotOwner = 'NotOwner' };
 export enum AccessErrorOutput { NotOwner = 'NotOwner' };
 export type IdentityInput = Enum<{ Address: AddressInput, ContractId: ContractIdInput }>;
 export type IdentityOutput = Enum<{ Address: AddressOutput, ContractId: ContractIdOutput }>;
+export enum InitializationErrorInput { CannotReinitialized = 'CannotReinitialized' };
+export enum InitializationErrorOutput { CannotReinitialized = 'CannotReinitialized' };
 export enum MarketRegistryErrorInput { MarketAlreadyRegistered = 'MarketAlreadyRegistered', MarketNotRegistered = 'MarketNotRegistered' };
 export enum MarketRegistryErrorOutput { MarketAlreadyRegistered = 'MarketAlreadyRegistered', MarketNotRegistered = 'MarketNotRegistered' };
 export type StateInput = Enum<{ Uninitialized: undefined, Initialized: IdentityInput, Revoked: undefined }>;
@@ -41,9 +43,12 @@ export type MarketRegisterEventInput = { base: AssetIdInput, quote: AssetIdInput
 export type MarketRegisterEventOutput = { base: AssetIdOutput, quote: AssetIdOutput, market: ContractIdOutput };
 export type MarketUnregisterEventInput = { base: AssetIdInput, quote: AssetIdInput, market: ContractIdInput };
 export type MarketUnregisterEventOutput = { base: AssetIdOutput, quote: AssetIdOutput, market: ContractIdOutput };
+export type OwnershipSetInput = { new_owner: IdentityInput };
+export type OwnershipSetOutput = { new_owner: IdentityOutput };
+export type OwnershipTransferredInput = { new_owner: IdentityInput, previous_owner: IdentityInput };
+export type OwnershipTransferredOutput = { new_owner: IdentityOutput, previous_owner: IdentityOutput };
 
 export type SparkRegistryConfigurables = Partial<{
-  OWNER: StateInput;
   VERSION: BigNumberish;
 }>;
 
@@ -87,24 +92,34 @@ const abi = {
       "metadataTypeId": 6
     },
     {
+      "type": "enum std::identity::Identity",
+      "concreteTypeId": "ab7cd04e05be58e3fc15d424c2c4a57f824a2a2d97d67252440a3925ebdc1335",
+      "metadataTypeId": 7
+    },
+    {
+      "type": "enum sway_libs::ownership::errors::InitializationError",
+      "concreteTypeId": "1dfe7feadc1d9667a4351761230f948744068a090fe91b1bc6763a90ed5d3893",
+      "metadataTypeId": 9
+    },
+    {
       "type": "struct events::MarketRegisterEvent",
       "concreteTypeId": "e559511bc70821c6e5333f8fe558060c41a83e157902640537145a83fe39911c",
-      "metadataTypeId": 11
+      "metadataTypeId": 12
     },
     {
       "type": "struct events::MarketUnregisterEvent",
       "concreteTypeId": "78914643255fa4cad1546556baf0eb607cc71b603273e23c79caef436311a897",
-      "metadataTypeId": 12
+      "metadataTypeId": 13
     },
     {
       "type": "struct std::contract_id::ContractId",
       "concreteTypeId": "29c10735d33b5159f0c71ee1dbd17b36a3e69e41f00fab0d42e1bd9f428d8a54",
-      "metadataTypeId": 15
+      "metadataTypeId": 16
     },
     {
       "type": "struct std::vec::Vec<(struct std::asset_id::AssetId, struct std::asset_id::AssetId)>",
       "concreteTypeId": "6447a267e9d2fb14747f1d0aac4c6698545574e97ab28e075201fd7fa1f0400e",
-      "metadataTypeId": 17,
+      "metadataTypeId": 18,
       "typeArguments": [
         "d3ddf84f691d572b4313a7be3ae1d8b67fe9061c281ff6ae955e4c4441524f92"
       ]
@@ -112,10 +127,20 @@ const abi = {
     {
       "type": "struct std::vec::Vec<(struct std::asset_id::AssetId, struct std::asset_id::AssetId, enum std::option::Option<struct std::contract_id::ContractId>)>",
       "concreteTypeId": "1188c4d215c8979c27750c27dbb0e8ab6b1a113d969fb16256fee601c9dc8f73",
-      "metadataTypeId": 17,
+      "metadataTypeId": 18,
       "typeArguments": [
         "ebac2eda4e76df30d6c6d33c546e9423167d2e38b538752e7ae5b31e6fc772df"
       ]
+    },
+    {
+      "type": "struct sway_libs::ownership::events::OwnershipSet",
+      "concreteTypeId": "e1ef35033ea9d2956f17c3292dea4a46ce7d61fdf37bbebe03b7b965073f43b5",
+      "metadataTypeId": 19
+    },
+    {
+      "type": "struct sway_libs::ownership::events::OwnershipTransferred",
+      "concreteTypeId": "b3fffbcb3158d7c010c31b194b60fb7857adb4ad61bdcf4b8b42958951d9f308",
+      "metadataTypeId": 20
     },
     {
       "type": "u32",
@@ -149,11 +174,11 @@ const abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "typeId": 14
+          "typeId": 15
         },
         {
           "name": "__tuple_element",
-          "typeId": 14
+          "typeId": 15
         }
       ]
     },
@@ -163,11 +188,11 @@ const abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "typeId": 14
+          "typeId": 15
         },
         {
           "name": "__tuple_element",
-          "typeId": 14
+          "typeId": 15
         },
         {
           "name": "__tuple_element",
@@ -175,7 +200,7 @@ const abi = {
           "typeArguments": [
             {
               "name": "",
-              "typeId": 15
+              "typeId": 16
             }
           ]
         }
@@ -233,11 +258,11 @@ const abi = {
       "components": [
         {
           "name": "Address",
-          "typeId": 13
+          "typeId": 14
         },
         {
           "name": "ContractId",
-          "typeId": 15
+          "typeId": 16
         }
       ]
     },
@@ -251,69 +276,69 @@ const abi = {
         },
         {
           "name": "Some",
-          "typeId": 9
+          "typeId": 10
         }
       ],
       "typeParameters": [
-        9
+        10
+      ]
+    },
+    {
+      "type": "enum sway_libs::ownership::errors::InitializationError",
+      "metadataTypeId": 9,
+      "components": [
+        {
+          "name": "CannotReinitialized",
+          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
+        }
       ]
     },
     {
       "type": "generic T",
-      "metadataTypeId": 9
-    },
-    {
-      "type": "raw untyped ptr",
       "metadataTypeId": 10
     },
     {
+      "type": "raw untyped ptr",
+      "metadataTypeId": 11
+    },
+    {
       "type": "struct events::MarketRegisterEvent",
-      "metadataTypeId": 11,
+      "metadataTypeId": 12,
       "components": [
         {
           "name": "base",
-          "typeId": 14
+          "typeId": 15
         },
         {
           "name": "quote",
-          "typeId": 14
+          "typeId": 15
         },
         {
           "name": "market",
-          "typeId": 15
+          "typeId": 16
         }
       ]
     },
     {
       "type": "struct events::MarketUnregisterEvent",
-      "metadataTypeId": 12,
+      "metadataTypeId": 13,
       "components": [
         {
           "name": "base",
-          "typeId": 14
+          "typeId": 15
         },
         {
           "name": "quote",
-          "typeId": 14
+          "typeId": 15
         },
         {
           "name": "market",
-          "typeId": 15
+          "typeId": 16
         }
       ]
     },
     {
       "type": "struct std::address::Address",
-      "metadataTypeId": 13,
-      "components": [
-        {
-          "name": "bits",
-          "typeId": 3
-        }
-      ]
-    },
-    {
-      "type": "struct std::asset_id::AssetId",
       "metadataTypeId": 14,
       "components": [
         {
@@ -323,7 +348,7 @@ const abi = {
       ]
     },
     {
-      "type": "struct std::contract_id::ContractId",
+      "type": "struct std::asset_id::AssetId",
       "metadataTypeId": 15,
       "components": [
         {
@@ -333,48 +358,82 @@ const abi = {
       ]
     },
     {
-      "type": "struct std::vec::RawVec",
+      "type": "struct std::contract_id::ContractId",
       "metadataTypeId": 16,
       "components": [
         {
+          "name": "bits",
+          "typeId": 3
+        }
+      ]
+    },
+    {
+      "type": "struct std::vec::RawVec",
+      "metadataTypeId": 17,
+      "components": [
+        {
           "name": "ptr",
-          "typeId": 10
+          "typeId": 11
         },
         {
           "name": "cap",
-          "typeId": 18
+          "typeId": 21
         }
       ],
       "typeParameters": [
-        9
+        10
       ]
     },
     {
       "type": "struct std::vec::Vec",
-      "metadataTypeId": 17,
+      "metadataTypeId": 18,
       "components": [
         {
           "name": "buf",
-          "typeId": 16,
+          "typeId": 17,
           "typeArguments": [
             {
               "name": "",
-              "typeId": 9
+              "typeId": 10
             }
           ]
         },
         {
           "name": "len",
-          "typeId": 18
+          "typeId": 21
         }
       ],
       "typeParameters": [
-        9
+        10
+      ]
+    },
+    {
+      "type": "struct sway_libs::ownership::events::OwnershipSet",
+      "metadataTypeId": 19,
+      "components": [
+        {
+          "name": "new_owner",
+          "typeId": 7
+        }
+      ]
+    },
+    {
+      "type": "struct sway_libs::ownership::events::OwnershipTransferred",
+      "metadataTypeId": 20,
+      "components": [
+        {
+          "name": "new_owner",
+          "typeId": 7
+        },
+        {
+          "name": "previous_owner",
+          "typeId": 7
+        }
       ]
     },
     {
       "type": "u64",
-      "metadataTypeId": 18
+      "metadataTypeId": 21
     }
   ],
   "functions": [
@@ -417,6 +476,44 @@ const abi = {
           "name": "storage",
           "arguments": [
             "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "new_owner",
+          "concreteTypeId": "ab7cd04e05be58e3fc15d424c2c4a57f824a2a2d97d67252440a3925ebdc1335"
+        }
+      ],
+      "name": "initialize_ownership",
+      "output": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d",
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read",
+            "write"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "new_owner",
+          "concreteTypeId": "ab7cd04e05be58e3fc15d424c2c4a57f824a2a2d97d67252440a3925ebdc1335"
+        }
+      ],
+      "name": "transfer_ownership",
+      "output": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d",
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read",
+            "write"
           ]
         }
       ]
@@ -478,6 +575,12 @@ const abi = {
           "name": "doc-comment",
           "arguments": [
             " * [(Option<Identity>, u32)] - A tuple containing the Otion of owner's Identity and the contract's version number as a 'u32'."
+          ]
+        },
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
           ]
         }
       ]
@@ -822,8 +925,20 @@ const abi = {
   ],
   "loggedTypes": [
     {
+      "logId": "2161305517876418151",
+      "concreteTypeId": "1dfe7feadc1d9667a4351761230f948744068a090fe91b1bc6763a90ed5d3893"
+    },
+    {
+      "logId": "16280289466020123285",
+      "concreteTypeId": "e1ef35033ea9d2956f17c3292dea4a46ce7d61fdf37bbebe03b7b965073f43b5"
+    },
+    {
       "logId": "4571204900286667806",
       "concreteTypeId": "3f702ea3351c9c1ece2b84048006c8034a24cbc2bad2e740d0412b4172951d3d"
+    },
+    {
+      "logId": "12970362301975156672",
+      "concreteTypeId": "b3fffbcb3158d7c010c31b194b60fb7857adb4ad61bdcf4b8b42958951d9f308"
     },
     {
       "logId": "12854673644547923665",
@@ -841,14 +956,9 @@ const abi = {
   "messagesTypes": [],
   "configurables": [
     {
-      "name": "OWNER",
-      "concreteTypeId": "192bc7098e2fe60635a9918afb563e4e5419d386da2bdbf0d716b4bc8549802c",
-      "offset": 19856
-    },
-    {
       "name": "VERSION",
       "concreteTypeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc",
-      "offset": 19904
+      "offset": 23568
     }
   ]
 };
@@ -862,6 +972,8 @@ export class SparkRegistryInterface extends Interface {
 
   declare functions: {
     owner: FunctionFragment;
+    initialize_ownership: FunctionFragment;
+    transfer_ownership: FunctionFragment;
     config: FunctionFragment;
     markets: FunctionFragment;
     register_market: FunctionFragment;
@@ -876,6 +988,8 @@ export class SparkRegistry extends Contract {
   declare interface: SparkRegistryInterface;
   declare functions: {
     owner: InvokeFunction<[], StateOutput>;
+    initialize_ownership: InvokeFunction<[new_owner: IdentityInput], void>;
+    transfer_ownership: InvokeFunction<[new_owner: IdentityInput], void>;
     config: InvokeFunction<[], [Option<IdentityOutput>, number]>;
     markets: InvokeFunction<[market_assets: Vec<[AssetIdInput, AssetIdInput]>], Vec<[AssetIdOutput, AssetIdOutput, Option<ContractIdOutput>]>>;
     register_market: InvokeFunction<[market: ContractIdInput], void>;

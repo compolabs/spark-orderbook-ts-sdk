@@ -210,3 +210,15 @@ export interface UserProtocolFee {
   takerFee: string;
   makerFee: string;
 }
+
+export interface UserInfoParams {
+  user: string;
+}
+
+export interface UserInfo {
+  id: string;
+  active: number;
+  canceled: number;
+  closed: number;
+  timestamp: string;
+}

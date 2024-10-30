@@ -4,6 +4,7 @@ import {
   gql,
   Observable,
 } from "@apollo/client";
+import { Undefinable } from "tsdef";
 
 import BN from "./utils/BN";
 import { generateWhereFilter } from "./utils/generateWhereFilter";
@@ -16,6 +17,8 @@ import {
   Order,
   OrderType,
   TradeOrderEvent,
+  UserInfo,
+  UserInfoParams,
   Volume,
 } from "./interface";
 import { getActiveOrdersQuery, getOrdersQuery } from "./query";
@@ -126,10 +129,10 @@ export class IndexerApi extends GraphClient {
     }>({
       query,
       variables: {
-        where: generateWhereFilter({
-          ...restParams,
-          timestamp,
-        }),
+        where: {
+          ...generateWhereFilter(restParams),
+          timestamp: { _gte: timestamp },
+        },
       },
     });
 
@@ -169,5 +172,36 @@ export class IndexerApi extends GraphClient {
       high24h: data.high24h.toString(),
       low24h: data.low24h.toString(),
     };
+  };
+
+  getUserInfo = async (
+    params: UserInfoParams,
+  ): Promise<Undefinable<UserInfo>> => {
+    const query = gql`
+      query UserQuery($where: User_bool_exp) {
+        User(where: $where) {
+          id
+          active
+          canceled
+          closed
+          timestamp
+        }
+      }
+    `;
+
+    const response = await this.client.query<{
+      UserQuery: UserInfo[];
+    }>({
+      query,
+      variables: {
+        where: generateWhereFilter(params),
+      },
+    });
+
+    if (!response.data.UserQuery.length) {
+      return;
+    }
+
+    return response.data.UserQuery[0];
   };
 }
