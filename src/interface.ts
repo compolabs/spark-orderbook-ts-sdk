@@ -212,7 +212,7 @@ export interface UserProtocolFee {
 }
 
 export interface UserInfoParams {
-  user: string;
+  id: string;
 }
 
 export interface UserInfo {
