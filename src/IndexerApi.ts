@@ -4,7 +4,6 @@ import {
   gql,
   Observable,
 } from "@apollo/client";
-import { Undefinable } from "tsdef";
 
 import BN from "./utils/BN";
 import { generateWhereFilter } from "./utils/generateWhereFilter";

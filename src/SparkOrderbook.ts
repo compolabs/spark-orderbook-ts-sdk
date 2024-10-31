@@ -241,8 +241,9 @@ export class SparkOrderbook {
     return this.activeIndexerApi.getVolume(params);
   }
 
-
-  subscribeUserInfo(params: UserInfoParams): Observable<FetchResult<{ User: UserInfo[] }>> {
+  subscribeUserInfo(
+    params: UserInfoParams,
+  ): Observable<FetchResult<{ User: UserInfo[] }>> {
     return this.activeIndexerApi.subscribeUserInfo(params);
   }
 
