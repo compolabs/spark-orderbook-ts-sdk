@@ -3,10 +3,7 @@ import { generateWhereFilter } from "src/utils/generateWhereFilter";
 
 import { GetActiveOrdersParams, GetOrdersParams } from "..";
 
-export const getOrdersQuery = (
-  type: "query" | "subscription",
-  params: GetOrdersParams,
-): QueryOptions => {
+export const getOrdersQuery = (type: "query" | "subscription", params: GetOrdersParams): QueryOptions => {
   const { limit, orderType, offset, ...restParams } = params;
   const priceOrder = orderType === "Buy" ? "desc" : "asc";
   const offsetInRange = offset ?? 0;
@@ -44,10 +41,7 @@ export const getOrdersQuery = (
   };
 };
 
-export const getActiveOrdersQuery = (
-  type: "query" | "subscription",
-  params: GetActiveOrdersParams,
-): QueryOptions => {
+export const getActiveOrdersQuery = (type: "query" | "subscription", params: GetActiveOrdersParams): QueryOptions => {
   const { limit, orderType, offset, ...restParams } = params;
   const priceOrder = orderType === "Buy" ? "desc" : "asc";
   const queryObject = `Active${orderType}Order`;

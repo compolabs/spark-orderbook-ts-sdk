@@ -174,11 +174,11 @@ export class IndexerApi extends GraphClient {
     };
   };
 
-  getUserInfo = async (
+  subscribeUserInfo = (
     params: UserInfoParams,
-  ): Promise<Undefinable<UserInfo>> => {
+  ): Observable<FetchResult<{ User: UserInfo[] }>> => {
     const query = gql`
-      query UserQuery($where: User_bool_exp) {
+      subscription UserQuery($where: User_bool_exp) {
         User(where: $where) {
           id
           active
@@ -189,19 +189,13 @@ export class IndexerApi extends GraphClient {
       }
     `;
 
-    const response = await this.client.query<{
-      UserQuery: UserInfo[];
+    return this.client.subscribe<{
+      User: UserInfo[];
     }>({
       query,
       variables: {
         where: generateWhereFilter(params),
       },
     });
-
-    if (!response.data.UserQuery.length) {
-      return;
-    }
-
-    return response.data.UserQuery[0];
   };
 }
