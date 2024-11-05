@@ -62,12 +62,13 @@ describe("IndexerApi", () => {
     id: "1",
     asset: ASSET_ADDRESS,
     amount: "100",
-    initial_amount: "100",
-    order_type: OrderType.Buy,
+    initialAmount: "100",
+    orderType: OrderType.Buy,
     price: "50000",
     status: "Active",
     user: USER_ADDRESS,
     timestamp: MOCK_DATE,
+    market: MARKET_ADDRESS,
     ...overrides,
   });
 
@@ -91,7 +92,7 @@ describe("IndexerApi", () => {
   test("getOrders should construct the correct query and return formatted data", async () => {
     const params: GetOrdersParams = {
       limit: 10,
-      market: MARKET_ADDRESS,
+      market: [MARKET_ADDRESS],
       orderType: OrderType.Buy,
       status: ["Active"],
     };
@@ -112,7 +113,7 @@ describe("IndexerApi", () => {
   test("getOrders should throw an error when client.query fails", async () => {
     const params: GetOrdersParams = {
       limit: 10,
-      market: MARKET_ADDRESS,
+      market: [MARKET_ADDRESS],
       orderType: OrderType.Buy,
     };
 
@@ -129,7 +130,7 @@ describe("IndexerApi", () => {
   test("subscribeOrders should subscribe with correct query and variables", (done) => {
     const params: GetOrdersParams = {
       limit: 10,
-      market: MARKET_ADDRESS,
+      market: [MARKET_ADDRESS],
       orderType: OrderType.Sell,
       status: ["Active"],
       user: USER_ADDRESS,
@@ -138,7 +139,7 @@ describe("IndexerApi", () => {
     };
 
     const mockData = {
-      Order: createMockOrders(1, { order_type: OrderType.Sell }),
+      Order: createMockOrders(1, { orderType: OrderType.Sell }),
     };
     const mockObservable = createMockObservable(mockData);
 
@@ -167,7 +168,7 @@ describe("IndexerApi", () => {
   test("getActiveOrders should construct the correct query and return formatted data", async () => {
     const params: GetActiveOrdersParams = {
       limit: 5,
-      market: MARKET_ADDRESS,
+      market: [MARKET_ADDRESS],
       orderType: OrderType.Buy,
       user: USER_ADDRESS,
       asset: ASSET_ADDRESS,
@@ -178,7 +179,7 @@ describe("IndexerApi", () => {
       id: "2",
       asset: ASSET_ADDRESS,
       amount: "50",
-      initial_amount: "50",
+      initialAmount: "50",
       price: "4000",
       user: USER_ADDRESS,
       timestamp: MOCK_DATE,
@@ -203,7 +204,7 @@ describe("IndexerApi", () => {
   test("subscribeActiveOrders should subscribe with correct query and variables", (done) => {
     const params: GetActiveOrdersParams = {
       limit: 5,
-      market: MARKET_ADDRESS,
+      market: [MARKET_ADDRESS],
       orderType: OrderType.Sell,
       user: USER_ADDRESS,
       asset: ASSET_ADDRESS,
@@ -211,10 +212,10 @@ describe("IndexerApi", () => {
     };
 
     const mockOrder = createMockOrder({
-      order_type: OrderType.Sell,
+      orderType: OrderType.Sell,
       asset: ASSET_ADDRESS,
       amount: "100",
-      initial_amount: "100",
+      initialAmount: "100",
       price: "2000",
       user: USER_ADDRESS,
       timestamp: MOCK_DATE,
@@ -251,7 +252,7 @@ describe("IndexerApi", () => {
   test("getVolume should calculate volume, high, and low correctly", async () => {
     const params: GetTradeOrderEventsParams = {
       limit: 100,
-      market: MARKET_ADDRESS,
+      market: [MARKET_ADDRESS],
     };
 
     const mockDateNow = new Date(MOCK_DATE);
@@ -261,21 +262,24 @@ describe("IndexerApi", () => {
     const tradeEvents: TradeOrderEvent[] = [
       {
         id: "0",
-        trade_size: "100",
-        trade_price: "50000",
+        tradeSize: "100",
+        tradePrice: "50000",
         timestamp: MOCK_DATE_YESTERDAY,
+        sellerIsMaker: false,
       },
       {
         id: "1",
-        trade_size: "200",
-        trade_price: "51000",
+        tradeSize: "200",
+        tradePrice: "51000",
         timestamp: MOCK_DATE_YESTERDAY,
+        sellerIsMaker: false,
       },
       {
         id: "2",
-        trade_size: "150",
-        trade_price: "49500",
+        tradeSize: "150",
+        tradePrice: "49500",
         timestamp: MOCK_DATE_YESTERDAY,
+        sellerIsMaker: false,
       },
     ];
 
@@ -307,7 +311,7 @@ describe("IndexerApi", () => {
   test("getVolume should return zeros when no trade events are available", async () => {
     const params: GetTradeOrderEventsParams = {
       limit: 100,
-      market: MARKET_ADDRESS,
+      market: [MARKET_ADDRESS],
     };
 
     const mockData = { TradeOrderEvent: [] };

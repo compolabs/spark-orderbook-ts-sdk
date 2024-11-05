@@ -1,13 +1,11 @@
-import {
-  Address,
-  Bech32Address,
-  FunctionInvocationScope,
-  MultiCallInvocationScope,
-  ZeroBytes32,
-} from "fuels";
+import { Address, Bech32Address, Contract, ZeroBytes32 } from "fuels";
 import { Undefinable } from "tsdef";
 
-import { AccountOutput, IdentityInput } from "./types/market/SparkMarket";
+import {
+  AccountOutput,
+  IdentityInput,
+  SparkMarket,
+} from "./types/market/SparkMarket";
 import { Vec } from "./types/registry/common";
 import { AssetIdInput } from "./types/registry/SparkRegistry";
 
@@ -43,10 +41,6 @@ export class ReadActions {
     return createContract("MultiassetContract", this.options);
   }
 
-  private getMarketFactory(address?: string) {
-    return createContract("SparkMarket", this.options, address);
-  }
-
   private get proxyContract() {
     if (!this.options.contractAddresses.proxy) {
       return;
@@ -59,20 +53,16 @@ export class ReadActions {
     );
   }
 
-  private async fetchData<TReturn>(
-    createTx: () =>
-      | FunctionInvocationScope<any, TReturn>
-      | MultiCallInvocationScope<TReturn>,
-  ): Promise<TReturn> {
-    let tx = createTx();
-
+  private getProxyMarketFactory(address?: string) {
     if (this.proxyContract) {
-      tx = tx.addContracts([this.proxyContract]);
+      return new Contract(
+        address ?? this.proxyContract.id,
+        this.marketFactory.interface,
+        this.options.wallet,
+      ) as SparkMarket;
     }
 
-    const result = await tx.get();
-
-    return result.value;
+    return this.marketFactory;
   }
 
   private createIdentityInput(trader: Bech32Address): IdentityInput {
@@ -126,9 +116,9 @@ export class ReadActions {
   }
 
   async fetchMarketConfig(marketAddress: string): Promise<MarketInfo> {
-    const marketFactory = this.getMarketFactory(marketAddress);
+    const marketFactory = this.getProxyMarketFactory(marketAddress);
 
-    const data = await this.fetchData(marketFactory.functions.config);
+    const data = await marketFactory.functions.config().get();
 
     const [
       baseAssetId,
@@ -138,7 +128,7 @@ export class ReadActions {
       ownerIdentity,
       priceDecimals,
       version,
-    ] = data;
+    ] = data.value;
 
     const owner =
       ownerIdentity?.Address?.bits ?? ownerIdentity?.ContractId?.bits ?? "";
@@ -158,11 +148,11 @@ export class ReadActions {
     trader: Bech32Address,
   ): Promise<UserMarketBalance> {
     const user = this.createIdentityInput(trader);
-    const result = await this.fetchData(() =>
-      this.marketFactory.functions.account(user),
-    );
+    const result = await this.getProxyMarketFactory()
+      .functions.account(user)
+      .get();
 
-    const { liquid, locked } = result ?? {};
+    const { liquid, locked } = result.value ?? {};
 
     return {
       liquid: {
@@ -182,14 +172,14 @@ export class ReadActions {
   ): Promise<UserMarketBalance[]> {
     const user = this.createIdentityInput(trader);
     const calls = contractsAddresses.map((address) => {
-      const market = this.getMarketFactory(address);
+      const market = this.getProxyMarketFactory(address);
       return market.functions.account(user);
     });
 
-    const baseMarketContract = this.getMarketFactory(contractsAddresses[0]);
-    const result = await this.fetchData(() =>
-      baseMarketContract.multiCall(calls),
+    const baseMarketContract = this.getProxyMarketFactory(
+      contractsAddresses[0],
     );
+    const result = await baseMarketContract.multiCall(calls).get();
 
     return result.value.map((data: AccountOutput) => ({
       liquid: {
@@ -206,13 +196,11 @@ export class ReadActions {
   async fetchOrderById(
     orderId: string,
   ): Promise<Undefinable<SpotOrderWithoutTimestamp>> {
-    const result = await this.fetchData(() =>
-      this.marketFactory.functions.order(orderId),
-    );
+    const result = await this.marketFactory.functions.order(orderId).get();
 
-    if (!result) return;
+    if (!result.value) return;
 
-    const { amount, price, order_type, owner } = result;
+    const { amount, price, order_type, owner } = result.value;
 
     return {
       id: orderId,
@@ -225,11 +213,11 @@ export class ReadActions {
 
   async fetchOrderIdsByAddress(trader: Bech32Address): Promise<string[]> {
     const user = this.createIdentityInput(trader);
-    const result = await this.fetchData(() =>
-      this.marketFactory.functions.user_orders(user),
-    );
+    const result = await this.getProxyMarketFactory()
+      .functions.user_orders(user)
+      .get();
 
-    return result;
+    return result.value;
   }
 
   async fetchWalletBalance(assetId: string): Promise<string> {
@@ -238,19 +226,19 @@ export class ReadActions {
   }
 
   async fetchMatcherFee(): Promise<string> {
-    const result = await this.fetchData(
-      this.marketFactory.functions.matcher_fee,
-    );
+    const result = await this.getProxyMarketFactory()
+      .functions.matcher_fee()
+      .get();
 
-    return result.toString();
+    return result.value.toString();
   }
 
   async fetchProtocolFee(): Promise<ProtocolFee[]> {
-    const result = await this.fetchData(
-      this.marketFactory.functions.protocol_fee,
-    );
+    const result = await this.getProxyMarketFactory()
+      .functions.protocol_fee()
+      .get();
 
-    return result.map((fee) => ({
+    return result.value.map((fee) => ({
       makerFee: fee.maker_fee.toString(),
       takerFee: fee.taker_fee.toString(),
       volumeThreshold: fee.volume_threshold.toString(),
@@ -261,13 +249,13 @@ export class ReadActions {
     trader: Bech32Address,
   ): Promise<UserProtocolFee> {
     const user = this.createIdentityInput(trader);
-    const result = await this.fetchData(() =>
-      this.marketFactory.functions.protocol_fee_user(user),
-    );
+    const result = await this.getProxyMarketFactory()
+      .functions.protocol_fee_user(user)
+      .get();
 
     return {
-      makerFee: result[0].toString(),
-      takerFee: result[1].toString(),
+      makerFee: result.value[0].toString(),
+      takerFee: result.value[1].toString(),
     };
   }
 
@@ -276,29 +264,29 @@ export class ReadActions {
     trader: Bech32Address,
   ): Promise<UserProtocolFee> {
     const user = this.createIdentityInput(trader);
-    const result = await this.fetchData(() =>
-      this.marketFactory.functions.protocol_fee_user_amount(amount, user),
-    );
+    const result = await this.getProxyMarketFactory()
+      .functions.protocol_fee_user_amount(amount, user)
+      .get();
 
     return {
-      makerFee: result[0].toString(),
-      takerFee: result[1].toString(),
+      makerFee: result.value[0].toString(),
+      takerFee: result.value[1].toString(),
     };
   }
 
   async fetchMinOrderSize(): Promise<string> {
-    const result = await this.fetchData(
-      this.marketFactory.functions.min_order_size,
-    );
+    const result = await this.getProxyMarketFactory()
+      .functions.min_order_size()
+      .get();
 
-    return result.toString();
+    return result.value.toString();
   }
 
   async fetchMinOrderPrice(): Promise<string> {
-    const result = await this.fetchData(
-      this.marketFactory.functions.min_order_price,
-    );
+    const result = await this.getProxyMarketFactory()
+      .functions.min_order_price()
+      .get();
 
-    return result.toString();
+    return result.value.toString();
   }
 }
