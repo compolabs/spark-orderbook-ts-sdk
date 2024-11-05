@@ -53,7 +53,7 @@ export class SparkOrderbook {
   constructor(params: SparkParams) {
     this.options = {
       contractAddresses: {
-        market: "",
+        proxyMarket: "",
         ...params.contractAddresses,
       },
       wallet: params.wallet,
@@ -113,7 +113,7 @@ export class SparkOrderbook {
   }
 
   setActiveMarket(contractAddress: string, indexer: GraphClientConfig): void {
-    this.options.contractAddresses.market = contractAddress;
+    this.options.contractAddresses.proxyMarket = contractAddress;
 
     if (this.indexerApi) {
       this.indexerApi.close();

@@ -1,11 +1,7 @@
-import { Address, Bech32Address, Contract, ZeroBytes32 } from "fuels";
+import { Address, Bech32Address, ZeroBytes32 } from "fuels";
 import { Undefinable } from "tsdef";
 
-import {
-  AccountOutput,
-  IdentityInput,
-  SparkMarket,
-} from "./types/market/SparkMarket";
+import { AccountOutput, IdentityInput } from "./types/market/SparkMarket";
 import { Vec } from "./types/registry/common";
 import { AssetIdInput } from "./types/registry/SparkRegistry";
 
@@ -29,10 +25,6 @@ export class ReadActions {
     this.options = options;
   }
 
-  private get marketFactory() {
-    return createContract("SparkMarket", this.options);
-  }
-
   private get registryFactory() {
     return createContract("SparkRegistry", this.options);
   }
@@ -41,28 +33,12 @@ export class ReadActions {
     return createContract("MultiassetContract", this.options);
   }
 
-  private get proxyContract() {
-    if (!this.options.contractAddresses.proxy) {
-      return;
-    }
-
-    return createContract(
-      "SparkProxy",
-      this.options,
-      this.options.contractAddresses.proxy,
-    );
-  }
-
   private getProxyMarketFactory(address?: string) {
-    if (this.proxyContract) {
-      return new Contract(
-        address ?? this.proxyContract.id,
-        this.marketFactory.interface,
-        this.options.wallet,
-      ) as SparkMarket;
-    }
-
-    return this.marketFactory;
+    return createContract(
+      "SparkMarket",
+      this.options,
+      address ?? this.options.contractAddresses.proxyMarket,
+    );
   }
 
   private createIdentityInput(trader: Bech32Address): IdentityInput {
@@ -196,7 +172,9 @@ export class ReadActions {
   async fetchOrderById(
     orderId: string,
   ): Promise<Undefinable<SpotOrderWithoutTimestamp>> {
-    const result = await this.marketFactory.functions.order(orderId).get();
+    const result = await this.getProxyMarketFactory()
+      .functions.order(orderId)
+      .get();
 
     if (!result.value) return;
 

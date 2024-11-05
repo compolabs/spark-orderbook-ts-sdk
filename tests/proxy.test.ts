@@ -25,12 +25,10 @@ describe("ReadActions", () => {
     readActions = new ReadActions({
       wallet,
       contractAddresses: {
-        market:
-          "0x009010a055ab636c38caa0e4c7cf9eb4ad8d6f44ff6e094f23b3dcdd291ee093",
+        proxyMarket:
+          "0xbbe3a8eeea77082864c5553e06df3bce440688f89ce538efa67d38b1a470f334",
         multiAsset: "multiasset_address",
         registry: "registry_address",
-        proxy:
-          "0xbbe3a8eeea77082864c5553e06df3bce440688f89ce538efa67d38b1a470f334",
       },
       gasLimitMultiplier: DEFAULT_GAS_LIMIT_MULTIPLIER,
       gasPrice: DEFAULT_GAS_PRICE,

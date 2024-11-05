@@ -1,6 +1,5 @@
 import {
   CoinQuantityLike,
-  Contract,
   FunctionInvocationScope,
   MultiCallInvocationScope,
 } from "fuels";
@@ -9,7 +8,6 @@ import {
   AssetTypeInput,
   LimitTypeInput,
   OrderTypeInput,
-  SparkMarket,
 } from "./types/market/SparkMarket";
 import {
   AssetIdInput,
@@ -39,14 +37,6 @@ export class WriteActions {
     this.options = options;
   }
 
-  private get marketFactory() {
-    return createContract(
-      "SparkMarket",
-      this.options,
-      this.options.contractAddresses.market,
-    );
-  }
-
   private get multiAssetContract() {
     return createContract(
       "MultiassetContract",
@@ -55,28 +45,12 @@ export class WriteActions {
     );
   }
 
-  private get proxyContract() {
-    if (!this.options.contractAddresses.proxy) {
-      return;
-    }
-
-    return createContract(
-      "SparkProxy",
-      this.options,
-      this.options.contractAddresses.proxy,
-    );
-  }
-
   private getProxyMarketFactory() {
-    if (this.proxyContract) {
-      return new Contract(
-        this.proxyContract.id,
-        this.marketFactory.interface,
-        this.options.wallet,
-      ) as SparkMarket;
-    }
-
-    return this.marketFactory;
+    return createContract(
+      "SparkMarket",
+      this.options,
+      this.options.contractAddresses.proxyMarket,
+    );
   }
 
   async deposit(

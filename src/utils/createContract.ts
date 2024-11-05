@@ -20,7 +20,7 @@ export const createContract = <T extends keyof ContractClasses>(
   switch (contractName) {
     case "SparkMarket":
       return new SparkMarket(
-        requiredAddress ?? options.contractAddresses.market,
+        requiredAddress ?? options.contractAddresses.proxyMarket,
         options.wallet,
       ) as InstanceType<ContractClasses[T]>;
     case "SparkRegistry":
@@ -31,11 +31,6 @@ export const createContract = <T extends keyof ContractClasses>(
     case "MultiassetContract":
       return new MultiassetContract(
         requiredAddress ?? options.contractAddresses.multiAsset,
-        options.wallet,
-      ) as InstanceType<ContractClasses[T]>;
-    case "SparkProxy":
-      return new SparkProxy(
-        requiredAddress ?? options.contractAddresses.proxy,
         options.wallet,
       ) as InstanceType<ContractClasses[T]>;
     default:
