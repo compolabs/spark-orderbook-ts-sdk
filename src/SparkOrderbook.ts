@@ -241,8 +241,10 @@ export class SparkOrderbook {
     return this.activeIndexerApi.getVolume(params);
   }
 
-  async fetchUserInfo(params: UserInfoParams): Promise<Undefinable<UserInfo>> {
-    return this.activeIndexerApi.getUserInfo(params);
+  subscribeUserInfo(
+    params: UserInfoParams,
+  ): Observable<FetchResult<{ User: UserInfo[] }>> {
+    return this.activeIndexerApi.subscribeUserInfo(params);
   }
 
   async fetchMarkets(assetIdPairs: [string, string][]): Promise<Markets> {
