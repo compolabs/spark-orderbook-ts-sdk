@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 
 /*
-  Fuels version: 0.94.8
+  Fuels version: 0.96.1
 */
 
 export { SparkMarket } from './SparkMarket';

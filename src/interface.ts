@@ -6,6 +6,7 @@ export interface OrderbookContracts {
   market: string;
   registry: string;
   multiAsset: string;
+  proxy: string;
 }
 
 export interface Asset {

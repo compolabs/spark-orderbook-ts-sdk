@@ -53,6 +53,30 @@ export class WriteActions {
     );
   }
 
+  private get proxyContract() {
+    if (!this.options.contractAddresses.proxy) {
+      return;
+    }
+
+    return createContract(
+      "SparkProxy",
+      this.options,
+      this.options.contractAddresses.proxy,
+    );
+  }
+
+  private prepareTransaction<T extends FunctionInvocationScope>(
+    createTx: () => T,
+  ): T {
+    let tx = createTx();
+
+    if (this.proxyContract) {
+      tx = tx.addContracts([this.proxyContract]);
+    }
+
+    return tx;
+  }
+
   async deposit(
     token: Asset,
     amount: string,
@@ -62,7 +86,10 @@ export class WriteActions {
       assetId: token.assetId,
     };
 
-    const tx = this.marketFactory.functions.deposit().callParams({ forward });
+    const tx = this.prepareTransaction(() =>
+      this.marketFactory.functions.deposit().callParams({ forward }),
+    );
+
     return this.sendTransaction(tx);
   }
 
@@ -70,10 +97,13 @@ export class WriteActions {
     amount: string,
     assetType: AssetType,
   ): Promise<WriteTransactionResponse> {
-    const tx = this.marketFactory.functions.withdraw(
-      amount,
-      assetType as unknown as AssetTypeInput,
+    const tx = this.prepareTransaction(() =>
+      this.marketFactory.functions.withdraw(
+        amount,
+        assetType as unknown as AssetTypeInput,
+      ),
     );
+
     return this.sendTransaction(tx);
   }
 
@@ -134,10 +164,12 @@ export class WriteActions {
     params: CreateOrderParams,
   ): Promise<WriteTransactionResponse> {
     const { amount, price, type } = params;
-    const tx = this.marketFactory.functions.open_order(
-      amount,
-      type as unknown as OrderTypeInput,
-      price,
+    const tx = this.prepareTransaction(() =>
+      this.marketFactory.functions.open_order(
+        amount,
+        type as unknown as OrderTypeInput,
+        price,
+      ),
     );
     return this.sendTransaction(tx);
   }
@@ -182,7 +214,9 @@ export class WriteActions {
   }
 
   async cancelOrder(orderId: string): Promise<WriteTransactionResponse> {
-    const tx = this.marketFactory.functions.cancel_order(orderId);
+    const tx = this.prepareTransaction(() =>
+      this.marketFactory.functions.cancel_order(orderId),
+    );
     return this.sendTransaction(tx);
   }
 
@@ -190,9 +224,8 @@ export class WriteActions {
     sellOrderId: string,
     buyOrderId: string,
   ): Promise<WriteTransactionResponse> {
-    const tx = this.marketFactory.functions.match_order_pair(
-      sellOrderId,
-      buyOrderId,
+    const tx = this.prepareTransaction(() =>
+      this.marketFactory.functions.match_order_pair(sellOrderId, buyOrderId),
     );
     return this.sendTransaction(tx);
   }
@@ -201,13 +234,15 @@ export class WriteActions {
     params: FulfillOrderManyParams,
   ): Promise<WriteTransactionResponse> {
     const { amount, orderType, limitType, price, slippage, orders } = params;
-    const tx = this.marketFactory.functions.fulfill_order_many(
-      amount,
-      orderType as unknown as OrderTypeInput,
-      limitType as unknown as LimitTypeInput,
-      price,
-      slippage,
-      orders,
+    const tx = this.prepareTransaction(() =>
+      this.marketFactory.functions.fulfill_order_many(
+        amount,
+        orderType as unknown as OrderTypeInput,
+        limitType as unknown as LimitTypeInput,
+        price,
+        slippage,
+        orders,
+      ),
     );
     return this.sendTransaction(tx);
   }

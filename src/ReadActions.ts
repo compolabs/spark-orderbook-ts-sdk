@@ -1,4 +1,10 @@
-import { Address, Bech32Address, ZeroBytes32 } from "fuels";
+import {
+  Address,
+  Bech32Address,
+  FunctionInvocationScope,
+  MultiCallInvocationScope,
+  ZeroBytes32,
+} from "fuels";
 import { Undefinable } from "tsdef";
 
 import { AccountOutput, IdentityInput } from "./types/market/SparkMarket";
@@ -39,6 +45,34 @@ export class ReadActions {
 
   private getMarketFactory(address?: string) {
     return createContract("SparkMarket", this.options, address);
+  }
+
+  private get proxyContract() {
+    if (!this.options.contractAddresses.proxy) {
+      return;
+    }
+
+    return createContract(
+      "SparkProxy",
+      this.options,
+      this.options.contractAddresses.proxy,
+    );
+  }
+
+  private async fetchData<TReturn>(
+    createTx: () =>
+      | FunctionInvocationScope<any, TReturn>
+      | MultiCallInvocationScope<TReturn>,
+  ): Promise<TReturn> {
+    let tx = createTx();
+
+    if (this.proxyContract) {
+      tx = tx.addContracts([this.proxyContract]);
+    }
+
+    const result = await tx.get();
+
+    return result.value;
   }
 
   private createIdentityInput(trader: Bech32Address): IdentityInput {
@@ -93,7 +127,8 @@ export class ReadActions {
 
   async fetchMarketConfig(marketAddress: string): Promise<MarketInfo> {
     const marketFactory = this.getMarketFactory(marketAddress);
-    const data = await marketFactory.functions.config().get();
+
+    const data = await this.fetchData(marketFactory.functions.config);
 
     const [
       baseAssetId,
@@ -103,7 +138,7 @@ export class ReadActions {
       ownerIdentity,
       priceDecimals,
       version,
-    ] = data.value;
+    ] = data;
 
     const owner =
       ownerIdentity?.Address?.bits ?? ownerIdentity?.ContractId?.bits ?? "";
@@ -123,9 +158,11 @@ export class ReadActions {
     trader: Bech32Address,
   ): Promise<UserMarketBalance> {
     const user = this.createIdentityInput(trader);
-    const result = await this.marketFactory.functions.account(user).get();
+    const result = await this.fetchData(() =>
+      this.marketFactory.functions.account(user),
+    );
 
-    const { liquid, locked } = result.value ?? {};
+    const { liquid, locked } = result ?? {};
 
     return {
       liquid: {
@@ -150,7 +187,9 @@ export class ReadActions {
     });
 
     const baseMarketContract = this.getMarketFactory(contractsAddresses[0]);
-    const result = await baseMarketContract.multiCall(calls).get();
+    const result = await this.fetchData(() =>
+      baseMarketContract.multiCall(calls),
+    );
 
     return result.value.map((data: AccountOutput) => ({
       liquid: {
@@ -166,12 +205,14 @@ export class ReadActions {
 
   async fetchOrderById(
     orderId: string,
-  ): Promise<SpotOrderWithoutTimestamp | undefined> {
-    const result = await this.marketFactory.functions.order(orderId).get();
+  ): Promise<Undefinable<SpotOrderWithoutTimestamp>> {
+    const result = await this.fetchData(() =>
+      this.marketFactory.functions.order(orderId),
+    );
 
-    if (!result.value) return undefined;
+    if (!result) return;
 
-    const { amount, price, order_type, owner } = result.value;
+    const { amount, price, order_type, owner } = result;
 
     return {
       id: orderId,
@@ -184,9 +225,11 @@ export class ReadActions {
 
   async fetchOrderIdsByAddress(trader: Bech32Address): Promise<string[]> {
     const user = this.createIdentityInput(trader);
-    const result = await this.marketFactory.functions.user_orders(user).get();
+    const result = await this.fetchData(() =>
+      this.marketFactory.functions.user_orders(user),
+    );
 
-    return result.value;
+    return result;
   }
 
   async fetchWalletBalance(assetId: string): Promise<string> {
@@ -195,15 +238,19 @@ export class ReadActions {
   }
 
   async fetchMatcherFee(): Promise<string> {
-    const result = await this.marketFactory.functions.matcher_fee().get();
+    const result = await this.fetchData(
+      this.marketFactory.functions.matcher_fee,
+    );
 
-    return result.value.toString();
+    return result.toString();
   }
 
   async fetchProtocolFee(): Promise<ProtocolFee[]> {
-    const result = await this.marketFactory.functions.protocol_fee().get();
+    const result = await this.fetchData(
+      this.marketFactory.functions.protocol_fee,
+    );
 
-    return result.value.map((fee) => ({
+    return result.map((fee) => ({
       makerFee: fee.maker_fee.toString(),
       takerFee: fee.taker_fee.toString(),
       volumeThreshold: fee.volume_threshold.toString(),
@@ -214,13 +261,13 @@ export class ReadActions {
     trader: Bech32Address,
   ): Promise<UserProtocolFee> {
     const user = this.createIdentityInput(trader);
-    const result = await this.marketFactory.functions
-      .protocol_fee_user(user)
-      .get();
+    const result = await this.fetchData(() =>
+      this.marketFactory.functions.protocol_fee_user(user),
+    );
 
     return {
-      makerFee: result.value[0].toString(),
-      takerFee: result.value[1].toString(),
+      makerFee: result[0].toString(),
+      takerFee: result[1].toString(),
     };
   }
 
@@ -229,25 +276,29 @@ export class ReadActions {
     trader: Bech32Address,
   ): Promise<UserProtocolFee> {
     const user = this.createIdentityInput(trader);
-    const result = await this.marketFactory.functions
-      .protocol_fee_user_amount(amount, user)
-      .get();
+    const result = await this.fetchData(() =>
+      this.marketFactory.functions.protocol_fee_user_amount(amount, user),
+    );
 
     return {
-      makerFee: result.value[0].toString(),
-      takerFee: result.value[1].toString(),
+      makerFee: result[0].toString(),
+      takerFee: result[1].toString(),
     };
   }
 
   async fetchMinOrderSize(): Promise<string> {
-    const result = await this.marketFactory.functions.min_order_size().get();
+    const result = await this.fetchData(
+      this.marketFactory.functions.min_order_size,
+    );
 
-    return result.value.toString();
+    return result.toString();
   }
 
   async fetchMinOrderPrice(): Promise<string> {
-    const result = await this.marketFactory.functions.min_order_price().get();
+    const result = await this.fetchData(
+      this.marketFactory.functions.min_order_price,
+    );
 
-    return result.value.toString();
+    return result.toString();
   }
 }

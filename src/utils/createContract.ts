@@ -1,3 +1,5 @@
+import { SparkProxy } from "src/types/proxy";
+
 import { Options } from "../interface";
 import { SparkMarket } from "../types/market";
 import { MultiassetContract } from "../types/multiasset";
@@ -7,6 +9,7 @@ interface ContractClasses {
   SparkMarket: typeof SparkMarket;
   SparkRegistry: typeof SparkRegistry;
   MultiassetContract: typeof MultiassetContract;
+  SparkProxy: typeof SparkProxy;
 }
 
 export const createContract = <T extends keyof ContractClasses>(
@@ -28,6 +31,11 @@ export const createContract = <T extends keyof ContractClasses>(
     case "MultiassetContract":
       return new MultiassetContract(
         requiredAddress ?? options.contractAddresses.multiAsset,
+        options.wallet,
+      ) as InstanceType<ContractClasses[T]>;
+    case "SparkProxy":
+      return new SparkProxy(
+        requiredAddress ?? options.contractAddresses.proxy,
         options.wallet,
       ) as InstanceType<ContractClasses[T]>;
     default:
