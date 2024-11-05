@@ -8,5 +8,5 @@
   Fuels version: 0.96.1
 */
 
-export { SparkRegistry } from './SparkRegistry';
-export { SparkRegistryFactory } from './SparkRegistryFactory';
+export { SparkProxy } from './SparkProxy';
+export { SparkProxyFactory } from './SparkProxyFactory';

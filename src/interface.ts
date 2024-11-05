@@ -3,7 +3,7 @@ import { WalletLocked, WalletUnlocked } from "fuels";
 import BN from "./utils/BN";
 
 export interface OrderbookContracts {
-  market: string;
+  proxyMarket: string;
   registry: string;
   multiAsset: string;
 }
@@ -35,7 +35,7 @@ export interface GraphClientConfig {
 
 export interface SparkParams {
   networkUrl: string;
-  contractAddresses: Omit<OrderbookContracts, "market">;
+  contractAddresses: Omit<OrderbookContracts, "proxyMarket">;
   wallet?: WalletLocked | WalletUnlocked;
   gasPrice?: string;
   gasLimitMultiplier?: string;
