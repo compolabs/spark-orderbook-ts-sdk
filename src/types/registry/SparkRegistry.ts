@@ -958,7 +958,7 @@ const abi = {
     {
       "name": "VERSION",
       "concreteTypeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc",
-      "offset": 23568
+      "offset": 23528
     }
   ]
 };

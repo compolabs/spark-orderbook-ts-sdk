@@ -26,7 +26,7 @@ describe("ReadActions", () => {
       wallet,
       contractAddresses: {
         proxyMarket:
-          "0xbbe3a8eeea77082864c5553e06df3bce440688f89ce538efa67d38b1a470f334",
+          "0x4c9010a055ab636c38caa0e4c7cf9eb4ad8d6f44ff6e094f23b3dcdd291ee093",
         multiAsset: "multiasset_address",
         registry: "registry_address",
       },

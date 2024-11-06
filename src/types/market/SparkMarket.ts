@@ -48,10 +48,10 @@ export type OrderErrorInput = Enum<{ OrderDuplicate: string, OrderNotFound: stri
 export type OrderErrorOutput = Enum<{ OrderDuplicate: string, OrderNotFound: string, PriceTooSmall: [], OrderSizeTooSmall: BN, ZeroLockAmount: void, ZeroUnlockAmount: void, ZeroTransferAmount: void, FailedToRemove: string }>;
 export enum OrderTypeInput { Buy = 'Buy', Sell = 'Sell' };
 export enum OrderTypeOutput { Buy = 'Buy', Sell = 'Sell' };
+export enum PauseErrorInput { Paused = 'Paused', NotPaused = 'NotPaused' };
+export enum PauseErrorOutput { Paused = 'Paused', NotPaused = 'NotPaused' };
 export enum ReentrancyErrorInput { NonReentrant = 'NonReentrant' };
 export enum ReentrancyErrorOutput { NonReentrant = 'NonReentrant' };
-export type StateInput = Enum<{ Uninitialized: undefined, Initialized: IdentityInput, Revoked: undefined }>;
-export type StateOutput = Enum<{ Uninitialized: void, Initialized: IdentityOutput, Revoked: void }>;
 export type ValueErrorInput = Enum<{ InvalidAmount: undefined, InvalidSlippage: undefined, InvalidArrayLength: undefined, InvalidFeeAmount: [], InvalidEpoch: [BigNumberish, BigNumberish, BigNumberish, BigNumberish], InvalidFeeSorting: undefined, InvalidFeeZeroBased: undefined, InvalidValueSame: undefined, InvalidMarketSame: undefined }>;
 export type ValueErrorOutput = Enum<{ InvalidAmount: void, InvalidSlippage: void, InvalidArrayLength: void, InvalidFeeAmount: [], InvalidEpoch: [BN, BN, BN, BN], InvalidFeeSorting: void, InvalidFeeZeroBased: void, InvalidValueSame: void, InvalidMarketSame: void }>;
 
@@ -192,19 +192,14 @@ const abi = {
       "metadataTypeId": 16
     },
     {
-      "type": "enum standards::src5::State",
-      "concreteTypeId": "192bc7098e2fe60635a9918afb563e4e5419d386da2bdbf0d716b4bc8549802c",
-      "metadataTypeId": 17
-    },
-    {
       "type": "enum std::identity::Identity",
       "concreteTypeId": "ab7cd04e05be58e3fc15d424c2c4a57f824a2a2d97d67252440a3925ebdc1335",
-      "metadataTypeId": 18
+      "metadataTypeId": 17
     },
     {
       "type": "enum std::option::Option<struct data_structures::order::Order>",
       "concreteTypeId": "af7345d115f618be19cd709b6734bdd5fd52bb0c27617a74a9564e4cea947d01",
-      "metadataTypeId": 19,
+      "metadataTypeId": 18,
       "typeArguments": [
         "d0d7221d2233a12a685667b843d8aab0c0b82407fc47b719c07aeb77dfcaed6a"
       ]
@@ -212,6 +207,11 @@ const abi = {
     {
       "type": "enum sway_libs::ownership::errors::InitializationError",
       "concreteTypeId": "1dfe7feadc1d9667a4351761230f948744068a090fe91b1bc6763a90ed5d3893",
+      "metadataTypeId": 19
+    },
+    {
+      "type": "enum sway_libs::pausable::errors::PauseError",
+      "concreteTypeId": "8b3afcadf894415a10b09fc3717487e33802c8ffbb030edafe84ca4a71b280bc",
       "metadataTypeId": 20
     },
     {
@@ -443,11 +443,11 @@ const abi = {
         },
         {
           "name": "__tuple_element",
-          "typeId": 19,
+          "typeId": 18,
           "typeArguments": [
             {
               "name": "",
-              "typeId": 18
+              "typeId": 17
             }
           ]
         },
@@ -686,26 +686,8 @@ const abi = {
       ]
     },
     {
-      "type": "enum standards::src5::State",
-      "metadataTypeId": 17,
-      "components": [
-        {
-          "name": "Uninitialized",
-          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
-        },
-        {
-          "name": "Initialized",
-          "typeId": 18
-        },
-        {
-          "name": "Revoked",
-          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
-        }
-      ]
-    },
-    {
       "type": "enum std::identity::Identity",
-      "metadataTypeId": 18,
+      "metadataTypeId": 17,
       "components": [
         {
           "name": "Address",
@@ -719,7 +701,7 @@ const abi = {
     },
     {
       "type": "enum std::option::Option",
-      "metadataTypeId": 19,
+      "metadataTypeId": 18,
       "components": [
         {
           "name": "None",
@@ -736,10 +718,24 @@ const abi = {
     },
     {
       "type": "enum sway_libs::ownership::errors::InitializationError",
-      "metadataTypeId": 20,
+      "metadataTypeId": 19,
       "components": [
         {
           "name": "CannotReinitialized",
+          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
+        }
+      ]
+    },
+    {
+      "type": "enum sway_libs::pausable::errors::PauseError",
+      "metadataTypeId": 20,
+      "components": [
+        {
+          "name": "Paused",
+          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
+        },
+        {
+          "name": "NotPaused",
           "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
         }
       ]
@@ -808,7 +804,7 @@ const abi = {
         },
         {
           "name": "owner",
-          "typeId": 18
+          "typeId": 17
         },
         {
           "name": "price",
@@ -850,7 +846,7 @@ const abi = {
         },
         {
           "name": "sender",
-          "typeId": 18
+          "typeId": 17
         },
         {
           "name": "tx_id",
@@ -894,7 +890,7 @@ const abi = {
         },
         {
           "name": "user",
-          "typeId": 18
+          "typeId": 17
         },
         {
           "name": "balance",
@@ -916,7 +912,7 @@ const abi = {
         },
         {
           "name": "user",
-          "typeId": 18
+          "typeId": 17
         },
         {
           "name": "account",
@@ -924,7 +920,7 @@ const abi = {
         },
         {
           "name": "caller",
-          "typeId": 18
+          "typeId": 17
         }
       ]
     },
@@ -954,7 +950,7 @@ const abi = {
         },
         {
           "name": "user",
-          "typeId": 18
+          "typeId": 17
         },
         {
           "name": "balance",
@@ -1054,7 +1050,7 @@ const abi = {
         },
         {
           "name": "order_matcher",
-          "typeId": 18
+          "typeId": 17
         },
         {
           "name": "trade_size",
@@ -1074,11 +1070,11 @@ const abi = {
         },
         {
           "name": "order_seller",
-          "typeId": 18
+          "typeId": 17
         },
         {
           "name": "order_buyer",
-          "typeId": 18
+          "typeId": 17
         },
         {
           "name": "s_balance",
@@ -1108,7 +1104,7 @@ const abi = {
         },
         {
           "name": "user",
-          "typeId": 18
+          "typeId": 17
         },
         {
           "name": "account",
@@ -1130,7 +1126,7 @@ const abi = {
         },
         {
           "name": "user",
-          "typeId": 18
+          "typeId": 17
         },
         {
           "name": "account",
@@ -1218,7 +1214,7 @@ const abi = {
       "components": [
         {
           "name": "new_owner",
-          "typeId": 18
+          "typeId": 17
         }
       ]
     },
@@ -1228,11 +1224,11 @@ const abi = {
       "components": [
         {
           "name": "new_owner",
-          "typeId": 18
+          "typeId": 17
         },
         {
           "name": "previous_owner",
-          "typeId": 18
+          "typeId": 17
         }
       ]
     }
@@ -1240,43 +1236,39 @@ const abi = {
   "functions": [
     {
       "inputs": [],
-      "name": "owner",
-      "output": "192bc7098e2fe60635a9918afb563e4e5419d386da2bdbf0d716b4bc8549802c",
+      "name": "is_paused",
+      "output": "b760f44fa5965c2474a3b471467a22c43185152129295af588b022ae50b50903",
       "attributes": [
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " Returns the owner."
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            ""
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " # Returns"
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            ""
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " * [State] - Represents the state of ownership for this contract."
-          ]
-        },
         {
           "name": "storage",
           "arguments": [
             "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [],
+      "name": "pause",
+      "output": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d",
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "write"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [],
+      "name": "unpause",
+      "output": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d",
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "write"
           ]
         }
       ]
@@ -3933,6 +3925,14 @@ const abi = {
   ],
   "loggedTypes": [
     {
+      "logId": "4571204900286667806",
+      "concreteTypeId": "3f702ea3351c9c1ece2b84048006c8034a24cbc2bad2e740d0412b4172951d3d"
+    },
+    {
+      "logId": "10032608944051208538",
+      "concreteTypeId": "8b3afcadf894415a10b09fc3717487e33802c8ffbb030edafe84ca4a71b280bc"
+    },
+    {
       "logId": "5557842539076482339",
       "concreteTypeId": "4d216c57b3357523323f59401c7355785b41bdf832f6e1106272186b94797038"
     },
@@ -3993,10 +3993,6 @@ const abi = {
       "concreteTypeId": "e1ef35033ea9d2956f17c3292dea4a46ce7d61fdf37bbebe03b7b965073f43b5"
     },
     {
-      "logId": "4571204900286667806",
-      "concreteTypeId": "3f702ea3351c9c1ece2b84048006c8034a24cbc2bad2e740d0412b4172951d3d"
-    },
-    {
       "logId": "649664855397936830",
       "concreteTypeId": "090412be710caebee4e019479841ea0100912819a3e1c52ba39b1faa7b778c83"
     },
@@ -4034,32 +4030,32 @@ const abi = {
     {
       "name": "BASE_ASSET",
       "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974",
-      "offset": 106120
+      "offset": 108048
     },
     {
       "name": "BASE_ASSET_DECIMALS",
       "concreteTypeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc",
-      "offset": 106152
+      "offset": 108080
     },
     {
       "name": "QUOTE_ASSET",
       "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974",
-      "offset": 106168
+      "offset": 108096
     },
     {
       "name": "QUOTE_ASSET_DECIMALS",
       "concreteTypeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc",
-      "offset": 106200
+      "offset": 108128
     },
     {
       "name": "PRICE_DECIMALS",
       "concreteTypeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc",
-      "offset": 106160
+      "offset": 108088
     },
     {
       "name": "VERSION",
       "concreteTypeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc",
-      "offset": 106208
+      "offset": 108136
     }
   ]
 };
@@ -4097,7 +4093,9 @@ export class SparkMarketInterface extends Interface {
   }
 
   declare functions: {
-    owner: FunctionFragment;
+    is_paused: FunctionFragment;
+    pause: FunctionFragment;
+    unpause: FunctionFragment;
     cancel_order: FunctionFragment;
     deposit: FunctionFragment;
     deposit_for: FunctionFragment;
@@ -4139,7 +4137,9 @@ export class SparkMarket extends Contract {
 
   declare interface: SparkMarketInterface;
   declare functions: {
-    owner: InvokeFunction<[], StateOutput>;
+    is_paused: InvokeFunction<[], boolean>;
+    pause: InvokeFunction<[], void>;
+    unpause: InvokeFunction<[], void>;
     cancel_order: InvokeFunction<[order_id: string], void>;
     deposit: InvokeFunction<[], void>;
     deposit_for: InvokeFunction<[user: IdentityInput], void>;
