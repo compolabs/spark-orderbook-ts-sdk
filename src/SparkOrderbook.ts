@@ -1,16 +1,11 @@
 import { ApolloQueryResult, FetchResult, Observable } from "@apollo/client";
-import {
-  Bech32Address,
-  Provider,
-  Wallet,
-  WalletLocked,
-  WalletUnlocked,
-} from "fuels";
+import { Bech32Address, Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
 import { Undefinable } from "tsdef";
 
 import { NETWORK_ERROR, NetworkError } from "./utils/NetworkError";
 import { DEFAULT_GAS_LIMIT_MULTIPLIER, DEFAULT_GAS_PRICE } from "./constants";
 import { IndexerApi } from "./IndexerApi";
+import { SentioApi } from "./sentioApi";
 import {
   ActiveOrderReturn,
   Asset,
@@ -49,6 +44,7 @@ export class SparkOrderbook {
   private provider?: Provider;
   private options: OptionsSpark;
   private indexerApi?: IndexerApi;
+  private sentioApi = new SentioApi();
 
   constructor(params: SparkParams) {
     this.options = {
@@ -58,8 +54,7 @@ export class SparkOrderbook {
       },
       wallet: params.wallet,
       gasPrice: params.gasPrice ?? DEFAULT_GAS_PRICE,
-      gasLimitMultiplier:
-        params.gasLimitMultiplier ?? DEFAULT_GAS_LIMIT_MULTIPLIER,
+      gasLimitMultiplier: params.gasLimitMultiplier ?? DEFAULT_GAS_LIMIT_MULTIPLIER,
     };
 
     this.providerPromise = Provider.create(params.networkUrl);
@@ -70,6 +65,13 @@ export class SparkOrderbook {
       throw new Error("Please set the correct active indexer.");
     }
     return this.indexerApi;
+  }
+
+  private get activesentioApi(): SentioApi {
+    if (!this.sentioApi) {
+      throw new Error("Please set the correct active indexer.");
+    }
+    return this.sentioApi;
   }
 
   async getProvider(): Promise<Provider> {
@@ -97,9 +99,7 @@ export class SparkOrderbook {
   }
 
   private async getRead(shouldWrite = false): Promise<ReadActions> {
-    const options = shouldWrite
-      ? this.getWriteOptions()
-      : await this.getReadOptions();
+    const options = shouldWrite ? this.getWriteOptions() : await this.getReadOptions();
     return new ReadActions(options);
   }
 
@@ -122,9 +122,7 @@ export class SparkOrderbook {
     this.indexerApi = new IndexerApi(indexer);
   }
 
-  async createOrder(
-    order: CreateOrderParams,
-  ): Promise<WriteTransactionResponse> {
+  async createOrder(order: CreateOrderParams): Promise<WriteTransactionResponse> {
     return this.getWrite().createOrder(order);
   }
 
@@ -139,53 +137,34 @@ export class SparkOrderbook {
     order: FulfillOrderManyWithDepositParams,
     allMarketContracts: string[],
   ): Promise<WriteTransactionResponse> {
-    return this.getWrite().fulfillOrderManyWithDeposit(
-      order,
-      allMarketContracts,
-    );
+    return this.getWrite().fulfillOrderManyWithDeposit(order, allMarketContracts);
   }
 
   async cancelOrder(orderId: string): Promise<WriteTransactionResponse> {
     return this.getWrite().cancelOrder(orderId);
   }
 
-  async matchOrders(
-    sellOrderId: string,
-    buyOrderId: string,
-  ): Promise<WriteTransactionResponse> {
+  async matchOrders(sellOrderId: string, buyOrderId: string): Promise<WriteTransactionResponse> {
     return this.getWrite().matchOrders(sellOrderId, buyOrderId);
   }
 
-  async fulfillOrderMany(
-    order: FulfillOrderManyParams,
-  ): Promise<WriteTransactionResponse> {
+  async fulfillOrderMany(order: FulfillOrderManyParams): Promise<WriteTransactionResponse> {
     return this.getWrite().fulfillOrderMany(order);
   }
 
-  async mintToken(
-    token: Asset,
-    amount: string,
-  ): Promise<WriteTransactionResponse> {
+  async mintToken(token: Asset, amount: string): Promise<WriteTransactionResponse> {
     return this.getWrite().mintToken(token, amount);
   }
 
-  async deposit(
-    token: Asset,
-    amount: string,
-  ): Promise<WriteTransactionResponse> {
+  async deposit(token: Asset, amount: string): Promise<WriteTransactionResponse> {
     return this.getWrite().deposit(token, amount);
   }
 
-  async withdraw(
-    amount: string,
-    assetType: AssetType,
-  ): Promise<WriteTransactionResponse> {
+  async withdraw(amount: string, assetType: AssetType): Promise<WriteTransactionResponse> {
     return this.getWrite().withdraw(amount, assetType);
   }
 
-  async withdrawAll(
-    assets: WithdrawAllType[],
-  ): Promise<WriteTransactionResponse> {
+  async withdrawAll(assets: WithdrawAllType[]): Promise<WriteTransactionResponse> {
     return this.getWrite().withdrawAll(assets);
   }
 
@@ -194,22 +173,14 @@ export class SparkOrderbook {
     allMarketContracts: string[],
     amount?: string,
   ): Promise<WriteTransactionResponse> {
-    return this.getWrite().withdrawAssets(
-      assetType,
-      allMarketContracts,
-      amount,
-    );
+    return this.getWrite().withdrawAssets(assetType, allMarketContracts, amount);
   }
 
-  async withdrawAllAssets(
-    allMarketContracts: string[],
-  ): Promise<WriteTransactionResponse> {
+  async withdrawAllAssets(allMarketContracts: string[]): Promise<WriteTransactionResponse> {
     return this.getWrite().withdrawAllAssets(allMarketContracts);
   }
 
-  async fetchOrders(
-    params: GetOrdersParams,
-  ): Promise<ApolloQueryResult<{ Order: Order[] }>> {
+  async fetchOrders(params: GetOrdersParams): Promise<ApolloQueryResult<{ Order: Order[] }>> {
     return this.activeIndexerApi.getOrders(params);
   }
 
@@ -219,9 +190,7 @@ export class SparkOrderbook {
     return this.activeIndexerApi.getActiveOrders<T>(params);
   }
 
-  subscribeOrders(
-    params: GetOrdersParams,
-  ): Observable<FetchResult<{ Order: Order[] }>> {
+  subscribeOrders(params: GetOrdersParams): Observable<FetchResult<{ Order: Order[] }>> {
     return this.activeIndexerApi.subscribeOrders(params);
   }
 
@@ -241,9 +210,7 @@ export class SparkOrderbook {
     return this.activeIndexerApi.getVolume(params);
   }
 
-  subscribeUserInfo(
-    params: UserInfoParams,
-  ): Observable<FetchResult<{ User: UserInfo[] }>> {
+  subscribeUserInfo(params: UserInfoParams): Observable<FetchResult<{ User: UserInfo[] }>> {
     return this.activeIndexerApi.subscribeUserInfo(params);
   }
 
@@ -257,9 +224,7 @@ export class SparkOrderbook {
     return read.fetchMarketConfig(marketAddress);
   }
 
-  async fetchOrderById(
-    orderId: string,
-  ): Promise<SpotOrderWithoutTimestamp | undefined> {
+  async fetchOrderById(orderId: string): Promise<SpotOrderWithoutTimestamp | undefined> {
     const read = await this.getRead();
     return read.fetchOrderById(orderId);
   }
@@ -274,9 +239,7 @@ export class SparkOrderbook {
     return read.fetchOrderIdsByAddress(trader);
   }
 
-  async fetchUserMarketBalance(
-    trader: Bech32Address,
-  ): Promise<UserMarketBalance> {
+  async fetchUserMarketBalance(trader: Bech32Address): Promise<UserMarketBalance> {
     const read = await this.getRead();
     return read.fetchUserMarketBalance(trader);
   }
@@ -299,17 +262,12 @@ export class SparkOrderbook {
     return read.fetchProtocolFee();
   }
 
-  async fetchProtocolFeeForUser(
-    trader: Bech32Address,
-  ): Promise<UserProtocolFee> {
+  async fetchProtocolFeeForUser(trader: Bech32Address): Promise<UserProtocolFee> {
     const read = await this.getRead();
     return read.fetchProtocolFeeForUser(trader);
   }
 
-  async fetchProtocolFeeAmountForUser(
-    amount: string,
-    trader: Bech32Address,
-  ): Promise<UserProtocolFee> {
+  async fetchProtocolFeeAmountForUser(amount: string, trader: Bech32Address): Promise<UserProtocolFee> {
     const read = await this.getRead();
     return read.fetchProtocolFeeAmountForUser(amount, trader);
   }
@@ -332,6 +290,13 @@ export class SparkOrderbook {
   async fetchMinOrderPrice(): Promise<string> {
     const read = await this.getRead();
     return read.fetchMinOrderPrice();
+  }
+
+  async getUserScoreSnapshot() {
+    console.log('123')
+    console.log('this.activesentioApi', this.activesentioApi)
+    return this.activesentioApi?.getUserScoreSnapshot();
+    console.log('end')
   }
 
   /**

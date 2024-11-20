@@ -222,3 +222,43 @@ export interface UserInfo {
   closed: number;
   timestamp: string;
 }
+
+export interface GetUserScoreSnapshotParams {
+  userAddress: string;
+  blockDate: number;
+}
+
+export interface GetUserScoreSnapshotResponse {
+  runtimeCost: string;
+  result: Result;
+  computeStats: ComputeStats;
+}
+
+interface ComputeStats {
+  computedAt: string;
+  computeCostMs: string;
+  binaryVersionHash: string;
+  computedBy: string;
+  isCached: boolean;
+  isRefreshing: boolean;
+}
+
+interface Result {
+  columns: string[];
+  columnTypes: ColumnTypes;
+  rows: Row[];
+  generatedAt: string;
+  cursor: string;
+}
+
+export interface Row {
+  block_date: string;
+  total_value_locked_score: number;
+  tradeVolume: number;
+}
+
+interface ColumnTypes {
+  block_date: string;
+  total_value_locked_score: string;
+  tradeVolume: string;
+}

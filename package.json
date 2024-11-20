@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.10.8",
+    "axios": "^1.7.7",
     "bignumber.js": "^9.1.2",
     "graphql-ws": "^5.16.0",
     "tsdef": "^0.0.14"

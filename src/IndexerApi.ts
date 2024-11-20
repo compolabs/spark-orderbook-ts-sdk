@@ -20,7 +20,7 @@ import {
   UserInfoParams,
   Volume,
 } from "./interface";
-import { getActiveOrdersQuery, getOrdersQuery } from "./query";
+import { getActiveOrdersQuery, getOrdersQuery } from "./query/indexerQuery";
 
 export class IndexerApi extends GraphClient {
   getOrders = (
