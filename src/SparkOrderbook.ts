@@ -22,6 +22,7 @@ import {
   GetActiveOrdersParams,
   GetOrdersParams,
   GetTradeOrderEventsParams,
+  GetUserScoreSnapshotParams,
   GraphClientConfig,
   MarketInfo,
   Markets,
@@ -30,6 +31,7 @@ import {
   Order,
   OrderType,
   ProtocolFee,
+  SentioApiParams,
   SparkParams,
   SpotOrderWithoutTimestamp,
   TradeOrderEvent,
@@ -42,6 +44,7 @@ import {
   WriteTransactionResponse,
 } from "./interface";
 import { ReadActions } from "./ReadActions";
+import { SentioApi } from "./sentioApi";
 import { WriteActions } from "./WriteActions";
 
 export class SparkOrderbook {
@@ -49,6 +52,7 @@ export class SparkOrderbook {
   private provider?: Provider;
   private options: OptionsSpark;
   private indexerApi?: IndexerApi;
+  private sentioApi?: SentioApi;
 
   constructor(params: SparkParams) {
     this.options = {
@@ -70,6 +74,13 @@ export class SparkOrderbook {
       throw new Error("Please set the correct active indexer.");
     }
     return this.indexerApi;
+  }
+
+  private get activeSentioApi(): SentioApi {
+    if (!this.sentioApi) {
+      throw new Error("Please set the correct active indexer.");
+    }
+    return this.sentioApi;
   }
 
   async getProvider(): Promise<Provider> {
@@ -120,6 +131,10 @@ export class SparkOrderbook {
     }
 
     this.indexerApi = new IndexerApi(indexer);
+  }
+
+  setSentioConfig(params: SentioApiParams): void {
+    this.sentioApi = new SentioApi(params);
   }
 
   async createOrder(
@@ -332,6 +347,10 @@ export class SparkOrderbook {
   async fetchMinOrderPrice(): Promise<string> {
     const read = await this.getRead();
     return read.fetchMinOrderPrice();
+  }
+
+  async getUserScoreSnapshot(params: GetUserScoreSnapshotParams) {
+    return this.activeSentioApi?.getUserScoreSnapshot(params);
   }
 
   /**

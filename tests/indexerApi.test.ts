@@ -19,7 +19,10 @@ import {
   OrderType,
   TradeOrderEvent,
 } from "../src/interface";
-import { getActiveOrdersQuery, getOrdersQuery } from "../src/query";
+import {
+  getActiveOrdersQuery,
+  getOrdersQuery,
+} from "../src/query/indexerQuery";
 
 const USER_ADDRESS = "0x0000";
 const ASSET_ADDRESS = "0x0001";

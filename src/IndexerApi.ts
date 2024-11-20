@@ -5,6 +5,7 @@ import {
   Observable,
 } from "@apollo/client";
 
+import { getActiveOrdersQuery, getOrdersQuery } from "./query/indexerQuery";
 import BN from "./utils/BN";
 import { generateWhereFilter } from "./utils/generateWhereFilter";
 import { GraphClient } from "./utils/GraphClient";
@@ -20,7 +21,6 @@ import {
   UserInfoParams,
   Volume,
 } from "./interface";
-import { getActiveOrdersQuery, getOrdersQuery } from "./query";
 
 export class IndexerApi extends GraphClient {
   getOrders = (

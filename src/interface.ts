@@ -66,7 +66,7 @@ export type WriteTransactionResponse = {
 };
 
 export interface GraphQLResponse<T> {
-  data: T;
+  result: T;
   errors?: { message: string }[];
 }
 
@@ -221,4 +221,49 @@ export interface UserInfo {
   canceled: number;
   closed: number;
   timestamp: string;
+}
+
+export interface GetUserScoreSnapshotParams {
+  userAddress: string;
+  blockDate: number;
+}
+
+export interface SentioApiParams {
+  url: string;
+  apiKey: string;
+}
+
+export interface GetUserScoreSnapshotResponse {
+  runtimeCost: string;
+  result: Result;
+  computeStats: ComputeStats;
+}
+
+interface ComputeStats {
+  computedAt: string;
+  computeCostMs: string;
+  binaryVersionHash: string;
+  computedBy: string;
+  isCached: boolean;
+  isRefreshing: boolean;
+}
+
+interface Result {
+  columns: string[];
+  columnTypes: ColumnTypes;
+  rows: Row[];
+  generatedAt: string;
+  cursor: string;
+}
+
+export interface Row {
+  block_date: string;
+  total_value_locked_score: number;
+  tradeVolume: number;
+}
+
+interface ColumnTypes {
+  block_date: string;
+  total_value_locked_score: string;
+  tradeVolume: string;
 }
