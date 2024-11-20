@@ -30,7 +30,8 @@ import {
   OptionsSpark,
   Order,
   OrderType,
-  ProtocolFee, SentioApiParams,
+  ProtocolFee,
+  SentioApiParams,
   SparkParams,
   SpotOrderWithoutTimestamp,
   TradeOrderEvent,
@@ -51,7 +52,7 @@ export class SparkOrderbook {
   private provider?: Provider;
   private options: OptionsSpark;
   private indexerApi?: IndexerApi;
-  private sentioApi?: SentioApi
+  private sentioApi?: SentioApi;
 
   constructor(params: SparkParams) {
     this.options = {
@@ -349,7 +350,6 @@ export class SparkOrderbook {
   }
 
   async getUserScoreSnapshot(params: GetUserScoreSnapshotParams) {
-    console.log("start");
     return this.activeSentioApi?.getUserScoreSnapshot(params);
   }
 
