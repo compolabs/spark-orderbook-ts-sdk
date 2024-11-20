@@ -21,7 +21,8 @@ import {
   FulfillOrderManyWithDepositParams,
   GetActiveOrdersParams,
   GetOrdersParams,
-  GetTradeOrderEventsParams, GetUserScoreSnapshotParams,
+  GetTradeOrderEventsParams,
+  GetUserScoreSnapshotParams,
   GraphClientConfig,
   MarketInfo,
   Markets,
@@ -74,7 +75,7 @@ export class SparkOrderbook {
     return this.indexerApi;
   }
 
-  private get activesentioApi(): SentioApi {
+  private get activeSentioApi(): SentioApi {
     if (!this.sentioApi) {
       throw new Error("Please set the correct active indexer.");
     }
@@ -344,7 +345,8 @@ export class SparkOrderbook {
   }
 
   async getUserScoreSnapshot(params: GetUserScoreSnapshotParams) {
-    return this.activesentioApi?.getUserScoreSnapshot(params);
+    console.log("start");
+    return this.activeSentioApi?.getUserScoreSnapshot(params);
   }
 
   /**

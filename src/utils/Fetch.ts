@@ -26,6 +26,7 @@ export class Fetch {
   protected post = <T>(
     body: Record<string, any>,
     credentials: RequestCredentials = "same-origin",
+    headers: Record<string, string>,
   ) => {
     return this.request<T>(this.url, {
       method: "POST",
@@ -33,6 +34,7 @@ export class Fetch {
       credentials,
       headers: {
         "Content-Type": "application/json",
+        ...headers,
       },
     });
   };
