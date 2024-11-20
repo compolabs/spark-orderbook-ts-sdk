@@ -25,7 +25,5 @@ export const getUserScoreSnapshotQuery = async ({
   const headers: Record<string, string> = {
     "api-key": "TLjw41s3DYbWALbwmvwLDM9vbVEDrD9BP", // TODO: ключь который не должен быть открыть пользователю, но договорились, что берем на себя риски и если что будет его менять
   };
-  const response = await AxiosService.post<sqlQuery>(url, sqlQuery, headers);
-  console.log("response", response);
-  return response;
+  return await AxiosService.post<sqlQuery>(url, sqlQuery, headers);
 };
