@@ -1,4 +1,3 @@
-import { GraphQLResponse } from "src/interface";
 import { Nilable } from "tsdef";
 
 export class Fetch {
@@ -14,12 +13,8 @@ export class Fetch {
   ): Promise<T> => {
     return fetch(endpoint, data)
       .then((response) => response.json())
-      .then((data: GraphQLResponse<T>) => {
-        if (data.errors) {
-          throw new Error(data.errors[0].message);
-        }
-
-        return data.data;
+      .then((data: T) => {
+        return data;
       });
   };
 

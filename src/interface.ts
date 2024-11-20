@@ -66,7 +66,7 @@ export type WriteTransactionResponse = {
 };
 
 export interface GraphQLResponse<T> {
-  data: T;
+  result: T;
   errors?: { message: string }[];
 }
 
@@ -226,6 +226,11 @@ export interface UserInfo {
 export interface GetUserScoreSnapshotParams {
   userAddress: string;
   blockDate: number;
+}
+
+export interface SentioApiParams {
+  url: string;
+  apiKey: string;
 }
 
 export interface GetUserScoreSnapshotResponse {
