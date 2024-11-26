@@ -17,24 +17,107 @@ npm i @compolabs/spark-orderbook-ts-sdk
 
 ## Usage
 
-To use the spark-orderbook-ts-sdk, you'll need to set up a `Spark` instance with the appropriate configuration:
+For the latest usage examples, refer to the `examples` folder.
+
+---
+
+### Folder Structure
+
+The `examples` folder includes the following files:
+
+- **`config.json`**: Configuration file for the SDK.
+- **`read.ts`**: Demonstrates how to fetch data such as orders, trade volume, and trade events.
+- **`write.ts`**: Includes examples for minting tokens, depositing, creating orders, and canceling orders.
+- **`utils.ts`**: Provides reusable functions for initializing the SDK with the proper configuration.
+
+### Notes
+
+1. **Configuration File**:  
+   Ensure the `config.json` file contains accurate data. Outdated configurations may cause errors. The latest version of the configuration file can always be found [here](https://github.com/compolabs/spark-frontend-config).
+
+2. **React Compatibility**:  
+   Some subscription methods work only in React. Check comments in the `read.ts` file for details.
+
+3. **Wallet Requirement**:  
+   For write operations, ensure your wallet has sufficient ETH to send transactions.
+
+4. **Examples First**:  
+   Always refer to the `read.ts` and `write.ts` files in the `examples` folder for the latest implementation patterns.
+
+---
+
+## Quick Start
+
+### 1. Setup
+
+To use the SDK, you need to initialize a `SparkOrderbook` instance. Check the implementation in `utils.ts`.
 
 ```typescript
-import Spark, { TESTNET_NETWORK, BETA_CONTRACT_ADDRESSES, TESTNET_INDEXER_URL } from "spark-orderbook-ts-sdk";
+import { Provider, Wallet } from "fuels";
+import SparkOrderbook, { Asset } from "../src";
+import CONFIG from "./config.json";
 
-// Create a wallet instance
-const provider = await Provider.create(TESTNET_NETWORK.url);
-const wallet = Wallet.fromPrivateKey(/* PRIVATE KEY */, provider);
+export async function initializeSparkOrderbook(wallet?: Wallet) {
+  const provider = await Provider.create(CONFIG.networkUrl);
+  const walletProvider = wallet ?? Wallet.generate({ provider });
 
-const spark = new Spark({
-  networkUrl: TESTNET_NETWORK.url,
-  contractAddresses: BETA_CONTRACT_ADDRESSES,
-  indexerApiUrl: TESTNET_INDEXER_URL,
-  wallet,
-});
-// Now you can use `spark` to interact with the library methods
+  const spark = new SparkOrderbook({
+    networkUrl: CONFIG.networkUrl,
+    contractAddresses: CONFIG.contracts,
+    wallet: walletProvider,
+  });
+
+  spark.setActiveMarket(CONFIG.markets[0].contractId, CONFIG.indexers[CONFIG.markets[0].contractId]);
+  return spark;
+}
 ```
 
+### 2. Read Operations
+
+The `read.ts` file contains examples for fetching and subscribing to market data:
+
+```typescript
+import SparkOrderbook, { OrderType } from "../src";
+import { initializeSparkOrderbook } from "./utils";
+
+async function main() {
+  const spark = await initializeSparkOrderbook();
+
+  // Fetch active buy orders
+  await spark.fetchActiveOrders(OrderType.Buy, ["defaultMarket"], 10);
+
+  // Fetch trade volume
+  await spark.fetchVolume({
+    limit: 100,
+    market: ["defaultMarket"],
+  });
+}
+```
+
+### 3. Write Operations
+
+The `write.ts` file provides examples for write operations like creating and canceling orders:
+
+```typescript
+import SparkOrderbook, { OrderType } from "../src";
+import { initializeSparkOrderbook } from "./utils";
+
+const PRIVATE_KEY = "your-private-key"; // ⚠️ NEVER SHARE YOUR PRIVATE KEY ⚠️
+
+async function main() {
+  const spark = await initializeSparkOrderbook(Wallet.fromPrivateKey(PRIVATE_KEY));
+
+  // Create a buy order
+  await spark.createOrder({
+    amount: "0.01",
+    price: "7000000000000",
+    type: OrderType.Buy,
+  });
+
+  // Cancel an order
+  await spark.cancelOrder("orderId");
+}
+```
 
 ## Contributing
 
