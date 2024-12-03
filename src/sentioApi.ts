@@ -1,5 +1,12 @@
-import { getUserScoreSnapshotQuery } from "./query/sentioQuery";
-import { GetUserScoreSnapshotParams, SentioApiParams } from "./interface";
+import {
+  getTradeEventQuery,
+  getUserScoreSnapshotQuery,
+} from "./query/sentioQuery";
+import {
+  GetTradeEventQueryParams,
+  GetUserScoreSnapshotParams,
+  SentioApiParams,
+} from "./interface";
 
 export class SentioApi {
   private url: string;
@@ -14,6 +21,16 @@ export class SentioApi {
     return getUserScoreSnapshotQuery({
       userAddress: params.userAddress,
       blockDate: params.blockDate,
+      url: this.url,
+      apiKey: this.apiKey,
+    });
+  };
+
+  getTradeEvent = (params: GetTradeEventQueryParams) => {
+    return getTradeEventQuery({
+      userAddress: params.userAddress,
+      fromTimestamp: params.fromTimestamp,
+      toTimestamp: params.toTimestamp,
       url: this.url,
       apiKey: this.apiKey,
     });

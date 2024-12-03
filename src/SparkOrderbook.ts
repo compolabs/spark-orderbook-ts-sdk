@@ -21,6 +21,7 @@ import {
   FulfillOrderManyWithDepositParams,
   GetActiveOrdersParams,
   GetOrdersParams,
+  GetTradeEventQueryParams,
   GetTradeOrderEventsParams,
   GetUserScoreSnapshotParams,
   GraphClientConfig,
@@ -351,6 +352,10 @@ export class SparkOrderbook {
 
   async getUserScoreSnapshot(params: GetUserScoreSnapshotParams) {
     return this.activeSentioApi?.getUserScoreSnapshot(params);
+  }
+
+  async getTradeEvent(params: GetTradeEventQueryParams) {
+    return this.activeSentioApi?.getTradeEvent(params);
   }
 
   /**
