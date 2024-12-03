@@ -1,5 +1,12 @@
-import {getTradeEventQuery, getUserScoreSnapshotQuery} from "./query/sentioQuery";
-import {GetTradeEventQueryParams, GetUserScoreSnapshotParams, SentioApiParams} from "./interface";
+import {
+  getTradeEventQuery,
+  getUserScoreSnapshotQuery,
+} from "./query/sentioQuery";
+import {
+  GetTradeEventQueryParams,
+  GetUserScoreSnapshotParams,
+  SentioApiParams,
+} from "./interface";
 
 export class SentioApi {
   private url: string;

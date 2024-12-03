@@ -257,7 +257,7 @@ interface ComputeStats {
 export interface Result<T> {
   columns: string[];
   columnTypes: ColumnTypes;
-  rows: T[]; // Используем параметризованный тип
+  rows: T[];
   generatedAt: string;
   cursor: string;
 }
