@@ -228,14 +228,20 @@ export interface GetUserScoreSnapshotParams {
   blockDate: number;
 }
 
+export interface GetTradeEventQueryParams {
+  userAddress: string;
+  toTimestamp: number;
+  fromTimestamp: number;
+}
+
 export interface SentioApiParams {
   url: string;
   apiKey: string;
 }
 
-export interface GetUserScoreSnapshotResponse {
+export interface GetSentioResponse<T> {
   runtimeCost: string;
-  result: Result;
+  result: Result<T>;
   computeStats: ComputeStats;
 }
 
@@ -248,18 +254,23 @@ interface ComputeStats {
   isRefreshing: boolean;
 }
 
-interface Result {
+export interface Result<T> {
   columns: string[];
   columnTypes: ColumnTypes;
-  rows: Row[];
+  rows: T[]; // Используем параметризованный тип
   generatedAt: string;
   cursor: string;
 }
 
-export interface Row {
+export interface RowSnapshot {
   block_date: string;
   total_value_locked_score: number;
   tradeVolume: number;
+}
+
+export interface RowTradeEvent {
+  timestamp: string;
+  volume: number;
 }
 
 interface ColumnTypes {
