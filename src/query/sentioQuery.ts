@@ -1,10 +1,12 @@
 import {
+  GetLeaderBoardQueryParams,
   GetSentioResponse,
   GetTradeEventQueryParams,
   GetUserScoreSnapshotParams,
   RowSnapshot,
   RowTradeEvent,
   SentioApiParams,
+  TraderVolumeResponse,
 } from "src/interface";
 import { Fetch } from "src/utils/Fetch";
 
@@ -16,11 +18,76 @@ interface sqlQueryParams {
 }
 
 export class SentioQuery extends Fetch {
-  private apiKey: string;
+  private readonly apiKey: string;
 
   constructor({ url, apiKey }: SentioApiParams) {
     super(url);
     this.apiKey = apiKey;
+  }
+
+  async getLeaderBoardQuery({
+    page,
+    search = "",
+    currentTimestamp,
+    interval,
+  }: GetLeaderBoardQueryParams): Promise<
+    GetSentioResponse<TraderVolumeResponse>
+  > {
+    const limit = 10;
+    const offset = page * limit;
+    const sqlQuery: sqlQueryParams = {
+      sqlQuery: {
+        sql: `WITH Combined AS (
+              SELECT 
+                  seller AS walletId,
+                  volume,
+                  timestamp
+              FROM TradeEvent
+              WHERE timestamp BETWEEN ${currentTimestamp} - ${interval} AND ${currentTimestamp}
+              UNION ALL
+              SELECT 
+                  buyer AS walletId,
+                  volume,
+                  timestamp
+              FROM TradeEvent
+              WHERE timestamp BETWEEN ${currentTimestamp} - ${interval} AND ${currentTimestamp}
+          ),
+          Ranked AS (
+              SELECT 
+                  walletId,
+                  SUM(volume) AS traderVolume,
+                  ROW_NUMBER() OVER (ORDER BY SUM(volume) DESC) AS id
+              FROM Combined
+              GROUP BY walletId
+          ),
+          Filtered AS (
+              SELECT 
+                  id,
+                  walletId,
+                  traderVolume,
+                  COUNT(*) OVER () AS totalCount
+              FROM Ranked
+              WHERE walletId LIKE '%${search}%'
+          )
+          SELECT 
+              id,
+              walletId,
+              traderVolume,
+              totalCount
+          FROM Filtered
+          ORDER BY traderVolume DESC
+          LIMIT ${limit} OFFSET ${offset};`,
+        size: 20,
+      },
+    };
+    const headers: Record<string, string> = {
+      "api-key": this.apiKey,
+    };
+    return await this.post<GetSentioResponse<TraderVolumeResponse>>(
+      sqlQuery,
+      "same-origin",
+      headers,
+    );
   }
 
   async getUserScoreSnapshotQuery({
@@ -100,5 +167,24 @@ export const getTradeEventQuery = async ({
     userAddress,
     fromTimestamp,
     toTimestamp,
+  });
+};
+
+export const getLeaderBoardQuery = async ({
+  page,
+  search,
+  url,
+  apiKey,
+  currentTimestamp,
+  interval,
+}: GetLeaderBoardQueryParams & SentioApiParams): Promise<
+  GetSentioResponse<TraderVolumeResponse>
+> => {
+  const sentioQuery = new SentioQuery({ url, apiKey });
+  return await sentioQuery.getLeaderBoardQuery({
+    page,
+    search,
+    currentTimestamp,
+    interval,
   });
 };

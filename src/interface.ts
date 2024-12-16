@@ -234,6 +234,13 @@ export interface GetTradeEventQueryParams {
   fromTimestamp: number;
 }
 
+export interface GetLeaderBoardQueryParams {
+  page: number;
+  search?: string;
+  currentTimestamp: number;
+  interval: number;
+}
+
 export interface SentioApiParams {
   url: string;
   apiKey: string;
@@ -271,6 +278,14 @@ export interface RowSnapshot {
 export interface RowTradeEvent {
   timestamp: string;
   volume: number;
+}
+
+export interface TraderVolumeResponse {
+  walletId: string;
+  traderVolume: number;
+  id: number;
+  totalCount: number;
+  isYour: boolean;
 }
 
 interface ColumnTypes {
