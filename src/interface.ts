@@ -234,7 +234,7 @@ export interface GetTradeEventQueryParams {
   fromTimestamp: number;
 }
 
-export interface GetLeaderBoardQueryParams {
+export interface GetLeaderboardQueryParams {
   page: number;
   search?: string;
   currentTimestamp: number;
