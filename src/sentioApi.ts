@@ -1,10 +1,10 @@
 import {
-  getLeaderBoardQuery,
+  getLeaderboardQuery,
   getTradeEventQuery,
   getUserScoreSnapshotQuery,
 } from "./query/sentioQuery";
 import {
-  GetLeaderBoardQueryParams,
+  GetLeaderboardQueryParams,
   GetTradeEventQueryParams,
   GetUserScoreSnapshotParams,
   SentioApiParams,
@@ -38,8 +38,8 @@ export class SentioApi {
     });
   };
 
-  getLeaderBoard = (params: GetLeaderBoardQueryParams) => {
-    return getLeaderBoardQuery({
+  getLeaderboard = (params: GetLeaderboardQueryParams) => {
+    return getLeaderboardQuery({
       page: params.page,
       search: params.search,
       currentTimestamp: params.currentTimestamp,

@@ -234,7 +234,7 @@ export interface GetTradeEventQueryParams {
   fromTimestamp: number;
 }
 
-export interface GetLeaderBoardQueryParams {
+export interface GetLeaderboardQueryParams {
   page: number;
   search?: string;
   currentTimestamp: number;
@@ -283,7 +283,7 @@ export interface RowTradeEvent {
 export interface TraderVolumeResponse {
   walletId: string;
   traderVolume: number;
-  id: number;
+  id: number | "N/A";
   totalCount: number;
   isYour: boolean;
 }

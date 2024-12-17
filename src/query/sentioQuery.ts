@@ -1,5 +1,5 @@
 import {
-  GetLeaderBoardQueryParams,
+  GetLeaderboardQueryParams,
   GetSentioResponse,
   GetTradeEventQueryParams,
   GetUserScoreSnapshotParams,
@@ -25,12 +25,12 @@ export class SentioQuery extends Fetch {
     this.apiKey = apiKey;
   }
 
-  async getLeaderBoardQuery({
+  async getLeaderboardQuery({
     page,
     search = "",
     currentTimestamp,
     interval,
-  }: GetLeaderBoardQueryParams): Promise<
+  }: GetLeaderboardQueryParams): Promise<
     GetSentioResponse<TraderVolumeResponse>
   > {
     const limit = 10;
@@ -170,18 +170,18 @@ export const getTradeEventQuery = async ({
   });
 };
 
-export const getLeaderBoardQuery = async ({
+export const getLeaderboardQuery = async ({
   page,
   search,
   url,
   apiKey,
   currentTimestamp,
   interval,
-}: GetLeaderBoardQueryParams & SentioApiParams): Promise<
+}: GetLeaderboardQueryParams & SentioApiParams): Promise<
   GetSentioResponse<TraderVolumeResponse>
 > => {
   const sentioQuery = new SentioQuery({ url, apiKey });
-  return await sentioQuery.getLeaderBoardQuery({
+  return await sentioQuery.getLeaderboardQuery({
     page,
     search,
     currentTimestamp,
