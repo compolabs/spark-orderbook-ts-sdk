@@ -20,6 +20,7 @@ import {
   FulfillOrderManyParams,
   FulfillOrderManyWithDepositParams,
   GetActiveOrdersParams,
+  GetLeaderBoardQueryParams,
   GetOrdersParams,
   GetTradeEventQueryParams,
   GetTradeOrderEventsParams,
@@ -356,6 +357,10 @@ export class SparkOrderbook {
 
   async getTradeEvent(params: GetTradeEventQueryParams) {
     return this.activeSentioApi?.getTradeEvent(params);
+  }
+
+  async getLeaderBoard(params: GetLeaderBoardQueryParams) {
+    return this.activeSentioApi?.getLeaderBoard(params);
   }
 
   /**
