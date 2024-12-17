@@ -42,6 +42,7 @@ export class SentioApi {
     return getLeaderboardQuery({
       page: params.page,
       search: params.search,
+      limit: params.limit,
       currentTimestamp: params.currentTimestamp,
       interval: params.interval,
       url: this.url,

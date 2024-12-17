@@ -236,6 +236,7 @@ export interface GetTradeEventQueryParams {
 
 export interface GetLeaderboardQueryParams {
   page: number;
+  limit: number;
   search?: string;
   currentTimestamp: number;
   interval: number;
