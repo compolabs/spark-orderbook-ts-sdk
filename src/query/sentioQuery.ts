@@ -28,12 +28,12 @@ export class SentioQuery extends Fetch {
   async getLeaderboardQuery({
     page,
     search = "",
+    limit,
     currentTimestamp,
     interval,
   }: GetLeaderboardQueryParams): Promise<
     GetSentioResponse<TraderVolumeResponse>
   > {
-    const limit = 10;
     const offset = page * limit;
     const sqlQuery: sqlQueryParams = {
       sqlQuery: {
@@ -77,7 +77,7 @@ export class SentioQuery extends Fetch {
           FROM Filtered
           ORDER BY traderVolume DESC
           LIMIT ${limit} OFFSET ${offset};`,
-        size: 20,
+        size: limit,
       },
     };
     const headers: Record<string, string> = {
@@ -174,6 +174,7 @@ export const getLeaderboardQuery = async ({
   page,
   search,
   url,
+  limit,
   apiKey,
   currentTimestamp,
   interval,
@@ -184,6 +185,7 @@ export const getLeaderboardQuery = async ({
   return await sentioQuery.getLeaderboardQuery({
     page,
     search,
+    limit,
     currentTimestamp,
     interval,
   });
