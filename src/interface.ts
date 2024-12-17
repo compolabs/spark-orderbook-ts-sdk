@@ -283,7 +283,7 @@ export interface RowTradeEvent {
 export interface TraderVolumeResponse {
   walletId: string;
   traderVolume: number;
-  id: number;
+  id: number | "N/A";
   totalCount: number;
   isYour: boolean;
 }
