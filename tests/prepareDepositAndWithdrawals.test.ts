@@ -152,4 +152,26 @@ describe("prepareDepositAndWithdrawals", () => {
 
     expect(contractCalls).toHaveLength(3);
   });
+
+  it("handles remainingAmountNeeded correctly", async () => {
+    mockGetTotalBalance.mockResolvedValue({
+      totalBalance: new BN("200"),
+      otherContractBalances: [new BN("100"), new BN("100")],
+      walletFeeBalance: new BN("10"),
+      targetMarketBalance: new BN("50"),
+    });
+
+    const contractCalls = await prepareDepositAndWithdrawals({
+      baseMarketFactory,
+      wallet,
+      assetType: AssetType.Base,
+      allMarketContracts: ["0xBaseContractAddress", CONTRACT_ADDRESS_2],
+      depositAssetId: "0xDepositAssetId",
+      feeAssetId: "0xFeeAssetId",
+      amountToSpend: "160",
+      amountFee: "0",
+    });
+
+    expect(contractCalls).toHaveLength(2);
+  });
 });
