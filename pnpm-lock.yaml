@@ -68,8 +68,8 @@ importers:
         specifier: ^3.0.0
         version: 3.2.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.6.2))(eslint@8.57.0)(typescript@5.6.2))(eslint@8.57.0)
       fuels:
-        specifier: 0.96.1
-        version: 0.96.1
+        specifier: 0.97.1
+        version: 0.97.1
       husky:
         specifier: ^9.0.11
         version: 9.0.11
@@ -587,69 +587,73 @@ packages:
     resolution: {integrity: sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@fuel-ts/abi-coder@0.96.1':
-    resolution: {integrity: sha512-czJxFPirhSO6ayshu9Cr5AmED/IprQ8h1igwlcSHFr5jR+l46bLdlsXsWiUwe7vyvZCpOnxkN/XZYkmQyNxKNg==}
+  '@fuel-ts/abi-coder@0.97.1':
+    resolution: {integrity: sha512-ZuBnx8hJi3BDs12tlnBrvF/G9ciHncIkekMjJYWUkM745fKCQfhud5d6RiP9PyqugKY3luXgF2uNBZshXLHN5w==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
 
-  '@fuel-ts/abi-typegen@0.96.1':
-    resolution: {integrity: sha512-vRJnAQ9sxkKuUQ2fkxntPm/679grxgwSf54O7vgDeXuXqQx/4XeylpExjH0/nZzEM5al+muw4rg9WwmKulkcZA==}
+  '@fuel-ts/abi-typegen@0.97.1':
+    resolution: {integrity: sha512-aNW/WbWXTQfJYZn6BN4Hw2X77somkWZN6DlM9KbsLpzpx0tQU/FHtM+6LGQdiuWzzMzyehGNZv/M6hjuZ/jlUg==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
     hasBin: true
 
-  '@fuel-ts/account@0.96.1':
-    resolution: {integrity: sha512-i9InTebg3/buKXNJZpKBhxGMBC3MKpk905Uiv2CvTmldyPVgnZV/jY/b63jlfdEWyP5yVkr5/tzo7QaPKpfnMA==}
+  '@fuel-ts/account@0.97.1':
+    resolution: {integrity: sha512-aOvLQ0oppuRug7P25o6GkcXjy0+l3quWQWruQGYEUW9PYg7LvRx4PGvGmcEObC8JeOHJ76U1DVPz3wzNqYVqPA==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
 
-  '@fuel-ts/address@0.96.1':
-    resolution: {integrity: sha512-PCuC8oojoWLhh0+boitaP90/Z3iSfEXZR8v1JCEfoLZIkvCq6EGKtiY0KvcNkPozHOHmmT34w/1CS6qHOoCBNA==}
+  '@fuel-ts/address@0.97.1':
+    resolution: {integrity: sha512-QjDexGzawpDXsDqhMYE8jGzWlz9nvzJavxe3ItEdHLySEIDB30hWOabwQkeBf1urDUs3YjdnNK3GSjk6bWIhrw==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
 
-  '@fuel-ts/contract@0.96.1':
-    resolution: {integrity: sha512-shwNMHFZ7vr5QJsfVQ6aLd1ms88f3ZagrsNLqNz1Txhz/5KVgYyJaxfp7tUc4WZFpR67+W1zeIqx8ZNHVhck3g==}
+  '@fuel-ts/contract@0.97.1':
+    resolution: {integrity: sha512-3oxE/ybqWEfY0P/JCqGlXBYCKHmDPJNk0ArtTDRe6tPHM2UyuNCj8RXxQUGSNh6HTGsIWKwIA0udmpLNZSd1ag==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
 
-  '@fuel-ts/crypto@0.96.1':
-    resolution: {integrity: sha512-OrAZPZtm8HQouzip621/ci47PeTS06QegGdz7MeN6wK4yeCbJmlRQ1WE9S3iclb3p+VLF0RtbecEbHQfsNgsnA==}
+  '@fuel-ts/crypto@0.97.1':
+    resolution: {integrity: sha512-AWnjVzLdK03R+Zb/qDMMwPMkDIBj191Vm3H1zAxGM8hUEP3wH8FUQ3383pkvA9MgJZ/zgiOjQ43gGCnra0IP/Q==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
 
-  '@fuel-ts/errors@0.96.1':
-    resolution: {integrity: sha512-Xtso5v4a3UUvnMaOSDhMRlkb9LxLyCyC/1/RY7fZZ035ttscy6dNMuiD/iSptJ5pHklJ5R4rCPdOL5EKpgOaMA==}
+  '@fuel-ts/errors@0.97.1':
+    resolution: {integrity: sha512-8eO4EV7k1Y4SsVRLjClTqCyxKB47psIo+qyVk6XObGMiOswjAjzapSdQfwZSlo59BGns3aNAA34V2SJiTu1fwg==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
 
-  '@fuel-ts/hasher@0.96.1':
-    resolution: {integrity: sha512-7z4cah+5TOcCBA2Wgvje1L7wVTahiFLb9IUpRXRMVGXwaqsbV/wUNcyuc1mhPh/JKLgcOe+OqsrpcYD2dg2rpg==}
+  '@fuel-ts/hasher@0.97.1':
+    resolution: {integrity: sha512-8f3qU7SZs3GceYYyB6bIzLH4pnkfYg8PTnhjqfXYEJw6QXpGKXDIE1pMyGz/FceShrFNP1ixNO7v9tcrdZG5og==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
 
-  '@fuel-ts/interfaces@0.96.1':
-    resolution: {integrity: sha512-mZ3sDHJml5AtLRSmGWo5rbU9//3oKDhAeiFealajcPaVztAAnaKnA5a19dd4ITbjZb2q3e2lQ7zX8iAXgHUwYA==}
+  '@fuel-ts/interfaces@0.97.1':
+    resolution: {integrity: sha512-zjzQPIUT9ZKSakwSbJ4A6mvnG+jrZgabTLCTL+7jiFQT5lBb60lhSdMXW5vbzVhWWvcTxaU8rej9CrjuXXCwkQ==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
 
-  '@fuel-ts/math@0.96.1':
-    resolution: {integrity: sha512-AZUChguQmE1ILYbcc6SOTjFJIUkGzD3Z6yHgvO4tszn2QS/jVTSAZKVx653J5u9m/Xn/WthwR35l1GbwXMwB4g==}
+  '@fuel-ts/math@0.97.1':
+    resolution: {integrity: sha512-tnql9KnXrhRV7p/HUx52EUTO7VsR0m590b621HyB+6jonhLWWBu7yla538g40Zt+Oto/0yYnAyGMN93joIqcbQ==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
 
-  '@fuel-ts/merkle@0.96.1':
-    resolution: {integrity: sha512-7cLbxYG5berKSK+wPKrkbB9dZ6akOm7C1Ij4iwYXOxQWlmXY62mjSY5Tl1PPyDBSdRqBtqxW0xYUGIzZl2A/3g==}
+  '@fuel-ts/merkle@0.97.1':
+    resolution: {integrity: sha512-rqiSSb4AUk9yf8FCzVniW5fiCkBliRnQDsLi+A8/E5gFuCc/bTN7Ws1J5ERTOMSly7ScCRRTUgYt+BSf7wzl2A==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
 
-  '@fuel-ts/program@0.96.1':
-    resolution: {integrity: sha512-tA2YvcIdlDQLKeOOfoTyfI3LRQZiqsHi5rFaGbOsjEQvyNQBdXa92vMMFW0dFNWXqOPLjTmYNWqp0xsMuikbsA==}
+  '@fuel-ts/program@0.97.1':
+    resolution: {integrity: sha512-y1AT8H2jFVTnnfObQqtmb38xLpQn7KRZ7lsAUJZk1Pe2P61dolv6e0sGax7dOjC8uzOFq+ygwEhDZzXqZ1WJOQ==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
 
-  '@fuel-ts/script@0.96.1':
-    resolution: {integrity: sha512-N/N3I3xjDI1+9XcCrYTWapF0iBbdvtBxUUUZxn5S5GuIXuTCK6UfQLrRciuCHK5QiHVwFmQjlki+ozJfI+4UbQ==}
+  '@fuel-ts/recipes@0.97.1':
+    resolution: {integrity: sha512-dQB29TZ4H1BOM+gfahojR5Vgcblj7HkaUrfFqhHZ4tImrwOVz/vb0cmz/8wSDT2bk017sDV1D59BB3BA752hUw==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
 
-  '@fuel-ts/transactions@0.96.1':
-    resolution: {integrity: sha512-yPQBzMeFIzNBLUZigaf4q0hETO8AH8Evt6ZvpWrYhjYz2WfEpfNDpuhIHRwsMfJRbxz2vhQ51AzkRqpH0b2GMQ==}
+  '@fuel-ts/script@0.97.1':
+    resolution: {integrity: sha512-B86EBGNL8TL5TE8KmOcKb4LoA2v2XcQMsk0VEBuFTMyLLrOE+Yf96N509lsIhu2p1d/mBDbIf8yb/N1KZ7Zr6Q==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
 
-  '@fuel-ts/utils@0.96.1':
-    resolution: {integrity: sha512-XXZNEUPf7qtKpVO3ak2CSroBYEKh1Gne1zlmVSNUoVPqQvglcu0I2pu/QmVnZBN4m3yVSyHUoWR2Kbo8/Dh7sA==}
+  '@fuel-ts/transactions@0.97.1':
+    resolution: {integrity: sha512-aehrq8clj3MBo+ssg9QEesrNdbzmxiWSo8YqWU/cf7D+331CjRo5PIht3evsp9rDWPFtK5h7e3NzJzaV2wopDA==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
 
-  '@fuel-ts/versions@0.96.1':
-    resolution: {integrity: sha512-C//ZT7U68Gksz9PzUJVzdzUARK7mfXf3MsF5ZqZaMegkE2tCy+twjy8PBdeVserY0uX6mEHRJyZJwcspk34ixg==}
+  '@fuel-ts/utils@0.97.1':
+    resolution: {integrity: sha512-RTm55rmfY55DI8P8XOQq5sEvRfE5XT1K15lLzRjSNvEB6QxO6Mv2D7pSBOcmczZIdcajLvBII40tAaaGxY16ww==}
+    engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
+
+  '@fuel-ts/versions@0.97.1':
+    resolution: {integrity: sha512-rKHBLolZpsaTEFHMshDmMT8BxwQnukOHPCMbb91QXD9qBBbOffCyMIfkljY8teBtxcvgWkF9d96GO+V9UAaL6w==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
     hasBin: true
 
@@ -658,8 +662,8 @@ packages:
     peerDependencies:
       tsup: ^7.2.0
 
-  '@fuels/vm-asm@0.58.0':
-    resolution: {integrity: sha512-tfarairW3IAtyoAIL3I5EJiUQzKAsY4J+eLgZg58B7+itDxqF+CUEpKanmiUnt1mBgry5GwtZsPIrUJ7OgTcDA==}
+  '@fuels/vm-asm@0.58.2':
+    resolution: {integrity: sha512-1/5azTzKJP508BXbZvM6Y0V5bCCX5JgEnd/8mXdBFmFvNLOhiYbwb25yk26auqOokfBXvthSkdkrvipEFft6jQ==}
 
   '@graphql-typed-document-node/core@3.2.0':
     resolution: {integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==}
@@ -1657,10 +1661,6 @@ packages:
     resolution: {integrity: sha512-2Zks0hf1VLFYI1kbh0I5jP3KHHyCHpkfyHBzsSXRFgl/Bg9mWYfMW8oD+PdMPlEwy5HNsR9JutYy6pMeOh61nw==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
 
-  extract-files@9.0.0:
-    resolution: {integrity: sha512-CvdFfHkC95B4bBBk36hcEmvdR2awOdhhVUYH6S/zrVj3477zven/fJMYg7121h4T1xHZC+tetUpubpAhxwI7hQ==}
-    engines: {node: ^10.17.0 || ^12.0.0 || >= 13.7.0}
-
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
 
@@ -1725,10 +1725,6 @@ packages:
     resolution: {integrity: sha512-PXUUyLqrR2XCWICfv6ukppP96sdFwWbNEnfEMt7jNsISjMsvaLNinAHNDYyvkyU+SZG2BTSbT5NjG+vZslfGTA==}
     engines: {node: '>=14'}
 
-  form-data@3.0.1:
-    resolution: {integrity: sha512-RHkBKtLWUVwd7SqRIvCZMEvAMoGUp0XU+seQiZejj0COz3RI3hWP4sCv3gZWWLjJTd7rGwcsF5eKZGii0r/hbg==}
-    engines: {node: '>= 6'}
-
   form-data@4.0.1:
     resolution: {integrity: sha512-tzN8e4TX8+kkxGPK8D5u0FNmjPUjw3lwC9lSLxxoB/+GtsJG91CO8bSWy73APlgAZzZbXEYZJuxjkHH2w+Ezhw==}
     engines: {node: '>= 6'}
@@ -1741,8 +1737,8 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
-  fuels@0.96.1:
-    resolution: {integrity: sha512-BquRIJ0qHNKwhqBTNa6X4aghqhCj1Qz0jM+P0bziXAEk7gVJJZWRz10jCcAgZVeEb4AMdZLDsnNzKJ51GH8IvQ==}
+  fuels@0.97.1:
+    resolution: {integrity: sha512-k+J2w7MU5XMEOoSz2O53TI1NPIblz0uwaZ9PHPpNlH1So2+i+ZCiy83wWNYWnJr/HTB+kbvVFXY21RR3on24Cw==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
     hasBin: true
 
@@ -1829,8 +1825,8 @@ packages:
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
 
-  graphql-request@5.0.0:
-    resolution: {integrity: sha512-SpVEnIo2J5k2+Zf76cUkdvIRaq5FMZvGQYnA4lUWYbc99m+fHh4CZYRRO/Ff4tCLQ613fzCm3SiDT64ubW5Gyw==}
+  graphql-request@6.1.0:
+    resolution: {integrity: sha512-p+XPfS4q7aIpKVcgmnZKhMNqhltk20hfXtkaIkTfjjmiKMJ5xrt5c743cL03y/K7y1rg3WrIC49xGiEQ4mxdNw==}
     peerDependencies:
       graphql: 14 - 16
 
@@ -3550,22 +3546,22 @@ snapshots:
 
   '@eslint/js@8.57.0': {}
 
-  '@fuel-ts/abi-coder@0.96.1':
+  '@fuel-ts/abi-coder@0.97.1':
     dependencies:
-      '@fuel-ts/crypto': 0.96.1
-      '@fuel-ts/errors': 0.96.1
-      '@fuel-ts/hasher': 0.96.1
-      '@fuel-ts/interfaces': 0.96.1
-      '@fuel-ts/math': 0.96.1
-      '@fuel-ts/utils': 0.96.1
+      '@fuel-ts/crypto': 0.97.1
+      '@fuel-ts/errors': 0.97.1
+      '@fuel-ts/hasher': 0.97.1
+      '@fuel-ts/interfaces': 0.97.1
+      '@fuel-ts/math': 0.97.1
+      '@fuel-ts/utils': 0.97.1
       type-fest: 4.26.1
 
-  '@fuel-ts/abi-typegen@0.96.1':
+  '@fuel-ts/abi-typegen@0.97.1':
     dependencies:
-      '@fuel-ts/errors': 0.96.1
-      '@fuel-ts/interfaces': 0.96.1
-      '@fuel-ts/utils': 0.96.1
-      '@fuel-ts/versions': 0.96.1
+      '@fuel-ts/errors': 0.97.1
+      '@fuel-ts/interfaces': 0.97.1
+      '@fuel-ts/utils': 0.97.1
+      '@fuel-ts/versions': 0.97.1
       commander: 12.1.0
       glob: 10.4.5
       handlebars: 4.7.8
@@ -3573,137 +3569,150 @@ snapshots:
       ramda: 0.30.1
       rimraf: 5.0.10
 
-  '@fuel-ts/account@0.96.1':
+  '@fuel-ts/account@0.97.1':
     dependencies:
-      '@fuel-ts/abi-coder': 0.96.1
-      '@fuel-ts/address': 0.96.1
-      '@fuel-ts/crypto': 0.96.1
-      '@fuel-ts/errors': 0.96.1
-      '@fuel-ts/hasher': 0.96.1
-      '@fuel-ts/interfaces': 0.96.1
-      '@fuel-ts/math': 0.96.1
-      '@fuel-ts/merkle': 0.96.1
-      '@fuel-ts/transactions': 0.96.1
-      '@fuel-ts/utils': 0.96.1
-      '@fuel-ts/versions': 0.96.1
-      '@fuels/vm-asm': 0.58.0
+      '@fuel-ts/abi-coder': 0.97.1
+      '@fuel-ts/address': 0.97.1
+      '@fuel-ts/crypto': 0.97.1
+      '@fuel-ts/errors': 0.97.1
+      '@fuel-ts/hasher': 0.97.1
+      '@fuel-ts/interfaces': 0.97.1
+      '@fuel-ts/math': 0.97.1
+      '@fuel-ts/merkle': 0.97.1
+      '@fuel-ts/transactions': 0.97.1
+      '@fuel-ts/utils': 0.97.1
+      '@fuel-ts/versions': 0.97.1
+      '@fuels/vm-asm': 0.58.2
       '@noble/curves': 1.6.0
       events: 3.3.0
       graphql: 16.9.0
-      graphql-request: 5.0.0(graphql@16.9.0)
+      graphql-request: 6.1.0(graphql@16.9.0)
       graphql-tag: 2.12.6(graphql@16.9.0)
       ramda: 0.30.1
     transitivePeerDependencies:
       - encoding
 
-  '@fuel-ts/address@0.96.1':
+  '@fuel-ts/address@0.97.1':
     dependencies:
-      '@fuel-ts/crypto': 0.96.1
-      '@fuel-ts/errors': 0.96.1
-      '@fuel-ts/interfaces': 0.96.1
-      '@fuel-ts/utils': 0.96.1
+      '@fuel-ts/crypto': 0.97.1
+      '@fuel-ts/errors': 0.97.1
+      '@fuel-ts/interfaces': 0.97.1
+      '@fuel-ts/utils': 0.97.1
       '@noble/hashes': 1.5.0
       bech32: 2.0.0
 
-  '@fuel-ts/contract@0.96.1':
+  '@fuel-ts/contract@0.97.1':
     dependencies:
-      '@fuel-ts/abi-coder': 0.96.1
-      '@fuel-ts/account': 0.96.1
-      '@fuel-ts/crypto': 0.96.1
-      '@fuel-ts/errors': 0.96.1
-      '@fuel-ts/hasher': 0.96.1
-      '@fuel-ts/interfaces': 0.96.1
-      '@fuel-ts/math': 0.96.1
-      '@fuel-ts/merkle': 0.96.1
-      '@fuel-ts/program': 0.96.1
-      '@fuel-ts/transactions': 0.96.1
-      '@fuel-ts/utils': 0.96.1
-      '@fuel-ts/versions': 0.96.1
-      '@fuels/vm-asm': 0.58.0
+      '@fuel-ts/abi-coder': 0.97.1
+      '@fuel-ts/account': 0.97.1
+      '@fuel-ts/crypto': 0.97.1
+      '@fuel-ts/errors': 0.97.1
+      '@fuel-ts/hasher': 0.97.1
+      '@fuel-ts/interfaces': 0.97.1
+      '@fuel-ts/math': 0.97.1
+      '@fuel-ts/merkle': 0.97.1
+      '@fuel-ts/program': 0.97.1
+      '@fuel-ts/transactions': 0.97.1
+      '@fuel-ts/utils': 0.97.1
+      '@fuel-ts/versions': 0.97.1
+      '@fuels/vm-asm': 0.58.2
       ramda: 0.30.1
     transitivePeerDependencies:
       - encoding
 
-  '@fuel-ts/crypto@0.96.1':
+  '@fuel-ts/crypto@0.97.1':
     dependencies:
-      '@fuel-ts/errors': 0.96.1
-      '@fuel-ts/interfaces': 0.96.1
-      '@fuel-ts/math': 0.96.1
-      '@fuel-ts/utils': 0.96.1
+      '@fuel-ts/errors': 0.97.1
+      '@fuel-ts/interfaces': 0.97.1
+      '@fuel-ts/math': 0.97.1
+      '@fuel-ts/utils': 0.97.1
       '@noble/hashes': 1.5.0
 
-  '@fuel-ts/errors@0.96.1':
+  '@fuel-ts/errors@0.97.1':
     dependencies:
-      '@fuel-ts/versions': 0.96.1
+      '@fuel-ts/versions': 0.97.1
 
-  '@fuel-ts/hasher@0.96.1':
+  '@fuel-ts/hasher@0.97.1':
     dependencies:
-      '@fuel-ts/crypto': 0.96.1
-      '@fuel-ts/interfaces': 0.96.1
-      '@fuel-ts/utils': 0.96.1
+      '@fuel-ts/crypto': 0.97.1
+      '@fuel-ts/interfaces': 0.97.1
+      '@fuel-ts/utils': 0.97.1
       '@noble/hashes': 1.5.0
 
-  '@fuel-ts/interfaces@0.96.1': {}
+  '@fuel-ts/interfaces@0.97.1': {}
 
-  '@fuel-ts/math@0.96.1':
+  '@fuel-ts/math@0.97.1':
     dependencies:
-      '@fuel-ts/errors': 0.96.1
+      '@fuel-ts/errors': 0.97.1
       '@types/bn.js': 5.1.6
       bn.js: 5.2.1
 
-  '@fuel-ts/merkle@0.96.1':
+  '@fuel-ts/merkle@0.97.1':
     dependencies:
-      '@fuel-ts/hasher': 0.96.1
-      '@fuel-ts/math': 0.96.1
+      '@fuel-ts/hasher': 0.97.1
+      '@fuel-ts/math': 0.97.1
 
-  '@fuel-ts/program@0.96.1':
+  '@fuel-ts/program@0.97.1':
     dependencies:
-      '@fuel-ts/abi-coder': 0.96.1
-      '@fuel-ts/account': 0.96.1
-      '@fuel-ts/address': 0.96.1
-      '@fuel-ts/errors': 0.96.1
-      '@fuel-ts/interfaces': 0.96.1
-      '@fuel-ts/math': 0.96.1
-      '@fuel-ts/transactions': 0.96.1
-      '@fuel-ts/utils': 0.96.1
-      '@fuels/vm-asm': 0.58.0
+      '@fuel-ts/abi-coder': 0.97.1
+      '@fuel-ts/account': 0.97.1
+      '@fuel-ts/address': 0.97.1
+      '@fuel-ts/errors': 0.97.1
+      '@fuel-ts/interfaces': 0.97.1
+      '@fuel-ts/math': 0.97.1
+      '@fuel-ts/transactions': 0.97.1
+      '@fuel-ts/utils': 0.97.1
+      '@fuels/vm-asm': 0.58.2
       ramda: 0.30.1
     transitivePeerDependencies:
       - encoding
 
-  '@fuel-ts/script@0.96.1':
+  '@fuel-ts/recipes@0.97.1':
     dependencies:
-      '@fuel-ts/abi-coder': 0.96.1
-      '@fuel-ts/account': 0.96.1
-      '@fuel-ts/address': 0.96.1
-      '@fuel-ts/errors': 0.96.1
-      '@fuel-ts/interfaces': 0.96.1
-      '@fuel-ts/math': 0.96.1
-      '@fuel-ts/program': 0.96.1
-      '@fuel-ts/transactions': 0.96.1
-      '@fuel-ts/utils': 0.96.1
+      '@fuel-ts/abi-coder': 0.97.1
+      '@fuel-ts/abi-typegen': 0.97.1
+      '@fuel-ts/account': 0.97.1
+      '@fuel-ts/contract': 0.97.1
+      '@fuel-ts/interfaces': 0.97.1
+      '@fuel-ts/program': 0.97.1
+      '@fuel-ts/transactions': 0.97.1
+      '@fuel-ts/utils': 0.97.1
     transitivePeerDependencies:
       - encoding
 
-  '@fuel-ts/transactions@0.96.1':
+  '@fuel-ts/script@0.97.1':
     dependencies:
-      '@fuel-ts/abi-coder': 0.96.1
-      '@fuel-ts/address': 0.96.1
-      '@fuel-ts/errors': 0.96.1
-      '@fuel-ts/hasher': 0.96.1
-      '@fuel-ts/interfaces': 0.96.1
-      '@fuel-ts/math': 0.96.1
-      '@fuel-ts/utils': 0.96.1
+      '@fuel-ts/abi-coder': 0.97.1
+      '@fuel-ts/account': 0.97.1
+      '@fuel-ts/address': 0.97.1
+      '@fuel-ts/errors': 0.97.1
+      '@fuel-ts/interfaces': 0.97.1
+      '@fuel-ts/math': 0.97.1
+      '@fuel-ts/program': 0.97.1
+      '@fuel-ts/transactions': 0.97.1
+      '@fuel-ts/utils': 0.97.1
+    transitivePeerDependencies:
+      - encoding
 
-  '@fuel-ts/utils@0.96.1':
+  '@fuel-ts/transactions@0.97.1':
     dependencies:
-      '@fuel-ts/errors': 0.96.1
-      '@fuel-ts/interfaces': 0.96.1
-      '@fuel-ts/math': 0.96.1
-      '@fuel-ts/versions': 0.96.1
+      '@fuel-ts/abi-coder': 0.97.1
+      '@fuel-ts/address': 0.97.1
+      '@fuel-ts/errors': 0.97.1
+      '@fuel-ts/hasher': 0.97.1
+      '@fuel-ts/interfaces': 0.97.1
+      '@fuel-ts/math': 0.97.1
+      '@fuel-ts/utils': 0.97.1
+
+  '@fuel-ts/utils@0.97.1':
+    dependencies:
+      '@fuel-ts/errors': 0.97.1
+      '@fuel-ts/interfaces': 0.97.1
+      '@fuel-ts/math': 0.97.1
+      '@fuel-ts/versions': 0.97.1
       fflate: 0.8.2
 
-  '@fuel-ts/versions@0.96.1':
+  '@fuel-ts/versions@0.97.1':
     dependencies:
       chalk: 4.1.2
       cli-table: 0.3.11
@@ -3715,7 +3724,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       tsup: 8.2.4(tsx@4.19.1)(typescript@5.6.2)(yaml@2.4.5)
 
-  '@fuels/vm-asm@0.58.0': {}
+  '@fuels/vm-asm@0.58.2': {}
 
   '@graphql-typed-document-node/core@3.2.0(graphql@16.9.0)':
     dependencies:
@@ -4981,8 +4990,6 @@ snapshots:
       jest-message-util: 29.7.0
       jest-util: 29.7.0
 
-  extract-files@9.0.0: {}
-
   fast-deep-equal@3.1.3: {}
 
   fast-diff@1.3.0: {}
@@ -5046,12 +5053,6 @@ snapshots:
       cross-spawn: 7.0.3
       signal-exit: 4.1.0
 
-  form-data@3.0.1:
-    dependencies:
-      asynckit: 0.4.0
-      combined-stream: 1.0.8
-      mime-types: 2.1.35
-
   form-data@4.0.1:
     dependencies:
       asynckit: 0.4.0
@@ -5063,24 +5064,25 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
-  fuels@0.96.1:
+  fuels@0.97.1:
     dependencies:
-      '@fuel-ts/abi-coder': 0.96.1
-      '@fuel-ts/abi-typegen': 0.96.1
-      '@fuel-ts/account': 0.96.1
-      '@fuel-ts/address': 0.96.1
-      '@fuel-ts/contract': 0.96.1
-      '@fuel-ts/crypto': 0.96.1
-      '@fuel-ts/errors': 0.96.1
-      '@fuel-ts/hasher': 0.96.1
-      '@fuel-ts/interfaces': 0.96.1
-      '@fuel-ts/math': 0.96.1
-      '@fuel-ts/merkle': 0.96.1
-      '@fuel-ts/program': 0.96.1
-      '@fuel-ts/script': 0.96.1
-      '@fuel-ts/transactions': 0.96.1
-      '@fuel-ts/utils': 0.96.1
-      '@fuel-ts/versions': 0.96.1
+      '@fuel-ts/abi-coder': 0.97.1
+      '@fuel-ts/abi-typegen': 0.97.1
+      '@fuel-ts/account': 0.97.1
+      '@fuel-ts/address': 0.97.1
+      '@fuel-ts/contract': 0.97.1
+      '@fuel-ts/crypto': 0.97.1
+      '@fuel-ts/errors': 0.97.1
+      '@fuel-ts/hasher': 0.97.1
+      '@fuel-ts/interfaces': 0.97.1
+      '@fuel-ts/math': 0.97.1
+      '@fuel-ts/merkle': 0.97.1
+      '@fuel-ts/program': 0.97.1
+      '@fuel-ts/recipes': 0.97.1
+      '@fuel-ts/script': 0.97.1
+      '@fuel-ts/transactions': 0.97.1
+      '@fuel-ts/utils': 0.97.1
+      '@fuel-ts/versions': 0.97.1
       bundle-require: 5.0.0(esbuild@0.24.0)
       chalk: 4.1.2
       chokidar: 3.6.0
@@ -5198,12 +5200,10 @@ snapshots:
 
   graphemer@1.4.0: {}
 
-  graphql-request@5.0.0(graphql@16.9.0):
+  graphql-request@6.1.0(graphql@16.9.0):
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.9.0)
       cross-fetch: 3.1.8
-      extract-files: 9.0.0
-      form-data: 3.0.1
       graphql: 16.9.0
     transitivePeerDependencies:
       - encoding
