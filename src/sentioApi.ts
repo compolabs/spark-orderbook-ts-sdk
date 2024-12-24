@@ -22,7 +22,8 @@ export class SentioApi {
   getUserScoreSnapshot = (params: GetUserScoreSnapshotParams) => {
     return getUserScoreSnapshotQuery({
       userAddress: params.userAddress,
-      blockDate: params.blockDate,
+      fromTimestamp: params.fromTimestamp,
+      toTimestamp: params.toTimestamp,
       url: this.url,
       apiKey: this.apiKey,
     });

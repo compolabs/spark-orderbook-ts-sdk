@@ -92,12 +92,32 @@ export class SentioQuery extends Fetch {
 
   async getUserScoreSnapshotQuery({
     userAddress,
-    blockDate,
+    fromTimestamp,
+    toTimestamp,
   }: GetUserScoreSnapshotParams): Promise<GetSentioResponse<RowSnapshot>> {
     const sqlQuery: sqlQueryParams = {
       sqlQuery: {
-        sql: `SELECT total_value_locked_score, tradeVolume, block_date FROM UserScoreSnapshot_raw WHERE user_address = '${userAddress}' AND timestamp > '${blockDate}' ORDER BY timestamp;`,
-        size: 1000,
+        sql: `SELECT 
+          DATE_TRUNC('hour', toDateTime(timestamp)) AS hour,
+          ARRAY_AGG(
+              CONCAT(
+                  '{',
+                  '"user": "', user, '", ',
+                  '"market": "', market, '", ',
+                  '"tvl": ', tvl, ', ',
+                  '"timestamp": ', timestamp,
+                  '}'
+              )
+          ) AS records_in_hour
+          FROM prod_subgraph.SqgyBNQS_view_Balance AS Balance_raw 
+          WHERE user = '${userAddress}'
+              AND timestamp >= '${fromTimestamp}' 
+              AND timestamp <= '${toTimestamp}'
+          GROUP BY hour
+          ORDER BY hour ASC 
+          LIMIT 10000;
+      `,
+        size: 10000,
       },
     };
     const headers: Record<string, string> = {
@@ -140,7 +160,8 @@ export class SentioQuery extends Fetch {
 
 export const getUserScoreSnapshotQuery = async ({
   userAddress,
-  blockDate,
+  fromTimestamp,
+  toTimestamp,
   url,
   apiKey,
 }: GetUserScoreSnapshotParams & SentioApiParams): Promise<
@@ -149,7 +170,8 @@ export const getUserScoreSnapshotQuery = async ({
   const sentioQuery = new SentioQuery({ url, apiKey });
   return await sentioQuery.getUserScoreSnapshotQuery({
     userAddress,
-    blockDate,
+    fromTimestamp,
+    toTimestamp,
   });
 };
 
