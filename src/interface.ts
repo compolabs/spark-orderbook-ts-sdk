@@ -225,7 +225,8 @@ export interface UserInfo {
 
 export interface GetUserScoreSnapshotParams {
   userAddress: string;
-  blockDate: number;
+  toTimestamp: number;
+  fromTimestamp: number;
 }
 
 export interface GetTradeEventQueryParams {
@@ -272,8 +273,11 @@ export interface Result<T> {
 
 export interface RowSnapshot {
   block_date: string;
-  total_value_locked_score: number;
-  tradeVolume: number;
+  tvl: number;
+  market: string;
+  timestamp: string;
+  records_in_hour: string[];
+  hour: string;
 }
 
 export interface RowTradeEvent {
