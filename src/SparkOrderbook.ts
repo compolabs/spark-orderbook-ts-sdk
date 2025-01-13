@@ -382,6 +382,7 @@ export class SparkOrderbook {
       ...this.options,
       contractAddresses: {
         ...this.options.contractAddresses,
+        proxyMarket: marketAddress,
         market: marketAddress,
       },
       networkUrl: this.provider!.url,
