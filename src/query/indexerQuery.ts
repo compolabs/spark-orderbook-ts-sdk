@@ -7,8 +7,7 @@ export const getOrdersQuery = (
   type: "query" | "subscription",
   params: GetOrdersParams,
 ): QueryOptions => {
-  const { limit, orderType, offset, ...restParams } = params;
-  const priceOrder = orderType === "Buy" ? "desc" : "asc";
+  const { limit, offset, ...restParams } = params;
   const offsetInRange = offset ?? 0;
 
   const query = gql`
@@ -16,9 +15,8 @@ export const getOrdersQuery = (
       $limit: Int!
       $offset: Int!
       $where: Order_bool_exp
-      $priceOrder: order_by!
     ) {
-      Order(limit: $limit, offset: $offset, where: $where, order_by: { price: $priceOrder }) {
+      Order(limit: $limit, offset: $offset, where: $where) {
         id
         asset
         amount
@@ -39,7 +37,6 @@ export const getOrdersQuery = (
       limit,
       offset: offsetInRange,
       where: generateWhereFilter(restParams),
-      priceOrder,
     },
   };
 };
@@ -58,9 +55,8 @@ export const getActiveOrdersQuery = (
       $limit: Int!
       $offset: Int!
       $where: ${queryObject}_bool_exp
-      $priceOrder: order_by!
     ) {
-      ${queryObject}(limit: $limit, offset: $offset, where: $where, order_by: { price: $priceOrder }) {
+      ${queryObject}(limit: $limit, offset: $offset, where: $where) {
         id
         asset
         amount
@@ -80,8 +76,7 @@ export const getActiveOrdersQuery = (
     variables: {
       limit,
       offset: offsetInRange,
-      where: generateWhereFilter(restParams),
-      priceOrder,
+      where: generateWhereFilter({ ...restParams, orderType }),
     },
   };
 };
