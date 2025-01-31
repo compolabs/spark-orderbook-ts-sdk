@@ -46,7 +46,6 @@ export const getActiveOrdersQuery = (
   params: GetActiveOrdersParams,
 ): QueryOptions => {
   const { limit, orderType, offset, ...restParams } = params;
-  const priceOrder = orderType === "Buy" ? "desc" : "asc";
   const queryObject = `Active${orderType}Order`;
   const offsetInRange = offset ?? 0;
 
