@@ -365,7 +365,7 @@ export class SparkOrderbook {
   }
 
   async fetchLastTrade<T extends OrderType>(
-    params: GetActiveOrdersParams,
+    params: GetOrdersParams,
   ): Promise<ApolloQueryResult<LastPriceReturn>> {
     return this.activeIndexerApi.getLastTrade(params);
   }

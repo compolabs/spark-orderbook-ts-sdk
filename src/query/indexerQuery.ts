@@ -87,13 +87,8 @@ export const getActiveOrdersQuery = (
 export const getLastTradeQuery = (params: GetOrdersParams): QueryOptions => {
   const { limit, ...restParams } = params;
   const query = gql`
-    query OrderQuery(
-      $limit: Int!
-      $offset: Int!
-      $where: Order_bool_exp
-      $priceOrder: order_by!
-    ) {
-      TradeOrderEvent(limit: $limit, offset: $offset, where: $where) {
+    query OrderQuery($limit: Int!, $where: TradeOrderEvent_bool_exp) {
+      TradeOrderEvent(limit: $limit, where: $where) {
         tradePrice
       }
     }

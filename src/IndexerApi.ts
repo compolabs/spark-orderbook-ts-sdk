@@ -53,7 +53,7 @@ export class IndexerApi extends GraphClient {
   };
 
   getLastTrade = async (
-    params: GetTradeOrderEventsParams,
+    params: GetOrdersParams,
   ): Promise<ApolloQueryResult<any>> => {
     return this.client.query<LastPriceReturn>(getLastTradeQuery(params));
   };
