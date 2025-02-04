@@ -122,6 +122,10 @@ export interface CreateOrderParams {
   type: OrderType;
 }
 
+export interface LastPriceReturn {
+  tradePrice: string;
+}
+
 export interface CreateOrderWithDepositParams {
   amount: string;
   amountToSpend: string;

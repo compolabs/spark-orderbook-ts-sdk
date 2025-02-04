@@ -5,7 +5,11 @@ import {
   Observable,
 } from "@apollo/client";
 
-import { getActiveOrdersQuery, getOrdersQuery } from "./query/indexerQuery";
+import {
+  getActiveOrdersQuery,
+  getLastTradeQuery,
+  getOrdersQuery,
+} from "./query/indexerQuery";
 import BN from "./utils/BN";
 import { generateWhereFilter } from "./utils/generateWhereFilter";
 import { GraphClient } from "./utils/GraphClient";
@@ -14,6 +18,7 @@ import {
   GetActiveOrdersParams,
   GetOrdersParams,
   GetTradeOrderEventsParams,
+  LastPriceReturn,
   Order,
   OrderType,
   TradeOrderEvent,
@@ -45,6 +50,12 @@ export class IndexerApi extends GraphClient {
     return this.client.query<ActiveOrderReturn<T>>(
       getActiveOrdersQuery("query", params),
     );
+  };
+
+  getLastTrade = async (
+    params: GetTradeOrderEventsParams,
+  ): Promise<ApolloQueryResult<any>> => {
+    return this.client.query<LastPriceReturn>(getLastTradeQuery(params));
   };
 
   subscribeActiveOrders = <T extends OrderType>(
@@ -95,7 +106,6 @@ export class IndexerApi extends GraphClient {
       query,
       variables: {
         limit,
-        orderBy: "desc",
         where: generateWhereFilter(restParams),
       },
     });

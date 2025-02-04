@@ -83,3 +83,27 @@ export const getActiveOrdersQuery = (
     },
   };
 };
+
+export const getLastTradeQuery = (params: GetOrdersParams): QueryOptions => {
+  const { limit, ...restParams } = params;
+  const query = gql`
+    query OrderQuery(
+      $limit: Int!
+      $offset: Int!
+      $where: Order_bool_exp
+      $priceOrder: order_by!
+    ) {
+      TradeOrderEvent(limit: $limit, offset: $offset, where: $where) {
+        tradePrice
+      }
+    }
+  `;
+
+  return {
+    query,
+    variables: {
+      limit,
+      where: generateWhereFilter({ ...restParams }),
+    },
+  };
+};

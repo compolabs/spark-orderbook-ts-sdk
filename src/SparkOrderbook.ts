@@ -26,6 +26,7 @@ import {
   GetTradeOrderEventsParams,
   GetUserScoreSnapshotParams,
   GraphClientConfig,
+  LastPriceReturn,
   MarketInfo,
   Markets,
   Options,
@@ -361,6 +362,12 @@ export class SparkOrderbook {
 
   async getLeaderboard(params: GetLeaderboardQueryParams) {
     return this.activeSentioApi?.getLeaderboard(params);
+  }
+
+  async fetchLastTrade<T extends OrderType>(
+    params: GetActiveOrdersParams,
+  ): Promise<ApolloQueryResult<LastPriceReturn>> {
+    return this.activeIndexerApi.getLastTrade(params);
   }
 
   /**
