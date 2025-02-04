@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.10.8",
+    "@compolabs/spark-orderbook-ts-sdk": "^1.14.12",
     "axios": "^1.7.7",
     "bignumber.js": "^9.1.2",
     "graphql-ws": "^5.16.0",
