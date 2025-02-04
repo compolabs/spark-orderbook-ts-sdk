@@ -58,7 +58,7 @@ export const getActiveOrdersQuery = (
       $where: ${queryObject}_bool_exp
       $priceOrder: order_by!
     ) {
-      ${queryObject}(limit: $limit, offset: $offset, where: $where, order_by: { price: $priceOrder })) {
+      ${queryObject}(limit: $limit, offset: $offset, where: $where, order_by: { price: $priceOrder }) {
         id
         asset
         amount
