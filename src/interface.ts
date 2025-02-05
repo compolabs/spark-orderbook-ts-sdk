@@ -8,6 +8,12 @@ export interface OrderbookContracts {
   multiAsset: string;
 }
 
+export interface LastPriceReturn {
+  TradeOrderEvent: {
+    tradePrice: string;
+  }[];
+}
+
 export interface Asset {
   assetId: string;
   symbol: string;

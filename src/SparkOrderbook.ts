@@ -363,6 +363,10 @@ export class SparkOrderbook {
     return this.activeSentioApi?.getLeaderboard(params);
   }
 
+  async getLastTrades(params: GetOrdersParams) {
+    return this.activeIndexerApi?.getLastTrades(params);
+  }
+
   /**
    * @experimental
    * Returns the current instance to allow method chaining.
