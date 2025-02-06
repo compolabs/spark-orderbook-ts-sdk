@@ -258,6 +258,16 @@ export interface GetLeaderboardPnlQueryParams {
   wallets: string[];
 }
 
+export interface GetUserPointQueryParams {
+  userAddress: string;
+  toTimestamp: number;
+  fromTimestamp: number;
+}
+
+export interface UserPointsResponse {
+  result: string;
+}
+
 export interface GetSortedLeaderboardPnlQueryParams {
   side: string;
   timeline: string;
