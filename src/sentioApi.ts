@@ -4,6 +4,7 @@ import {
   getSortedLeaderboardPnlQuery,
   getSortedLeaderboardQuery,
   getTradeEventQuery,
+  getUserPointsQuery,
   getUserScoreSnapshotQuery,
 } from "./query/sentioQuery";
 import {
@@ -12,6 +13,7 @@ import {
   GetSortedLeaderboardPnlQueryParams,
   GetSortedLeaderboardQueryParams,
   GetTradeEventQueryParams,
+  GetUserPointQueryParams,
   GetUserScoreSnapshotParams,
   SentioApiParams,
 } from "./interface";
@@ -70,6 +72,13 @@ export class SentioApi {
   };
   getSortedLeaderboardPnl = (params: GetSortedLeaderboardPnlQueryParams) => {
     return getSortedLeaderboardPnlQuery({
+      ...params,
+      url: this.url,
+      apiKey: this.apiKey,
+    });
+  };
+  getUserPoints = (params: GetUserPointQueryParams) => {
+    return getUserPointsQuery({
       ...params,
       url: this.url,
       apiKey: this.apiKey,

@@ -27,6 +27,7 @@ import {
   GetSortedLeaderboardQueryParams,
   GetTradeEventQueryParams,
   GetTradeOrderEventsParams,
+  GetUserPointQueryParams,
   GetUserScoreSnapshotParams,
   GraphClientConfig,
   MarketInfo,
@@ -382,6 +383,9 @@ export class SparkOrderbook {
     return this.activeSentioApi.getSortedLeaderboardPnl(params);
   }
 
+  async getUserPoints(params: GetUserPointQueryParams) {
+    return this.activeSentioApi.getUserPoints(params);
+  }
   /**
    * @experimental
    * Returns the current instance to allow method chaining.

@@ -5,12 +5,14 @@ import {
   GetSortedLeaderboardPnlQueryParams,
   GetSortedLeaderboardQueryParams,
   GetTradeEventQueryParams,
+  GetUserPointQueryParams,
   GetUserScoreSnapshotParams,
   LeaderboardPnlResponse,
   RowSnapshot,
   RowTradeEvent,
   SentioApiParams,
   TraderVolumeResponse,
+  UserPointsResponse,
 } from "src/interface";
 import { Fetch } from "src/utils/Fetch";
 
@@ -311,6 +313,40 @@ export class SentioQuery extends Fetch {
       headers,
     );
   }
+
+  async getUserPoints({
+    userAddress,
+    fromTimestamp,
+    toTimestamp,
+  }: GetTradeEventQueryParams): Promise<GetSentioResponse<UserPointsResponse>> {
+    const sqlQuery: sqlQueryParams = {
+      sqlQuery: {
+        sql: `SELECT (total_volume / latest_volume) * 400000 AS result FROM
+        (SELECT
+          SUM(te.volume) AS total_volume,
+            (SELECT volume
+              FROM TotalVolume_raw
+              ORDER BY timestamp DESC
+              LIMIT 1) AS latest_volume
+          FROM
+            TradeEvent te
+          WHERE
+            (te.seller = '${userAddress}'
+              OR te.buyer = '${userAddress}')
+          AND te.timestamp BETWEEN '${fromTimestamp}' AND '${toTimestamp}'
+        ) AS aggregated_data;`,
+        size: 10,
+      },
+    };
+    const headers: Record<string, string> = {
+      "api-key": this.apiKey,
+    };
+    return await this.post<GetSentioResponse<UserPointsResponse>>(
+      sqlQuery,
+      "same-origin",
+      headers,
+    );
+  }
 }
 
 export const getUserScoreSnapshotQuery = async (
@@ -369,6 +405,16 @@ export const getSortedLeaderboardPnlQuery = async (
   const { url, apiKey } = params;
   const sentioQuery = new SentioQuery({ url, apiKey });
   return await sentioQuery.getSortedLeaderboardPnlQuery({
+    ...params,
+  });
+};
+
+export const getUserPointsQuery = async (
+  params: GetUserPointQueryParams & SentioApiParams,
+): Promise<GetSentioResponse<UserPointsResponse>> => {
+  const { url, apiKey } = params;
+  const sentioQuery = new SentioQuery({ url, apiKey });
+  return await sentioQuery.getUserPoints({
     ...params,
   });
 };
