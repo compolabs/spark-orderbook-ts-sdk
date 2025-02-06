@@ -1,8 +1,12 @@
 import {
+  GetLeaderboardPnlQueryParams,
   GetLeaderboardQueryParams,
   GetSentioResponse,
+  GetSortedLeaderboardPnlQueryParams,
+  GetSortedLeaderboardQueryParams,
   GetTradeEventQueryParams,
   GetUserScoreSnapshotParams,
+  LeaderboardPnlResponse,
   RowSnapshot,
   RowTradeEvent,
   SentioApiParams,
@@ -25,13 +29,164 @@ export class SentioQuery extends Fetch {
     this.apiKey = apiKey;
   }
 
+  async getSortedLeaderboardPnlQuery({
+    side,
+    timeline,
+    limit,
+    page,
+  }: GetSortedLeaderboardPnlQueryParams): Promise<
+    GetSentioResponse<LeaderboardPnlResponse>
+  > {
+    const offset = page * limit;
+    const sqlQuery: sqlQueryParams = {
+      sqlQuery: {
+        sql: `WITH latest_market_data AS (
+              SELECT 
+                  pnlInPersent1, pnlInPersent7, pnlInPersent31, user, market, pnlChangedTimestamp AS timestamp
+              FROM (
+                  SELECT *,
+                      ROW_NUMBER() OVER (PARTITION BY user, market ORDER BY pnlChangedTimestamp DESC) AS rn
+                  FROM Balance_raw
+              ) t
+              WHERE rn = 1
+          )
+          SELECT 
+              user,
+              SUM(pnlInPersent1) AS total_pnl1,
+              SUM(pnlInPersent7) AS total_pnl7,
+              SUM(pnlInPersent31) AS total_pnl31
+          FROM latest_market_data
+          GROUP BY user
+          ORDER BY ${timeline} ${side}
+          LIMIT ${limit} OFFSET ${offset};
+          `,
+        size: 20,
+      },
+    };
+    const headers: Record<string, string> = {
+      "api-key": this.apiKey,
+    };
+    return await this.post<GetSentioResponse<LeaderboardPnlResponse>>(
+      sqlQuery,
+      "same-origin",
+      headers,
+    );
+  }
+
+  async getLeaderboardPnlQuery({
+    wallets,
+  }: GetLeaderboardPnlQueryParams): Promise<
+    GetSentioResponse<LeaderboardPnlResponse>
+  > {
+    const sqlQuery: sqlQueryParams = {
+      sqlQuery: {
+        sql: `WITH latest_market_data AS (
+              SELECT 
+                  pnlInPersent1, pnlInPersent7, pnlInPersent31, user, market, pnlChangedTimestamp AS timestamp
+              FROM (
+                  SELECT *,
+                      ROW_NUMBER() OVER (PARTITION BY user, market ORDER BY pnlChangedTimestamp DESC) AS rn
+                  FROM Balance_raw
+                  WHERE user IN (${wallets.map((wallet) => `'${wallet}'`).join(", ")})
+              ) t
+              WHERE rn = 1
+          )
+          SELECT 
+              user,
+              SUM(pnlInPersent1) AS total_pnl1,
+              SUM(pnlInPersent7) AS total_pnl7,
+              SUM(pnlInPersent31) AS total_pnl31
+          FROM latest_market_data
+          GROUP BY user
+          `,
+        size: 1000,
+      },
+    };
+    const headers: Record<string, string> = {
+      "api-key": this.apiKey,
+    };
+    return await this.post<GetSentioResponse<LeaderboardPnlResponse>>(
+      sqlQuery,
+      "same-origin",
+      headers,
+    );
+  }
+
   async getLeaderboardQuery({
+    page,
+    limit,
+    currentTimestamp,
+    interval,
+    side,
+    wallets,
+  }: GetLeaderboardQueryParams): Promise<
+    GetSentioResponse<TraderVolumeResponse>
+  > {
+    const offset = page * limit;
+    const sqlQuery: sqlQueryParams = {
+      sqlQuery: {
+        sql: `WITH Combined AS (
+              SELECT
+                  seller AS walletId,
+                  volume,
+                  timestamp
+              FROM TradeEvent
+              WHERE timestamp BETWEEN ${currentTimestamp} - ${interval} AND ${currentTimestamp}
+              UNION ALL
+              SELECT
+                  buyer AS walletId,
+                  volume,
+                  timestamp
+              FROM TradeEvent
+              WHERE timestamp BETWEEN ${currentTimestamp} - ${interval} AND ${currentTimestamp}
+          ),
+          Ranked AS (
+              SELECT
+                  walletId,
+                  SUM(volume) AS traderVolume,
+                  ROW_NUMBER() OVER (ORDER BY SUM(volume) DESC) AS id
+              FROM Combined
+              GROUP BY walletId
+          ),
+          Filtered AS (
+              SELECT
+                  id,
+                  walletId,
+                  traderVolume,
+                  COUNT(*) OVER () AS totalCount
+              FROM Ranked
+              WHERE walletId IN (${wallets.map((wallet) => `'${wallet}'`).join(", ")}
+              )
+          )
+          SELECT
+              id,
+              walletId,
+              traderVolume,
+              totalCount
+          FROM Filtered
+          ORDER BY traderVolume ${side}
+          LIMIT ${limit} OFFSET ${offset};`,
+        size: limit,
+      },
+    };
+    const headers: Record<string, string> = {
+      "api-key": this.apiKey,
+    };
+    return await this.post<GetSentioResponse<TraderVolumeResponse>>(
+      sqlQuery,
+      "same-origin",
+      headers,
+    );
+  }
+
+  async getSortedLeaderboardQuery({
     page,
     search = "",
     limit,
     currentTimestamp,
     interval,
-  }: GetLeaderboardQueryParams): Promise<
+    side,
+  }: GetSortedLeaderboardQueryParams): Promise<
     GetSentioResponse<TraderVolumeResponse>
   > {
     const offset = page * limit;
@@ -75,7 +230,7 @@ export class SentioQuery extends Fetch {
               traderVolume,
               totalCount
           FROM Filtered
-          ORDER BY traderVolume DESC
+          ORDER BY traderVolume ${side}
           LIMIT ${limit} OFFSET ${offset};`,
         size: limit,
       },
@@ -158,57 +313,62 @@ export class SentioQuery extends Fetch {
   }
 }
 
-export const getUserScoreSnapshotQuery = async ({
-  userAddress,
-  fromTimestamp,
-  toTimestamp,
-  url,
-  apiKey,
-}: GetUserScoreSnapshotParams & SentioApiParams): Promise<
-  GetSentioResponse<RowSnapshot>
-> => {
+export const getUserScoreSnapshotQuery = async (
+  props: GetUserScoreSnapshotParams & SentioApiParams,
+): Promise<GetSentioResponse<RowSnapshot>> => {
+  const { url, apiKey } = props;
   const sentioQuery = new SentioQuery({ url, apiKey });
   return await sentioQuery.getUserScoreSnapshotQuery({
-    userAddress,
-    fromTimestamp,
-    toTimestamp,
+    ...props,
   });
 };
 
-export const getTradeEventQuery = async ({
-  userAddress,
-  fromTimestamp,
-  toTimestamp,
-  url,
-  apiKey,
-}: GetTradeEventQueryParams & SentioApiParams): Promise<
-  GetSentioResponse<RowTradeEvent>
-> => {
+export const getTradeEventQuery = async (
+  props: GetTradeEventQueryParams & SentioApiParams,
+): Promise<GetSentioResponse<RowTradeEvent>> => {
+  const { url, apiKey } = props;
   const sentioQuery = new SentioQuery({ url, apiKey });
   return await sentioQuery.getTradeEventQuery({
-    userAddress,
-    fromTimestamp,
-    toTimestamp,
+    ...props,
   });
 };
 
-export const getLeaderboardQuery = async ({
-  page,
-  search,
-  url,
-  limit,
-  apiKey,
-  currentTimestamp,
-  interval,
-}: GetLeaderboardQueryParams & SentioApiParams): Promise<
-  GetSentioResponse<TraderVolumeResponse>
-> => {
+export const getSortedLeaderboardQuery = async (
+  params: GetSortedLeaderboardQueryParams & SentioApiParams,
+): Promise<GetSentioResponse<TraderVolumeResponse>> => {
+  const { url, apiKey } = params;
+  const sentioQuery = new SentioQuery({ url, apiKey });
+  return await sentioQuery.getSortedLeaderboardQuery({
+    ...params,
+  });
+};
+
+export const getLeaderboardQuery = async (
+  params: GetLeaderboardQueryParams & SentioApiParams,
+): Promise<GetSentioResponse<TraderVolumeResponse>> => {
+  const { url, apiKey } = params;
   const sentioQuery = new SentioQuery({ url, apiKey });
   return await sentioQuery.getLeaderboardQuery({
-    page,
-    search,
-    limit,
-    currentTimestamp,
-    interval,
+    ...params,
+  });
+};
+
+export const getLeaderboardPnlQuery = async (
+  params: GetLeaderboardPnlQueryParams & SentioApiParams,
+): Promise<GetSentioResponse<LeaderboardPnlResponse>> => {
+  const { url, apiKey } = params;
+  const sentioQuery = new SentioQuery({ url, apiKey });
+  return await sentioQuery.getLeaderboardPnlQuery({
+    ...params,
+  });
+};
+
+export const getSortedLeaderboardPnlQuery = async (
+  params: GetSortedLeaderboardPnlQueryParams & SentioApiParams,
+): Promise<GetSentioResponse<LeaderboardPnlResponse>> => {
+  const { url, apiKey } = params;
+  const sentioQuery = new SentioQuery({ url, apiKey });
+  return await sentioQuery.getSortedLeaderboardPnlQuery({
+    ...params,
   });
 };
