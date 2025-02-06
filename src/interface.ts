@@ -241,12 +241,35 @@ export interface GetTradeEventQueryParams {
   fromTimestamp: number;
 }
 
-export interface GetLeaderboardQueryParams {
+export interface GetSortedLeaderboardQueryParams {
   page: number;
   limit: number;
   search?: string;
   currentTimestamp: number;
   interval: number;
+  side: string;
+}
+
+export interface GetLeaderboardQueryParams
+  extends GetSortedLeaderboardQueryParams {
+  wallets: string[];
+}
+export interface GetLeaderboardPnlQueryParams {
+  wallets: string[];
+}
+
+export interface GetSortedLeaderboardPnlQueryParams {
+  side: string;
+  timeline: string;
+  page: number;
+  limit: number;
+}
+
+export interface LeaderboardPnlResponse {
+  user: string;
+  total_pnl1: string;
+  total_pnl7: string;
+  total_pnl31: string;
 }
 
 export interface SentioApiParams {

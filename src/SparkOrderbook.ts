@@ -20,8 +20,11 @@ import {
   FulfillOrderManyParams,
   FulfillOrderManyWithDepositParams,
   GetActiveOrdersParams,
+  GetLeaderboardPnlQueryParams,
   GetLeaderboardQueryParams,
   GetOrdersParams,
+  GetSortedLeaderboardPnlQueryParams,
+  GetSortedLeaderboardQueryParams,
   GetTradeEventQueryParams,
   GetTradeOrderEventsParams,
   GetUserScoreSnapshotParams,
@@ -359,13 +362,31 @@ export class SparkOrderbook {
     return this.activeSentioApi?.getTradeEvent(params);
   }
 
+  async getSortedLeaderboard(params: GetSortedLeaderboardQueryParams) {
+    return this.activeSentioApi?.getSortedLeaderboard(params);
+  }
+
   async getLeaderboard(params: GetLeaderboardQueryParams) {
-    return this.activeSentioApi?.getLeaderboard(params);
+    return this.activeSentioApi?.getLeaderboardQuery(params);
   }
 
   async getLastTrades(params: GetOrdersParams) {
     return this.activeIndexerApi?.getLastTrades(params);
   }
+
+
+  async getLeaderboardPnl(params: GetLeaderboardPnlQueryParams) {
+    return this.activeSentioApi.getLeaderboardPnl(params);
+  }
+
+  async getSortedLeaderboardPnl(params: GetSortedLeaderboardPnlQueryParams) {
+    return this.activeSentioApi.getSortedLeaderboardPnl(params);
+  }
+
+  async getLastTrades(params: GetOrdersParams) {
+    return this.activeIndexerApi?.getLastTrades(params);
+  }
+
 
   /**
    * @experimental

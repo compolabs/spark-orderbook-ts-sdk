@@ -1,10 +1,16 @@
 import {
+  getLeaderboardPnlQuery,
   getLeaderboardQuery,
+  getSortedLeaderboardPnlQuery,
+  getSortedLeaderboardQuery,
   getTradeEventQuery,
   getUserScoreSnapshotQuery,
 } from "./query/sentioQuery";
 import {
+  GetLeaderboardPnlQueryParams,
   GetLeaderboardQueryParams,
+  GetSortedLeaderboardPnlQueryParams,
+  GetSortedLeaderboardQueryParams,
   GetTradeEventQueryParams,
   GetUserScoreSnapshotParams,
   SentioApiParams,
@@ -39,13 +45,32 @@ export class SentioApi {
     });
   };
 
-  getLeaderboard = (params: GetLeaderboardQueryParams) => {
+  getSortedLeaderboard = (params: GetSortedLeaderboardQueryParams) => {
+    return getSortedLeaderboardQuery({
+      ...params,
+      url: this.url,
+      apiKey: this.apiKey,
+    });
+  };
+
+  getLeaderboardQuery = (params: GetLeaderboardQueryParams) => {
     return getLeaderboardQuery({
-      page: params.page,
-      search: params.search,
-      limit: params.limit,
-      currentTimestamp: params.currentTimestamp,
-      interval: params.interval,
+      ...params,
+      url: this.url,
+      apiKey: this.apiKey,
+    });
+  };
+
+  getLeaderboardPnl = (params: GetLeaderboardPnlQueryParams) => {
+    return getLeaderboardPnlQuery({
+      ...params,
+      url: this.url,
+      apiKey: this.apiKey,
+    });
+  };
+  getSortedLeaderboardPnl = (params: GetSortedLeaderboardPnlQueryParams) => {
+    return getSortedLeaderboardPnlQuery({
+      ...params,
       url: this.url,
       apiKey: this.apiKey,
     });
