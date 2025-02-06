@@ -374,6 +374,7 @@ export class SparkOrderbook {
     return this.activeIndexerApi?.getLastTrades(params);
   }
 
+
   async getLeaderboardPnl(params: GetLeaderboardPnlQueryParams) {
     return this.activeSentioApi.getLeaderboardPnl(params);
   }
@@ -381,6 +382,12 @@ export class SparkOrderbook {
   async getSortedLeaderboardPnl(params: GetSortedLeaderboardPnlQueryParams) {
     return this.activeSentioApi.getSortedLeaderboardPnl(params);
   }
+
+  async getLastTrades(params: GetOrdersParams) {
+    return this.activeIndexerApi?.getLastTrades(params);
+  }
+
+
   /**
    * @experimental
    * Returns the current instance to allow method chaining.
