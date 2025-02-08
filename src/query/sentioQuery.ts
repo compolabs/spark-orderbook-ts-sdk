@@ -321,20 +321,16 @@ export class SentioQuery extends Fetch {
   }: GetTradeEventQueryParams): Promise<GetSentioResponse<UserPointsResponse>> {
     const sqlQuery: sqlQueryParams = {
       sqlQuery: {
-        sql: `SELECT (total_volume / latest_volume) * 400000 AS result FROM
-        (SELECT
-          SUM(te.volume) AS total_volume,
-            (SELECT volume
-              FROM TotalVolume_raw
-              ORDER BY timestamp DESC
-              LIMIT 1) AS latest_volume
-          FROM
-            TradeEvent te
-          WHERE
-            (te.seller = '${userAddress}'
-              OR te.buyer = '${userAddress}')
-          AND te.timestamp BETWEEN '${fromTimestamp}' AND '${toTimestamp}'
-        ) AS aggregated_data;`,
+        sql: `SELECT (
+          (SELECT SUM(volume)
+            FROM TradeEvent
+              WHERE
+                (seller = '${userAddress}'
+                OR buyer = '${userAddress}')
+                AND timestamp BETWEEN '${fromTimestamp}' AND '${toTimestamp}'
+          ) /
+          (SELECT SUM(volume) FROM TradeEvent)
+        ) * 400000 AS result;`,
         size: 10,
       },
     };
