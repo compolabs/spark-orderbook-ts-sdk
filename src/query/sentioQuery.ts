@@ -27,17 +27,6 @@ interface sqlQueryParams {
 }
 
 export class SentioQuery extends Fetch {
-  getUserPoints(arg0: {
-    userAddress: string;
-    toTimestamp: number;
-    fromTimestamp: number;
-    url: string;
-    apiKey: string;
-  }):
-    | GetSentioResponse<UserPointsResponse>
-    | PromiseLike<GetSentioResponse<UserPointsResponse>> {
-    throw new Error("Method not implemented.");
-  }
   private readonly apiKey: string;
 
   constructor({ url, apiKey }: SentioApiParams) {
@@ -255,6 +244,36 @@ export class SentioQuery extends Fetch {
       "api-key": this.apiKey,
     };
     return await this.post<GetSentioResponse<TraderVolumeResponse>>(
+      sqlQuery,
+      "same-origin",
+      headers,
+    );
+  }
+
+  async getUserPoints({
+    userAddress,
+    fromTimestamp,
+    toTimestamp,
+  }: GetTradeEventQueryParams): Promise<GetSentioResponse<UserPointsResponse>> {
+    const sqlQuery: sqlQueryParams = {
+      sqlQuery: {
+        sql: `SELECT (
+          (SELECT SUM(volume)
+            FROM TradeEvent
+              WHERE
+                (seller = '${userAddress}'
+                OR buyer = '${userAddress}')
+                AND timestamp BETWEEN '${fromTimestamp}' AND '${toTimestamp}'
+          ) /
+          (SELECT SUM(volume) FROM TradeEvent)
+        ) * 400000 AS result;`,
+        size: 10,
+      },
+    };
+    const headers: Record<string, string> = {
+      "api-key": this.apiKey,
+    };
+    return await this.post<GetSentioResponse<UserPointsResponse>>(
       sqlQuery,
       "same-origin",
       headers,
