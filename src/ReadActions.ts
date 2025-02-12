@@ -5,6 +5,7 @@ import { AccountOutput, IdentityInput } from "./types/market/SparkMarket";
 import { Vec } from "./types/registry/common";
 import { AssetIdInput } from "./types/registry/SparkRegistry";
 
+import { batchArray } from "./utils/batchCalls";
 import BN from "./utils/BN";
 import { createContract } from "./utils/createContract";
 import {
@@ -147,6 +148,7 @@ export class ReadActions {
     contractsAddresses: string[],
   ): Promise<UserMarketBalance[]> {
     const user = this.createIdentityInput(trader);
+
     const calls = contractsAddresses.map((address) => {
       const market = this.getProxyMarketFactory(address);
       return market.functions.account(user);
@@ -155,9 +157,17 @@ export class ReadActions {
     const baseMarketContract = this.getProxyMarketFactory(
       contractsAddresses[0],
     );
-    const result = await baseMarketContract.multiCall(calls).get();
 
-    return result.value.map((data: AccountOutput) => ({
+    const callBatches = batchArray(calls, 8);
+
+    const combinedResults: AccountOutput[] = [];
+
+    for (const batch of callBatches) {
+      const resultBatch = await baseMarketContract.multiCall(batch).get();
+      combinedResults.push(...resultBatch.value);
+    }
+
+    return combinedResults.map((data: AccountOutput) => ({
       liquid: {
         base: data.liquid.base.toString() ?? "0",
         quote: data.liquid.quote.toString() ?? "0",
