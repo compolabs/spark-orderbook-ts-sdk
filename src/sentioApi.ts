@@ -3,6 +3,8 @@ import {
   getLeaderboardQuery,
   getSortedLeaderboardPnlQuery,
   getSortedLeaderboardQuery,
+  getTotalStatsQuery,
+  getTotalStatsTableDataQuery,
   getTradeEventQuery,
   getUserPointsQuery,
   getUserScoreSnapshotQuery,
@@ -12,6 +14,7 @@ import {
   GetLeaderboardQueryParams,
   GetSortedLeaderboardPnlQueryParams,
   GetSortedLeaderboardQueryParams,
+  GetTotalStatsTableDataParams,
   GetTradeEventQueryParams,
   GetUserPointQueryParams,
   GetUserScoreSnapshotParams,
@@ -79,6 +82,19 @@ export class SentioApi {
   };
   getUserPoints = (params: GetUserPointQueryParams) => {
     return getUserPointsQuery({
+      ...params,
+      url: this.url,
+      apiKey: this.apiKey,
+    });
+  };
+  getTotalStats = () => {
+    return getTotalStatsQuery({
+      url: this.url,
+      apiKey: this.apiKey,
+    });
+  };
+  getTotalStatsTableData = (params: GetTotalStatsTableDataParams) => {
+    return getTotalStatsTableDataQuery({
       ...params,
       url: this.url,
       apiKey: this.apiKey,

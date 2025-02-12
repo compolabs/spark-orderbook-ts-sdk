@@ -235,6 +235,10 @@ export interface GetUserScoreSnapshotParams {
   fromTimestamp: number;
 }
 
+export interface GetTotalStatsTableDataParams {
+  side: string;
+}
+
 export interface GetTradeEventQueryParams {
   userAddress: string;
   toTimestamp: number;
@@ -266,6 +270,20 @@ export interface GetUserPointQueryParams {
 
 export interface UserPointsResponse {
   result: string;
+}
+
+export interface GetTotalStatsResponse {
+  total_volume: string;
+  total_trades: string;
+}
+
+export interface GetTotalStatsTableData {
+  market: string;
+  total_volume_24h: string;
+  total_volume_7d: string;
+  last_price: string;
+  price_24h_ago: string;
+  price_change_24h: string;
 }
 
 export interface GetSortedLeaderboardPnlQueryParams {

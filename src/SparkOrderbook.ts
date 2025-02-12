@@ -25,6 +25,7 @@ import {
   GetOrdersParams,
   GetSortedLeaderboardPnlQueryParams,
   GetSortedLeaderboardQueryParams,
+  GetTotalStatsTableDataParams,
   GetTradeEventQueryParams,
   GetTradeOrderEventsParams,
   GetUserPointQueryParams,
@@ -385,6 +386,14 @@ export class SparkOrderbook {
 
   async getUserPoints(params: GetUserPointQueryParams) {
     return this.activeSentioApi.getUserPoints(params);
+  }
+
+  async getTotalStats() {
+    return this.activeSentioApi.getTotalStats();
+  }
+
+  async getTotalStatsTableData(params: GetTotalStatsTableDataParams) {
+    return this.activeSentioApi.getTotalStatsTableData(params);
   }
   /**
    * @experimental
