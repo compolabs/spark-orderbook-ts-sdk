@@ -4,6 +4,9 @@ import {
   GetSentioResponse,
   GetSortedLeaderboardPnlQueryParams,
   GetSortedLeaderboardQueryParams,
+  GetTotalStatsResponse,
+  GetTotalStatsTableData,
+  GetTotalStatsTableDataParams,
   GetTradeEventQueryParams,
   GetUserPointQueryParams,
   GetUserScoreSnapshotParams,
@@ -24,6 +27,17 @@ interface sqlQueryParams {
 }
 
 export class SentioQuery extends Fetch {
+  getUserPoints(arg0: {
+    userAddress: string;
+    toTimestamp: number;
+    fromTimestamp: number;
+    url: string;
+    apiKey: string;
+  }):
+    | GetSentioResponse<UserPointsResponse>
+    | PromiseLike<GetSentioResponse<UserPointsResponse>> {
+    throw new Error("Method not implemented.");
+  }
   private readonly apiKey: string;
 
   constructor({ url, apiKey }: SentioApiParams) {
@@ -314,30 +328,66 @@ export class SentioQuery extends Fetch {
     );
   }
 
-  async getUserPoints({
-    userAddress,
-    fromTimestamp,
-    toTimestamp,
-  }: GetTradeEventQueryParams): Promise<GetSentioResponse<UserPointsResponse>> {
+  async getTotalStats(): Promise<GetSentioResponse<GetTotalStatsResponse>> {
     const sqlQuery: sqlQueryParams = {
       sqlQuery: {
-        sql: `SELECT (
-          (SELECT SUM(volume)
-            FROM TradeEvent
-              WHERE
-                (seller = '${userAddress}'
-                OR buyer = '${userAddress}')
-                AND timestamp BETWEEN '${fromTimestamp}' AND '${toTimestamp}'
-          ) /
-          (SELECT SUM(volume) FROM TradeEvent)
-        ) * 400000 AS result;`,
+        sql: `SELECT 
+            SUM(volume) AS total_volume, 
+            COUNT(*) AS total_trades 
+         FROM TradeEvent;
+        `,
         size: 10,
       },
     };
     const headers: Record<string, string> = {
       "api-key": this.apiKey,
     };
-    return await this.post<GetSentioResponse<UserPointsResponse>>(
+    return await this.post<GetSentioResponse<GetTotalStatsResponse>>(
+      sqlQuery,
+      "same-origin",
+      headers,
+    );
+  }
+
+  async getTotalStatsTableData({
+    side,
+  }: GetTotalStatsTableDataParams): Promise<
+    GetSentioResponse<GetTotalStatsTableData>
+  > {
+    const sqlQuery: sqlQueryParams = {
+      sqlQuery: {
+        sql: `WITH LastPrices AS (
+                  SELECT market, price AS last_price
+                  FROM TradeEvent
+                  QUALIFY ROW_NUMBER() OVER (PARTITION BY market ORDER BY timestamp DESC) = 1
+              ),  
+              Price24hAgo AS (
+                  SELECT DISTINCT ON (market) market, price AS price_24h_ago
+                  FROM TradeEvent
+                  WHERE timestamp >= (now() - INTERVAL 1 DAY)
+                  ORDER BY market, timestamp ASC
+              )
+
+              SELECT t.market AS market,
+                    SUM(CASE WHEN t.timestamp >= (now() - INTERVAL 1 DAY) THEN t.volume ELSE 0 END) AS total_volume_24h,
+                    SUM(CASE WHEN t.timestamp >= (now() - INTERVAL 7 DAY) THEN t.volume ELSE 0 END) AS total_volume_7d,
+                    lp.last_price,
+                    COALESCE(p24.price_24h_ago, lp.last_price) AS price_24h_ago,
+                    (lp.last_price - COALESCE(p24.price_24h_ago, lp.last_price)) AS price_change_24h
+              FROM TradeEvent t
+              LEFT JOIN LastPrices lp ON t.market = lp.market
+              LEFT JOIN Price24hAgo p24 ON t.market = p24.market
+              WHERE t.timestamp >= (now() - INTERVAL 7 DAY)
+              GROUP BY t.market, lp.last_price, p24.price_24h_ago
+              ORDER BY total_volume_24h ${side};
+        `,
+        size: 10,
+      },
+    };
+    const headers: Record<string, string> = {
+      "api-key": this.apiKey,
+    };
+    return await this.post<GetSentioResponse<GetTotalStatsTableData>>(
       sqlQuery,
       "same-origin",
       headers,
@@ -413,4 +463,20 @@ export const getUserPointsQuery = async (
   return await sentioQuery.getUserPoints({
     ...params,
   });
+};
+
+export const getTotalStatsQuery = async (
+  props: SentioApiParams,
+): Promise<GetSentioResponse<GetTotalStatsResponse>> => {
+  const { url, apiKey } = props;
+  const sentioQuery = new SentioQuery({ url, apiKey });
+  return await sentioQuery.getTotalStats();
+};
+
+export const getTotalStatsTableDataQuery = async (
+  props: GetTotalStatsTableDataParams & SentioApiParams,
+): Promise<GetSentioResponse<GetTotalStatsTableData>> => {
+  const { url, apiKey } = props;
+  const sentioQuery = new SentioQuery({ url, apiKey });
+  return await sentioQuery.getTotalStatsTableData({ ...props });
 };
