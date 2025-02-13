@@ -1,6 +1,6 @@
 {
   "name": "@compolabs/spark-orderbook-ts-sdk",
-  "version": "1.14.19",
+  "version": "1.14.20",
   "type": "module",
   "main": "./dist/index.сjs",
   "module": "./dist/index.js",
@@ -75,5 +75,5 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "pnpm@9.11.0+sha256.1c0e33f70e5df9eede84a357bdfa0b1f9dba6e58194628d48a1055756f553754"
+  "packageManager": "pnpm@10.3.0+sha512.ee592eda8815a8a293c206bb0917c4bb0ff274c50def7cbc17be05ec641fc2d1b02490ce660061356bd0d126a4d7eb2ec8830e6959fb8a447571c631d5a2442d"
 }

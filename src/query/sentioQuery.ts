@@ -265,8 +265,27 @@ export class SentioQuery extends Fetch {
                 OR buyer = '${userAddress}')
                 AND timestamp BETWEEN '${fromTimestamp}' AND '${toTimestamp}'
           ) /
-          (SELECT SUM(volume) FROM TradeEvent)
-        ) * 400000 AS result;`,
+          (SELECT SUM(volume) FROM TradeEvent
+            WHERE seller NOT IN (
+              '0x1389cb25c66e55525b35f5c57c2f773ab953b80f396e503b6a55ed43707c4e0c',
+              '0xeb0dd9331390a24aa49bd0cf21c5d2127661c68ff38b614afdf41d4e59db5c37',
+              '0xd8962a0f26cf184ae35023e03cde4937cb6c0383be5ccc4e9aca73fe013928c0',
+              '0x210ec7f9fc740e5c6a06eab9134be3a73a7fd6a75f4a9b12c93436c9acbfc3bd',
+              '0xae519546161aa3d969092716f617dd1465f0ba76acdd91b2a9d6e51fd01a8ac5',
+              '0xfc07190ea30c0c308e8b552bdba73dd3abc30c60c00efbb048671fb8c55a97c3',
+              '0x6d0f1faf235cc8d159479ce436d02d6bea21e4579b619c47c7d1810237710d8c'
+              ) 
+              AND buyer NOT IN (
+              '0x1389cb25c66e55525b35f5c57c2f773ab953b80f396e503b6a55ed43707c4e0c',
+              '0xeb0dd9331390a24aa49bd0cf21c5d2127661c68ff38b614afdf41d4e59db5c37',
+              '0xd8962a0f26cf184ae35023e03cde4937cb6c0383be5ccc4e9aca73fe013928c0',
+              '0x210ec7f9fc740e5c6a06eab9134be3a73a7fd6a75f4a9b12c93436c9acbfc3bd',
+              '0xae519546161aa3d969092716f617dd1465f0ba76acdd91b2a9d6e51fd01a8ac5',
+              '0xfc07190ea30c0c308e8b552bdba73dd3abc30c60c00efbb048671fb8c55a97c3',
+              '0x6d0f1faf235cc8d159479ce436d02d6bea21e4579b619c47c7d1810237710d8c'
+              )
+            )
+          ) * 400000 AS result;`,
         size: 10,
       },
     };
