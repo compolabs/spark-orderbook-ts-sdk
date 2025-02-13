@@ -20,6 +20,7 @@ import {
   FulfillOrderManyParams,
   FulfillOrderManyWithDepositParams,
   GetActiveOrdersParams,
+  GetCompetitionParams,
   GetLeaderboardPnlQueryParams,
   GetLeaderboardQueryParams,
   GetOrdersParams,
@@ -394,6 +395,10 @@ export class SparkOrderbook {
 
   async getTotalStatsTableData(params: GetTotalStatsTableDataParams) {
     return this.activeSentioApi.getTotalStatsTableData(params);
+  }
+
+  async getCompetition(params: GetCompetitionParams) {
+    return this.activeSentioApi.getCompetition(params);
   }
   /**
    * @experimental

@@ -239,6 +239,13 @@ export interface GetTotalStatsTableDataParams {
   side: string;
 }
 
+export interface GetCompetitionParams {
+  side: string;
+  limit: number;
+  page: number;
+  search?: string;
+}
+
 export interface GetTradeEventQueryParams {
   userAddress: string;
   toTimestamp: number;
@@ -284,6 +291,14 @@ export interface GetTotalStatsTableData {
   last_price: string;
   price_24h_ago: string;
   price_change_24h: string;
+}
+
+export interface GetCompetitionResponse {
+  user: string;
+  total_pnlComp1: string;
+  total_quoteAmount: string;
+  position: number;
+  data: string;
 }
 
 export interface GetSortedLeaderboardPnlQueryParams {

@@ -1,4 +1,5 @@
 import {
+  getCompetitionQuery,
   getLeaderboardPnlQuery,
   getLeaderboardQuery,
   getSortedLeaderboardPnlQuery,
@@ -10,6 +11,7 @@ import {
   getUserScoreSnapshotQuery,
 } from "./query/sentioQuery";
 import {
+  GetCompetitionParams,
   GetLeaderboardPnlQueryParams,
   GetLeaderboardQueryParams,
   GetSortedLeaderboardPnlQueryParams,
@@ -95,6 +97,13 @@ export class SentioApi {
   };
   getTotalStatsTableData = (params: GetTotalStatsTableDataParams) => {
     return getTotalStatsTableDataQuery({
+      ...params,
+      url: this.url,
+      apiKey: this.apiKey,
+    });
+  };
+  getCompetition = (params: GetCompetitionParams) => {
+    return getCompetitionQuery({
       ...params,
       url: this.url,
       apiKey: this.apiKey,

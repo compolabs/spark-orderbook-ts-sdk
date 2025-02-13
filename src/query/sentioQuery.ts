@@ -1,4 +1,6 @@
 import {
+  GetCompetitionParams,
+  GetCompetitionResponse,
   GetLeaderboardPnlQueryParams,
   GetLeaderboardQueryParams,
   GetSentioResponse,
@@ -387,6 +389,51 @@ export class SentioQuery extends Fetch {
     );
   }
 
+  async getCompetition({
+    side,
+    limit,
+    page,
+    search = "",
+  }: GetCompetitionParams): Promise<GetSentioResponse<GetCompetitionResponse>> {
+    const offset = page * limit;
+    const sqlQuery: sqlQueryParams = {
+      sqlQuery: {
+        sql: `WITH RankedData AS (
+              SELECT 
+                  user, 
+                  SUM(pnlComp1) AS total_pnlComp1, 
+                  SUM(quoteAmount) AS total_quoteAmount,
+                  ROW_NUMBER() OVER (ORDER BY SUM(pnlComp1) DESC) AS position,
+                  CONCAT('[', 
+                        arrayStringConcat(
+                            arrayMap(x -> concat('{"market": "', x.1, '", "pnlComp1": ', toString(x.2), '}'), 
+                                      groupArray((market, pnlComp1))),
+                            ','
+                        ), 
+                        ']') AS data
+              FROM prod_subgraph.WCCjGDWY_latestView_Balance AS Balance
+              GROUP BY user
+              HAVING SUM(pnlComp1) != 0
+          )
+          SELECT * 
+          FROM RankedData
+          WHERE user ILIKE '%' || '${search}' || '%'
+          ORDER BY total_pnlComp1 ${side}
+          LIMIT ${limit} OFFSET ${offset};
+        `,
+        size: 10,
+      },
+    };
+    const headers: Record<string, string> = {
+      "api-key": this.apiKey,
+    };
+    return await this.post<GetSentioResponse<GetCompetitionResponse>>(
+      sqlQuery,
+      "same-origin",
+      headers,
+    );
+  }
+
   async getTotalStatsTableData({
     side,
   }: GetTotalStatsTableDataParams): Promise<
@@ -517,4 +564,12 @@ export const getTotalStatsTableDataQuery = async (
   const { url, apiKey } = props;
   const sentioQuery = new SentioQuery({ url, apiKey });
   return await sentioQuery.getTotalStatsTableData({ ...props });
+};
+
+export const getCompetitionQuery = async (
+  props: GetCompetitionParams & SentioApiParams,
+): Promise<GetSentioResponse<GetCompetitionResponse>> => {
+  const { url, apiKey } = props;
+  const sentioQuery = new SentioQuery({ url, apiKey });
+  return await sentioQuery.getCompetition({ ...props });
 };
