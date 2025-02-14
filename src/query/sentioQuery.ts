@@ -403,22 +403,24 @@ export class SentioQuery extends Fetch {
                   user, 
                   SUM(pnlComp1) AS total_pnlComp1, 
                   SUM(quoteAmount) AS total_quoteAmount,
-                  ROW_NUMBER() OVER (ORDER BY SUM(pnlComp1) DESC) AS position,
-                  CONCAT('[', 
-                        arrayStringConcat(
-                            arrayMap(x -> concat('{"market": "', x.1, '", "pnlComp1": ', toString(x.2), '}'), 
-                                      groupArray((market, pnlComp1))),
-                            ','
-                        ), 
-                        ']') AS data
-              FROM prod_subgraph.WCCjGDWY_latestView_Balance AS Balance
+                  ROW_NUMBER() OVER (ORDER BY SUM(pnlComp1) DESC) AS position
+              FROM Balance
               GROUP BY user
               HAVING SUM(pnlComp1) != 0
+          ),
+          UserVolumes AS (
+              SELECT
+                  t.buyer AS user,
+                  SUM(CASE WHEN t.seller = t.buyer THEN t.volume ELSE 0 END) + 
+                  SUM(CASE WHEN t.buyer = t.buyer THEN t.volume ELSE 0 END) AS total_volume
+              FROM TradeEvent t
+              GROUP BY t.buyer
           )
-          SELECT * 
-          FROM RankedData
+          SELECT rd.*, uv.total_volume
+          FROM RankedData rd
+          LEFT JOIN UserVolumes uv ON rd.user = uv.user
           WHERE user ILIKE '%' || '${search}' || '%'
-          ORDER BY total_pnlComp1 ${side}
+          ORDER BY rd.total_pnlComp1 ${side}
           LIMIT ${limit} OFFSET ${offset};
         `,
         size: 10,

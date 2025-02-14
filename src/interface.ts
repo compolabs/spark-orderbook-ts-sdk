@@ -298,7 +298,7 @@ export interface GetCompetitionResponse {
   total_pnlComp1: string;
   total_quoteAmount: string;
   position: number;
-  data: string;
+  total_volume: string;
 }
 
 export interface GetSortedLeaderboardPnlQueryParams {
