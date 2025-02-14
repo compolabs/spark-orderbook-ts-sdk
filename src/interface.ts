@@ -109,6 +109,20 @@ export interface GetOrdersParams {
   offset?: number;
 }
 
+type SortBy = "desc" | "asc";
+
+export interface GetOrdersSort {
+  amount?: SortBy;
+  asset?: SortBy;
+  id?: SortBy;
+  initialAmount?: SortBy;
+  market?: SortBy;
+  orderType?: SortBy;
+  price?: SortBy;
+  status?: SortBy;
+  timestamp?: SortBy;
+}
+
 export interface GetActiveOrdersParams {
   limit: number;
   market: string[];

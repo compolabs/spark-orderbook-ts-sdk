@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@compolabs/spark-orderbook-ts-sdk': 'link:'
+
 importers:
 
   .:
@@ -11,6 +14,9 @@ importers:
       '@apollo/client':
         specifier: ^3.10.8
         version: 3.12.11(graphql-ws@5.16.2(graphql@16.10.0))(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@compolabs/spark-orderbook-ts-sdk':
+        specifier: 'link:'
+        version: 'link:'
       axios:
         specifier: ^1.7.7
         version: 1.7.9

@@ -24,6 +24,7 @@ import {
   GetLeaderboardPnlQueryParams,
   GetLeaderboardQueryParams,
   GetOrdersParams,
+  GetOrdersSort,
   GetSortedLeaderboardPnlQueryParams,
   GetSortedLeaderboardQueryParams,
   GetTotalStatsTableDataParams,
@@ -232,26 +233,30 @@ export class SparkOrderbook {
 
   async fetchOrders(
     params: GetOrdersParams,
+    orderBy?: GetOrdersSort,
   ): Promise<ApolloQueryResult<{ Order: Order[] }>> {
-    return this.activeIndexerApi.getOrders(params);
+    return this.activeIndexerApi.getOrders(params, orderBy);
   }
 
   async fetchActiveOrders<T extends OrderType>(
     params: GetActiveOrdersParams,
+    orderBy?: GetOrdersSort,
   ): Promise<ApolloQueryResult<ActiveOrderReturn<T>>> {
-    return this.activeIndexerApi.getActiveOrders<T>(params);
+    return this.activeIndexerApi.getActiveOrders<T>(params, orderBy);
   }
 
   subscribeOrders(
     params: GetOrdersParams,
+    orderBy?: GetOrdersSort,
   ): Observable<FetchResult<{ Order: Order[] }>> {
-    return this.activeIndexerApi.subscribeOrders(params);
+    return this.activeIndexerApi.subscribeOrders(params, orderBy);
   }
 
   subscribeActiveOrders<T extends OrderType>(
     params: GetActiveOrdersParams,
+    orderBy?: GetOrdersSort,
   ): Observable<FetchResult<ActiveOrderReturn<T>>> {
-    return this.activeIndexerApi.subscribeActiveOrders<T>(params);
+    return this.activeIndexerApi.subscribeActiveOrders<T>(params, orderBy);
   }
 
   subscribeTradeOrderEvents(
