@@ -287,6 +287,7 @@ export interface GetUserPointQueryParams {
   userAddress: string;
   toTimestamp: number;
   fromTimestamp: number;
+  excluded: string[];
 }
 
 export interface UserPointsResponse {
@@ -312,7 +313,7 @@ export interface GetCompetitionResponse {
   total_pnlComp1: string;
   total_quoteAmount: string;
   position: number;
-  data: string;
+  total_volume: string;
 }
 
 export interface GetSortedLeaderboardPnlQueryParams {
