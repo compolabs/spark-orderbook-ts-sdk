@@ -273,6 +273,7 @@ export interface GetUserPointQueryParams {
   userAddress: string;
   toTimestamp: number;
   fromTimestamp: number;
+  excluded: string[];
 }
 
 export interface UserPointsResponse {
