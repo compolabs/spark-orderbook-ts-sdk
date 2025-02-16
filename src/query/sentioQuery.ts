@@ -89,7 +89,7 @@ export class SentioQuery extends Fetch {
       sqlQuery: {
         sql: `WITH latest_market_data AS (
               SELECT 
-                  pnlInPersent1, pnlInPersent7, pnlInPersent31, user, market, pnlChangedTimestamp AS timestamp
+                  pnl1, pnl7, pnl31, user, market, pnlChangedTimestamp AS timestamp
               FROM (
                   SELECT *,
                       ROW_NUMBER() OVER (PARTITION BY user, market ORDER BY pnlChangedTimestamp DESC) AS rn
@@ -100,9 +100,9 @@ export class SentioQuery extends Fetch {
           )
           SELECT 
               user,
-              SUM(pnlInPersent1) AS total_pnl1,
-              SUM(pnlInPersent7) AS total_pnl7,
-              SUM(pnlInPersent31) AS total_pnl31
+              SUM(pnl1) AS total_pnl1,
+              SUM(pnl7) AS total_pnl7,
+              SUM(pnl31) AS total_pnl31
           FROM latest_market_data
           GROUP BY user
           `,
