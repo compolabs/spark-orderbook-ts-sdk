@@ -115,21 +115,12 @@ export class WriteActions {
   async withdrawAllAssets(
     markets: MarketWithdrawalInfo[],
   ): Promise<WriteTransactionResponse> {
-    const [withdrawTxsBase, withdrawTxsQuote] = await Promise.all([
-      prepareFullWithdrawals({
-        wallet: this.options.wallet,
-        markets,
-      }),
-      prepareFullWithdrawals({
-        wallet: this.options.wallet,
-        markets,
-      }),
-    ]);
+    const withdrawTxs = await prepareFullWithdrawals({
+      wallet: this.options.wallet,
+      markets,
+    });
 
-    const multiTx = this.getProxyMarketFactory().multiCall([
-      ...withdrawTxsBase,
-      ...withdrawTxsQuote,
-    ]);
+    const multiTx = this.getProxyMarketFactory().multiCall(withdrawTxs);
     return this.sendMultiTransaction(multiTx);
   }
 
