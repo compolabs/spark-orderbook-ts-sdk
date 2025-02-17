@@ -297,7 +297,10 @@ export interface GetUserPointQueryParams {
 }
 
 export interface UserPointsResponse {
-  result: string;
+  user: string;
+  user_volume: string;
+  points: string;
+  total_points: string;
 }
 
 export interface GetTotalStatsResponse {
