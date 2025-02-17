@@ -322,7 +322,7 @@ export class SentioQuery extends Fetch {
                   '}'
               )
           ) AS records_in_hour
-          FROM prod_subgraph.SqgyBNQS_view_Balance AS Balance_raw 
+          FROM Balance_raw
           WHERE user = '${userAddress}'
               AND timestamp >= '${fromTimestamp}' 
               AND timestamp <= '${toTimestamp}'
