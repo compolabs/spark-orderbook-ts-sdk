@@ -25,6 +25,7 @@ import {
   CreateOrderWithDepositParams,
   FulfillOrderManyParams,
   FulfillOrderManyWithDepositParams,
+  MarketWithdrawalInfo,
   Options,
   WithdrawAllType,
   WriteTransactionResponse,
@@ -96,14 +97,14 @@ export class WriteActions {
   }
 
   async withdrawAssets(
-    assetType: AssetType,
-    allMarketContracts: string[],
-    amount?: string,
+    assetId: string,
+    markets: MarketWithdrawalInfo[],
+    amount: string,
   ): Promise<WriteTransactionResponse> {
     const withdrawTxs = await prepareFullWithdrawals({
       wallet: this.options.wallet,
-      allMarketContracts,
-      assetType,
+      markets,
+      assetId,
       amount,
     });
 
@@ -112,18 +113,16 @@ export class WriteActions {
   }
 
   async withdrawAllAssets(
-    allMarketContracts: string[],
+    markets: MarketWithdrawalInfo[],
   ): Promise<WriteTransactionResponse> {
     const [withdrawTxsBase, withdrawTxsQuote] = await Promise.all([
       prepareFullWithdrawals({
         wallet: this.options.wallet,
-        allMarketContracts,
-        assetType: AssetType.Base,
+        markets,
       }),
       prepareFullWithdrawals({
         wallet: this.options.wallet,
-        allMarketContracts,
-        assetType: AssetType.Quote,
+        markets,
       }),
     ]);
 

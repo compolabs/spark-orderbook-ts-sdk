@@ -35,6 +35,7 @@ import {
   GraphClientConfig,
   MarketInfo,
   Markets,
+  MarketWithdrawalInfo,
   Options,
   OptionsSpark,
   Order,
@@ -214,21 +215,17 @@ export class SparkOrderbook {
   }
 
   async withdrawAssets(
-    assetType: AssetType,
-    allMarketContracts: string[],
-    amount?: string,
+    assetId: string,
+    markets: MarketWithdrawalInfo[],
+    amount: string,
   ): Promise<WriteTransactionResponse> {
-    return this.getWrite().withdrawAssets(
-      assetType,
-      allMarketContracts,
-      amount,
-    );
+    return this.getWrite().withdrawAssets(assetId, markets, amount);
   }
 
   async withdrawAllAssets(
-    allMarketContracts: string[],
+    markets: MarketWithdrawalInfo[],
   ): Promise<WriteTransactionResponse> {
-    return this.getWrite().withdrawAllAssets(allMarketContracts);
+    return this.getWrite().withdrawAllAssets(markets);
   }
 
   async fetchOrders(

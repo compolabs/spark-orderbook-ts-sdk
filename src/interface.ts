@@ -220,6 +220,12 @@ export interface MarketInfo {
   version: number;
 }
 
+export interface MarketWithdrawalInfo {
+  contractId: string;
+  baseAssetId: string;
+  quoteAssetId: string;
+}
+
 export interface ProtocolFee {
   takerFee: string;
   makerFee: string;
