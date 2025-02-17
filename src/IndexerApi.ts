@@ -17,6 +17,7 @@ import {
   ActiveOrderReturn,
   GetActiveOrdersParams,
   GetOrdersParams,
+  GetOrdersSort,
   GetTradeOrderEventsParams,
   LastPriceReturn,
   Order,
@@ -30,29 +31,32 @@ import {
 export class IndexerApi extends GraphClient {
   getOrders = (
     params: GetOrdersParams,
+    orderBy?: GetOrdersSort,
   ): Promise<ApolloQueryResult<{ Order: Order[] }>> => {
     return this.client.query<{ Order: Order[] }>(
-      getOrdersQuery("query", params),
+      getOrdersQuery("query", params, orderBy),
     );
   };
 
   subscribeOrders = (
     params: GetOrdersParams,
+    sortBy?: GetOrdersSort,
   ): Observable<FetchResult<{ Order: Order[] }>> => {
     return this.client.subscribe<{ Order: Order[] }>(
-      getOrdersQuery("subscription", params),
+      getOrdersQuery("subscription", params, sortBy),
     );
   };
 
   getActiveOrders = <T extends OrderType>(
     params: GetActiveOrdersParams,
+    orderBy?: GetOrdersSort,
   ): Promise<ApolloQueryResult<ActiveOrderReturn<T>>> => {
     return this.client.query<ActiveOrderReturn<T>>(
-      getActiveOrdersQuery("query", params),
+      getActiveOrdersQuery("query", params, orderBy),
     );
   };
 
-  getLastTrades = <T extends OrderType>(
+  getLastTrades = (
     params: GetOrdersParams,
   ): Promise<ApolloQueryResult<LastPriceReturn>> => {
     return this.client.query<LastPriceReturn>(getLastTradeQuery(params));
@@ -60,9 +64,10 @@ export class IndexerApi extends GraphClient {
 
   subscribeActiveOrders = <T extends OrderType>(
     params: GetActiveOrdersParams,
+    orderBy?: GetOrdersSort,
   ): Observable<FetchResult<ActiveOrderReturn<T>>> => {
     return this.client.subscribe<ActiveOrderReturn<T>>(
-      getActiveOrdersQuery("subscription", params),
+      getActiveOrdersQuery("subscription", params, orderBy),
     );
   };
 

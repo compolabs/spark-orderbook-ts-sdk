@@ -1,23 +1,24 @@
 import { gql, QueryOptions } from "@apollo/client";
 import { generateWhereFilter } from "src/utils/generateWhereFilter";
 
-import { GetActiveOrdersParams, GetOrdersParams } from "..";
+import { GetActiveOrdersParams, GetOrdersParams, GetOrdersSort } from "..";
 
 export const getOrdersQuery = (
   type: "query" | "subscription",
   params: GetOrdersParams,
+  orderBy: GetOrdersSort = {},
 ): QueryOptions => {
   const { limit, orderType, offset, ...restParams } = params;
-  const priceOrder = orderType === "Buy" ? "desc" : "asc";
   const offsetInRange = offset ?? 0;
+
   const query = gql`
     ${type} OrderQuery(
       $limit: Int!
       $offset: Int!
       $where: Order_bool_exp
-      $priceOrder: order_by!
+      $orderBy: [Order_order_by!]
     ) {
-      Order(limit: $limit, offset: $offset, where: $where, order_by: { price: $priceOrder }) {
+      Order(limit: $limit, offset: $offset, where: $where, order_by: $orderBy) {
         id
         asset
         amount
@@ -38,7 +39,7 @@ export const getOrdersQuery = (
       limit,
       offset: offsetInRange,
       where: generateWhereFilter({ ...restParams, orderType }),
-      priceOrder,
+      orderBy,
     },
   };
 };
@@ -46,9 +47,9 @@ export const getOrdersQuery = (
 export const getActiveOrdersQuery = (
   type: "query" | "subscription",
   params: GetActiveOrdersParams,
+  orderBy?: GetOrdersSort,
 ): QueryOptions => {
   const { limit, orderType, offset, ...restParams } = params;
-  const priceOrder = orderType === "Buy" ? "desc" : "asc";
   const queryObject = `Active${orderType}Order`;
   const offsetInRange = offset ?? 0;
   const query = gql`
@@ -56,9 +57,9 @@ export const getActiveOrdersQuery = (
       $limit: Int!
       $offset: Int!
       $where: ${queryObject}_bool_exp
-      $priceOrder: order_by!
+      $orderBy: [${queryObject}_order_by!]
     ) {
-      ${queryObject}(limit: $limit, offset: $offset, where: $where, order_by: { price: $priceOrder }) {
+      ${queryObject}(limit: $limit, offset: $offset, where: $where, order_by: $orderBy) {
         id
         asset
         amount
@@ -79,7 +80,7 @@ export const getActiveOrdersQuery = (
       limit,
       offset: offsetInRange,
       where: generateWhereFilter({ ...restParams, orderType }),
-      priceOrder,
+      orderBy,
     },
   };
 };
