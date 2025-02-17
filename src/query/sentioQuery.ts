@@ -421,7 +421,8 @@ export class SentioQuery extends Fetch {
           SELECT rd.*, uv.total_volume
           FROM RankedData rd
           LEFT JOIN UserVolumes uv ON rd.user = uv.user
-          WHERE user ILIKE '%' || '${search}' || '%'
+          WHERE rd.user ILIKE '%' || '${search}' || '%'
+            AND uv.total_volume > 4000
           ORDER BY rd.total_pnlComp1 ${side}
           LIMIT ${limit} OFFSET ${offset};
         `,
