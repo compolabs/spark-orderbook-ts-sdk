@@ -261,34 +261,71 @@ export class SentioQuery extends Fetch {
     const sqlQuery: sqlQueryParams = {
       sqlQuery: {
         sql: `
+          WITH ExcludedUsers AS (
+              SELECT '0x1389cb25c66e55525b35f5c57c2f773ab953b80f396e503b6a55ed43707c4e0c' AS user UNION ALL
+              SELECT '0xeb0dd9331390a24aa49bd0cf21c5d2127661c68ff38b614afdf41d4e59db5c37' UNION ALL
+              SELECT '0xd8962a0f26cf184ae35023e03cde4937cb6c0383be5ccc4e9aca73fe013928c0' UNION ALL
+              SELECT '0x210ec7f9fc740e5c6a06eab9134be3a73a7fd6a75f4a9b12c93436c9acbfc3bd' UNION ALL
+              SELECT '0xae519546161aa3d969092716f617dd1465f0ba76acdd91b2a9d6e51fd01a8ac5' UNION ALL
+              SELECT '0xfc07190ea30c0c308e8b552bdba73dd3abc30c60c00efbb048671fb8c55a97c3' UNION ALL
+              SELECT '0x6d0f1faf235cc8d159479ce436d02d6bea21e4579b619c47c7d1810237710d8c' UNION ALL
+              SELECT '0x642731ae54ab89722a0a1b5f0e7aac9e323f7aeb7d852709bc17de92e18789f3' UNION ALL
+              SELECT '0x1fba609a02f7207c0022d5813e4f406dfe91c18c93d7fb44fbf956dcf0d5b86f' UNION ALL
+              SELECT '0x690a1f28c8b5080f7b3dd55eeb4a0d12d0eebad67aaec0c6544c65e4f97d2896' UNION ALL
+              SELECT '0x9acaf0ab822be6b2bce28d794db0392de2681c95aa3774540c2aa425949810ec' UNION ALL
+              SELECT '0x4b69b918206ce5082097368f630e84be5da50a471e3284b44e105e0275af9d14' UNION ALL
+              SELECT '0x2b017a54b98cfa78df455c6d199c9e937c8af5804e9b719aa918bed0fcd33992' UNION ALL
+              SELECT '0x8b38e6756fdf18ce0d89b819ac04513d3286a876518dd7b7203efa00418e9ca6' UNION ALL
+              SELECT '0xa9221fafa62ed456b1ff0a17051998e88aadb1f9f1af0badb89a8b5a743e533f' UNION ALL
+              SELECT '0x669cc8ba4f7fec0c0277642e5aeb2ce6b5d409204df1888f7a546a9e0fd30783' UNION ALL
+              SELECT '0x9f85f7d7abbafbc84f4cce74097d70d4ebbec3b161db9ac1fb0aa5ea5709faa3' UNION ALL
+              SELECT '0xbe55d9b972639bafe700dd917a7a7dcca1b672185171e17d69de1e97eaf779c0' UNION ALL
+              SELECT '0x8e02b13009a5830f8ef5519afe70a7dfac3e193fdba954c25fb215783a163a5f' UNION ALL
+              SELECT '0x96c75d93dc777a4028aca7ba280077fbcc58e00086137a4ee9967038b0649c92' UNION ALL
+              SELECT '0xef90c66d4debb1cbeedc6c92d4bb8535451bea51a9fea6b3b8ba1dcc4e2e1ee9' UNION ALL
+              SELECT '0xbd7ebae1f5245a17762178e5bbbfea9dacfade646c9d42e5d04e1d133c9595f2'
+          ),
+          UserTradeVolumes AS (
+              SELECT 
+                  user,
+                  SUM(volume) AS user_volume
+              FROM (
+                  SELECT seller AS user, volume 
+                  FROM TradeEvent 
+                  WHERE timestamp BETWEEN ${fromTimestamp} AND ${toTimestamp}
+                  AND seller NOT IN (SELECT user FROM ExcludedUsers)
+
+                  UNION ALL
+
+                  SELECT buyer AS user, volume 
+                  FROM TradeEvent 
+                  WHERE timestamp BETWEEN ${fromTimestamp} AND ${toTimestamp}
+                  AND buyer NOT IN (SELECT user FROM ExcludedUsers)
+
+              ) AS combined_trades
+              GROUP BY user
+          ),
+          TotalMarketVolume AS (
+              SELECT SUM(volume) AS market_volume 
+              FROM TradeEvent
+              WHERE timestamp BETWEEN ${fromTimestamp} AND ${toTimestamp}
+          ),
+          UserPoints AS (
+              SELECT 
+                  utv.user,
+                  utv.user_volume,
+                  ROUND((utv.user_volume / tmv.market_volume) * 200000 * 1.54978, 6) AS points
+              FROM UserTradeVolumes utv
+              CROSS JOIN TotalMarketVolume tmv
+          )
           SELECT 
-          (
-            (
-              SELECT 
-                SUM(volume) 
-              FROM 
-                TradeEvent 
-              WHERE 
-                (
-                  seller = '${userAddress}' 
-                  OR buyer = '${userAddress}'
-                ) 
-                AND timestamp BETWEEN ${fromTimestamp} 
-                AND ${toTimestamp}
-            ) / (
-              SELECT 
-                SUM(volume) 
-              FROM 
-                TradeEvent 
-              WHERE 
-                seller NOT IN (
-                  ${excluded.join(",")}
-                ) 
-                AND buyer NOT IN (
-                  ${excluded.join(",")}
-                )
-            )
-          ) * 400000 AS result
+              up.user,
+              up.user_volume,
+              up.points,
+              (SELECT SUM(points) FROM UserPoints) AS total_points
+          FROM UserPoints up
+          WHERE up.user = '${userAddress}'
+          ORDER BY up.points DESC;
         `,
         size: 10,
       },
