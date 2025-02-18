@@ -433,11 +433,14 @@ export class SentioQuery extends Fetch {
     limit,
     page,
     search = "",
+    startTime,
+    endTime
   }: GetCompetitionParams): Promise<GetSentioResponse<GetCompetitionResponse>> {
     const offset = page * limit;
     const sqlQuery: sqlQueryParams = {
       sqlQuery: {
-        sql: `WITH RankedData AS (
+        sql: `
+        WITH RankedData AS (
               SELECT 
                   user, 
                   SUM(pnlComp1) AS total_pnlComp1, 
@@ -449,17 +452,28 @@ export class SentioQuery extends Fetch {
           ),
           UserVolumes AS (
               SELECT
-                  t.buyer AS user,
-                  SUM(CASE WHEN t.seller = t.buyer THEN t.volume ELSE 0 END) + 
-                  SUM(CASE WHEN t.buyer = t.buyer THEN t.volume ELSE 0 END) AS total_volume
-              FROM TradeEvent t
-              GROUP BY t.buyer
+                  user,
+                  SUM(volume) AS total_volume
+              FROM (
+                  SELECT
+                      t.buyer AS user,
+                      t.volume
+                  FROM TradeEvent t
+                  WHERE t.timestamp >= ${startTime} AND t.timestamp <= ${endTime}
+                  UNION ALL
+                  SELECT
+                      t.seller AS user,
+                      t.volume
+                  FROM TradeEvent t
+                  WHERE t.timestamp >= ${startTime} AND t.timestamp <= ${endTime}
+              ) AS combined
+              GROUP BY user
           )
           SELECT rd.*, uv.total_volume
           FROM RankedData rd
           LEFT JOIN UserVolumes uv ON rd.user = uv.user
           WHERE rd.user ILIKE '%' || '${search}' || '%'
-            AND uv.total_volume > 4000
+          AND uv.total_volume > 4000
           ORDER BY rd.total_pnlComp1 ${side}
           LIMIT ${limit} OFFSET ${offset};
         `,

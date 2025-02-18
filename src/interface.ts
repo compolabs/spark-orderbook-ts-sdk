@@ -264,6 +264,8 @@ export interface GetCompetitionParams {
   limit: number;
   page: number;
   search?: string;
+  startTime: number;
+  endTime: number;
 }
 
 export interface GetTradeEventQueryParams {
