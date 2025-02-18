@@ -434,7 +434,7 @@ export class SentioQuery extends Fetch {
     page,
     search = "",
     startTime,
-    endTime
+    endTime,
   }: GetCompetitionParams): Promise<GetSentioResponse<GetCompetitionResponse>> {
     const offset = page * limit;
     const sqlQuery: sqlQueryParams = {
