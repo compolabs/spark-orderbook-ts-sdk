@@ -435,7 +435,7 @@ export class SentioQuery extends Fetch {
     search = "",
     startTime,
     endTime,
-    minimumTradingVolume
+    minimumTradingVolume,
   }: GetCompetitionParams): Promise<GetSentioResponse<GetCompetitionResponse>> {
     const offset = page * limit;
     const sqlQuery: sqlQueryParams = {
