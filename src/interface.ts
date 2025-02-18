@@ -266,6 +266,7 @@ export interface GetCompetitionParams {
   search?: string;
   startTime: number;
   endTime: number;
+  minimumTradingVolume: number;
 }
 
 export interface GetTradeEventQueryParams {
