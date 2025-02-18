@@ -435,6 +435,7 @@ export class SentioQuery extends Fetch {
     search = "",
     startTime,
     endTime,
+    minimumTradingVolume
   }: GetCompetitionParams): Promise<GetSentioResponse<GetCompetitionResponse>> {
     const offset = page * limit;
     const sqlQuery: sqlQueryParams = {
@@ -473,7 +474,7 @@ export class SentioQuery extends Fetch {
           FROM RankedData rd
           LEFT JOIN UserVolumes uv ON rd.user = uv.user
           WHERE rd.user ILIKE '%' || '${search}' || '%'
-          AND uv.total_volume > 4000
+          AND uv.total_volume > ${minimumTradingVolume}
           ORDER BY rd.total_pnlComp1 ${side}
           LIMIT ${limit} OFFSET ${offset};
         `,
