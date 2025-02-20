@@ -441,12 +441,11 @@ export class SentioQuery extends Fetch {
     const sqlQuery: sqlQueryParams = {
       sqlQuery: {
         sql: `
-        WITH RankedData AS (
+          WITH RankedData AS (
               SELECT 
                   user, 
                   SUM(pnlComp1) AS total_pnlComp1, 
-                  SUM(quoteAmount) AS total_quoteAmount,
-                  ROW_NUMBER() OVER (ORDER BY SUM(pnlComp1) DESC) AS position
+                  SUM(quoteAmount) AS total_quoteAmount
               FROM Balance
               GROUP BY user
               HAVING SUM(pnlComp1) != 0
@@ -469,13 +468,18 @@ export class SentioQuery extends Fetch {
                   WHERE t.timestamp >= ${startTime} AND t.timestamp <= ${endTime}
               ) AS combined
               GROUP BY user
+          ),
+          FilteredData AS (
+              SELECT rd.*, uv.total_volume
+              FROM RankedData rd
+              LEFT JOIN UserVolumes uv ON rd.user = uv.user
+              WHERE rd.user ILIKE '%' || '${search}' || '%'
+              AND uv.total_volume > ${minimumTradingVolume}
           )
-          SELECT rd.*, uv.total_volume
-          FROM RankedData rd
-          LEFT JOIN UserVolumes uv ON rd.user = uv.user
-          WHERE rd.user ILIKE '%' || '${search}' || '%'
-          AND uv.total_volume > ${minimumTradingVolume}
-          ORDER BY rd.total_pnlComp1 ${side}
+          SELECT *,
+                ROW_NUMBER() OVER (ORDER BY total_pnlComp1 ${side}) AS position
+          FROM FilteredData
+          ORDER BY total_pnlComp1 ${side}
           LIMIT ${limit} OFFSET ${offset};
         `,
         size: 10,
