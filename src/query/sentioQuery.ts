@@ -442,44 +442,31 @@ export class SentioQuery extends Fetch {
       sqlQuery: {
         sql: `
           WITH RankedData AS (
-              SELECT 
-                  user, 
-                  SUM(pnlComp1) AS total_pnlComp1, 
-                  SUM(quoteAmount) AS total_quoteAmount
-              FROM Balance
-              GROUP BY user
-              HAVING SUM(pnlComp1) != 0
+            SELECT 
+                user, 
+                SUM(pnlComp1) AS total_pnlComp1, 
+                SUM(quoteAmount) AS total_quoteAmount
+            FROM Balance
+            GROUP BY user
+            HAVING SUM(pnlComp1) != 0
           ),
           UserVolumes AS (
-              SELECT
-                  user,
-                  SUM(volume) AS total_volume
-              FROM (
-                  SELECT
-                      t.buyer AS user,
-                      t.volume
-                  FROM TradeEvent t
-                  WHERE t.timestamp >= ${startTime} AND t.timestamp <= ${endTime}
-                  UNION ALL
-                  SELECT
-                      t.seller AS user,
-                      t.volume
-                  FROM TradeEvent t
-                  WHERE t.timestamp >= ${startTime} AND t.timestamp <= ${endTime}
-              ) AS combined
-              GROUP BY user
-          ),
-          FilteredData AS (
-              SELECT rd.*, uv.total_volume
-              FROM RankedData rd
-              LEFT JOIN UserVolumes uv ON rd.user = uv.user
-              WHERE rd.user ILIKE '%' || '${search}' || '%'
-              AND uv.total_volume > ${minimumTradingVolume}
+              SELECT 
+                  b.user,
+                  COALESCE(SUM(te.volume), 0) AS total_volume
+              FROM (SELECT DISTINCT user FROM Balance) b
+              LEFT JOIN TradeEvent te
+                  ON te.timestamp BETWEEN ${startTime} AND ${endTime}
+                  AND (te.seller = b.user OR te.buyer = b.user)
+              GROUP BY b.user
           )
-          SELECT *,
-                ROW_NUMBER() OVER (ORDER BY total_pnlComp1 ${side}) AS position
-          FROM FilteredData
-          ORDER BY total_pnlComp1 ${side}
+          SELECT rd.*, uv.total_volume,
+                ROW_NUMBER() OVER (ORDER BY rd.total_pnlComp1 ${side}) AS position
+          FROM RankedData rd
+          LEFT JOIN UserVolumes uv ON rd.user = uv.user
+          WHERE rd.user ILIKE '%' || '${search}' || '%'
+          AND uv.total_volume > ${minimumTradingVolume}
+          ORDER BY rd.total_pnlComp1 ${side}
           LIMIT ${limit} OFFSET ${offset};
         `,
         size: 10,
