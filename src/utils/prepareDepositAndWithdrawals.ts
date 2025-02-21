@@ -57,19 +57,26 @@ export const prepareDepositAndWithdrawals = async ({
     markets: sortedMarkets,
   });
 
+  const targetMarket = sortedMarkets[0];
+  const isFeeAssetSameAsQuote =
+    targetMarket.quoteAssetId.toLowerCase() === feeAssetId.toLowerCase();
+
   if (walletFeeBalance.lt(amountFee)) {
     throw new Error(
       `Insufficient fee balance:\nFee: ${amountFee}\nWallet balance: ${walletFeeBalance}`,
     );
   }
 
+  const expectedFee = isFeeAssetSameAsQuote ? amountFee : BN.ZERO;
+
   const totalBalance = walletBalance
+    .minus(expectedFee)
     .plus(targetMarketBalance)
     .plus(BN.sum(...otherContractBalances));
 
-  if (totalBalance.minus(amountFee).lt(amountToSpend)) {
+  if (totalBalance.lt(amountToSpend)) {
     throw new Error(
-      `Insufficient balance:\nAmount to spend: ${amountToSpend}\nFee: ${amountFee}\nBalance: ${totalBalance}`,
+      `Insufficient balance:\nAmount to spend: ${amountToSpend}\nFee: ${expectedFee}\nBalance: ${totalBalance}`,
     );
   }
 
@@ -144,8 +151,6 @@ export const prepareDepositAndWithdrawals = async ({
       baseMarketFactory.functions.deposit().callParams({ forward }),
     );
   }
-
-  console.log(contractCalls);
 
   return contractCalls;
 };
