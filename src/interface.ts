@@ -150,7 +150,6 @@ export interface CreateOrderWithDepositParams {
   type: OrderType;
   depositAssetId: string;
   feeAssetId: string;
-  assetType: AssetType;
 }
 
 export interface FulfillOrderManyParams {
@@ -173,7 +172,6 @@ export interface FulfillOrderManyWithDepositParams {
   orders: string[];
   depositAssetId: string;
   feeAssetId: string;
-  assetType: AssetType;
 }
 
 export interface Order {
@@ -220,7 +218,7 @@ export interface MarketInfo {
   version: number;
 }
 
-export interface MarketWithdrawalInfo {
+export interface CompactMarketInfo {
   contractId: string;
   baseAssetId: string;
   quoteAssetId: string;
