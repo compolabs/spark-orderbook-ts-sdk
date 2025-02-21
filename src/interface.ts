@@ -264,6 +264,9 @@ export interface GetCompetitionParams {
   limit: number;
   page: number;
   search?: string;
+  startTime: number;
+  endTime: number;
+  minimumTradingVolume: number;
 }
 
 export interface GetTradeEventQueryParams {
@@ -297,7 +300,10 @@ export interface GetUserPointQueryParams {
 }
 
 export interface UserPointsResponse {
-  result: string;
+  user: string;
+  user_volume: string;
+  points: string;
+  total_points: string;
 }
 
 export interface GetTotalStatsResponse {
