@@ -21,11 +21,11 @@ import { prepareFullWithdrawals } from "./utils/prepareFullWithdrawals";
 import {
   Asset,
   AssetType,
+  CompactMarketInfo,
   CreateOrderParams,
   CreateOrderWithDepositParams,
   FulfillOrderManyParams,
   FulfillOrderManyWithDepositParams,
-  MarketWithdrawalInfo,
   Options,
   WithdrawAllType,
   WriteTransactionResponse,
@@ -98,7 +98,7 @@ export class WriteActions {
 
   async withdrawAssets(
     assetId: string,
-    markets: MarketWithdrawalInfo[],
+    markets: CompactMarketInfo[],
     amount: string,
   ): Promise<WriteTransactionResponse> {
     const withdrawTxs = await prepareFullWithdrawals({
@@ -113,7 +113,7 @@ export class WriteActions {
   }
 
   async withdrawAllAssets(
-    markets: MarketWithdrawalInfo[],
+    markets: CompactMarketInfo[],
   ): Promise<WriteTransactionResponse> {
     const withdrawTxs = await prepareFullWithdrawals({
       wallet: this.options.wallet,
@@ -139,7 +139,7 @@ export class WriteActions {
 
   async createOrderWithDeposit(
     params: CreateOrderWithDepositParams,
-    allMarketContracts: string[],
+    markets: CompactMarketInfo[],
   ): Promise<WriteTransactionResponse> {
     const {
       amount,
@@ -160,7 +160,7 @@ export class WriteActions {
       feeAssetId,
       amountFee,
       assetType,
-      allMarketContracts,
+      markets,
     });
 
     const txs = [
@@ -212,7 +212,7 @@ export class WriteActions {
 
   async fulfillOrderManyWithDeposit(
     params: FulfillOrderManyWithDepositParams,
-    allMarketContracts: string[],
+    markets: CompactMarketInfo[],
   ): Promise<WriteTransactionResponse> {
     const {
       amount,
@@ -234,7 +234,7 @@ export class WriteActions {
       amountToSpend,
       depositAssetId,
       assetType,
-      allMarketContracts,
+      markets,
       amountFee,
       feeAssetId,
     });

@@ -220,7 +220,7 @@ export interface MarketInfo {
   version: number;
 }
 
-export interface MarketWithdrawalInfo {
+export interface CompactMarketInfo {
   contractId: string;
   baseAssetId: string;
   quoteAssetId: string;

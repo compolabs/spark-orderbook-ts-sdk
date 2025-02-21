@@ -15,6 +15,7 @@ import {
   ActiveOrderReturn,
   Asset,
   AssetType,
+  CompactMarketInfo,
   CreateOrderParams,
   CreateOrderWithDepositParams,
   FulfillOrderManyParams,
@@ -35,7 +36,6 @@ import {
   GraphClientConfig,
   MarketInfo,
   Markets,
-  MarketWithdrawalInfo,
   Options,
   OptionsSpark,
   Order,
@@ -155,19 +155,16 @@ export class SparkOrderbook {
 
   async createOrderWithDeposit(
     order: CreateOrderWithDepositParams,
-    allMarketContracts: string[],
+    markets: CompactMarketInfo[],
   ): Promise<WriteTransactionResponse> {
-    return this.getWrite().createOrderWithDeposit(order, allMarketContracts);
+    return this.getWrite().createOrderWithDeposit(order, markets);
   }
 
   async fulfillOrderManyWithDeposit(
     order: FulfillOrderManyWithDepositParams,
-    allMarketContracts: string[],
+    markets: CompactMarketInfo[],
   ): Promise<WriteTransactionResponse> {
-    return this.getWrite().fulfillOrderManyWithDeposit(
-      order,
-      allMarketContracts,
-    );
+    return this.getWrite().fulfillOrderManyWithDeposit(order, markets);
   }
 
   async cancelOrder(orderId: string): Promise<WriteTransactionResponse> {
@@ -216,14 +213,14 @@ export class SparkOrderbook {
 
   async withdrawAssets(
     assetId: string,
-    markets: MarketWithdrawalInfo[],
+    markets: CompactMarketInfo[],
     amount: string,
   ): Promise<WriteTransactionResponse> {
     return this.getWrite().withdrawAssets(assetId, markets, amount);
   }
 
   async withdrawAllAssets(
-    markets: MarketWithdrawalInfo[],
+    markets: CompactMarketInfo[],
   ): Promise<WriteTransactionResponse> {
     return this.getWrite().withdrawAllAssets(markets);
   }

@@ -1,41 +1,40 @@
 import { WalletLocked, WalletUnlocked } from "fuels";
-import { AssetType } from "src/interface";
+import { AssetType, CompactMarketInfo } from "src/interface";
 import { SparkMarket } from "src/types/market";
 import { AccountOutput, IdentityInput } from "src/types/market/SparkMarket";
 
 import BN from "./BN";
+import { getAssetType } from "./getAssetType";
 
-const getMarketContract = (
+export const _getMarketContract = (
   contractAddress: string,
   wallet: WalletLocked | WalletUnlocked,
 ) => new SparkMarket(contractAddress, wallet);
 
+interface GetTotalBalanceParams {
+  wallet: WalletLocked | WalletUnlocked;
+  depositAssetId: string;
+  feeAssetId: string;
+  markets: CompactMarketInfo[];
+}
+
 // Helper function to get the total balance (contract + wallet)
 export const getTotalBalance = async ({
   wallet,
-  assetType,
   depositAssetId,
   feeAssetId,
-  contracts,
-}: {
-  wallet: WalletLocked | WalletUnlocked;
-  assetType: AssetType;
-  depositAssetId: string;
-  feeAssetId: string;
-  contracts: string[];
-}) => {
-  const isBase = assetType === AssetType.Base;
-
+  markets,
+}: GetTotalBalanceParams) => {
   const identity: IdentityInput = {
     Address: {
       bits: wallet.address.toB256(),
     },
   };
 
-  const baseMarketFactory = getMarketContract(contracts[0], wallet);
+  const baseMarketFactory = _getMarketContract(markets[0].contractId, wallet);
 
-  const getBalancePromises = contracts.map((contractAddress) =>
-    getMarketContract(contractAddress, wallet).functions.account(identity),
+  const getBalancePromises = markets.map((market) =>
+    _getMarketContract(market.contractId, wallet).functions.account(identity),
   );
 
   const balanceMultiCallResult = await baseMarketFactory
@@ -43,15 +42,20 @@ export const getTotalBalance = async ({
     .get();
 
   const [targetMarketBalance, ...otherContractBalances]: BN[] =
-    balanceMultiCallResult.value.map((balance: AccountOutput) => {
-      const asset = isBase ? balance.liquid.base : balance.liquid.quote;
-      return new BN(asset.toString());
-    });
+    balanceMultiCallResult.value.map(
+      (balance: AccountOutput, index: number) => {
+        const isBase =
+          getAssetType(markets[index], depositAssetId) === AssetType.Base;
+        const asset = isBase ? balance.liquid.base : balance.liquid.quote;
+        return new BN(asset.toString());
+      },
+    );
 
   const [walletBalance, walletFeeBalance] = await Promise.all([
     wallet.getBalance(depositAssetId),
     wallet.getBalance(feeAssetId),
   ]);
+
   const totalBalance = new BN(BN.sum(...otherContractBalances)).plus(
     walletBalance.toString(),
   );

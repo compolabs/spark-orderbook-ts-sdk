@@ -4,7 +4,7 @@ import {
   WalletLocked,
   WalletUnlocked,
 } from "fuels";
-import { AssetType } from "src/interface";
+import { AssetType, CompactMarketInfo } from "src/interface";
 import { SparkMarket } from "src/types/market";
 import { AssetTypeInput, ContractIdInput } from "src/types/market/SparkMarket";
 
@@ -21,7 +21,7 @@ export const prepareDepositAndWithdrawals = async ({
   baseMarketFactory,
   wallet,
   assetType,
-  allMarketContracts,
+  markets,
   depositAssetId,
   feeAssetId,
   amountToSpend,
@@ -30,15 +30,19 @@ export const prepareDepositAndWithdrawals = async ({
   baseMarketFactory: SparkMarket;
   wallet: WalletLocked | WalletUnlocked;
   assetType: AssetType;
-  allMarketContracts: string[];
+  markets: CompactMarketInfo[];
   depositAssetId: string;
   feeAssetId: string;
   amountToSpend: string;
   amountFee: string;
 }) => {
-  const sortedContracts = allMarketContracts.sort((a) => {
-    if (a.toLowerCase() === baseMarketFactory.id.toB256().toLowerCase())
+  const sortedMarkets = markets.sort((market) => {
+    if (
+      market.contractId.toLowerCase() ===
+      baseMarketFactory.id.toB256().toLowerCase()
+    ) {
       return -1;
+    }
     return 0;
   });
 
@@ -49,10 +53,9 @@ export const prepareDepositAndWithdrawals = async ({
     targetMarketBalance,
   } = await getTotalBalance({
     wallet,
-    assetType,
     depositAssetId,
     feeAssetId,
-    contracts: sortedContracts,
+    markets: sortedMarkets,
   });
 
   if (walletFeeBalance.lt(amountFee)) {
@@ -71,13 +74,13 @@ export const prepareDepositAndWithdrawals = async ({
   let remainingAmountNeeded = amountToSpendBN.minus(targetMarketBalance);
 
   // Create withdraw promises for each contract, withdrawing only what's necessary
-  const withdrawPromises = sortedContracts
+  const withdrawPromises = sortedMarkets
     .filter(
-      (contractAddress) =>
-        contractAddress.toLowerCase() !==
+      (market) =>
+        market.contractId.toLowerCase() !==
         baseMarketFactory.id.toB256().toLowerCase(),
     )
-    .map((contractAddress, i) => {
+    .map((market, i) => {
       let amount = otherContractBalances[i];
 
       // Skip if there's no need to withdraw funds or if the contract balance is zero
@@ -103,7 +106,7 @@ export const prepareDepositAndWithdrawals = async ({
       };
 
       return getMarketContract(
-        contractAddress,
+        market.contractId,
         wallet,
       ).functions.withdraw_to_market(
         amount.toString(),
