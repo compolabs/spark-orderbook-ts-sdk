@@ -149,7 +149,6 @@ export class WriteActions {
       type,
       depositAssetId,
       feeAssetId,
-      assetType,
     } = params;
 
     const depositAndWithdrawalTxs = await prepareDepositAndWithdrawals({
@@ -159,7 +158,6 @@ export class WriteActions {
       depositAssetId,
       feeAssetId,
       amountFee,
-      assetType,
       markets,
     });
 
@@ -223,7 +221,6 @@ export class WriteActions {
       orders,
       amountToSpend,
       amountFee,
-      assetType,
       depositAssetId,
       feeAssetId,
     } = params;
@@ -233,7 +230,6 @@ export class WriteActions {
       wallet: this.options.wallet,
       amountToSpend,
       depositAssetId,
-      assetType,
       markets,
       amountFee,
       feeAssetId,

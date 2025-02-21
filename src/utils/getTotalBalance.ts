@@ -18,7 +18,7 @@ interface GetTotalBalanceParams {
   markets: CompactMarketInfo[];
 }
 
-// Helper function to get the total balance (contract + wallet)
+// Helper function to get balances
 export const getTotalBalance = async ({
   wallet,
   depositAssetId,
@@ -56,14 +56,10 @@ export const getTotalBalance = async ({
     wallet.getBalance(feeAssetId),
   ]);
 
-  const totalBalance = new BN(BN.sum(...otherContractBalances)).plus(
-    walletBalance.toString(),
-  );
-
   return {
-    totalBalance,
-    otherContractBalances,
-    walletFeeBalance,
+    walletBalance: new BN(walletBalance.toString()),
+    walletFeeBalance: new BN(walletFeeBalance.toString()),
     targetMarketBalance,
+    otherContractBalances,
   };
 };

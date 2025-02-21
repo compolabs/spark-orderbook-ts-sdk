@@ -150,7 +150,6 @@ export interface CreateOrderWithDepositParams {
   type: OrderType;
   depositAssetId: string;
   feeAssetId: string;
-  assetType: AssetType;
 }
 
 export interface FulfillOrderManyParams {
@@ -173,7 +172,6 @@ export interface FulfillOrderManyWithDepositParams {
   orders: string[];
   depositAssetId: string;
   feeAssetId: string;
-  assetType: AssetType;
 }
 
 export interface Order {
