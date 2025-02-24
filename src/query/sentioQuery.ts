@@ -317,7 +317,7 @@ export class SentioQuery extends Fetch {
               SELECT 
                   utv.user,
                   utv.user_volume,
-                  ROUND((utv.user_volume / tmv.market_volume) * 200000 * 1.54978, 6) AS points
+                  ROUND((utv.user_volume / tmv.market_volume) * 200000 * 1.1529, 6) AS points
               FROM UserTradeVolumes utv
               CROSS JOIN TotalMarketVolume tmv
           )
