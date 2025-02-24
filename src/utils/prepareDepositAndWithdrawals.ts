@@ -4,11 +4,12 @@ import {
   WalletLocked,
   WalletUnlocked,
 } from "fuels";
-import { AssetType } from "src/interface";
+import { CompactMarketInfo } from "src/interface";
 import { SparkMarket } from "src/types/market";
 import { AssetTypeInput, ContractIdInput } from "src/types/market/SparkMarket";
 
 import BN from "./BN";
+import { getAssetType } from "./getAssetType";
 import { getTotalBalance } from "./getTotalBalance";
 
 const getMarketContract = (
@@ -20,8 +21,7 @@ const getMarketContract = (
 export const prepareDepositAndWithdrawals = async ({
   baseMarketFactory,
   wallet,
-  assetType,
-  allMarketContracts,
+  markets,
   depositAssetId,
   feeAssetId,
   amountToSpend,
@@ -29,31 +29,37 @@ export const prepareDepositAndWithdrawals = async ({
 }: {
   baseMarketFactory: SparkMarket;
   wallet: WalletLocked | WalletUnlocked;
-  assetType: AssetType;
-  allMarketContracts: string[];
+  markets: CompactMarketInfo[];
   depositAssetId: string;
   feeAssetId: string;
   amountToSpend: string;
   amountFee: string;
 }) => {
-  const sortedContracts = allMarketContracts.sort((a) => {
-    if (a.toLowerCase() === baseMarketFactory.id.toB256().toLowerCase())
+  const sortedMarkets = markets.sort((market) => {
+    if (
+      market.contractId.toLowerCase() ===
+      baseMarketFactory.id.toB256().toLowerCase()
+    ) {
       return -1;
+    }
     return 0;
   });
 
   const {
-    totalBalance,
-    otherContractBalances,
+    walletBalance,
     walletFeeBalance,
     targetMarketBalance,
+    otherContractBalances,
   } = await getTotalBalance({
     wallet,
-    assetType,
     depositAssetId,
     feeAssetId,
-    contracts: sortedContracts,
+    markets: sortedMarkets,
   });
+
+  const targetMarket = sortedMarkets[0];
+  const isFeeAssetSameAsQuote =
+    targetMarket.quoteAssetId.toLowerCase() === feeAssetId.toLowerCase();
 
   if (walletFeeBalance.lt(amountFee)) {
     throw new Error(
@@ -61,9 +67,16 @@ export const prepareDepositAndWithdrawals = async ({
     );
   }
 
-  if (totalBalance.minus(amountFee).lt(amountToSpend)) {
+  const expectedFee = isFeeAssetSameAsQuote ? amountFee : BN.ZERO;
+
+  const totalBalance = walletBalance
+    .minus(expectedFee)
+    .plus(targetMarketBalance)
+    .plus(BN.sum(...otherContractBalances));
+
+  if (totalBalance.lt(amountToSpend)) {
     throw new Error(
-      `Insufficient balance:\nAmount to spend: ${amountToSpend}\nFee: ${amountFee}\nBalance: ${totalBalance}`,
+      `Insufficient balance:\nAmount to spend: ${amountToSpend}\nFee: ${expectedFee}\nBalance: ${totalBalance}`,
     );
   }
 
@@ -71,13 +84,13 @@ export const prepareDepositAndWithdrawals = async ({
   let remainingAmountNeeded = amountToSpendBN.minus(targetMarketBalance);
 
   // Create withdraw promises for each contract, withdrawing only what's necessary
-  const withdrawPromises = sortedContracts
+  const withdrawPromises = sortedMarkets
     .filter(
-      (contractAddress) =>
-        contractAddress.toLowerCase() !==
+      (market) =>
+        market.contractId.toLowerCase() !==
         baseMarketFactory.id.toB256().toLowerCase(),
     )
-    .map((contractAddress, i) => {
+    .map((market, i) => {
       let amount = otherContractBalances[i];
 
       // Skip if there's no need to withdraw funds or if the contract balance is zero
@@ -102,8 +115,10 @@ export const prepareDepositAndWithdrawals = async ({
         bits: baseMarketFactory.id.toB256(),
       };
 
+      const assetType = getAssetType(market, depositAssetId);
+
       return getMarketContract(
-        contractAddress,
+        market.contractId,
         wallet,
       ).functions.withdraw_to_market(
         amount.toString(),
@@ -113,14 +128,14 @@ export const prepareDepositAndWithdrawals = async ({
     })
     .filter(Boolean) as FunctionInvocationScope[];
 
-  const forwardFee: CoinQuantityLike = {
-    amount: amountFee,
-    assetId: feeAssetId,
-  };
-
   const contractCalls = [...withdrawPromises];
 
   if (!new BN(amountFee).isZero()) {
+    const forwardFee: CoinQuantityLike = {
+      amount: amountFee,
+      assetId: feeAssetId,
+    };
+
     contractCalls.push(
       baseMarketFactory.functions.deposit().callParams({ forward: forwardFee }),
     );

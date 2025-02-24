@@ -4,31 +4,19 @@ import {
   WalletLocked,
   WalletUnlocked,
 } from "fuels";
-import { AssetType, MarketWithdrawalInfo } from "src/interface";
+import { AssetType, CompactMarketInfo } from "src/interface";
 import {
   AssetTypeInput,
   IdentityInput,
   SparkMarket,
 } from "src/types/market/SparkMarket";
 
+import { getAssetType } from "./getAssetType";
+
 const getMarketContract = (
   contractAddress: string,
   wallet: WalletLocked | WalletUnlocked,
 ) => new SparkMarket(contractAddress, wallet);
-
-const getAssetType = (
-  market: MarketWithdrawalInfo,
-  assetId: string,
-): AssetType | undefined => {
-  const normalizedAssetId = assetId.toLowerCase();
-  const baseId = market.baseAssetId.toLowerCase();
-  const quoteId = market.quoteAssetId.toLowerCase();
-
-  if (normalizedAssetId === baseId) return AssetType.Base;
-  if (normalizedAssetId === quoteId) return AssetType.Quote;
-
-  return;
-};
 
 /**
  * Prepares withdrawal calls when a specific asset is given.
@@ -43,7 +31,7 @@ const prepareWithdrawalsForSpecificAsset = async ({
 }: {
   wallet: WalletLocked | WalletUnlocked;
   assetId: string;
-  markets: MarketWithdrawalInfo[];
+  markets: CompactMarketInfo[];
   amount?: string;
 }): Promise<FunctionInvocationScope[]> => {
   const identity: IdentityInput = {
@@ -106,7 +94,7 @@ const prepareWithdrawalsForAllAssets = async ({
   markets,
 }: {
   wallet: WalletLocked | WalletUnlocked;
-  markets: MarketWithdrawalInfo[];
+  markets: CompactMarketInfo[];
 }): Promise<FunctionInvocationScope[]> => {
   const identity: IdentityInput = {
     Address: {
@@ -157,13 +145,13 @@ const prepareWithdrawalsForAllAssets = async ({
 type FullWithdrawalsParams =
   | {
       wallet: WalletLocked | WalletUnlocked;
-      markets: MarketWithdrawalInfo[];
+      markets: CompactMarketInfo[];
       assetId: string;
       amount: string;
     }
   | {
       wallet: WalletLocked | WalletUnlocked;
-      markets: MarketWithdrawalInfo[];
+      markets: CompactMarketInfo[];
       assetId?: undefined;
       amount?: undefined;
     };
