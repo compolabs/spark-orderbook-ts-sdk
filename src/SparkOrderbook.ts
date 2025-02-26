@@ -34,6 +34,7 @@ import {
   GetUserPointQueryParams,
   GetUserScoreSnapshotParams,
   GraphClientConfig,
+  LimitType,
   MarketInfo,
   Markets,
   Options,
@@ -156,8 +157,9 @@ export class SparkOrderbook {
   async createOrderWithDeposit(
     order: CreateOrderWithDepositParams,
     markets: CompactMarketInfo[],
+    timeInForce: LimitType
   ): Promise<WriteTransactionResponse> {
-    return this.getWrite().createOrderWithDeposit(order, markets);
+    return this.getWrite().createOrderWithDeposit(order, markets, timeInForce);
   }
 
   async fulfillOrderManyWithDeposit(
@@ -171,12 +173,12 @@ export class SparkOrderbook {
     return this.getWrite().cancelOrder(orderId);
   }
 
-  async matchOrders(
-    sellOrderId: string,
-    buyOrderId: string,
-  ): Promise<WriteTransactionResponse> {
-    return this.getWrite().matchOrders(sellOrderId, buyOrderId);
-  }
+  // async matchOrders(
+  //   sellOrderId: string,
+  //   buyOrderId: string,
+  // ): Promise<WriteTransactionResponse> {
+  //   return this.getWrite().matchOrders(sellOrderId, buyOrderId);
+  // }
 
   async fulfillOrderMany(
     order: FulfillOrderManyParams,

@@ -26,6 +26,7 @@ import {
   CreateOrderWithDepositParams,
   FulfillOrderManyParams,
   FulfillOrderManyWithDepositParams,
+  LimitType,
   Options,
   WithdrawAllType,
   WriteTransactionResponse,
@@ -140,6 +141,7 @@ export class WriteActions {
   async createOrderWithDeposit(
     params: CreateOrderWithDepositParams,
     markets: CompactMarketInfo[],
+    timeInForce: LimitType
   ): Promise<WriteTransactionResponse> {
     const {
       amount,
@@ -161,14 +163,28 @@ export class WriteActions {
       markets,
     });
 
-    const txs = [
-      ...depositAndWithdrawalTxs,
-      this.getProxyMarketFactory().functions.open_order(
-        amount,
-        type as unknown as OrderTypeInput,
-        price,
-      ),
-    ];
+    let txs = []
+    console.log('timeInForce', timeInForce)
+    if (timeInForce === LimitType.GTC) {
+      txs = [
+        ...depositAndWithdrawalTxs,
+        this.getProxyMarketFactory().functions.open_order(
+          amount,
+          type as unknown as OrderTypeInput,
+          price,
+        ),
+      ];
+    } else {
+      txs = [
+        ...depositAndWithdrawalTxs,
+        this.getProxyMarketFactory().functions.open_market_order(
+          amount,
+          type as unknown as OrderTypeInput,
+          price,
+        ),
+      ];
+    }
+    console.log('tx', txs)
 
     const multiTx = this.getProxyMarketFactory().multiCall(txs);
     return this.sendMultiTransaction(multiTx);
@@ -180,17 +196,17 @@ export class WriteActions {
     return this.sendTransaction(tx);
   }
 
-  async matchOrders(
-    sellOrderId: string,
-    buyOrderId: string,
-  ): Promise<WriteTransactionResponse> {
-    const tx = this.getProxyMarketFactory().functions.match_order_pair(
-      sellOrderId,
-      buyOrderId,
-    );
+  // async matchOrders(
+  //   sellOrderId: string,
+  //   buyOrderId: string,
+  // ): Promise<WriteTransactionResponse> {
+  //   const tx = this.getProxyMarketFactory().functions.match_order_pair(
+  //     sellOrderId,
+  //     buyOrderId,
+  //   );
 
-    return this.sendTransaction(tx);
-  }
+  //   return this.sendTransaction(tx);
+  // }
 
   async fulfillOrderMany(
     params: FulfillOrderManyParams,

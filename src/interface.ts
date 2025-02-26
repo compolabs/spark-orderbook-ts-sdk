@@ -90,6 +90,7 @@ export enum LimitType {
   IOC = "IOC",
   FOK = "FOK",
   GTC = "GTC",
+  MKT = "MKT",
 }
 
 export type Status = "Active" | "Canceled" | "Closed";
