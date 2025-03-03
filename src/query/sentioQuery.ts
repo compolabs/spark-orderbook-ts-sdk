@@ -268,9 +268,6 @@ export class SentioQuery extends Fetch {
               SELECT '0xda27c7294ead3f83eb229ffdee247bca7e4e1deb73a976635f1062403bea818a' UNION ALL
               SELECT '0x9aea5411a6e9c022bb66e2c868b9bf5bcbc589ddac501071c2ab0ff186561b26' UNION ALL
               SELECT '0xd8962a0f26cf184ae35023e03cde4937cb6c0383be5ccc4e9aca73fe013928c0' UNION ALL
-              SELECT '0x5308ce1503bee7c36c132b5d0035e9435d33b3b000cd964964b2c986dab9e007' UNION ALL
-              SELECT '0xda27c7294ead3f83eb229ffdee247bca7e4e1deb73a976635f1062403bea818a' UNION ALL
-              SELECT '0x9aea5411a6e9c022bb66e2c868b9bf5bcbc589ddac501071c2ab0ff186561b26' UNION ALL
               SELECT '0x210ec7f9fc740e5c6a06eab9134be3a73a7fd6a75f4a9b12c93436c9acbfc3bd' UNION ALL
               SELECT '0xae519546161aa3d969092716f617dd1465f0ba76acdd91b2a9d6e51fd01a8ac5' UNION ALL
               SELECT '0xfc07190ea30c0c308e8b552bdba73dd3abc30c60c00efbb048671fb8c55a97c3' UNION ALL
@@ -289,6 +286,8 @@ export class SentioQuery extends Fetch {
               SELECT '0x8e02b13009a5830f8ef5519afe70a7dfac3e193fdba954c25fb215783a163a5f' UNION ALL
               SELECT '0x96c75d93dc777a4028aca7ba280077fbcc58e00086137a4ee9967038b0649c92' UNION ALL
               SELECT '0xef90c66d4debb1cbeedc6c92d4bb8535451bea51a9fea6b3b8ba1dcc4e2e1ee9' UNION ALL
+              SELECT '0x2a3a5d57e6e4173e159fcc40ca34deccd6c0ceeca92c7437c6fa8798a4a666c9' UNION ALL
+              SELECT '0x31d547cb3c52b7140de7ad78ed6aafd6449f72cc57ed136c18ef3452e7c9641a' UNION ALL
               SELECT '0xbd7ebae1f5245a17762178e5bbbfea9dacfade646c9d42e5d04e1d133c9595f2'
           ),
           UserTradeVolumes AS (
@@ -320,7 +319,7 @@ export class SentioQuery extends Fetch {
               SELECT 
                   utv.user,
                   utv.user_volume,
-                  ROUND((utv.user_volume / tmv.market_volume) * 200000 * 1.54978, 6) AS points
+                  ROUND((utv.user_volume / tmv.market_volume) * 200000 * 1.69527, 6) AS points
               FROM UserTradeVolumes utv
               CROSS JOIN TotalMarketVolume tmv
           )
