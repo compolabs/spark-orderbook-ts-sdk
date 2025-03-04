@@ -4,7 +4,7 @@ import {
   WalletLocked,
   WalletUnlocked,
 } from "fuels";
-import { CompactMarketInfo } from "src/interface";
+import { AssetType, CompactMarketInfo } from "src/interface";
 import { SparkMarket } from "src/types/market";
 import { AssetTypeInput, ContractIdInput } from "src/types/market/SparkMarket";
 
@@ -17,7 +17,124 @@ const getMarketContract = (
   wallet: WalletLocked | WalletUnlocked,
 ) => new SparkMarket(contractAddress, wallet);
 
-// Function to get deposit data and withdraw funds if necessary
+const sortMarkets = (
+  markets: CompactMarketInfo[],
+  baseMarketFactory: SparkMarket,
+): CompactMarketInfo[] => {
+  return markets.sort((market) =>
+    market.contractId.toLowerCase() ===
+    baseMarketFactory.id.toB256().toLowerCase()
+      ? -1
+      : 0,
+  );
+};
+
+const calculateFeeMissing = (targetFeeBalance: BN, expectedFee: BN): BN => {
+  return targetFeeBalance.lt(expectedFee)
+    ? expectedFee.minus(targetFeeBalance)
+    : BN.ZERO;
+};
+
+const prepareWithdrawCallsForSpending = (
+  sortedMarkets: CompactMarketInfo[],
+  wallet: WalletLocked | WalletUnlocked,
+  baseMarketFactory: SparkMarket,
+  depositAssetId: string,
+  otherContractBalances: BN[],
+  targetMarketBalance: BN,
+  amountToSpend: string,
+): { withdrawCalls: FunctionInvocationScope[]; remainingAmountNeeded: BN } => {
+  const amountToSpendBN = new BN(amountToSpend);
+  const withdrawCalls: FunctionInvocationScope[] = [];
+
+  let remainingAmountNeeded = amountToSpendBN.minus(targetMarketBalance);
+
+  const spendingMarkets = sortedMarkets.filter(
+    (market) =>
+      market.contractId.toLowerCase() !==
+      baseMarketFactory.id.toB256().toLowerCase(),
+  );
+
+  spendingMarkets.forEach((market, i) => {
+    const contractBalance = otherContractBalances[i];
+    if (
+      contractBalance.isZero() ||
+      remainingAmountNeeded.isZero() ||
+      remainingAmountNeeded.isNegative()
+    ) {
+      return;
+    }
+
+    const amount = contractBalance.gt(remainingAmountNeeded)
+      ? remainingAmountNeeded
+      : contractBalance;
+
+    remainingAmountNeeded = remainingAmountNeeded.minus(amount);
+
+    const marketInput: ContractIdInput = {
+      bits: baseMarketFactory.id.toB256(),
+    };
+
+    const assetType = getAssetType(market, depositAssetId);
+
+    if (assetType) {
+      const call = getMarketContract(
+        market.contractId,
+        wallet,
+      ).functions.withdraw_to_market(
+        amount.toString(),
+        assetType as unknown as AssetTypeInput,
+        marketInput,
+      );
+      withdrawCalls.push(call);
+    }
+  });
+
+  return { withdrawCalls, remainingAmountNeeded };
+};
+
+const prepareFeeWithdrawalCalls = (
+  sortedMarkets: CompactMarketInfo[],
+  wallet: WalletLocked | WalletUnlocked,
+  baseMarketFactory: SparkMarket,
+  contractFeeBalances: BN[],
+  feeMissing: BN,
+): { feeCalls: FunctionInvocationScope[]; remainingFee: BN } => {
+  const feeCalls: FunctionInvocationScope[] = [];
+  const otherFeeBalances = contractFeeBalances.slice(1);
+
+  let remainingFee = feeMissing;
+
+  otherFeeBalances.forEach((available, i) => {
+    if (remainingFee.lte(BN.ZERO) || available.isZero()) return;
+
+    let amountToWithdraw: BN;
+
+    if (available.gte(remainingFee)) {
+      amountToWithdraw = remainingFee;
+      remainingFee = BN.ZERO;
+    } else {
+      amountToWithdraw = available;
+      remainingFee = remainingFee.minus(available);
+    }
+
+    const market = sortedMarkets[i + 1];
+
+    const marketInput: ContractIdInput = {
+      bits: baseMarketFactory.id.toB256(),
+    };
+
+    feeCalls.push(
+      getMarketContract(market.contractId, wallet).functions.withdraw_to_market(
+        amountToWithdraw.toString(),
+        AssetType.Quote as unknown as AssetTypeInput,
+        marketInput,
+      ),
+    );
+  });
+  return { feeCalls, remainingFee };
+};
+
 export const prepareDepositAndWithdrawals = async ({
   baseMarketFactory,
   wallet,
@@ -34,22 +151,15 @@ export const prepareDepositAndWithdrawals = async ({
   feeAssetId: string;
   amountToSpend: string;
   amountFee: string;
-}) => {
-  const sortedMarkets = markets.sort((market) => {
-    if (
-      market.contractId.toLowerCase() ===
-      baseMarketFactory.id.toB256().toLowerCase()
-    ) {
-      return -1;
-    }
-    return 0;
-  });
+}): Promise<FunctionInvocationScope[]> => {
+  const sortedMarkets = sortMarkets(markets, baseMarketFactory);
 
   const {
     walletBalance,
     walletFeeBalance,
     targetMarketBalance,
     otherContractBalances,
+    contractFeeBalances,
   } = await getTotalBalance({
     wallet,
     depositAssetId,
@@ -58,95 +168,66 @@ export const prepareDepositAndWithdrawals = async ({
   });
 
   const targetMarket = sortedMarkets[0];
+
   const isFeeAssetSameAsQuote =
     targetMarket.quoteAssetId.toLowerCase() === feeAssetId.toLowerCase();
+  const expectedFee = isFeeAssetSameAsQuote ? new BN(amountFee) : BN.ZERO;
 
-  if (walletFeeBalance.lt(amountFee)) {
-    throw new Error(
-      `Insufficient fee balance:\nFee: ${amountFee}\nWallet balance: ${walletFeeBalance}`,
-    );
-  }
+  const targetFeeBalance = contractFeeBalances[0];
+  const feeMissing = calculateFeeMissing(targetFeeBalance, expectedFee);
 
-  const expectedFee = isFeeAssetSameAsQuote ? amountFee : BN.ZERO;
-
-  const totalBalance = walletBalance
-    .minus(expectedFee)
-    .plus(targetMarketBalance)
+  const totalAvailableBalance = new BN(walletBalance)
+    .minus(feeMissing)
+    .plus(new BN(targetMarketBalance))
     .plus(BN.sum(...otherContractBalances));
 
-  if (totalBalance.lt(amountToSpend)) {
+  if (totalAvailableBalance.lt(amountToSpend)) {
     throw new Error(
-      `Insufficient balance:\nAmount to spend: ${amountToSpend}\nFee: ${expectedFee}\nBalance: ${totalBalance}`,
+      `Insufficient balance:\nAmount to spend: ${amountToSpend}\nExpected Fee: ${expectedFee}\nTotal available: ${totalAvailableBalance}`,
     );
   }
 
-  const amountToSpendBN = new BN(amountToSpend);
-  let remainingAmountNeeded = amountToSpendBN.minus(targetMarketBalance);
+  const { withdrawCalls, remainingAmountNeeded } =
+    prepareWithdrawCallsForSpending(
+      sortedMarkets,
+      wallet,
+      baseMarketFactory,
+      depositAssetId,
+      otherContractBalances,
+      targetMarketBalance,
+      amountToSpend,
+    );
+  const contractCalls: FunctionInvocationScope[] = [...withdrawCalls];
 
-  // Create withdraw promises for each contract, withdrawing only what's necessary
-  const withdrawPromises = sortedMarkets
-    .filter(
-      (market) =>
-        market.contractId.toLowerCase() !==
-        baseMarketFactory.id.toB256().toLowerCase(),
-    )
-    .map((market, i) => {
-      let amount = otherContractBalances[i];
+  const { feeCalls, remainingFee } = prepareFeeWithdrawalCalls(
+    sortedMarkets,
+    wallet,
+    baseMarketFactory,
+    contractFeeBalances,
+    feeMissing,
+  );
+  contractCalls.push(...feeCalls);
 
-      // Skip if there's no need to withdraw funds or if the contract balance is zero
-      if (
-        amount.isZero() ||
-        remainingAmountNeeded.isZero() ||
-        remainingAmountNeeded.isNegative()
-      ) {
-        return null;
-      }
-
-      // If the contract balance exceeds the remaining amount, withdraw only the remaining amount
-      if (amount.gt(remainingAmountNeeded)) {
-        amount = remainingAmountNeeded;
-        remainingAmountNeeded = BN.ZERO;
-      } else {
-        // Otherwise, subtract the contract balance from the remaining amount and continue
-        remainingAmountNeeded = remainingAmountNeeded.minus(amount);
-      }
-
-      const marketInput: ContractIdInput = {
-        bits: baseMarketFactory.id.toB256(),
-      };
-
-      const assetType = getAssetType(market, depositAssetId);
-
-      return getMarketContract(
-        market.contractId,
-        wallet,
-      ).functions.withdraw_to_market(
-        amount.toString(),
-        assetType as unknown as AssetTypeInput,
-        marketInput,
+  if (remainingFee.gt(BN.ZERO)) {
+    if (!walletFeeBalance.gte(remainingFee.toString())) {
+      throw new Error(
+        `Insufficient wallet fee balance:\nRequired wallet fee deposit: ${remainingFee}\nWallet fee balance: ${walletFeeBalance}`,
       );
-    })
-    .filter(Boolean) as FunctionInvocationScope[];
-
-  const contractCalls = [...withdrawPromises];
-
-  if (!new BN(amountFee).isZero()) {
+    }
     const forwardFee: CoinQuantityLike = {
-      amount: amountFee,
+      amount: remainingFee.toString(),
       assetId: feeAssetId,
     };
-
     contractCalls.push(
       baseMarketFactory.functions.deposit().callParams({ forward: forwardFee }),
     );
   }
 
-  if (remainingAmountNeeded.isPositive() && !remainingAmountNeeded.isZero()) {
+  if (remainingAmountNeeded.gt(BN.ZERO)) {
     const forward: CoinQuantityLike = {
       amount: remainingAmountNeeded.toString(),
       assetId: depositAssetId,
     };
-
     contractCalls.push(
       baseMarketFactory.functions.deposit().callParams({ forward }),
     );

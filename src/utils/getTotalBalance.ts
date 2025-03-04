@@ -41,25 +41,41 @@ export const getTotalBalance = async ({
     .multiCall(getBalancePromises)
     .get();
 
-  const [targetMarketBalance, ...otherContractBalances]: BN[] =
-    balanceMultiCallResult.value.map(
-      (balance: AccountOutput, index: number) => {
-        const isBase =
-          getAssetType(markets[index], depositAssetId) === AssetType.Base;
-        const asset = isBase ? balance.liquid.base : balance.liquid.quote;
-        return new BN(asset.toString());
-      },
-    );
+  const depositBalances: BN[] = [];
+  const contractFeeBalances: BN[] = [];
+  const numMarkets = balanceMultiCallResult.value.length;
 
-  const [walletBalance, walletFeeBalance] = await Promise.all([
+  for (let i = 0; i < numMarkets; i++) {
+    const balance: AccountOutput = balanceMultiCallResult.value[i];
+
+    const isDepositBase =
+      getAssetType(markets[i], depositAssetId) === AssetType.Base;
+
+    const depositAsset = isDepositBase
+      ? balance.liquid.base
+      : balance.liquid.quote;
+    depositBalances.push(new BN(depositAsset.toString()));
+
+    const feeAsset = balance.liquid.quote;
+    contractFeeBalances.push(new BN(feeAsset.toString()));
+  }
+
+  const targetMarketBalance = depositBalances[0];
+  const otherContractBalances = depositBalances.slice(1);
+
+  const [walletBalanceRaw, walletFeeBalanceRaw] = await Promise.all([
     wallet.getBalance(depositAssetId),
     wallet.getBalance(feeAssetId),
   ]);
 
+  const walletBalance = new BN(walletBalanceRaw.toString());
+  const walletFeeBalance = new BN(walletFeeBalanceRaw.toString());
+
   return {
-    walletBalance: new BN(walletBalance.toString()),
-    walletFeeBalance: new BN(walletFeeBalance.toString()),
+    walletBalance,
+    walletFeeBalance,
     targetMarketBalance,
     otherContractBalances,
+    contractFeeBalances,
   };
 };
