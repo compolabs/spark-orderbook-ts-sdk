@@ -333,6 +333,22 @@ export interface GetSortedLeaderboardPnlQueryParams {
   limit: number;
 }
 
+export interface GetBalancePnlByUserParams {
+  user: string;
+}
+
+export interface BalancePnlByUserResponse {
+  pnl1: string;
+  pnl31: string;
+  pnl7: string;
+  pnlAllTime: string;
+  pnlInPersent1: string;
+  pnlInPersent31: string;
+  pnlInPersent7: string;
+  pnlInPersentAllTime: string;
+  market: string
+}
+
 export interface LeaderboardPnlResponse {
   user: string;
   total_pnl1: string;

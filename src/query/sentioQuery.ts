@@ -1,4 +1,7 @@
+import { GetBalancesResponse } from "fuels";
 import {
+  BalancePnlByUserResponse,
+  GetBalancePnlByUserParams,
   GetCompetitionParams,
   GetCompetitionResponse,
   GetLeaderboardPnlQueryParams,
@@ -34,6 +37,39 @@ export class SentioQuery extends Fetch {
   constructor({ url, apiKey }: SentioApiParams) {
     super(url);
     this.apiKey = apiKey;
+  }
+
+  async getBalancePnlByUser({
+    user
+  }: GetBalancePnlByUserParams): Promise<
+    GetSentioResponse<BalancePnlByUserResponse>
+  > {
+    const sqlQuery: sqlQueryParams = {
+      sqlQuery: {
+        sql: `SELECT 
+                pnl1,
+                pnl31,
+                pnl7,
+                pnlAllTime,
+                pnlInPersent1,
+                pnlInPersent31,
+                pnlInPersent7,
+                pnlInPersentAllTime,
+                market
+            FROM Balance 
+            WHERE user = '${user}';
+          `,
+        size: 20,
+      },
+    };
+    const headers: Record<string, string> = {
+      "api-key": this.apiKey,
+    };
+    return await this.post<GetSentioResponse<BalancePnlByUserResponse>>(
+      sqlQuery,
+      "same-origin",
+      headers,
+    );
   }
 
   async getSortedLeaderboardPnlQuery({
@@ -625,4 +661,12 @@ export const getCompetitionQuery = async (
   const { url, apiKey } = props;
   const sentioQuery = new SentioQuery({ url, apiKey });
   return await sentioQuery.getCompetition({ ...props });
+};
+
+export const getBalancePnlByUserQuery = async (
+  props: GetBalancePnlByUserParams & SentioApiParams,
+): Promise<GetSentioResponse<BalancePnlByUserResponse>> => {
+  const { url, apiKey } = props;
+  const sentioQuery = new SentioQuery({ url, apiKey });
+  return await sentioQuery.getBalancePnlByUser({ ...props });
 };
