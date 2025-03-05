@@ -157,7 +157,7 @@ export class SparkOrderbook {
   async createOrderWithDeposit(
     order: CreateOrderWithDepositParams,
     markets: CompactMarketInfo[],
-    timeInForce: LimitType
+    timeInForce: LimitType,
   ): Promise<WriteTransactionResponse> {
     return this.getWrite().createOrderWithDeposit(order, markets, timeInForce);
   }

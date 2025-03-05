@@ -48,7 +48,7 @@ const humanReadableMessages: HumanReadableMessages = {
   InvalidMarketAsset: "Invalid market asset",
   InvalidMarketSame: "Invalid market asset same",
   OrderSizeTooSmall: "Order size too small",
-  OrderSizeNotSmall: ""
+  OrderSizeNotSmall: "",
 };
 
 const humanReadableMessagesKeys = Object.keys(humanReadableMessages);

@@ -141,7 +141,7 @@ export class WriteActions {
   async createOrderWithDeposit(
     params: CreateOrderWithDepositParams,
     markets: CompactMarketInfo[],
-    timeInForce: LimitType
+    timeInForce: LimitType,
   ): Promise<WriteTransactionResponse> {
     const {
       amount,
@@ -163,8 +163,7 @@ export class WriteActions {
       markets,
     });
 
-    let txs = []
-    console.log('timeInForce', timeInForce)
+    let txs = [];
     if (timeInForce === LimitType.GTC) {
       txs = [
         ...depositAndWithdrawalTxs,
@@ -184,7 +183,6 @@ export class WriteActions {
         ),
       ];
     }
-    console.log('tx', txs)
 
     const multiTx = this.getProxyMarketFactory().multiCall(txs);
     return this.sendMultiTransaction(multiTx);
