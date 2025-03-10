@@ -347,7 +347,7 @@ export interface BalancePnlByUserResponse {
   pnlInPersent31: string;
   pnlInPersent7: string;
   pnlInPersentAllTime: string;
-  market: string
+  market: string;
 }
 
 export interface LeaderboardPnlResponse {

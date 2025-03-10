@@ -1,4 +1,3 @@
-import { GetBalancesResponse } from "fuels";
 import {
   BalancePnlByUserResponse,
   GetBalancePnlByUserParams,
@@ -40,7 +39,7 @@ export class SentioQuery extends Fetch {
   }
 
   async getBalancePnlByUser({
-    user
+    user,
   }: GetBalancePnlByUserParams): Promise<
     GetSentioResponse<BalancePnlByUserResponse>
   > {
