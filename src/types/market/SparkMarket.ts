@@ -36,16 +36,14 @@ export type IdentityInput = Enum<{ Address: AddressInput, ContractId: ContractId
 export type IdentityOutput = Enum<{ Address: AddressOutput, ContractId: ContractIdOutput }>;
 export enum InitializationErrorInput { CannotReinitialized = 'CannotReinitialized' };
 export enum InitializationErrorOutput { CannotReinitialized = 'CannotReinitialized' };
-export enum LimitTypeInput { GTC = 'GTC', IOC = 'IOC', FOK = 'FOK' };
-export enum LimitTypeOutput { GTC = 'GTC', IOC = 'IOC', FOK = 'FOK' };
+export enum LimitTypeInput { GTC = 'GTC', IOC = 'IOC', FOK = 'FOK', MKT = 'MKT' };
+export enum LimitTypeOutput { GTC = 'GTC', IOC = 'IOC', FOK = 'FOK', MKT = 'MKT' };
 export type MatchErrorInput = Enum<{ CantMatch: [string, string], CantMatchMany: undefined, CantFulfillMany: undefined, CantFulfillFOK: undefined }>;
 export type MatchErrorOutput = Enum<{ CantMatch: [string, string], CantMatchMany: void, CantFulfillMany: void, CantFulfillFOK: void }>;
 export enum MathErrorInput { Overflow = 'Overflow' };
 export enum MathErrorOutput { Overflow = 'Overflow' };
-export enum OrderChangeTypeInput { OrderOpened = 'OrderOpened', OrderCancelled = 'OrderCancelled', OrderMatched = 'OrderMatched' };
-export enum OrderChangeTypeOutput { OrderOpened = 'OrderOpened', OrderCancelled = 'OrderCancelled', OrderMatched = 'OrderMatched' };
-export type OrderErrorInput = Enum<{ OrderDuplicate: string, OrderNotFound: string, PriceTooSmall: [], OrderSizeTooSmall: BigNumberish, ZeroLockAmount: undefined, ZeroUnlockAmount: undefined, ZeroTransferAmount: undefined, FailedToRemove: string }>;
-export type OrderErrorOutput = Enum<{ OrderDuplicate: string, OrderNotFound: string, PriceTooSmall: [], OrderSizeTooSmall: BN, ZeroLockAmount: void, ZeroUnlockAmount: void, ZeroTransferAmount: void, FailedToRemove: string }>;
+export type OrderErrorInput = Enum<{ OrderDuplicate: string, OrderNotFound: string, PriceTooSmall: [], OrderSizeTooSmall: BigNumberish, OrderSizeNotSmall: undefined, ZeroLockAmount: undefined, ZeroUnlockAmount: undefined, ZeroTransferAmount: undefined, FailedToRemove: string }>;
+export type OrderErrorOutput = Enum<{ OrderDuplicate: string, OrderNotFound: string, PriceTooSmall: [], OrderSizeTooSmall: BN, OrderSizeNotSmall: void, ZeroLockAmount: void, ZeroUnlockAmount: void, ZeroTransferAmount: void, FailedToRemove: string }>;
 export enum OrderTypeInput { Buy = 'Buy', Sell = 'Sell' };
 export enum OrderTypeOutput { Buy = 'Buy', Sell = 'Sell' };
 export enum PauseErrorInput { Paused = 'Paused', NotPaused = 'NotPaused' };
@@ -69,12 +67,10 @@ export type ContractIdInput = { bits: string };
 export type ContractIdOutput = ContractIdInput;
 export type DepositEventInput = { amount: BigNumberish, asset: AssetIdInput, user: IdentityInput, account: AccountInput, caller: IdentityInput };
 export type DepositEventOutput = { amount: BN, asset: AssetIdOutput, user: IdentityOutput, account: AccountOutput, caller: IdentityOutput };
-export type OpenOrderEventInput = { amount: BigNumberish, asset: AssetIdInput, order_type: OrderTypeInput, order_id: string, price: BigNumberish, user: IdentityInput, balance: AccountInput };
-export type OpenOrderEventOutput = { amount: BN, asset: AssetIdOutput, order_type: OrderTypeOutput, order_id: string, price: BN, user: IdentityOutput, balance: AccountOutput };
+export type OpenOrderEventInput = { amount: BigNumberish, asset: AssetIdInput, order_type: OrderTypeInput, order_id: string, price: BigNumberish, user: IdentityInput, balance: AccountInput, limit_type: LimitTypeInput };
+export type OpenOrderEventOutput = { amount: BN, asset: AssetIdOutput, order_type: OrderTypeOutput, order_id: string, price: BN, user: IdentityOutput, balance: AccountOutput, limit_type: LimitTypeOutput };
 export type OrderInput = { amount: BigNumberish, asset_type: AssetTypeInput, order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish, order_height: BigNumberish, matcher_fee: BigNumberish, protocol_maker_fee: BigNumberish, protocol_taker_fee: BigNumberish };
 export type OrderOutput = { amount: BN, asset_type: AssetTypeOutput, order_type: OrderTypeOutput, owner: IdentityOutput, price: BN, block_height: number, order_height: BN, matcher_fee: BN, protocol_maker_fee: BN, protocol_taker_fee: BN };
-export type OrderChangeInfoInput = { change_type: OrderChangeTypeInput, block_height: BigNumberish, sender: IdentityInput, tx_id: string, amount_before: BigNumberish, amount_after: BigNumberish };
-export type OrderChangeInfoOutput = { change_type: OrderChangeTypeOutput, block_height: number, sender: IdentityOutput, tx_id: string, amount_before: BN, amount_after: BN };
 export type OwnershipSetInput = { new_owner: IdentityInput };
 export type OwnershipSetOutput = { new_owner: IdentityOutput };
 export type OwnershipTransferredInput = { new_owner: IdentityInput, previous_owner: IdentityInput };
@@ -91,8 +87,6 @@ export type SetMinOrderSizeEventInput = { size: BigNumberish };
 export type SetMinOrderSizeEventOutput = { size: BN };
 export type SetProtocolFeeEventInput = { protocol_fee: Vec<ProtocolFeeInput> };
 export type SetProtocolFeeEventOutput = { protocol_fee: Vec<ProtocolFeeOutput> };
-export type SetStoreOrderChangeInfoEventInput = { store: boolean };
-export type SetStoreOrderChangeInfoEventOutput = SetStoreOrderChangeInfoEventInput;
 export type TradeOrderEventInput = { base_sell_order_id: string, base_buy_order_id: string, base_sell_order_limit: LimitTypeInput, base_buy_order_limit: LimitTypeInput, order_matcher: IdentityInput, trade_size: BigNumberish, trade_price: BigNumberish, block_height: BigNumberish, tx_id: string, order_seller: IdentityInput, order_buyer: IdentityInput, s_balance: AccountInput, b_balance: AccountInput, seller_is_maker: boolean };
 export type TradeOrderEventOutput = { base_sell_order_id: string, base_buy_order_id: string, base_sell_order_limit: LimitTypeOutput, base_buy_order_limit: LimitTypeOutput, order_matcher: IdentityOutput, trade_size: BN, trade_price: BN, block_height: number, tx_id: string, order_seller: IdentityOutput, order_buyer: IdentityOutput, s_balance: AccountOutput, b_balance: AccountOutput, seller_is_maker: boolean };
 export type WithdrawEventInput = { amount: BigNumberish, asset: AssetIdInput, user: IdentityInput, account: AccountInput };
@@ -149,57 +143,65 @@ const abi = {
     {
       "type": "enum data_structures::order_type::OrderType",
       "concreteTypeId": "87d371fb295bf9d2ae8ded087940e8d0b097ddef40d8499ac650a22985df2682",
-      "metadataTypeId": 8
+      "metadataTypeId": 7
     },
     {
       "type": "enum errors::AccountError",
       "concreteTypeId": "d4bce56f7daed5c8d2b62c0f0745c18d9fdd0b2f0dafecf85ebdd9c7378b5c63",
-      "metadataTypeId": 9
+      "metadataTypeId": 8
     },
     {
       "type": "enum errors::AssetError",
       "concreteTypeId": "e0676030b211eb9ed3b9837fc852a3cf3b6533a31533dd3ab957e8b3f6e77dd3",
-      "metadataTypeId": 10
+      "metadataTypeId": 9
     },
     {
       "type": "enum errors::AuthError",
       "concreteTypeId": "06c3d78f1057db580eb36dc2fc04ebd7407f4a4e954417b6761844fe38ee1a5d",
-      "metadataTypeId": 11
+      "metadataTypeId": 10
     },
     {
       "type": "enum errors::MatchError",
       "concreteTypeId": "dbce8f9c6be61d876835d7a0b5794cfc25fc3b171ba3748ec4c8f2e7ce426cf6",
-      "metadataTypeId": 12
+      "metadataTypeId": 11
     },
     {
       "type": "enum errors::MathError",
       "concreteTypeId": "60f84769b56edc1bfc54f08c4393c6d30612549f4952a1b7d4e08b1eeced9039",
-      "metadataTypeId": 13
+      "metadataTypeId": 12
     },
     {
       "type": "enum errors::OrderError",
       "concreteTypeId": "0ddf63471f7b27c54c55fd3d75fe37594fb1b07a496dba57eb8fc56497e9d9c1",
-      "metadataTypeId": 14
+      "metadataTypeId": 13
     },
     {
       "type": "enum errors::ValueError",
       "concreteTypeId": "380bd4d6b96f9eaa3a3d8db8bb9753399443715fb3fd65460cc28d6ab4d3659b",
-      "metadataTypeId": 15
+      "metadataTypeId": 14
     },
     {
       "type": "enum standards::src5::AccessError",
       "concreteTypeId": "3f702ea3351c9c1ece2b84048006c8034a24cbc2bad2e740d0412b4172951d3d",
-      "metadataTypeId": 16
+      "metadataTypeId": 15
     },
     {
       "type": "enum std::identity::Identity",
       "concreteTypeId": "ab7cd04e05be58e3fc15d424c2c4a57f824a2a2d97d67252440a3925ebdc1335",
-      "metadataTypeId": 17
+      "metadataTypeId": 16
+    },
+    {
+      "type": "enum std::option::Option<bool>",
+      "concreteTypeId": "160e7964babcf172e41aa29b138f9c2ccfc416ad2368dabdbdf877ec5de5503f",
+      "metadataTypeId": 17,
+      "typeArguments": [
+        "b760f44fa5965c2474a3b471467a22c43185152129295af588b022ae50b50903"
+      ]
     },
     {
       "type": "enum std::option::Option<struct data_structures::order::Order>",
       "concreteTypeId": "af7345d115f618be19cd709b6734bdd5fd52bb0c27617a74a9564e4cea947d01",
-      "metadataTypeId": 18,
+      "metadataTypeId": 17,
       "typeArguments": [
         "d0d7221d2233a12a685667b843d8aab0c0b82407fc47b719c07aeb77dfcaed6a"
       ]
@@ -207,128 +209,110 @@ const abi = {
     {
       "type": "enum sway_libs::ownership::errors::InitializationError",
       "concreteTypeId": "1dfe7feadc1d9667a4351761230f948744068a090fe91b1bc6763a90ed5d3893",
-      "metadataTypeId": 19
+      "metadataTypeId": 18
     },
     {
       "type": "enum sway_libs::pausable::errors::PauseError",
       "concreteTypeId": "8b3afcadf894415a10b09fc3717487e33802c8ffbb030edafe84ca4a71b280bc",
-      "metadataTypeId": 20
+      "metadataTypeId": 19
     },
     {
       "type": "enum sway_libs::reentrancy::errors::ReentrancyError",
       "concreteTypeId": "4d216c57b3357523323f59401c7355785b41bdf832f6e1106272186b94797038",
-      "metadataTypeId": 21
+      "metadataTypeId": 20
     },
     {
       "type": "struct data_structures::account::Account",
       "concreteTypeId": "10410fea5a6cba4a6b6079f9d804c0daf23980a360d009048ecb36118036c28e",
-      "metadataTypeId": 24
+      "metadataTypeId": 23
     },
     {
       "type": "struct data_structures::order::Order",
       "concreteTypeId": "d0d7221d2233a12a685667b843d8aab0c0b82407fc47b719c07aeb77dfcaed6a",
-      "metadataTypeId": 26
-    },
-    {
-      "type": "struct data_structures::order_change::OrderChangeInfo",
-      "concreteTypeId": "29bc325768e93baaa35ac6e466461baa03f97fb67a0a328521afacca7d3bf987",
-      "metadataTypeId": 27
+      "metadataTypeId": 25
     },
     {
       "type": "struct data_structures::protocol_fee::ProtocolFee",
       "concreteTypeId": "009d87c3f03cbc1373d98411934ee7648a3922e9adcbafd190ce4d1618b6e5a2",
-      "metadataTypeId": 28
+      "metadataTypeId": 26
     },
     {
       "type": "struct events::CancelOrderEvent",
       "concreteTypeId": "cbadef79adf1e6906cac7404759d7d55a9eaa9f1e6d479ecbbfa76f727486081",
-      "metadataTypeId": 29
+      "metadataTypeId": 27
     },
     {
       "type": "struct events::DepositEvent",
       "concreteTypeId": "aeb9b947da259c606e2c25be1150e2150f609fe5f2ec593c9a7ebb771e4e7065",
-      "metadataTypeId": 30
+      "metadataTypeId": 28
     },
     {
       "type": "struct events::OpenOrderEvent",
       "concreteTypeId": "6c6a47ac80e7110dd8666e169f0fffe2d1378df88cf8960bb9dfe14a84ac3495",
-      "metadataTypeId": 31
+      "metadataTypeId": 29
     },
     {
       "type": "struct events::SetEpochEvent",
       "concreteTypeId": "4fb77907614eb05d769b487a16469bfaac5278323bc54bddccd790cc4e00428e",
-      "metadataTypeId": 32
+      "metadataTypeId": 30
     },
     {
       "type": "struct events::SetMatcherRewardEvent",
       "concreteTypeId": "090412be710caebee4e019479841ea0100912819a3e1c52ba39b1faa7b778c83",
-      "metadataTypeId": 33
+      "metadataTypeId": 31
     },
     {
       "type": "struct events::SetMinOrderPriceEvent",
       "concreteTypeId": "c8d45af21e2ce0c0314fa13def355f80b58f0c1276f0bcad3f6f4b9ca2ea0bf7",
-      "metadataTypeId": 34
+      "metadataTypeId": 32
     },
     {
       "type": "struct events::SetMinOrderSizeEvent",
       "concreteTypeId": "7542dfa693d485551511758498255bf7e73c2835604bdffc22262d0ea2326c16",
-      "metadataTypeId": 35
+      "metadataTypeId": 33
     },
     {
       "type": "struct events::SetProtocolFeeEvent",
       "concreteTypeId": "957dde23e9fbd44b1bada18eae8b84f6d868be2fe55b721ce24b54cdcdafda79",
-      "metadataTypeId": 36
-    },
-    {
-      "type": "struct events::SetStoreOrderChangeInfoEvent",
-      "concreteTypeId": "34a2b5822332a827c494d0a8cfc543cb5e50d6e02ac23d9886c94f9a7572d18c",
-      "metadataTypeId": 37
+      "metadataTypeId": 34
     },
     {
       "type": "struct events::TradeOrderEvent",
       "concreteTypeId": "fe08cb2392b6eb92ee6b7868e2877ca0630f87f543acc63897f7d806229379d5",
-      "metadataTypeId": 38
+      "metadataTypeId": 35
     },
     {
       "type": "struct events::WithdrawEvent",
       "concreteTypeId": "9787083b0003f388ec6bf30609ff6a10c76fada67314a162841a445b07a17168",
-      "metadataTypeId": 39
+      "metadataTypeId": 36
     },
     {
       "type": "struct events::WithdrawToMarketEvent",
       "concreteTypeId": "ae2f6315bc0c35670e520b82df972bee3ba559d15fb2ef3864cfe265f3802fb6",
-      "metadataTypeId": 40
+      "metadataTypeId": 37
     },
     {
       "type": "struct std::asset_id::AssetId",
       "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974",
-      "metadataTypeId": 42
+      "metadataTypeId": 39
     },
     {
       "type": "struct std::contract_id::ContractId",
       "concreteTypeId": "29c10735d33b5159f0c71ee1dbd17b36a3e69e41f00fab0d42e1bd9f428d8a54",
-      "metadataTypeId": 43
+      "metadataTypeId": 40
     },
     {
       "type": "struct std::vec::Vec<b256>",
       "concreteTypeId": "32559685d0c9845f059bf9d472a0a38cf77d36c23dfcffe5489e86a65cdd9198",
-      "metadataTypeId": 45,
+      "metadataTypeId": 42,
       "typeArguments": [
         "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
       ]
     },
     {
-      "type": "struct std::vec::Vec<struct data_structures::order_change::OrderChangeInfo>",
-      "concreteTypeId": "742fbfc9dbc675c4bb942c1c3d87581f5da5c5a8b0fc21e0d1f8d873328d5e5a",
-      "metadataTypeId": 45,
-      "typeArguments": [
-        "29bc325768e93baaa35ac6e466461baa03f97fb67a0a328521afacca7d3bf987"
-      ]
-    },
-    {
       "type": "struct std::vec::Vec<struct data_structures::protocol_fee::ProtocolFee>",
       "concreteTypeId": "4b03eb3d5d8751745804ec649d33055ca43456407d3991177f51a1397cd4da50",
-      "metadataTypeId": 45,
+      "metadataTypeId": 42,
       "typeArguments": [
         "009d87c3f03cbc1373d98411934ee7648a3922e9adcbafd190ce4d1618b6e5a2"
       ]
@@ -336,12 +320,12 @@ const abi = {
     {
       "type": "struct sway_libs::ownership::events::OwnershipSet",
       "concreteTypeId": "e1ef35033ea9d2956f17c3292dea4a46ce7d61fdf37bbebe03b7b965073f43b5",
-      "metadataTypeId": 46
+      "metadataTypeId": 43
     },
     {
       "type": "struct sway_libs::ownership::events::OwnershipTransferred",
       "concreteTypeId": "b3fffbcb3158d7c010c31b194b60fb7857adb4ad61bdcf4b8b42958951d9f308",
-      "metadataTypeId": 47
+      "metadataTypeId": 44
     },
     {
       "type": "u32",
@@ -427,7 +411,7 @@ const abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "typeId": 42
+          "typeId": 39
         },
         {
           "name": "__tuple_element",
@@ -435,7 +419,7 @@ const abi = {
         },
         {
           "name": "__tuple_element",
-          "typeId": 42
+          "typeId": 39
         },
         {
           "name": "__tuple_element",
@@ -443,11 +427,11 @@ const abi = {
         },
         {
           "name": "__tuple_element",
-          "typeId": 18,
+          "typeId": 17,
           "typeArguments": [
             {
               "name": "",
-              "typeId": 17
+              "typeId": 16
             }
           ]
         },
@@ -490,30 +474,16 @@ const abi = {
         {
           "name": "FOK",
           "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
-        }
-      ]
-    },
-    {
-      "type": "enum data_structures::order_change::OrderChangeType",
-      "metadataTypeId": 7,
-      "components": [
-        {
-          "name": "OrderOpened",
-          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
         },
         {
-          "name": "OrderCancelled",
-          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
-        },
-        {
-          "name": "OrderMatched",
+          "name": "MKT",
           "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
         }
       ]
     },
     {
       "type": "enum data_structures::order_type::OrderType",
-      "metadataTypeId": 8,
+      "metadataTypeId": 7,
       "components": [
         {
           "name": "Buy",
@@ -527,7 +497,7 @@ const abi = {
     },
     {
       "type": "enum errors::AccountError",
-      "metadataTypeId": 9,
+      "metadataTypeId": 8,
       "components": [
         {
           "name": "InsufficientBalance",
@@ -537,7 +507,7 @@ const abi = {
     },
     {
       "type": "enum errors::AssetError",
-      "metadataTypeId": 10,
+      "metadataTypeId": 9,
       "components": [
         {
           "name": "InvalidAsset",
@@ -555,7 +525,7 @@ const abi = {
     },
     {
       "type": "enum errors::AuthError",
-      "metadataTypeId": 11,
+      "metadataTypeId": 10,
       "components": [
         {
           "name": "Unauthorized",
@@ -565,7 +535,7 @@ const abi = {
     },
     {
       "type": "enum errors::MatchError",
-      "metadataTypeId": 12,
+      "metadataTypeId": 11,
       "components": [
         {
           "name": "CantMatch",
@@ -587,7 +557,7 @@ const abi = {
     },
     {
       "type": "enum errors::MathError",
-      "metadataTypeId": 13,
+      "metadataTypeId": 12,
       "components": [
         {
           "name": "Overflow",
@@ -597,7 +567,7 @@ const abi = {
     },
     {
       "type": "enum errors::OrderError",
-      "metadataTypeId": 14,
+      "metadataTypeId": 13,
       "components": [
         {
           "name": "OrderDuplicate",
@@ -614,6 +584,10 @@ const abi = {
         {
           "name": "OrderSizeTooSmall",
           "typeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
+        },
+        {
+          "name": "OrderSizeNotSmall",
+          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
         },
         {
           "name": "ZeroLockAmount",
@@ -635,7 +609,7 @@ const abi = {
     },
     {
       "type": "enum errors::ValueError",
-      "metadataTypeId": 15,
+      "metadataTypeId": 14,
       "components": [
         {
           "name": "InvalidAmount",
@@ -677,7 +651,7 @@ const abi = {
     },
     {
       "type": "enum standards::src5::AccessError",
-      "metadataTypeId": 16,
+      "metadataTypeId": 15,
       "components": [
         {
           "name": "NotOwner",
@@ -687,21 +661,21 @@ const abi = {
     },
     {
       "type": "enum std::identity::Identity",
-      "metadataTypeId": 17,
+      "metadataTypeId": 16,
       "components": [
         {
           "name": "Address",
-          "typeId": 41
+          "typeId": 38
         },
         {
           "name": "ContractId",
-          "typeId": 43
+          "typeId": 40
         }
       ]
     },
     {
       "type": "enum std::option::Option",
-      "metadataTypeId": 18,
+      "metadataTypeId": 17,
       "components": [
         {
           "name": "None",
@@ -709,16 +683,16 @@ const abi = {
         },
         {
           "name": "Some",
-          "typeId": 22
+          "typeId": 21
         }
       ],
       "typeParameters": [
-        22
+        21
       ]
     },
     {
       "type": "enum sway_libs::ownership::errors::InitializationError",
-      "metadataTypeId": 19,
+      "metadataTypeId": 18,
       "components": [
         {
           "name": "CannotReinitialized",
@@ -728,7 +702,7 @@ const abi = {
     },
     {
       "type": "enum sway_libs::pausable::errors::PauseError",
-      "metadataTypeId": 20,
+      "metadataTypeId": 19,
       "components": [
         {
           "name": "Paused",
@@ -742,7 +716,7 @@ const abi = {
     },
     {
       "type": "enum sway_libs::reentrancy::errors::ReentrancyError",
-      "metadataTypeId": 21,
+      "metadataTypeId": 20,
       "components": [
         {
           "name": "NonReentrant",
@@ -752,29 +726,29 @@ const abi = {
     },
     {
       "type": "generic T",
-      "metadataTypeId": 22
+      "metadataTypeId": 21
     },
     {
       "type": "raw untyped ptr",
-      "metadataTypeId": 23
+      "metadataTypeId": 22
     },
     {
       "type": "struct data_structures::account::Account",
-      "metadataTypeId": 24,
+      "metadataTypeId": 23,
       "components": [
         {
           "name": "liquid",
-          "typeId": 25
+          "typeId": 24
         },
         {
           "name": "locked",
-          "typeId": 25
+          "typeId": 24
         }
       ]
     },
     {
       "type": "struct data_structures::balance::Balance",
-      "metadataTypeId": 25,
+      "metadataTypeId": 24,
       "components": [
         {
           "name": "base",
@@ -788,7 +762,7 @@ const abi = {
     },
     {
       "type": "struct data_structures::order::Order",
-      "metadataTypeId": 26,
+      "metadataTypeId": 25,
       "components": [
         {
           "name": "amount",
@@ -800,11 +774,11 @@ const abi = {
         },
         {
           "name": "order_type",
-          "typeId": 8
+          "typeId": 7
         },
         {
           "name": "owner",
-          "typeId": 17
+          "typeId": 16
         },
         {
           "name": "price",
@@ -833,38 +807,8 @@ const abi = {
       ]
     },
     {
-      "type": "struct data_structures::order_change::OrderChangeInfo",
-      "metadataTypeId": 27,
-      "components": [
-        {
-          "name": "change_type",
-          "typeId": 7
-        },
-        {
-          "name": "block_height",
-          "typeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc"
-        },
-        {
-          "name": "sender",
-          "typeId": 17
-        },
-        {
-          "name": "tx_id",
-          "typeId": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
-        },
-        {
-          "name": "amount_before",
-          "typeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
-        },
-        {
-          "name": "amount_after",
-          "typeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
-        }
-      ]
-    },
-    {
       "type": "struct data_structures::protocol_fee::ProtocolFee",
-      "metadataTypeId": 28,
+      "metadataTypeId": 26,
       "components": [
         {
           "name": "maker_fee",
@@ -882,7 +826,7 @@ const abi = {
     },
     {
       "type": "struct events::CancelOrderEvent",
-      "metadataTypeId": 29,
+      "metadataTypeId": 27,
       "components": [
         {
           "name": "order_id",
@@ -890,17 +834,17 @@ const abi = {
         },
         {
           "name": "user",
-          "typeId": 17
+          "typeId": 16
         },
         {
           "name": "balance",
-          "typeId": 24
+          "typeId": 23
         }
       ]
     },
     {
       "type": "struct events::DepositEvent",
-      "metadataTypeId": 30,
+      "metadataTypeId": 28,
       "components": [
         {
           "name": "amount",
@@ -908,25 +852,25 @@ const abi = {
         },
         {
           "name": "asset",
-          "typeId": 42
+          "typeId": 39
         },
         {
           "name": "user",
-          "typeId": 17
+          "typeId": 16
         },
         {
           "name": "account",
-          "typeId": 24
+          "typeId": 23
         },
         {
           "name": "caller",
-          "typeId": 17
+          "typeId": 16
         }
       ]
     },
     {
       "type": "struct events::OpenOrderEvent",
-      "metadataTypeId": 31,
+      "metadataTypeId": 29,
       "components": [
         {
           "name": "amount",
@@ -934,11 +878,11 @@ const abi = {
         },
         {
           "name": "asset",
-          "typeId": 42
+          "typeId": 39
         },
         {
           "name": "order_type",
-          "typeId": 8
+          "typeId": 7
         },
         {
           "name": "order_id",
@@ -950,17 +894,21 @@ const abi = {
         },
         {
           "name": "user",
-          "typeId": 17
+          "typeId": 16
         },
         {
           "name": "balance",
-          "typeId": 24
+          "typeId": 23
+        },
+        {
+          "name": "limit_type",
+          "typeId": 6
         }
       ]
     },
     {
       "type": "struct events::SetEpochEvent",
-      "metadataTypeId": 32,
+      "metadataTypeId": 30,
       "components": [
         {
           "name": "epoch",
@@ -974,7 +922,7 @@ const abi = {
     },
     {
       "type": "struct events::SetMatcherRewardEvent",
-      "metadataTypeId": 33,
+      "metadataTypeId": 31,
       "components": [
         {
           "name": "amount",
@@ -984,7 +932,7 @@ const abi = {
     },
     {
       "type": "struct events::SetMinOrderPriceEvent",
-      "metadataTypeId": 34,
+      "metadataTypeId": 32,
       "components": [
         {
           "name": "price",
@@ -994,7 +942,7 @@ const abi = {
     },
     {
       "type": "struct events::SetMinOrderSizeEvent",
-      "metadataTypeId": 35,
+      "metadataTypeId": 33,
       "components": [
         {
           "name": "size",
@@ -1004,33 +952,23 @@ const abi = {
     },
     {
       "type": "struct events::SetProtocolFeeEvent",
-      "metadataTypeId": 36,
+      "metadataTypeId": 34,
       "components": [
         {
           "name": "protocol_fee",
-          "typeId": 45,
+          "typeId": 42,
           "typeArguments": [
             {
               "name": "",
-              "typeId": 28
+              "typeId": 26
             }
           ]
         }
       ]
     },
     {
-      "type": "struct events::SetStoreOrderChangeInfoEvent",
-      "metadataTypeId": 37,
-      "components": [
-        {
-          "name": "store",
-          "typeId": "b760f44fa5965c2474a3b471467a22c43185152129295af588b022ae50b50903"
-        }
-      ]
-    },
-    {
       "type": "struct events::TradeOrderEvent",
-      "metadataTypeId": 38,
+      "metadataTypeId": 35,
       "components": [
         {
           "name": "base_sell_order_id",
@@ -1050,7 +988,7 @@ const abi = {
         },
         {
           "name": "order_matcher",
-          "typeId": 17
+          "typeId": 16
         },
         {
           "name": "trade_size",
@@ -1070,19 +1008,19 @@ const abi = {
         },
         {
           "name": "order_seller",
-          "typeId": 17
+          "typeId": 16
         },
         {
           "name": "order_buyer",
-          "typeId": 17
+          "typeId": 16
         },
         {
           "name": "s_balance",
-          "typeId": 24
+          "typeId": 23
         },
         {
           "name": "b_balance",
-          "typeId": 24
+          "typeId": 23
         },
         {
           "name": "seller_is_maker",
@@ -1092,7 +1030,7 @@ const abi = {
     },
     {
       "type": "struct events::WithdrawEvent",
-      "metadataTypeId": 39,
+      "metadataTypeId": 36,
       "components": [
         {
           "name": "amount",
@@ -1100,21 +1038,21 @@ const abi = {
         },
         {
           "name": "asset",
-          "typeId": 42
+          "typeId": 39
         },
         {
           "name": "user",
-          "typeId": 17
+          "typeId": 16
         },
         {
           "name": "account",
-          "typeId": 24
+          "typeId": 23
         }
       ]
     },
     {
       "type": "struct events::WithdrawToMarketEvent",
-      "metadataTypeId": 40,
+      "metadataTypeId": 37,
       "components": [
         {
           "name": "amount",
@@ -1122,25 +1060,25 @@ const abi = {
         },
         {
           "name": "asset",
-          "typeId": 42
+          "typeId": 39
         },
         {
           "name": "user",
-          "typeId": 17
+          "typeId": 16
         },
         {
           "name": "account",
-          "typeId": 24
+          "typeId": 23
         },
         {
           "name": "market",
-          "typeId": 43
+          "typeId": 40
         }
       ]
     },
     {
       "type": "struct std::address::Address",
-      "metadataTypeId": 41,
+      "metadataTypeId": 38,
       "components": [
         {
           "name": "bits",
@@ -1150,7 +1088,7 @@ const abi = {
     },
     {
       "type": "struct std::asset_id::AssetId",
-      "metadataTypeId": 42,
+      "metadataTypeId": 39,
       "components": [
         {
           "name": "bits",
@@ -1160,7 +1098,7 @@ const abi = {
     },
     {
       "type": "struct std::contract_id::ContractId",
-      "metadataTypeId": 43,
+      "metadataTypeId": 40,
       "components": [
         {
           "name": "bits",
@@ -1170,11 +1108,11 @@ const abi = {
     },
     {
       "type": "struct std::vec::RawVec",
-      "metadataTypeId": 44,
+      "metadataTypeId": 41,
       "components": [
         {
           "name": "ptr",
-          "typeId": 23
+          "typeId": 22
         },
         {
           "name": "cap",
@@ -1182,20 +1120,20 @@ const abi = {
         }
       ],
       "typeParameters": [
-        22
+        21
       ]
     },
     {
       "type": "struct std::vec::Vec",
-      "metadataTypeId": 45,
+      "metadataTypeId": 42,
       "components": [
         {
           "name": "buf",
-          "typeId": 44,
+          "typeId": 41,
           "typeArguments": [
             {
               "name": "",
-              "typeId": 22
+              "typeId": 21
             }
           ]
         },
@@ -1205,30 +1143,30 @@ const abi = {
         }
       ],
       "typeParameters": [
-        22
+        21
       ]
     },
     {
       "type": "struct sway_libs::ownership::events::OwnershipSet",
-      "metadataTypeId": 46,
+      "metadataTypeId": 43,
       "components": [
         {
           "name": "new_owner",
-          "typeId": 17
+          "typeId": 16
         }
       ]
     },
     {
       "type": "struct sway_libs::ownership::events::OwnershipTransferred",
-      "metadataTypeId": 47,
+      "metadataTypeId": 44,
       "components": [
         {
           "name": "new_owner",
-          "typeId": 17
+          "typeId": 16
         },
         {
           "name": "previous_owner",
-          "typeId": 17
+          "typeId": 16
         }
       ]
     }
@@ -1343,6 +1281,25 @@ const abi = {
             " * When a caller is not an owner of the order."
           ]
         },
+        {
+          "name": "storage",
+          "arguments": [
+            "read",
+            "write"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "order_id",
+          "concreteTypeId": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
+        }
+      ],
+      "name": "cancel_small_order",
+      "output": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d",
+      "attributes": [
         {
           "name": "storage",
           "arguments": [
@@ -1839,21 +1796,25 @@ const abi = {
     {
       "inputs": [
         {
-          "name": "order0_id",
-          "concreteTypeId": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
+          "name": "amount",
+          "concreteTypeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
         },
         {
-          "name": "order1_id",
-          "concreteTypeId": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
+          "name": "order_type",
+          "concreteTypeId": "87d371fb295bf9d2ae8ded087940e8d0b097ddef40d8499ac650a22985df2682"
+        },
+        {
+          "name": "price",
+          "concreteTypeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
         }
       ],
-      "name": "match_order_pair",
-      "output": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d",
+      "name": "open_market_order",
+      "output": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b",
       "attributes": [
         {
           "name": "doc-comment",
           "arguments": [
-            " Matches two orders identified by their respective order IDs."
+            " Opens a new market order with a specified amount, order type, and price."
           ]
         },
         {
@@ -1877,13 +1838,43 @@ const abi = {
         {
           "name": "doc-comment",
           "arguments": [
-            " * `order0_id`: [b256] - The unique identifier of the first order to be matched."
+            " * `amount`: [u64] - The amount of the asset to be used in the order."
           ]
         },
         {
           "name": "doc-comment",
           "arguments": [
-            " * `order1_id`: [b256] - The unique identifier of the second order to be matched."
+            " * `order_type`: [OrderType] - The type of the order being created (e.g., buy or sell)."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " * `price`: [u64] - The price at which the order should be placed."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            ""
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " ### Returns"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            ""
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " * [b256] - The unique identifier of the newly opened order."
           ]
         },
         {
@@ -1907,19 +1898,13 @@ const abi = {
         {
           "name": "doc-comment",
           "arguments": [
-            " * When orders with `order0_id` or `order1_id` not found."
+            " * When `amount` == 0 or `amount` exeeds user unlocked asset amount."
           ]
         },
         {
           "name": "doc-comment",
           "arguments": [
-            " * When orders are in same direction ([sell, sell] or [buy, buy])."
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " * When order buy price lower than order sell price."
+            " * When `price` == 0."
           ]
         },
         {
@@ -2658,109 +2643,6 @@ const abi = {
     {
       "inputs": [
         {
-          "name": "store",
-          "concreteTypeId": "b760f44fa5965c2474a3b471467a22c43185152129295af588b022ae50b50903"
-        }
-      ],
-      "name": "set_store_order_change_info",
-      "output": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d",
-      "attributes": [
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " Sets storing change info flag."
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            ""
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " ### Additional Information"
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            ""
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " This function allows the contract owner to enable or disable storing of order change info."
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            ""
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " ### Arguments"
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            ""
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " * `store`: [bool] The new store boolean value."
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            ""
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " ### Reverts"
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            ""
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " * When called by non-owner."
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " * When `store` is same as set before."
-          ]
-        },
-        {
-          "name": "storage",
-          "arguments": [
-            "read",
-            "write"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
           "name": "new_owner",
           "concreteTypeId": "ab7cd04e05be58e3fc15d424c2c4a57f824a2a2d97d67252440a3925ebdc1335"
         }
@@ -3160,6 +3042,78 @@ const abi = {
       ]
     },
     {
+      "inputs": [
+        {
+          "name": "order",
+          "concreteTypeId": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
+        }
+      ],
+      "name": "market_order",
+      "output": "160e7964babcf172e41aa29b138f9c2ccfc416ad2368dabdbdf877ec5de5503f",
+      "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " Get the info of market order."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            ""
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " ### Arguments"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            ""
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " * `order`: [b256] The order_id."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            ""
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " ### Returns"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            ""
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " * [Option<bool>] - The Some<true> if market orderm Some(false) if limit order, None if not found by id."
+          ]
+        },
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
       "inputs": [],
       "name": "matcher_fee",
       "output": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0",
@@ -3350,78 +3304,6 @@ const abi = {
           "name": "doc-comment",
           "arguments": [
             " * [Option<Order>] - The Some<Order> struct of found by id otherwise None."
-          ]
-        },
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "order_id",
-          "concreteTypeId": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
-        }
-      ],
-      "name": "order_change_info",
-      "output": "742fbfc9dbc675c4bb942c1c3d87581f5da5c5a8b0fc21e0d1f8d873328d5e5a",
-      "attributes": [
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " Get order change list."
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            ""
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " ### Arguments"
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            ""
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " * `order_id`: [b256] The order id."
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            ""
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " ### Returns"
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            ""
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " * [Vec<OrderChangeInfo>] - The vector of order change info."
           ]
         },
         {
@@ -3736,49 +3618,6 @@ const abi = {
       ]
     },
     {
-      "inputs": [],
-      "name": "store_order_change_info",
-      "output": "b760f44fa5965c2474a3b471467a22c43185152129295af588b022ae50b50903",
-      "attributes": [
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " Get order change info flag."
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            ""
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " ### Returns"
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            ""
-          ]
-        },
-        {
-          "name": "doc-comment",
-          "arguments": [
-            " * [bool] - The True if order change info stores otherwise false."
-          ]
-        },
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
       "inputs": [
         {
           "name": "user",
@@ -4009,10 +3848,6 @@ const abi = {
       "concreteTypeId": "957dde23e9fbd44b1bada18eae8b84f6d868be2fe55b721ce24b54cdcdafda79"
     },
     {
-      "logId": "3792793406740277287",
-      "concreteTypeId": "34a2b5822332a827c494d0a8cfc543cb5e50d6e02ac23d9886c94f9a7572d18c"
-    },
-    {
       "logId": "12970362301975156672",
       "concreteTypeId": "b3fffbcb3158d7c010c31b194b60fb7857adb4ad61bdcf4b8b42958951d9f308"
     },
@@ -4030,32 +3865,32 @@ const abi = {
     {
       "name": "BASE_ASSET",
       "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974",
-      "offset": 108048
+      "offset": 104936
     },
     {
       "name": "BASE_ASSET_DECIMALS",
       "concreteTypeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc",
-      "offset": 108080
+      "offset": 104968
     },
     {
       "name": "QUOTE_ASSET",
       "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974",
-      "offset": 108096
+      "offset": 104984
     },
     {
       "name": "QUOTE_ASSET_DECIMALS",
       "concreteTypeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc",
-      "offset": 108128
+      "offset": 105016
     },
     {
       "name": "PRICE_DECIMALS",
       "concreteTypeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc",
-      "offset": 108088
+      "offset": 104976
     },
     {
       "name": "VERSION",
       "concreteTypeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc",
-      "offset": 108136
+      "offset": 105024
     }
   ]
 };
@@ -4097,35 +3932,34 @@ export class SparkMarketInterface extends Interface {
     pause: FunctionFragment;
     unpause: FunctionFragment;
     cancel_order: FunctionFragment;
+    cancel_small_order: FunctionFragment;
     deposit: FunctionFragment;
     deposit_for: FunctionFragment;
     fulfill_order_many: FunctionFragment;
     initialize_ownership: FunctionFragment;
     match_order_many: FunctionFragment;
-    match_order_pair: FunctionFragment;
+    open_market_order: FunctionFragment;
     open_order: FunctionFragment;
     set_epoch: FunctionFragment;
     set_matcher_fee: FunctionFragment;
     set_min_order_price: FunctionFragment;
     set_min_order_size: FunctionFragment;
     set_protocol_fee: FunctionFragment;
-    set_store_order_change_info: FunctionFragment;
     transfer_ownership: FunctionFragment;
     withdraw: FunctionFragment;
     withdraw_to_market: FunctionFragment;
     account: FunctionFragment;
     config: FunctionFragment;
     get_epoch: FunctionFragment;
+    market_order: FunctionFragment;
     matcher_fee: FunctionFragment;
     min_order_price: FunctionFragment;
     min_order_size: FunctionFragment;
     order: FunctionFragment;
-    order_change_info: FunctionFragment;
     order_id: FunctionFragment;
     protocol_fee: FunctionFragment;
     protocol_fee_user: FunctionFragment;
     protocol_fee_user_amount: FunctionFragment;
-    store_order_change_info: FunctionFragment;
     user_order_height: FunctionFragment;
     user_orders: FunctionFragment;
   };
@@ -4141,35 +3975,34 @@ export class SparkMarket extends Contract {
     pause: InvokeFunction<[], void>;
     unpause: InvokeFunction<[], void>;
     cancel_order: InvokeFunction<[order_id: string], void>;
+    cancel_small_order: InvokeFunction<[order_id: string], void>;
     deposit: InvokeFunction<[], void>;
     deposit_for: InvokeFunction<[user: IdentityInput], void>;
     fulfill_order_many: InvokeFunction<[amount: BigNumberish, order_type: OrderTypeInput, limit_type: LimitTypeInput, price: BigNumberish, slippage: BigNumberish, orders: Vec<string>], string>;
     initialize_ownership: InvokeFunction<[new_owner: IdentityInput], void>;
     match_order_many: InvokeFunction<[orders: Vec<string>], void>;
-    match_order_pair: InvokeFunction<[order0_id: string, order1_id: string], void>;
+    open_market_order: InvokeFunction<[amount: BigNumberish, order_type: OrderTypeInput, price: BigNumberish], string>;
     open_order: InvokeFunction<[amount: BigNumberish, order_type: OrderTypeInput, price: BigNumberish], string>;
     set_epoch: InvokeFunction<[epoch: BigNumberish, epoch_duration: BigNumberish], void>;
     set_matcher_fee: InvokeFunction<[amount: BigNumberish], void>;
     set_min_order_price: InvokeFunction<[price: BigNumberish], void>;
     set_min_order_size: InvokeFunction<[size: BigNumberish], void>;
     set_protocol_fee: InvokeFunction<[protocol_fee: Vec<ProtocolFeeInput>], void>;
-    set_store_order_change_info: InvokeFunction<[store: boolean], void>;
     transfer_ownership: InvokeFunction<[new_owner: IdentityInput], void>;
     withdraw: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput], void>;
     withdraw_to_market: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput, market: ContractIdInput], void>;
     account: InvokeFunction<[user: IdentityInput], AccountOutput>;
     config: InvokeFunction<[], [AssetIdOutput, number, AssetIdOutput, number, Option<IdentityOutput>, number, number]>;
     get_epoch: InvokeFunction<[], [BN, BN]>;
+    market_order: InvokeFunction<[order: string], Option<boolean>>;
     matcher_fee: InvokeFunction<[], BN>;
     min_order_price: InvokeFunction<[], BN>;
     min_order_size: InvokeFunction<[], BN>;
     order: InvokeFunction<[order: string], Option<OrderOutput>>;
-    order_change_info: InvokeFunction<[order_id: string], Vec<OrderChangeInfoOutput>>;
     order_id: InvokeFunction<[order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish, order_height: BigNumberish], string>;
     protocol_fee: InvokeFunction<[], Vec<ProtocolFeeOutput>>;
     protocol_fee_user: InvokeFunction<[user: IdentityInput], [BN, BN]>;
     protocol_fee_user_amount: InvokeFunction<[amount: BigNumberish, user: IdentityInput], [BN, BN]>;
-    store_order_change_info: InvokeFunction<[], boolean>;
     user_order_height: InvokeFunction<[user: IdentityInput], BN>;
     user_orders: InvokeFunction<[user: IdentityInput], Vec<string>>;
   };
