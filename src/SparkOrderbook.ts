@@ -21,6 +21,7 @@ import {
   FulfillOrderManyParams,
   FulfillOrderManyWithDepositParams,
   GetActiveOrdersParams,
+  GetBalancePnlByUserParams,
   GetCompetitionParams,
   GetLeaderboardPnlQueryParams,
   GetLeaderboardQueryParams,
@@ -400,6 +401,10 @@ export class SparkOrderbook {
 
   async getCompetition(params: GetCompetitionParams) {
     return this.activeSentioApi.getCompetition(params);
+  }
+  
+  async getBalancePnlByUser(params: GetBalancePnlByUserParams) {
+    return this.activeSentioApi.getBalancePnlByUser(params);
   }
   /**
    * @experimental
