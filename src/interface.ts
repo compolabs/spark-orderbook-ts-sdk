@@ -185,6 +185,7 @@ export interface Order {
   status: Status;
   user: string;
   timestamp: string;
+  avrPrice: string;
   market: string;
 }
 
