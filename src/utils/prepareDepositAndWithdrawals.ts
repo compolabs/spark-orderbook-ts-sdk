@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import {
   CoinQuantityLike,
   FunctionInvocationScope,
@@ -185,12 +186,12 @@ export const prepareDepositAndWithdrawals = async ({
   const targetFeeBalance = contractFeeBalances[0];
   const expectedFee = calculateFeeMissing(targetFeeBalance, new BN(amountFee));
 
-  console.log(expectedFee.toString());
+  const otherContractBalancesTotal = BN.sum(...otherContractBalances);
 
-  const totalAvailableBalance = new BN(walletBalance)
+  const totalAvailableBalance = new BigNumber(walletBalance)
     .minus(expectedFee)
-    .plus(new BN(targetMarketBalance))
-    .plus(BN.sum(...otherContractBalances));
+    .plus(targetMarketBalance)
+    .plus(otherContractBalancesTotal);
 
   if (totalAvailableBalance.lt(amountToSpend)) {
     throw new Error(

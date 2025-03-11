@@ -28,6 +28,7 @@ jest.mock("../src/types/market/SparkMarket", () => {
 });
 
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import BigNumber from "bignumber.js";
 import { WalletLocked, WalletUnlocked } from "fuels";
 
 import { SparkMarket } from "../src/types/market/SparkMarket";
@@ -181,6 +182,8 @@ describe("prepareDepositAndWithdrawals", () => {
       otherContractBalances: [new BN(0)], // Balance of other markets
       contractFeeBalances: [new BN(0), new BN(35)],
     });
+
+    console.warn("123123", new BigNumber(1).plus(0));
 
     const contractCalls = await prepareDepositAndWithdrawals({
       baseMarketFactory,
