@@ -35,7 +35,9 @@ import BN from "../src/utils/BN";
 import { getTotalBalance } from "../src/utils/getTotalBalance";
 import { prepareDepositAndWithdrawals } from "../src/utils/prepareDepositAndWithdrawals";
 
-const mockGetTotalBalance = getTotalBalance as jest.Mock<any>;
+const mockGetTotalBalance = getTotalBalance as jest.Mock<
+  typeof getTotalBalance
+>;
 
 const generateContractWithAssets = (
   contractId: string,
@@ -84,6 +86,7 @@ describe("prepareDepositAndWithdrawals", () => {
       walletFeeBalance: new BN(10), // Balance of feeAssetId
       targetMarketBalance: new BN(0), // Balance of target
       otherContractBalances: [new BN(0)], // Balance of other markets
+      contractFeeBalances: [new BN(0)],
     });
 
     await expect(
@@ -91,13 +94,12 @@ describe("prepareDepositAndWithdrawals", () => {
         baseMarketFactory,
         wallet,
         markets: [CONTRACT_ADDRESS_1, CONTRACT_ADDRESS_2],
-        depositAssetId: USDC,
-        feeAssetId: USDC,
         amountToSpend: "100",
         amountFee: "5",
+        type: "Buy" as any,
       }),
     ).rejects.toThrow(
-      "Insufficient balance:\nAmount to spend: 100\nFee: 5\nBalance: 5",
+      "Insufficient balance:\nAmount to spend: 100\nExpected Fee: 5\nTotal available: 5",
     );
   });
 
@@ -105,8 +107,9 @@ describe("prepareDepositAndWithdrawals", () => {
     mockGetTotalBalance.mockResolvedValue({
       walletBalance: new BN(10), // Balance of depositAssetId
       walletFeeBalance: new BN(10), // Balance of feeAssetId
-      targetMarketBalance: new BN(0), // Balance of target
-      otherContractBalances: [new BN(0)], // Balance of other markets
+      targetMarketBalance: new BN(10), // Balance of target
+      otherContractBalances: [new BN(100)], // Balance of other markets
+      contractFeeBalances: [new BN(0)],
     });
 
     await expect(
@@ -114,12 +117,13 @@ describe("prepareDepositAndWithdrawals", () => {
         baseMarketFactory,
         wallet,
         markets: [CONTRACT_ADDRESS_1, CONTRACT_ADDRESS_2],
-        depositAssetId: USDC,
-        feeAssetId: USDC,
         amountToSpend: "100",
         amountFee: "15",
+        type: "Buy" as any,
       }),
-    ).rejects.toThrow("Insufficient fee balance:\nFee: 15\nWallet balance: 10");
+    ).rejects.toThrow(
+      "Insufficient wallet fee balance:\nRequired wallet fee deposit: 15\nWallet fee balance: 10",
+    );
   });
 
   it("returns correct contract calls when balances are sufficient", async () => {
@@ -128,6 +132,7 @@ describe("prepareDepositAndWithdrawals", () => {
       walletFeeBalance: new BN(15), // Balance of feeAssetId
       targetMarketBalance: new BN(0), // Balance of target
       otherContractBalances: [new BN(70), new BN(15), new BN(5)], // Balance of other markets
+      contractFeeBalances: [new BN(0), new BN(0)],
     });
 
     const contractCalls = await prepareDepositAndWithdrawals({
@@ -139,10 +144,9 @@ describe("prepareDepositAndWithdrawals", () => {
         CONTRACT_ADDRESS_3,
         CONTRACT_ADDRESS_4,
       ],
-      depositAssetId: USDC,
-      feeAssetId: USDC,
       amountToSpend: "100",
       amountFee: "5",
+      type: "Buy" as any,
     });
 
     expect(contractCalls).toHaveLength(5);
@@ -154,18 +158,39 @@ describe("prepareDepositAndWithdrawals", () => {
       walletFeeBalance: new BN(15), // Balance of feeAssetId
       targetMarketBalance: new BN(50), // Balance of target
       otherContractBalances: [new BN(40)], // Balance of other markets
+      contractFeeBalances: [new BN(0)],
     });
 
     const contractCalls = await prepareDepositAndWithdrawals({
       baseMarketFactory,
       wallet,
       markets: [CONTRACT_ADDRESS_1, CONTRACT_ADDRESS_2],
-      depositAssetId: USDC,
-      feeAssetId: USDC,
       amountToSpend: "100",
       amountFee: "5",
+      type: "Buy" as any,
     });
 
     expect(contractCalls).toHaveLength(3);
+  });
+
+  it.only("handles fee amount correctly", async () => {
+    mockGetTotalBalance.mockResolvedValue({
+      walletBalance: new BN(15), // Balance of depositAssetId
+      walletFeeBalance: new BN(15), // Balance of feeAssetId
+      targetMarketBalance: new BN(10), // Balance of target
+      otherContractBalances: [new BN(0)], // Balance of other markets
+      contractFeeBalances: [new BN(0), new BN(35)],
+    });
+
+    const contractCalls = await prepareDepositAndWithdrawals({
+      baseMarketFactory,
+      wallet,
+      markets: [CONTRACT_ADDRESS_1, CONTRACT_ADDRESS_3],
+      amountToSpend: "10",
+      amountFee: "50",
+      type: "Buy" as any,
+    });
+
+    expect(contractCalls).toHaveLength(2);
   });
 });

@@ -4,7 +4,7 @@ import {
   WalletLocked,
   WalletUnlocked,
 } from "fuels";
-import { AssetType, CompactMarketInfo } from "src/interface";
+import { AssetType, CompactMarketInfo, OrderType } from "src/interface";
 import { SparkMarket } from "src/types/market";
 import { AssetTypeInput, ContractIdInput } from "src/types/market/SparkMarket";
 
@@ -135,24 +135,39 @@ const prepareFeeWithdrawalCalls = (
   return { feeCalls, remainingFee };
 };
 
+const getTokens = (market: CompactMarketInfo, type: OrderType) => {
+  if (type === OrderType.Buy) {
+    return {
+      depositAssetId: market.quoteAssetId,
+      feeAssetId: market.quoteAssetId,
+    };
+  }
+  return {
+    depositAssetId: market.baseAssetId,
+    feeAssetId: market.quoteAssetId,
+  };
+};
+
 export const prepareDepositAndWithdrawals = async ({
   baseMarketFactory,
   wallet,
   markets,
-  depositAssetId,
-  feeAssetId,
   amountToSpend,
   amountFee,
+  type,
 }: {
   baseMarketFactory: SparkMarket;
   wallet: WalletLocked | WalletUnlocked;
   markets: CompactMarketInfo[];
-  depositAssetId: string;
-  feeAssetId: string;
   amountToSpend: string;
   amountFee: string;
+  type: OrderType;
 }): Promise<FunctionInvocationScope[]> => {
   const sortedMarkets = sortMarkets(markets, baseMarketFactory);
+
+  const targetMarket = sortedMarkets[0];
+
+  const { depositAssetId, feeAssetId } = getTokens(targetMarket, type);
 
   const {
     walletBalance,
@@ -167,17 +182,13 @@ export const prepareDepositAndWithdrawals = async ({
     markets: sortedMarkets,
   });
 
-  const targetMarket = sortedMarkets[0];
-
-  const isFeeAssetSameAsQuote =
-    targetMarket.quoteAssetId.toLowerCase() === feeAssetId.toLowerCase();
-  const expectedFee = isFeeAssetSameAsQuote ? new BN(amountFee) : BN.ZERO;
-
   const targetFeeBalance = contractFeeBalances[0];
-  const feeMissing = calculateFeeMissing(targetFeeBalance, expectedFee);
+  const expectedFee = calculateFeeMissing(targetFeeBalance, new BN(amountFee));
+
+  console.log(expectedFee.toString());
 
   const totalAvailableBalance = new BN(walletBalance)
-    .minus(feeMissing)
+    .minus(expectedFee)
     .plus(new BN(targetMarketBalance))
     .plus(BN.sum(...otherContractBalances));
 
@@ -204,7 +215,7 @@ export const prepareDepositAndWithdrawals = async ({
     wallet,
     baseMarketFactory,
     contractFeeBalances,
-    feeMissing,
+    expectedFee,
   );
   contractCalls.push(...feeCalls);
 

@@ -143,24 +143,15 @@ export class WriteActions {
     markets: CompactMarketInfo[],
     timeInForce: LimitType,
   ): Promise<WriteTransactionResponse> {
-    const {
-      amount,
-      amountToSpend,
-      amountFee,
-      price,
-      type,
-      depositAssetId,
-      feeAssetId,
-    } = params;
+    const { amount, amountToSpend, amountFee, price, type } = params;
 
     const depositAndWithdrawalTxs = await prepareDepositAndWithdrawals({
       baseMarketFactory: this.getProxyMarketFactory(),
       wallet: this.options.wallet,
       amountToSpend,
-      depositAssetId,
-      feeAssetId,
       amountFee,
       markets,
+      type,
     });
 
     let txs = [];
@@ -235,18 +226,15 @@ export class WriteActions {
       orders,
       amountToSpend,
       amountFee,
-      depositAssetId,
-      feeAssetId,
     } = params;
 
     const depositAndWithdrawalTxs = await prepareDepositAndWithdrawals({
       baseMarketFactory: this.getProxyMarketFactory(),
       wallet: this.options.wallet,
       amountToSpend,
-      depositAssetId,
       markets,
       amountFee,
-      feeAssetId,
+      type: orderType,
     });
 
     const txs = [

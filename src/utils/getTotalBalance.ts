@@ -25,6 +25,10 @@ export const getTotalBalance = async ({
   feeAssetId,
   markets,
 }: GetTotalBalanceParams) => {
+  if (!markets.length) {
+    throw new Error("[getTotalBalance] Markets are empty");
+  }
+
   const identity: IdentityInput = {
     Address: {
       bits: wallet.address.toB256(),
@@ -48,16 +52,26 @@ export const getTotalBalance = async ({
   for (let i = 0; i < numMarkets; i++) {
     const balance: AccountOutput = balanceMultiCallResult.value[i];
 
-    const isDepositBase =
-      getAssetType(markets[i], depositAssetId) === AssetType.Base;
+    const baseAssetType = getAssetType(markets[i], depositAssetId);
+    const quoteAssetType = getAssetType(markets[i], feeAssetId);
 
-    const depositAsset = isDepositBase
-      ? balance.liquid.base
-      : balance.liquid.quote;
-    depositBalances.push(new BN(depositAsset.toString()));
+    const isDepositBase = baseAssetType === AssetType.Base;
 
-    const feeAsset = balance.liquid.quote;
-    contractFeeBalances.push(new BN(feeAsset.toString()));
+    if (!baseAssetType) {
+      depositBalances.push(BN.ZERO);
+    } else {
+      const depositAsset = isDepositBase
+        ? balance.liquid.base
+        : balance.liquid.quote;
+      depositBalances.push(new BN(depositAsset.toString()));
+    }
+
+    if (!quoteAssetType) {
+      contractFeeBalances.push(BN.ZERO);
+    } else {
+      const feeAsset = balance.liquid.quote;
+      contractFeeBalances.push(new BN(feeAsset.toString()));
+    }
   }
 
   const targetMarketBalance = depositBalances[0];
