@@ -21,6 +21,7 @@ import {
   FulfillOrderManyParams,
   FulfillOrderManyWithDepositParams,
   GetActiveOrdersParams,
+  GetBalancePnlByUserParams,
   GetCompetitionParams,
   GetLeaderboardPnlQueryParams,
   GetLeaderboardQueryParams,
@@ -34,6 +35,7 @@ import {
   GetUserPointQueryParams,
   GetUserScoreSnapshotParams,
   GraphClientConfig,
+  LimitType,
   MarketInfo,
   Markets,
   Options,
@@ -156,8 +158,9 @@ export class SparkOrderbook {
   async createOrderWithDeposit(
     order: CreateOrderWithDepositParams,
     markets: CompactMarketInfo[],
+    timeInForce: LimitType,
   ): Promise<WriteTransactionResponse> {
-    return this.getWrite().createOrderWithDeposit(order, markets);
+    return this.getWrite().createOrderWithDeposit(order, markets, timeInForce);
   }
 
   async fulfillOrderManyWithDeposit(
@@ -171,12 +174,12 @@ export class SparkOrderbook {
     return this.getWrite().cancelOrder(orderId);
   }
 
-  async matchOrders(
-    sellOrderId: string,
-    buyOrderId: string,
-  ): Promise<WriteTransactionResponse> {
-    return this.getWrite().matchOrders(sellOrderId, buyOrderId);
-  }
+  // async matchOrders(
+  //   sellOrderId: string,
+  //   buyOrderId: string,
+  // ): Promise<WriteTransactionResponse> {
+  //   return this.getWrite().matchOrders(sellOrderId, buyOrderId);
+  // }
 
   async fulfillOrderMany(
     order: FulfillOrderManyParams,
@@ -398,6 +401,10 @@ export class SparkOrderbook {
 
   async getCompetition(params: GetCompetitionParams) {
     return this.activeSentioApi.getCompetition(params);
+  }
+
+  async getBalancePnlByUser(params: GetBalancePnlByUserParams) {
+    return this.activeSentioApi.getBalancePnlByUser(params);
   }
   /**
    * @experimental

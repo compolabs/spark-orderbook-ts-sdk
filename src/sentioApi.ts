@@ -1,4 +1,5 @@
 import {
+  getBalancePnlByUserQuery,
   getCompetitionQuery,
   getLeaderboardPnlQuery,
   getLeaderboardQuery,
@@ -11,6 +12,7 @@ import {
   getUserScoreSnapshotQuery,
 } from "./query/sentioQuery";
 import {
+  GetBalancePnlByUserParams,
   GetCompetitionParams,
   GetLeaderboardPnlQueryParams,
   GetLeaderboardQueryParams,
@@ -104,6 +106,13 @@ export class SentioApi {
   };
   getCompetition = (params: GetCompetitionParams) => {
     return getCompetitionQuery({
+      ...params,
+      url: this.url,
+      apiKey: this.apiKey,
+    });
+  };
+  getBalancePnlByUser = (params: GetBalancePnlByUserParams) => {
+    return getBalancePnlByUserQuery({
       ...params,
       url: this.url,
       apiKey: this.apiKey,

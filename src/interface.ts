@@ -90,6 +90,7 @@ export enum LimitType {
   IOC = "IOC",
   FOK = "FOK",
   GTC = "GTC",
+  MKT = "MKT",
 }
 
 export type Status = "Active" | "Canceled" | "Closed";
@@ -331,6 +332,22 @@ export interface GetSortedLeaderboardPnlQueryParams {
   timeline: string;
   page: number;
   limit: number;
+}
+
+export interface GetBalancePnlByUserParams {
+  user: string;
+}
+
+export interface BalancePnlByUserResponse {
+  pnl1: string;
+  pnl31: string;
+  pnl7: string;
+  pnlAllTime: string;
+  pnlInPersent1: string;
+  pnlInPersent31: string;
+  pnlInPersent7: string;
+  pnlInPersentAllTime: string;
+  market: string;
 }
 
 export interface LeaderboardPnlResponse {
