@@ -28,6 +28,7 @@ export const getOrdersQuery = (
         status
         user
         timestamp
+        avrPrice
         market
       }
     }
