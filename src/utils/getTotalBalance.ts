@@ -6,12 +6,12 @@ import { AccountOutput, IdentityInput } from "src/types/market/SparkMarket";
 import BN from "./BN";
 import { getAssetType } from "./getAssetType";
 
-export const _getMarketContract = (
+export const getMarketContract = (
   contractAddress: string,
   wallet: WalletLocked | WalletUnlocked,
 ) => new SparkMarket(contractAddress, wallet);
 
-export interface Balance {
+export interface TokenBalance {
   amount: BN;
   type?: AssetType;
 }
@@ -23,92 +23,103 @@ interface GetTotalBalanceParams {
   markets: CompactMarketInfo[];
 }
 
-// Helper function to get balances
+export interface TotalBalanceResult {
+  walletBalance: BN;
+  walletFeeBalance: BN;
+  targetMarketBalance: TokenBalance;
+  otherContractBalances: TokenBalance[];
+  contractFeeBalances: TokenBalance[];
+}
+
+function processMarketBalance(
+  balance: AccountOutput,
+  market: CompactMarketInfo,
+  depositAssetId: string,
+  feeAssetId: string,
+): { depositBalance: TokenBalance; feeBalance: TokenBalance } {
+  const depositType = getAssetType(market, depositAssetId);
+  const feeType = getAssetType(market, feeAssetId);
+
+  const depositBalance: TokenBalance = {
+    amount: depositType
+      ? new BN(
+          (depositType === AssetType.Base
+            ? balance.liquid.base
+            : balance.liquid.quote
+          ).toString(),
+        )
+      : BN.ZERO,
+    type: depositType,
+  };
+
+  const feeBalance: TokenBalance = {
+    amount: feeType
+      ? new BN(
+          (feeType === AssetType.Base
+            ? balance.liquid.base
+            : balance.liquid.quote
+          ).toString(),
+        )
+      : BN.ZERO,
+    type: feeType,
+  };
+
+  return { depositBalance, feeBalance };
+}
+
 export const getTotalBalance = async ({
   wallet,
   depositAssetId,
   feeAssetId,
   markets,
-}: GetTotalBalanceParams) => {
+}: GetTotalBalanceParams): Promise<TotalBalanceResult> => {
   if (!markets.length) {
     throw new Error("[getTotalBalance] Markets are empty");
   }
 
   const identity: IdentityInput = {
-    Address: {
-      bits: wallet.address.toB256(),
-    },
+    Address: { bits: wallet.address.toB256() },
   };
 
-  const baseMarketFactory = _getMarketContract(markets[0].contractId, wallet);
-
-  const getBalancePromises = markets.map((market) =>
-    _getMarketContract(market.contractId, wallet).functions.account(identity),
+  const baseMarketContract = getMarketContract(markets[0].contractId, wallet);
+  const balancePromises = markets.map((market) =>
+    getMarketContract(market.contractId, wallet).functions.account(identity),
   );
 
-  const balanceMultiCallResult = await baseMarketFactory
-    .multiCall(getBalancePromises)
+  const multiCallResult = await baseMarketContract
+    .multiCall(balancePromises)
     .get();
 
-  const depositBalances: Balance[] = [];
-  const contractFeeBalances: Balance[] = [];
-  const numMarkets = balanceMultiCallResult.value.length;
+  const depositBalances: TokenBalance[] = [];
+  const feeBalances: TokenBalance[] = [];
 
-  for (let i = 0; i < numMarkets; i++) {
-    const balance: AccountOutput = balanceMultiCallResult.value[i];
-
-    const baseAssetType = getAssetType(markets[i], depositAssetId);
-    const quoteAssetType = getAssetType(markets[i], feeAssetId);
-
-    if (!baseAssetType) {
-      depositBalances.push({
-        amount: BN.ZERO,
-        type: baseAssetType,
-      });
-    } else {
-      const depositAsset =
-        baseAssetType === AssetType.Base
-          ? balance.liquid.base
-          : balance.liquid.quote;
-      depositBalances.push({
-        amount: new BN(depositAsset.toString()),
-        type: baseAssetType,
-      });
-    }
-
-    if (!quoteAssetType) {
-      contractFeeBalances.push({
-        amount: BN.ZERO,
-        type: quoteAssetType,
-      });
-    } else {
-      const feeAsset =
-        quoteAssetType === AssetType.Base
-          ? balance.liquid.base
-          : balance.liquid.quote;
-      contractFeeBalances.push({
-        amount: new BN(feeAsset.toString()),
-        type: quoteAssetType,
-      });
-    }
+  for (let i = 0; i < multiCallResult.value.length; i++) {
+    const balance: AccountOutput = multiCallResult.value[i];
+    const { depositBalance, feeBalance } = processMarketBalance(
+      balance,
+      markets[i],
+      depositAssetId,
+      feeAssetId,
+    );
+    depositBalances.push(depositBalance);
+    feeBalances.push(feeBalance);
   }
 
   const targetMarketBalance = depositBalances[0];
   const otherContractBalances = depositBalances.slice(1);
 
-  const [walletBalanceRaw, walletFeeBalanceRaw] = await Promise.all([
+  const [walletDepositRaw, walletFeeRaw] = await Promise.all([
     wallet.getBalance(depositAssetId),
     wallet.getBalance(feeAssetId),
   ]);
-
-  const walletBalance = new BN(walletBalanceRaw.toString());
-  const walletFeeBalance = new BN(walletFeeBalanceRaw.toString());
+  const walletBalance = new BN(walletDepositRaw.toString());
+  const walletFeeBalance = new BN(walletFeeRaw.toString());
 
   return {
     walletBalance,
     walletFeeBalance,
     targetMarketBalance,
     otherContractBalances,
-    contractFeeBalances,
+    contractFeeBalances: feeBalances,
   };
 };

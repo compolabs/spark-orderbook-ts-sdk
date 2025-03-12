@@ -10,7 +10,7 @@ import { SparkMarket } from "src/types/market";
 import { AssetTypeInput, ContractIdInput } from "src/types/market/SparkMarket";
 
 import BN from "./BN";
-import { Balance, getTotalBalance } from "./getTotalBalance";
+import { getTotalBalance, TokenBalance } from "./getTotalBalance";
 
 const getMarketContract = (
   contractAddress: string,
@@ -39,8 +39,8 @@ const prepareWithdrawCallsForSpending = (
   sortedMarkets: CompactMarketInfo[],
   wallet: WalletLocked | WalletUnlocked,
   baseMarketFactory: SparkMarket,
-  otherContractBalances: Balance[],
-  targetMarketBalance: Balance,
+  otherContractBalances: TokenBalance[],
+  targetMarketBalance: TokenBalance,
   amountToSpend: string,
 ): { withdrawCalls: FunctionInvocationScope[]; remainingAmountNeeded: BN } => {
   const amountToSpendBN = new BN(amountToSpend);
@@ -103,7 +103,7 @@ const prepareFeeWithdrawalCalls = (
   sortedMarkets: CompactMarketInfo[],
   wallet: WalletLocked | WalletUnlocked,
   baseMarketFactory: SparkMarket,
-  contractFeeBalances: Balance[],
+  contractFeeBalances: TokenBalance[],
   feeMissing: BN,
 ): { feeCalls: FunctionInvocationScope[]; remainingFee: BN } => {
   const feeCalls: FunctionInvocationScope[] = [];
