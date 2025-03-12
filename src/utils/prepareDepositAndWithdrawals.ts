@@ -183,15 +183,28 @@ export const prepareDepositAndWithdrawals = async ({
     markets: sortedMarkets,
   });
 
-  const targetFeeBalance = contractFeeBalances[0];
-  const expectedFee = calculateFeeMissing(targetFeeBalance, new BN(amountFee));
+  const isBuy = type === OrderType.Buy;
 
-  const otherContractBalancesTotal = BN.sum(...otherContractBalances);
+  const targetFeeBalance = contractFeeBalances[0];
+  const expectedFee = isBuy
+    ? calculateFeeMissing(targetFeeBalance, new BN(amountFee))
+    : BN.ZERO;
+  const otherContractFeeBalancesTotal = isBuy
+    ? contractFeeBalances
+        .slice(1)
+        .reduce((acc, curr) => acc.plus(curr), BN.ZERO)
+    : BN.ZERO;
+
+  const otherContractBalancesTotal = otherContractBalances.reduce(
+    (acc, curr) => acc.plus(curr),
+    BN.ZERO,
+  );
 
   const totalAvailableBalance = new BigNumber(walletBalance)
     .minus(expectedFee)
     .plus(targetMarketBalance)
-    .plus(otherContractBalancesTotal);
+    .plus(otherContractBalancesTotal)
+    .plus(otherContractFeeBalancesTotal);
 
   if (totalAvailableBalance.lt(amountToSpend)) {
     throw new Error(

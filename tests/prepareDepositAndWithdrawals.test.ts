@@ -28,7 +28,6 @@ jest.mock("../src/types/market/SparkMarket", () => {
 });
 
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import BigNumber from "bignumber.js";
 import { WalletLocked, WalletUnlocked } from "fuels";
 
 import { SparkMarket } from "../src/types/market/SparkMarket";
@@ -174,7 +173,7 @@ describe("prepareDepositAndWithdrawals", () => {
     expect(contractCalls).toHaveLength(3);
   });
 
-  it.only("handles fee amount correctly", async () => {
+  it("handles fee amount correctly for BUY order", async () => {
     mockGetTotalBalance.mockResolvedValue({
       walletBalance: new BN(15), // Balance of depositAssetId
       walletFeeBalance: new BN(15), // Balance of feeAssetId
@@ -182,8 +181,6 @@ describe("prepareDepositAndWithdrawals", () => {
       otherContractBalances: [new BN(0)], // Balance of other markets
       contractFeeBalances: [new BN(0), new BN(35)],
     });
-
-    console.warn("123123", new BigNumber(1).plus(0));
 
     const contractCalls = await prepareDepositAndWithdrawals({
       baseMarketFactory,
@@ -195,5 +192,26 @@ describe("prepareDepositAndWithdrawals", () => {
     });
 
     expect(contractCalls).toHaveLength(2);
+  });
+
+  it("handles fee amount correctly for SELL order", async () => {
+    mockGetTotalBalance.mockResolvedValue({
+      walletBalance: new BN(15), // Balance of depositAssetId
+      walletFeeBalance: new BN(15), // Balance of feeAssetId
+      targetMarketBalance: new BN(10), // Balance of target
+      otherContractBalances: [new BN(0)], // Balance of other markets
+      contractFeeBalances: [new BN(0), new BN(35)],
+    });
+
+    const contractCalls = await prepareDepositAndWithdrawals({
+      baseMarketFactory,
+      wallet,
+      markets: [CONTRACT_ADDRESS_1, CONTRACT_ADDRESS_3],
+      amountToSpend: "10",
+      amountFee: "50",
+      type: "Sell" as any,
+    });
+
+    expect(contractCalls).toHaveLength(0);
   });
 });
