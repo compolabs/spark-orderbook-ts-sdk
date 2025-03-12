@@ -11,6 +11,11 @@ export const _getMarketContract = (
   wallet: WalletLocked | WalletUnlocked,
 ) => new SparkMarket(contractAddress, wallet);
 
+export interface Balance {
+  amount: BN;
+  type?: AssetType;
+}
+
 interface GetTotalBalanceParams {
   wallet: WalletLocked | WalletUnlocked;
   depositAssetId: string;
@@ -45,8 +50,8 @@ export const getTotalBalance = async ({
     .multiCall(getBalancePromises)
     .get();
 
-  const depositBalances: BN[] = [];
-  const contractFeeBalances: BN[] = [];
+  const depositBalances: Balance[] = [];
+  const contractFeeBalances: Balance[] = [];
   const numMarkets = balanceMultiCallResult.value.length;
 
   for (let i = 0; i < numMarkets; i++) {
@@ -58,19 +63,31 @@ export const getTotalBalance = async ({
     const isDepositBase = baseAssetType === AssetType.Base;
 
     if (!baseAssetType) {
-      depositBalances.push(BN.ZERO);
+      depositBalances.push({
+        amount: BN.ZERO,
+        type: baseAssetType,
+      });
     } else {
       const depositAsset = isDepositBase
         ? balance.liquid.base
         : balance.liquid.quote;
-      depositBalances.push(new BN(depositAsset.toString()));
+      depositBalances.push({
+        amount: new BN(depositAsset.toString()),
+        type: baseAssetType,
+      });
     }
 
     if (!quoteAssetType) {
-      contractFeeBalances.push(BN.ZERO);
+      contractFeeBalances.push({
+        amount: BN.ZERO,
+        type: quoteAssetType,
+      });
     } else {
       const feeAsset = balance.liquid.quote;
-      contractFeeBalances.push(new BN(feeAsset.toString()));
+      contractFeeBalances.push({
+        amount: new BN(feeAsset.toString()),
+        type: quoteAssetType,
+      });
     }
   }
 

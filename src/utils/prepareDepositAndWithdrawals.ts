@@ -5,13 +5,12 @@ import {
   WalletLocked,
   WalletUnlocked,
 } from "fuels";
-import { AssetType, CompactMarketInfo, OrderType } from "src/interface";
+import { CompactMarketInfo, OrderType } from "src/interface";
 import { SparkMarket } from "src/types/market";
 import { AssetTypeInput, ContractIdInput } from "src/types/market/SparkMarket";
 
 import BN from "./BN";
-import { getAssetType } from "./getAssetType";
-import { getTotalBalance } from "./getTotalBalance";
+import { Balance, getTotalBalance } from "./getTotalBalance";
 
 const getMarketContract = (
   contractAddress: string,
@@ -40,15 +39,14 @@ const prepareWithdrawCallsForSpending = (
   sortedMarkets: CompactMarketInfo[],
   wallet: WalletLocked | WalletUnlocked,
   baseMarketFactory: SparkMarket,
-  depositAssetId: string,
-  otherContractBalances: BN[],
-  targetMarketBalance: BN,
+  otherContractBalances: Balance[],
+  targetMarketBalance: Balance,
   amountToSpend: string,
 ): { withdrawCalls: FunctionInvocationScope[]; remainingAmountNeeded: BN } => {
   const amountToSpendBN = new BN(amountToSpend);
   const withdrawCalls: FunctionInvocationScope[] = [];
 
-  let remainingAmountNeeded = amountToSpendBN.minus(targetMarketBalance);
+  let remainingAmountNeeded = amountToSpendBN.minus(targetMarketBalance.amount);
 
   const spendingMarkets = sortedMarkets.filter(
     (market) =>
@@ -59,16 +57,16 @@ const prepareWithdrawCallsForSpending = (
   spendingMarkets.forEach((market, i) => {
     const contractBalance = otherContractBalances[i];
     if (
-      contractBalance.isZero() ||
+      contractBalance.amount.isZero() ||
       remainingAmountNeeded.isZero() ||
       remainingAmountNeeded.isNegative()
     ) {
       return;
     }
 
-    const amount = contractBalance.gt(remainingAmountNeeded)
+    const amount = contractBalance.amount.gt(remainingAmountNeeded)
       ? remainingAmountNeeded
-      : contractBalance;
+      : contractBalance.amount;
 
     remainingAmountNeeded = remainingAmountNeeded.minus(amount);
 
@@ -76,9 +74,15 @@ const prepareWithdrawCallsForSpending = (
       bits: baseMarketFactory.id.toB256(),
     };
 
-    const assetType = getAssetType(market, depositAssetId);
+    const assetType = contractBalance.type;
 
     if (assetType) {
+      console.log(
+        "adding spending call",
+        market.contractId,
+        amount.toString(),
+        assetType,
+      );
       const call = getMarketContract(
         market.contractId,
         wallet,
@@ -98,7 +102,7 @@ const prepareFeeWithdrawalCalls = (
   sortedMarkets: CompactMarketInfo[],
   wallet: WalletLocked | WalletUnlocked,
   baseMarketFactory: SparkMarket,
-  contractFeeBalances: BN[],
+  contractFeeBalances: Balance[],
   feeMissing: BN,
 ): { feeCalls: FunctionInvocationScope[]; remainingFee: BN } => {
   const feeCalls: FunctionInvocationScope[] = [];
@@ -107,16 +111,16 @@ const prepareFeeWithdrawalCalls = (
   let remainingFee = feeMissing;
 
   otherFeeBalances.forEach((available, i) => {
-    if (remainingFee.lte(BN.ZERO) || available.isZero()) return;
+    if (remainingFee.lte(BN.ZERO) || available.amount.isZero()) return;
 
     let amountToWithdraw: BN;
 
-    if (available.gte(remainingFee)) {
+    if (available.amount.gte(remainingFee)) {
       amountToWithdraw = remainingFee;
       remainingFee = BN.ZERO;
     } else {
-      amountToWithdraw = available;
-      remainingFee = remainingFee.minus(available);
+      amountToWithdraw = available.amount;
+      remainingFee = remainingFee.minus(available.amount);
     }
 
     const market = sortedMarkets[i + 1];
@@ -125,13 +129,24 @@ const prepareFeeWithdrawalCalls = (
       bits: baseMarketFactory.id.toB256(),
     };
 
-    feeCalls.push(
-      getMarketContract(market.contractId, wallet).functions.withdraw_to_market(
+    if (available.type) {
+      console.log(
+        "adding fee call",
+        market.contractId,
         amountToWithdraw.toString(),
-        AssetType.Quote as unknown as AssetTypeInput,
-        marketInput,
-      ),
-    );
+        available.type,
+      );
+      feeCalls.push(
+        getMarketContract(
+          market.contractId,
+          wallet,
+        ).functions.withdraw_to_market(
+          amountToWithdraw.toString(),
+          available.type as unknown as AssetTypeInput,
+          marketInput,
+        ),
+      );
+    }
   });
   return { feeCalls, remainingFee };
 };
@@ -187,22 +202,22 @@ export const prepareDepositAndWithdrawals = async ({
 
   const targetFeeBalance = contractFeeBalances[0];
   const expectedFee = isBuy
-    ? calculateFeeMissing(targetFeeBalance, new BN(amountFee))
+    ? calculateFeeMissing(targetFeeBalance.amount, new BN(amountFee))
     : BN.ZERO;
   const otherContractFeeBalancesTotal = isBuy
     ? contractFeeBalances
         .slice(1)
-        .reduce((acc, curr) => acc.plus(curr), BN.ZERO)
+        .reduce((acc, curr) => acc.plus(curr.amount), BN.ZERO)
     : BN.ZERO;
 
   const otherContractBalancesTotal = otherContractBalances.reduce(
-    (acc, curr) => acc.plus(curr),
+    (acc, curr) => acc.plus(curr.amount),
     BN.ZERO,
   );
 
   const totalAvailableBalance = new BigNumber(walletBalance)
     .minus(expectedFee)
-    .plus(targetMarketBalance)
+    .plus(targetMarketBalance.amount)
     .plus(otherContractBalancesTotal)
     .plus(otherContractFeeBalancesTotal);
 
@@ -217,7 +232,6 @@ export const prepareDepositAndWithdrawals = async ({
       sortedMarkets,
       wallet,
       baseMarketFactory,
-      depositAssetId,
       otherContractBalances,
       targetMarketBalance,
       amountToSpend,
@@ -243,6 +257,7 @@ export const prepareDepositAndWithdrawals = async ({
       amount: remainingFee.toString(),
       assetId: feeAssetId,
     };
+    console.log("adding fee call from wallet", forwardFee.amount.toString());
     contractCalls.push(
       baseMarketFactory.functions.deposit().callParams({ forward: forwardFee }),
     );
@@ -253,10 +268,13 @@ export const prepareDepositAndWithdrawals = async ({
       amount: remainingAmountNeeded.toString(),
       assetId: depositAssetId,
     };
+    console.log("adding deposit call from wallet", forward.amount.toString());
     contractCalls.push(
       baseMarketFactory.functions.deposit().callParams({ forward }),
     );
   }
+
+  console.log("wtf", contractCalls);
 
   return contractCalls;
 };

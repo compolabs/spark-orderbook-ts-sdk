@@ -16,6 +16,7 @@ import {
 
 import BN from "./utils/BN";
 import { createContract } from "./utils/createContract";
+import { prepareAvailableMarkets } from "./utils/prepareAvailableMarkets";
 import { prepareDepositAndWithdrawals } from "./utils/prepareDepositAndWithdrawals";
 import { prepareFullWithdrawals } from "./utils/prepareFullWithdrawals";
 import {
@@ -145,12 +146,19 @@ export class WriteActions {
   ): Promise<WriteTransactionResponse> {
     const { amount, amountToSpend, amountFee, price, type } = params;
 
+    const proxyMarketFactory = this.getProxyMarketFactory();
+    const availableMarkets = prepareAvailableMarkets({
+      type,
+      markets,
+      targetId: proxyMarketFactory.id.toB256(),
+    });
+
     const depositAndWithdrawalTxs = await prepareDepositAndWithdrawals({
-      baseMarketFactory: this.getProxyMarketFactory(),
+      baseMarketFactory: proxyMarketFactory,
       wallet: this.options.wallet,
       amountToSpend,
       amountFee,
-      markets,
+      markets: availableMarkets,
       type,
     });
 
@@ -158,7 +166,7 @@ export class WriteActions {
     if (timeInForce === LimitType.GTC) {
       txs = [
         ...depositAndWithdrawalTxs,
-        this.getProxyMarketFactory().functions.open_order(
+        proxyMarketFactory.functions.open_order(
           amount,
           type as unknown as OrderTypeInput,
           price,
@@ -167,7 +175,7 @@ export class WriteActions {
     } else {
       txs = [
         ...depositAndWithdrawalTxs,
-        this.getProxyMarketFactory().functions.open_market_order(
+        proxyMarketFactory.functions.open_market_order(
           amount,
           type as unknown as OrderTypeInput,
           price,
@@ -175,7 +183,9 @@ export class WriteActions {
       ];
     }
 
-    const multiTx = this.getProxyMarketFactory().multiCall(txs);
+    console.log(txs);
+
+    const multiTx = proxyMarketFactory.multiCall(txs);
     return this.sendMultiTransaction(multiTx);
   }
 
@@ -228,11 +238,18 @@ export class WriteActions {
       amountFee,
     } = params;
 
+    const proxyMarketFactory = this.getProxyMarketFactory();
+    const availableMarkets = prepareAvailableMarkets({
+      type: orderType,
+      markets,
+      targetId: proxyMarketFactory.id.toB256(),
+    });
+
     const depositAndWithdrawalTxs = await prepareDepositAndWithdrawals({
       baseMarketFactory: this.getProxyMarketFactory(),
       wallet: this.options.wallet,
       amountToSpend,
-      markets,
+      markets: availableMarkets,
       amountFee,
       type: orderType,
     });

@@ -30,6 +30,7 @@ jest.mock("../src/types/market/SparkMarket", () => {
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { WalletLocked, WalletUnlocked } from "fuels";
 
+import { AssetType } from "../src/interface";
 import { SparkMarket } from "../src/types/market/SparkMarket";
 import BN from "../src/utils/BN";
 import { getTotalBalance } from "../src/utils/getTotalBalance";
@@ -63,6 +64,8 @@ const CONTRACT_ADDRESS_3 = generateContractWithAssets("0x00003", USDT, USDC);
 const CONTRACT_ADDRESS_4 = generateContractWithAssets("0x00004", FUEL, USDC);
 const CONTRACT_ADDRESS_5 = generateContractWithAssets("0x00005", ETH, USDT);
 
+const getBalance = (amount: BN, type?: AssetType) => ({ amount, type });
+
 describe("prepareDepositAndWithdrawals", () => {
   let baseMarketFactory: any;
   let wallet: WalletLocked | WalletUnlocked;
@@ -84,9 +87,9 @@ describe("prepareDepositAndWithdrawals", () => {
     mockGetTotalBalance.mockResolvedValue({
       walletBalance: new BN(10), // Balance of depositAssetId
       walletFeeBalance: new BN(10), // Balance of feeAssetId
-      targetMarketBalance: new BN(0), // Balance of target
-      otherContractBalances: [new BN(0)], // Balance of other markets
-      contractFeeBalances: [new BN(0)],
+      targetMarketBalance: getBalance(BN.ZERO, undefined), // Balance of target
+      otherContractBalances: [getBalance(BN.ZERO, undefined)], // Balance of other markets
+      contractFeeBalances: [getBalance(BN.ZERO, undefined)],
     });
 
     await expect(
@@ -107,9 +110,9 @@ describe("prepareDepositAndWithdrawals", () => {
     mockGetTotalBalance.mockResolvedValue({
       walletBalance: new BN(10), // Balance of depositAssetId
       walletFeeBalance: new BN(10), // Balance of feeAssetId
-      targetMarketBalance: new BN(10), // Balance of target
-      otherContractBalances: [new BN(100)], // Balance of other markets
-      contractFeeBalances: [new BN(0)],
+      targetMarketBalance: getBalance(new BN(10), AssetType.Base), // Balance of target
+      otherContractBalances: [getBalance(new BN(100), AssetType.Base)], // Balance of other markets
+      contractFeeBalances: [getBalance(BN.ZERO, undefined)],
     });
 
     await expect(
@@ -130,9 +133,16 @@ describe("prepareDepositAndWithdrawals", () => {
     mockGetTotalBalance.mockResolvedValue({
       walletBalance: new BN(15), // Balance of depositAssetId
       walletFeeBalance: new BN(15), // Balance of feeAssetId
-      targetMarketBalance: new BN(0), // Balance of target
-      otherContractBalances: [new BN(70), new BN(15), new BN(5)], // Balance of other markets
-      contractFeeBalances: [new BN(0), new BN(0)],
+      targetMarketBalance: getBalance(BN.ZERO, undefined), // Balance of target
+      otherContractBalances: [
+        getBalance(new BN(70), AssetType.Base),
+        getBalance(new BN(15), AssetType.Base),
+        getBalance(new BN(5), AssetType.Base),
+      ], // Balance of other markets
+      contractFeeBalances: [
+        getBalance(BN.ZERO, undefined),
+        getBalance(BN.ZERO, undefined),
+      ],
     });
 
     const contractCalls = await prepareDepositAndWithdrawals({
@@ -156,9 +166,9 @@ describe("prepareDepositAndWithdrawals", () => {
     mockGetTotalBalance.mockResolvedValue({
       walletBalance: new BN(15), // Balance of depositAssetId
       walletFeeBalance: new BN(15), // Balance of feeAssetId
-      targetMarketBalance: new BN(50), // Balance of target
-      otherContractBalances: [new BN(40)], // Balance of other markets
-      contractFeeBalances: [new BN(0)],
+      targetMarketBalance: getBalance(new BN(50), AssetType.Base), // Balance of target
+      otherContractBalances: [getBalance(new BN(40), AssetType.Base)], // Balance of other markets
+      contractFeeBalances: [getBalance(BN.ZERO, undefined)],
     });
 
     const contractCalls = await prepareDepositAndWithdrawals({
@@ -177,9 +187,12 @@ describe("prepareDepositAndWithdrawals", () => {
     mockGetTotalBalance.mockResolvedValue({
       walletBalance: new BN(15), // Balance of depositAssetId
       walletFeeBalance: new BN(15), // Balance of feeAssetId
-      targetMarketBalance: new BN(10), // Balance of target
-      otherContractBalances: [new BN(0)], // Balance of other markets
-      contractFeeBalances: [new BN(0), new BN(35)],
+      targetMarketBalance: getBalance(new BN(10), AssetType.Base), // Balance of target
+      otherContractBalances: [getBalance(BN.ZERO, undefined)], // Balance of other markets
+      contractFeeBalances: [
+        getBalance(BN.ZERO, undefined),
+        getBalance(new BN(35), AssetType.Base),
+      ],
     });
 
     const contractCalls = await prepareDepositAndWithdrawals({
@@ -198,9 +211,12 @@ describe("prepareDepositAndWithdrawals", () => {
     mockGetTotalBalance.mockResolvedValue({
       walletBalance: new BN(15), // Balance of depositAssetId
       walletFeeBalance: new BN(15), // Balance of feeAssetId
-      targetMarketBalance: new BN(10), // Balance of target
-      otherContractBalances: [new BN(0)], // Balance of other markets
-      contractFeeBalances: [new BN(0), new BN(35)],
+      targetMarketBalance: getBalance(new BN(10), AssetType.Base), // Balance of target
+      otherContractBalances: [getBalance(BN.ZERO, undefined)], // Balance of other markets
+      contractFeeBalances: [
+        getBalance(BN.ZERO, undefined),
+        getBalance(new BN(35), AssetType.Base),
+      ],
     });
 
     const contractCalls = await prepareDepositAndWithdrawals({
@@ -213,5 +229,29 @@ describe("prepareDepositAndWithdrawals", () => {
     });
 
     expect(contractCalls).toHaveLength(0);
+  });
+
+  it("handles fee amount correctly for inverted market", async () => {
+    mockGetTotalBalance.mockResolvedValue({
+      walletBalance: new BN(15), // Balance of depositAssetId
+      walletFeeBalance: new BN(15), // Balance of feeAssetId
+      targetMarketBalance: getBalance(new BN(10), AssetType.Base), // Balance of target
+      otherContractBalances: [getBalance(BN.ZERO, undefined)], // Balance of other markets
+      contractFeeBalances: [
+        getBalance(BN.ZERO, undefined),
+        getBalance(new BN(35), AssetType.Quote),
+      ],
+    });
+
+    const contractCalls = await prepareDepositAndWithdrawals({
+      baseMarketFactory,
+      wallet,
+      markets: [CONTRACT_ADDRESS_1, CONTRACT_ADDRESS_2],
+      amountToSpend: "10",
+      amountFee: "50",
+      type: "Buy" as any,
+    });
+
+    expect(contractCalls).toHaveLength(2);
   });
 });

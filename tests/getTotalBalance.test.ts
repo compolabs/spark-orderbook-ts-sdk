@@ -134,4 +134,25 @@ describe("getTotalBalance", () => {
     expect(result.walletBalance.toString()).toBe(new BN("300").toString());
     expect(result.walletFeeBalance.toString()).toBe(new BN("150").toString());
   });
+
+  it.only("should return wallet balances correctly", async () => {
+    markets = [
+      { contractId: "0xabc", baseAssetId: "0xbase", quoteAssetId: "0xquote" },
+      { contractId: "0xdef", baseAssetId: "0xquote", quoteAssetId: "0xbase" },
+    ];
+
+    const result = await getTotalBalance({
+      wallet: fakeWallet,
+      depositAssetId: "0xquote",
+      feeAssetId: "0xquote",
+      markets,
+    });
+
+    expect(result.contractFeeBalances[0].toString()).toBe(
+      new BN("50").toString(),
+    );
+    expect(result.contractFeeBalances[1].toString()).toBe(
+      new BN("50").toString(),
+    );
+  });
 });
