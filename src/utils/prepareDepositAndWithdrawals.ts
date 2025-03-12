@@ -82,6 +82,7 @@ const prepareWithdrawCallsForSpending = (
         market.contractId,
         amount.toString(),
         assetType,
+        marketInput.bits,
       );
       const call = getMarketContract(
         market.contractId,
@@ -135,6 +136,7 @@ const prepareFeeWithdrawalCalls = (
         market.contractId,
         amountToWithdraw.toString(),
         available.type,
+        marketInput.bits,
       );
       feeCalls.push(
         getMarketContract(
@@ -257,7 +259,11 @@ export const prepareDepositAndWithdrawals = async ({
       amount: remainingFee.toString(),
       assetId: feeAssetId,
     };
-    console.log("adding fee call from wallet", forwardFee.amount.toString());
+    console.log(
+      "adding fee call from wallet",
+      forwardFee.amount.toString(),
+      forwardFee.assetId,
+    );
     contractCalls.push(
       baseMarketFactory.functions.deposit().callParams({ forward: forwardFee }),
     );
@@ -268,7 +274,11 @@ export const prepareDepositAndWithdrawals = async ({
       amount: remainingAmountNeeded.toString(),
       assetId: depositAssetId,
     };
-    console.log("adding deposit call from wallet", forward.amount.toString());
+    console.log(
+      "adding deposit call from wallet",
+      forward.amount.toString(),
+      forward.assetId,
+    );
     contractCalls.push(
       baseMarketFactory.functions.deposit().callParams({ forward }),
     );

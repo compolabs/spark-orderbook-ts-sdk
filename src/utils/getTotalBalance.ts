@@ -60,17 +60,16 @@ export const getTotalBalance = async ({
     const baseAssetType = getAssetType(markets[i], depositAssetId);
     const quoteAssetType = getAssetType(markets[i], feeAssetId);
 
-    const isDepositBase = baseAssetType === AssetType.Base;
-
     if (!baseAssetType) {
       depositBalances.push({
         amount: BN.ZERO,
         type: baseAssetType,
       });
     } else {
-      const depositAsset = isDepositBase
-        ? balance.liquid.base
-        : balance.liquid.quote;
+      const depositAsset =
+        baseAssetType === AssetType.Base
+          ? balance.liquid.base
+          : balance.liquid.quote;
       depositBalances.push({
         amount: new BN(depositAsset.toString()),
         type: baseAssetType,
@@ -83,7 +82,10 @@ export const getTotalBalance = async ({
         type: quoteAssetType,
       });
     } else {
-      const feeAsset = balance.liquid.quote;
+      const feeAsset =
+        quoteAssetType === AssetType.Base
+          ? balance.liquid.base
+          : balance.liquid.quote;
       contractFeeBalances.push({
         amount: new BN(feeAsset.toString()),
         type: quoteAssetType,
