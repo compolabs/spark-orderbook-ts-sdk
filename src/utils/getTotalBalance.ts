@@ -6,10 +6,15 @@ import { AccountOutput, IdentityInput } from "src/types/market/SparkMarket";
 import BN from "./BN";
 import { getAssetType } from "./getAssetType";
 
-export const _getMarketContract = (
+export const getMarketContract = (
   contractAddress: string,
   wallet: WalletLocked | WalletUnlocked,
 ) => new SparkMarket(contractAddress, wallet);
+
+export interface TokenBalance {
+  amount: BN;
+  type?: AssetType;
+}
 
 interface GetTotalBalanceParams {
   wallet: WalletLocked | WalletUnlocked;
@@ -18,48 +23,103 @@ interface GetTotalBalanceParams {
   markets: CompactMarketInfo[];
 }
 
-// Helper function to get balances
+export interface TotalBalanceResult {
+  walletBalance: BN;
+  walletFeeBalance: BN;
+  targetMarketBalance: TokenBalance;
+  otherContractBalances: TokenBalance[];
+  contractFeeBalances: TokenBalance[];
+}
+
+function processMarketBalance(
+  balance: AccountOutput,
+  market: CompactMarketInfo,
+  depositAssetId: string,
+  feeAssetId: string,
+): { depositBalance: TokenBalance; feeBalance: TokenBalance } {
+  const depositType = getAssetType(market, depositAssetId);
+  const feeType = getAssetType(market, feeAssetId);
+
+  const depositBalance: TokenBalance = {
+    amount: depositType
+      ? new BN(
+          (depositType === AssetType.Base
+            ? balance.liquid.base
+            : balance.liquid.quote
+          ).toString(),
+        )
+      : BN.ZERO,
+    type: depositType,
+  };
+
+  const feeBalance: TokenBalance = {
+    amount: feeType
+      ? new BN(
+          (feeType === AssetType.Base
+            ? balance.liquid.base
+            : balance.liquid.quote
+          ).toString(),
+        )
+      : BN.ZERO,
+    type: feeType,
+  };
+
+  return { depositBalance, feeBalance };
+}
+
 export const getTotalBalance = async ({
   wallet,
   depositAssetId,
   feeAssetId,
   markets,
-}: GetTotalBalanceParams) => {
+}: GetTotalBalanceParams): Promise<TotalBalanceResult> => {
+  if (!markets.length) {
+    throw new Error("[getTotalBalance] Markets are empty");
+  }
+
   const identity: IdentityInput = {
-    Address: {
-      bits: wallet.address.toB256(),
-    },
+    Address: { bits: wallet.address.toB256() },
   };
 
-  const baseMarketFactory = _getMarketContract(markets[0].contractId, wallet);
-
-  const getBalancePromises = markets.map((market) =>
-    _getMarketContract(market.contractId, wallet).functions.account(identity),
+  const baseMarketContract = getMarketContract(markets[0].contractId, wallet);
+  const balancePromises = markets.map((market) =>
+    getMarketContract(market.contractId, wallet).functions.account(identity),
   );
 
-  const balanceMultiCallResult = await baseMarketFactory
-    .multiCall(getBalancePromises)
+  const multiCallResult = await baseMarketContract
+    .multiCall(balancePromises)
     .get();
 
-  const [targetMarketBalance, ...otherContractBalances]: BN[] =
-    balanceMultiCallResult.value.map(
-      (balance: AccountOutput, index: number) => {
-        const isBase =
-          getAssetType(markets[index], depositAssetId) === AssetType.Base;
-        const asset = isBase ? balance.liquid.base : balance.liquid.quote;
-        return new BN(asset.toString());
-      },
-    );
+  const depositBalances: TokenBalance[] = [];
+  const feeBalances: TokenBalance[] = [];
 
-  const [walletBalance, walletFeeBalance] = await Promise.all([
+  for (let i = 0; i < multiCallResult.value.length; i++) {
+    const balance: AccountOutput = multiCallResult.value[i];
+    const { depositBalance, feeBalance } = processMarketBalance(
+      balance,
+      markets[i],
+      depositAssetId,
+      feeAssetId,
+    );
+    depositBalances.push(depositBalance);
+    feeBalances.push(feeBalance);
+  }
+
+  const targetMarketBalance = depositBalances[0];
+  const otherContractBalances = depositBalances.slice(1);
+
+  const [walletDepositRaw, walletFeeRaw] = await Promise.all([
     wallet.getBalance(depositAssetId),
     wallet.getBalance(feeAssetId),
   ]);
+  const walletBalance = new BN(walletDepositRaw.toString());
+  const walletFeeBalance = new BN(walletFeeRaw.toString());
 
   return {
-    walletBalance: new BN(walletBalance.toString()),
-    walletFeeBalance: new BN(walletFeeBalance.toString()),
+    walletBalance,
+    walletFeeBalance,
     targetMarketBalance,
     otherContractBalances,
+    contractFeeBalances: feeBalances,
   };
 };
