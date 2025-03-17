@@ -3,10 +3,10 @@ import { Undefinable } from "tsdef";
 
 BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
 
-type TValue = BN | BigNumber.Value;
+type Value = BN | BigNumber.Value;
 
 const bigNumberify = (n: any): string | number => {
-  if (n && n.toString) {
+  if (n !== null && n !== undefined && n.toString) {
     const primitive = n.toString();
 
     if (typeof primitive !== "object") {
@@ -27,19 +27,19 @@ class BN extends BigNumber {
   multipliedBy = this.times;
   squareRoot = this.sqrt;
 
-  constructor(n: TValue, base?: number) {
+  constructor(n: Value, base?: number) {
     super(bigNumberify(n), base);
   }
 
-  static clamp(number: TValue, min: TValue, max: TValue): BN {
+  static clamp(number: Value, min: Value, max: Value): BN {
     return BN.min(BN.max(number, min), max);
   }
 
-  static max(...n: TValue[]): BN {
+  static max(...n: Value[]): BN {
     return new BN(super.max(...n.map(bigNumberify)));
   }
 
-  static min(...n: TValue[]): BN {
+  static min(...n: Value[]): BN {
     return new BN(super.min(...n.map(bigNumberify)));
   }
 
@@ -47,43 +47,51 @@ class BN extends BigNumber {
     return p.then((v) => new BN(v));
   }
 
-  static parseUnits(value: TValue, decimals = 8): BN {
+  static parseUnits(value: Value, decimals = 8): BN {
     return new BN(10).pow(decimals).times(bigNumberify(value));
   }
 
-  static formatUnits(value: TValue, decimals = 8): BN {
+  static formatUnits(value: Value, decimals = 8): BN {
     return new BN(value).div(new BN(10).pow(decimals));
   }
 
-  static percentOf(value: TValue, percent: TValue): BN {
+  static percentOf(value: Value, percent: Value): BN {
     return new BN(new BN(value).times(percent).div(100).toFixed(0));
   }
 
-  static ratioOf(valueA: TValue, valueB: TValue): BN {
+  static ratioOf(valueA: Value, valueB: Value): BN {
     return new BN(valueA).div(valueB).times(100);
   }
+
+  static sum = (...n: Value[]): BN => {
+    if (!n.length) {
+      return BN.ZERO;
+    }
+
+    return new BN(super.sum(...n.map(bigNumberify)));
+  };
 
   abs(): BN {
     return new BN(super.abs());
   }
 
-  div(n: TValue, base?: Undefinable<number>): BN {
+  div(n: Value, base?: Undefinable<number>): BN {
     return new BN(super.div(bigNumberify(n), base));
   }
 
-  pow(n: TValue, m?: Undefinable<TValue>): BN {
+  pow(n: Value, m?: Undefinable<Value>): BN {
     return new BN(super.pow(bigNumberify(n), bigNumberify(m)));
   }
 
-  minus(n: TValue, base?: Undefinable<number>): BN {
+  minus(n: Value, base?: Undefinable<number>): BN {
     return new BN(super.minus(bigNumberify(n), base));
   }
 
-  mod(n: TValue, base?: Undefinable<number>): BN {
+  mod(n: Value, base?: Undefinable<number>): BN {
     return new BN(super.mod(bigNumberify(n), base));
   }
 
-  times(n: TValue, base?: Undefinable<number>): BN {
+  times(n: Value, base?: Undefinable<number>): BN {
     return new BN(super.times(bigNumberify(n), base));
   }
 
@@ -91,7 +99,7 @@ class BN extends BigNumber {
     return new BN(super.negated());
   }
 
-  plus(n: TValue, base?: Undefinable<number>): BN {
+  plus(n: Value, base?: Undefinable<number>): BN {
     return new BN(super.plus(bigNumberify(n), base));
   }
 
@@ -129,17 +137,13 @@ class BN extends BigNumber {
     roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN,
     format?: BigNumber.Format,
   ): string => {
-    return this.gte(1) || significantDigits === 0
+    return this.abs().gte(1) || significantDigits === 0
       ? this.toFormat(significantDigits, roundingMode, format).replace(
           /(\.[0-9]*[1-9])0+$|\.0+$/,
           "$1",
         )
       : super.precision(significantDigits, roundingMode).toString();
   };
-
-  clamp(min: TValue, max: TValue): BN {
-    return BN.min(BN.max(this, min), max);
-  }
 }
 
 export default BN;
