@@ -195,6 +195,20 @@ export class WriteActions {
     return this.sendTransaction(tx);
   }
 
+  async cancelOrderMulticall(
+    orderIds: string[],
+  ): Promise<WriteTransactionResponse> {
+    const proxyMarketFactory = this.getProxyMarketFactory();
+
+    const multiTx = proxyMarketFactory.multiCall(
+      orderIds.map((o) =>
+        this.getProxyMarketFactory().functions.cancel_order(o),
+      ),
+    );
+
+    return this.sendMultiTransaction(multiTx);
+  }
+
   // async matchOrders(
   //   sellOrderId: string,
   //   buyOrderId: string,
