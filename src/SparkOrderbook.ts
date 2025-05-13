@@ -174,6 +174,12 @@ export class SparkOrderbook {
     return this.getWrite().cancelOrder(orderId);
   }
 
+  async cancelOrderMulticall(
+    orderIds: string[],
+  ): Promise<WriteTransactionResponse> {
+    return this.getWrite().cancelOrderMulticall(orderIds);
+  }
+
   // async matchOrders(
   //   sellOrderId: string,
   //   buyOrderId: string,
