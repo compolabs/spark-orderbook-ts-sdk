@@ -1,11 +1,5 @@
 import { ApolloQueryResult, FetchResult, Observable } from "@apollo/client";
-import {
-  Bech32Address,
-  Provider,
-  Wallet,
-  WalletLocked,
-  WalletUnlocked,
-} from "fuels";
+import { Address, Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
 import { Undefinable } from "tsdef";
 
 import { NETWORK_ERROR, NetworkError } from "./utils/NetworkError";
@@ -60,7 +54,7 @@ import { SentioApi } from "./sentioApi";
 import { WriteActions } from "./WriteActions";
 
 export class SparkOrderbook {
-  private providerPromise: Promise<Provider>;
+  private providerPromise: Provider;
   private provider?: Provider;
   private options: OptionsSpark;
   private indexerApi?: IndexerApi;
@@ -78,7 +72,7 @@ export class SparkOrderbook {
         params.gasLimitMultiplier ?? DEFAULT_GAS_LIMIT_MULTIPLIER,
     };
 
-    this.providerPromise = Provider.create(params.networkUrl);
+    this.providerPromise = new Provider(params.networkUrl);
   }
 
   private get activeIndexerApi(): IndexerApi {
@@ -300,20 +294,18 @@ export class SparkOrderbook {
     return read.fetchWalletBalance(asset.assetId);
   }
 
-  async fetchOrderIdsByAddress(trader: Bech32Address): Promise<string[]> {
+  async fetchOrderIdsByAddress(trader: Address): Promise<string[]> {
     const read = await this.getRead();
     return read.fetchOrderIdsByAddress(trader);
   }
 
-  async fetchUserMarketBalance(
-    trader: Bech32Address,
-  ): Promise<UserMarketBalance> {
+  async fetchUserMarketBalance(trader: Address): Promise<UserMarketBalance> {
     const read = await this.getRead();
     return read.fetchUserMarketBalance(trader);
   }
 
   async fetchUserMarketBalanceByContracts(
-    trader: Bech32Address,
+    trader: Address,
     contractsAddresses: string[],
   ): Promise<UserMarketBalance[]> {
     const read = await this.getRead();
@@ -330,16 +322,14 @@ export class SparkOrderbook {
     return read.fetchProtocolFee();
   }
 
-  async fetchProtocolFeeForUser(
-    trader: Bech32Address,
-  ): Promise<UserProtocolFee> {
+  async fetchProtocolFeeForUser(trader: Address): Promise<UserProtocolFee> {
     const read = await this.getRead();
     return read.fetchProtocolFeeForUser(trader);
   }
 
   async fetchProtocolFeeAmountForUser(
     amount: string,
-    trader: Bech32Address,
+    trader: Address,
   ): Promise<UserProtocolFee> {
     const read = await this.getRead();
     return read.fetchProtocolFeeAmountForUser(amount, trader);

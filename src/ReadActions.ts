@@ -1,4 +1,4 @@
-import { Address, Bech32Address, ZeroBytes32 } from "fuels";
+import { Address, ZeroBytes32 } from "fuels";
 import { Undefinable } from "tsdef";
 
 import { AccountOutput, IdentityInput } from "./types/market/SparkMarket";
@@ -42,7 +42,7 @@ export class ReadActions {
     );
   }
 
-  private createIdentityInput(trader: Bech32Address): IdentityInput {
+  private createIdentityInput(trader: Address): IdentityInput {
     return {
       Address: {
         bits: new Address(trader).toB256(),
@@ -121,9 +121,7 @@ export class ReadActions {
     };
   }
 
-  async fetchUserMarketBalance(
-    trader: Bech32Address,
-  ): Promise<UserMarketBalance> {
+  async fetchUserMarketBalance(trader: Address): Promise<UserMarketBalance> {
     const user = this.createIdentityInput(trader);
     const result = await this.getProxyMarketFactory()
       .functions.account(user)
@@ -144,7 +142,7 @@ export class ReadActions {
   }
 
   async fetchUserMarketBalanceByContracts(
-    trader: Bech32Address,
+    trader: Address,
     contractsAddresses: string[],
   ): Promise<UserMarketBalance[]> {
     const user = this.createIdentityInput(trader);
@@ -199,7 +197,7 @@ export class ReadActions {
     };
   }
 
-  async fetchOrderIdsByAddress(trader: Bech32Address): Promise<string[]> {
+  async fetchOrderIdsByAddress(trader: Address): Promise<string[]> {
     const user = this.createIdentityInput(trader);
     const result = await this.getProxyMarketFactory()
       .functions.user_orders(user)
@@ -233,9 +231,7 @@ export class ReadActions {
     }));
   }
 
-  async fetchProtocolFeeForUser(
-    trader: Bech32Address,
-  ): Promise<UserProtocolFee> {
+  async fetchProtocolFeeForUser(trader: Address): Promise<UserProtocolFee> {
     const user = this.createIdentityInput(trader);
     const result = await this.getProxyMarketFactory()
       .functions.protocol_fee_user(user)
@@ -249,7 +245,7 @@ export class ReadActions {
 
   async fetchProtocolFeeAmountForUser(
     amount: string,
-    trader: Bech32Address,
+    trader: Address,
   ): Promise<UserProtocolFee> {
     const user = this.createIdentityInput(trader);
     const result = await this.getProxyMarketFactory()

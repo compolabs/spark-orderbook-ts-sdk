@@ -1,12 +1,9 @@
-import { Wallet } from "fuels";
+import { Provider, Wallet } from "fuels";
 
 import SparkOrderbook, { Asset, OrderType } from "../src";
 
-import {
-  DEFAULT_AMOUNT,
-  DEFAULT_TOKEN,
-  initializeSparkOrderbook,
-} from "./utils";
+import CONFIG from "./config.json";
+import { DEFAULT_AMOUNT, initializeSparkOrderbook } from "./utils";
 
 // ⚠️ NEVER SHARE YOUR PRIVATE KEY WITH ANYONE ⚠️
 const PRIVATE_KEY = ""; // ⚠️ NEVER SHARE YOUR PRIVATE KEY WITH ANYONE ⚠️
@@ -14,23 +11,14 @@ const PRIVATE_KEY = ""; // ⚠️ NEVER SHARE YOUR PRIVATE KEY WITH ANYONE ⚠�
 
 // For each write operation, you need a wallet with a sufficient amount of ETH to send transactions.
 async function main() {
-  const wallet = Wallet.fromPrivateKey(PRIVATE_KEY);
+  const provider = new Provider(CONFIG.networkUrl);
+  const wallet = Wallet.fromPrivateKey(PRIVATE_KEY, provider);
   const spark = await initializeSparkOrderbook(wallet);
 
-  await mint(spark, DEFAULT_TOKEN, DEFAULT_AMOUNT);
+  // await deposit(spark, DEFAULT_TOKEN, "50000");
 
-  await deposit(spark, DEFAULT_TOKEN, DEFAULT_AMOUNT);
-
-  const price = "7000000000000"; // $70,000
+  const price = "1000000000";
   await createOrder(spark, DEFAULT_AMOUNT, price, OrderType.Buy);
-
-  // Retrieve orderId from fetchOrders, filtered by user
-  // const orderId = '';
-  // await cancelOrder(spark, orderId);
-}
-
-function mint(spark: SparkOrderbook, token: Asset, amount: string) {
-  return spark.mintToken(token, amount);
 }
 
 function deposit(spark: SparkOrderbook, token: Asset, amount: string) {
@@ -48,10 +36,6 @@ function createOrder(
     price,
     type,
   });
-}
-
-function cancelOrder(spark: SparkOrderbook, orderId: string) {
-  return spark.cancelOrder(orderId);
 }
 
 main();

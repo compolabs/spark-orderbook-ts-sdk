@@ -9,13 +9,13 @@ export const DEFAULT_MARKET = CONFIG.markets[0].contractId;
 const INDEXER = CONFIG.indexers[DEFAULT_MARKET];
 
 export const DEFAULT_TOKEN = CONFIG.tokens.find(
-  (t) => t.symbol === "BTC",
+  (t) => t.symbol === "USDC",
 ) as Asset;
 
-export const DEFAULT_AMOUNT = "0.01";
+export const DEFAULT_AMOUNT = "10000";
 
 export async function initializeSparkOrderbook(wallet?: WalletUnlocked) {
-  const provider = await Provider.create(CONFIG.networkUrl);
+  const provider = new Provider(CONFIG.networkUrl);
   const walletProvider = wallet ?? Wallet.generate({ provider });
 
   const spark = new SparkOrderbook({
